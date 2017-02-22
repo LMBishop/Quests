@@ -83,6 +83,9 @@ public class Main extends JavaPlugin {
 		} else if (version.equals("v1_8_R2")) {
 			title = new Title_v1_8_R2();
 			success = true;
+		} else if (version.equals("v1_8_R1")) {
+			title = new Title_v1_8_R1();
+			success = true;
 		} else if (version.equals("v1_9_R2")) {
 			title = new Title_v1_9_R2();
 			success = true;

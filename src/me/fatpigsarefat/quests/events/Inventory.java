@@ -16,6 +16,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.fatpigsarefat.quests.Main;
 import me.fatpigsarefat.quests.Reward;
+import me.fatpigsarefat.quests.title.Title_v1_8_R1;
+
 import org.bukkit.ChatColor;
 
 public class Inventory extends BukkitRunnable {

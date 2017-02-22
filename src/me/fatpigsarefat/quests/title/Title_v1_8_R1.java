@@ -20,4 +20,5 @@ public class Title_v1_8_R1 implements Title {
 				100, 20);
 		((CraftPlayer) player).getHandle().playerConnection.sendPacket(subtitle);
 	}
+	
 }
