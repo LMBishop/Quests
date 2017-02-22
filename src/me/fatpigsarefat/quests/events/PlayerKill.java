@@ -82,18 +82,17 @@ public class PlayerKill implements Listener {
 				player.sendMessage(ChatColor.GREEN + "Successfully completed " + ChatColor.translateAlternateColorCodes(
 						'&', plugin.getConfig().getString("quests." + s + ".display.name")));
 				if (plugin.getConfig().getString("title.enabled").equals("true")) {
-			    	if (!Main.instance.titleEnabled) {
-			    		return;
-			    	}
-					titleMessage = ChatColor.translateAlternateColorCodes('&',
-							plugin.getConfig().getString("title.mainmessage"));
-					titleMessage = titleMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
-							plugin.getConfig().getString("quests." + s + ".display.name")));
-					titleSubMessage = ChatColor.translateAlternateColorCodes('&',
-							plugin.getConfig().getString("title.submessage"));
-					titleSubMessage = titleSubMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
-							plugin.getConfig().getString("quests." + s + ".display.name")));
-					plugin.title.sendTitle(player, titleMessage, titleSubMessage);
+					if (Main.instance.titleEnabled) {
+						titleMessage = ChatColor.translateAlternateColorCodes('&',
+								plugin.getConfig().getString("title.mainmessage"));
+						titleMessage = titleMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
+								plugin.getConfig().getString("quests." + s + ".display.name")));
+						titleSubMessage = ChatColor.translateAlternateColorCodes('&',
+								plugin.getConfig().getString("title.submessage"));
+						titleSubMessage = titleSubMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
+								plugin.getConfig().getString("quests." + s + ".display.name")));
+						plugin.title.sendTitle(player, titleMessage, titleSubMessage);
+					}
 				}
 				int i = 0;
 				for (String quest : questsStarted) {
@@ -110,7 +109,7 @@ public class PlayerKill implements Listener {
 				if (data.contains("progress." + player.getUniqueId() + ".quests-completed")) {
 					questsCompleted = data.getStringList("progress." + player.getUniqueId() + ".quests-completed");
 				}
-				
+
 				int cooldownTime = 0;
 				if (plugin.getConfig().contains("quests." + s + ".cooldown")) {
 					if (plugin.getConfig().getBoolean("quests." + s + ".cooldown.enabled")) {

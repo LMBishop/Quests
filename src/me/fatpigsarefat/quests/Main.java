@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import me.fatpigsarefat.quests.commands.CommandQuest;
 import me.fatpigsarefat.quests.events.BlockBreak;
 import me.fatpigsarefat.quests.events.BlockPlace;
+import me.fatpigsarefat.quests.events.Inventory;
 import me.fatpigsarefat.quests.events.InventoryInteract;
 import me.fatpigsarefat.quests.events.MobKill;
 import me.fatpigsarefat.quests.events.PlayerKill;
@@ -41,8 +42,7 @@ public class Main extends JavaPlugin {
 		// TODO getCommand("questcreate").setExecutor(new
 		// CommandQuestcreate(this));
 		new CommandQuest(this);
-		// TODO get my act together and actualy make these inventory quests >.>
-		// new Inventory(this).runTaskTimer(this, 20L, 20L);
+		new Inventory(this).runTaskTimer(this, 20L, 20L);
 		saveDefaultConfig();
 		File d = new File(this.getDataFolder() + File.separator + "data.yml");
 		if (!d.exists()) {
@@ -59,7 +59,7 @@ public class Main extends JavaPlugin {
 		} else {
 			getLogger().info("Your NMS version is not compatible with supported versions.");
 			getLogger().info("Titles in this version will be disabled!");
-			getLogger().info("Quests is compatible with: v1_8_R2, v1_8_R3, v1_9_R1, v1_9_R2, v1_10_R1, v1_11_R1");
+			getLogger().info("Quests is compatible with: v1_8_R1, v1_8_R2, v1_8_R3, v1_9_R1, v1_9_R2, v1_10_R1, v1_11_R1");
 			getLogger().info("Quests setup was successful with 1 error!");
 			titleEnabled = false;
 		}

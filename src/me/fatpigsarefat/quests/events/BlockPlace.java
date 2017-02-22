@@ -89,18 +89,17 @@ public class BlockPlace implements Listener {
 				player.sendMessage(ChatColor.GREEN + "Successfully completed " + ChatColor.translateAlternateColorCodes(
 						'&', plugin.getConfig().getString("quests." + s + ".display.name")));
 				if (plugin.getConfig().getString("title.enabled").equals("true")) {
-			    	if (!Main.instance.titleEnabled) {
-			    		return;
-			    	}
-					titleMessage = ChatColor.translateAlternateColorCodes('&',
-							plugin.getConfig().getString("title.mainmessage"));
-					titleMessage = titleMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
-							plugin.getConfig().getString("quests." + s + ".display.name")));
-					titleSubMessage = ChatColor.translateAlternateColorCodes('&',
-							plugin.getConfig().getString("title.submessage"));
-					titleSubMessage = titleSubMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
-							plugin.getConfig().getString("quests." + s + ".display.name")));
-					plugin.title.sendTitle(player, titleMessage, titleSubMessage);
+					if (Main.instance.titleEnabled) {
+						titleMessage = ChatColor.translateAlternateColorCodes('&',
+								plugin.getConfig().getString("title.mainmessage"));
+						titleMessage = titleMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
+								plugin.getConfig().getString("quests." + s + ".display.name")));
+						titleSubMessage = ChatColor.translateAlternateColorCodes('&',
+								plugin.getConfig().getString("title.submessage"));
+						titleSubMessage = titleSubMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
+								plugin.getConfig().getString("quests." + s + ".display.name")));
+						plugin.title.sendTitle(player, titleMessage, titleSubMessage);
+					}
 				}
 				int i = 0;
 				for (String quest : questsStarted) {

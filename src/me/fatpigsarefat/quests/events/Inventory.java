@@ -107,13 +107,8 @@ public class Inventory extends BukkitRunnable {
 					}
 					boolean overwrite = false;
 					int take = 0;
-					// Look, I know there probably is an easier way of doing
-					// this, but if you're here just to bash on me for not doing
-					// it 'correctly' then don't even bother. I know.
-					// ..
-					// nvm i give up.
-					// inventory quests can come next update.
 					while (take <= 1) {
+						int slot = 0;
 						for (ItemStack is : player.getInventory().getContents()) {
 							if (is == null) {
 								continue;
@@ -132,19 +127,18 @@ public class Inventory extends BukkitRunnable {
 								amountThreshold.put(is.getType(), amountThreshold.get(is.getType()) - is.getAmount());
 								if (amountThreshold.get(is.getType()) <= 0) {
 									if (overwrite) {
-										player.getInventory().remove(is);
-										is2.setAmount(0 - amountThreshold.get(is2.getType()));
-										if (is2.getAmount() > 0) {
-											player.getInventory().addItem(is2);
-										}
+										player.getInventory().setItem(slot, null);
+										is2.setAmount(Math.abs(amountThreshold.get(is2.getType())));
+										player.getInventory().setItem(slot, is2);
 									}
 									amountThreshold.remove(is2.getType());
 								} else {
 									if (overwrite) {
-										player.getInventory().remove(is.getType());
+										player.getInventory().setItem(slot, null);
 									}
 								}
 							}
+							slot++;
 						}
 						if (overwrite) {
 							questsToComplete.add(s);
@@ -157,8 +151,6 @@ public class Inventory extends BukkitRunnable {
 						} else {
 							break;
 						}
-						// Just in case it doesn't break out of the loop, we
-						// don't want any infinite loops do we now?
 						take++;
 					}
 				}
@@ -170,18 +162,17 @@ public class Inventory extends BukkitRunnable {
 				player.sendMessage(ChatColor.GREEN + "Successfully completed " + ChatColor.translateAlternateColorCodes(
 						'&', plugin.getConfig().getString("quests." + s + ".display.name")));
 				if (plugin.getConfig().getString("title.enabled").equals("true")) {
-					if (!Main.instance.titleEnabled) {
-						return;
+					if (Main.instance.titleEnabled) {
+						titleMessage = ChatColor.translateAlternateColorCodes('&',
+								plugin.getConfig().getString("title.mainmessage"));
+						titleMessage = titleMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
+								plugin.getConfig().getString("quests." + s + ".display.name")));
+						titleSubMessage = ChatColor.translateAlternateColorCodes('&',
+								plugin.getConfig().getString("title.submessage"));
+						titleSubMessage = titleSubMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
+								plugin.getConfig().getString("quests." + s + ".display.name")));
+						plugin.title.sendTitle(player, titleMessage, titleSubMessage);
 					}
-					titleMessage = ChatColor.translateAlternateColorCodes('&',
-							plugin.getConfig().getString("title.mainmessage"));
-					titleMessage = titleMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
-							plugin.getConfig().getString("quests." + s + ".display.name")));
-					titleSubMessage = ChatColor.translateAlternateColorCodes('&',
-							plugin.getConfig().getString("title.submessage"));
-					titleSubMessage = titleSubMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
-							plugin.getConfig().getString("quests." + s + ".display.name")));
-					plugin.title.sendTitle(player, titleMessage, titleSubMessage);
 				}
 				int i = 0;
 				for (String quest : questsStarted) {
