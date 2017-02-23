@@ -30,6 +30,9 @@ public class BlockPlace implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBlockPlace(BlockPlaceEvent event) {
+		if (event.isCancelled()) {
+			return;
+		}
 		Player player = event.getPlayer();
 
 		File d = new File(plugin.getDataFolder() + File.separator + "data.yml");

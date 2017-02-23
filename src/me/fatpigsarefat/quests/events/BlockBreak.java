@@ -30,6 +30,9 @@ public class BlockBreak implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onBlockBreak(BlockBreakEvent event) {
+		if (event.isCancelled()) {
+			return;
+		}
 		Player player = event.getPlayer();
 
 		File d = new File(plugin.getDataFolder() + File.separator + "data.yml");
