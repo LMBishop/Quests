@@ -169,7 +169,7 @@ public class CommandQuest implements CommandExecutor {
 				if (questsStarted.contains(s)) {
 					questStarted = true;
 				}
-				
+
 				String materialName = plugin.getConfig().getString(rootPath + "item").toUpperCase();
 				boolean datav = false;
 				int datavalue = 0;
@@ -179,12 +179,36 @@ public class CommandQuest implements CommandExecutor {
 					materialName = parts[0];
 					datavalue = Integer.parseInt(parts[1]);
 				}
-				
+
 				ItemStack is = null;
 				if (datav) {
-					is = new ItemStack(Material.getMaterial(materialName), 1, (byte) datavalue);
+					try {
+						is = new ItemStack(Material.getMaterial(materialName), 1, (byte) datavalue);
+					} catch (Exception e) {
+						player.sendMessage(ChatColor.RED + "There is an error with the configuration.");
+						player.sendMessage(ChatColor.WHITE + "Details:");
+						player.sendMessage("Problematic quest: " + s);
+						player.sendMessage("Error details: " + e.getMessage());
+						player.sendMessage("Attempted line: is = new ItemStack(Material.getMaterial(materialName), 1, (byte) datavalue)");
+						player.sendMessage("Additional information: ");
+						player.sendMessage("materialName: " + materialName + ", " + "datavalue: " + datavalue);
+						player.sendMessage(ChatColor.BOLD + "Problem: failed to get the material type. Does it exist?");
+						return true;
+					}
 				} else {
-					is = new ItemStack(Material.getMaterial(materialName));
+					try {
+						is = new ItemStack(Material.getMaterial(materialName));
+					} catch (NullPointerException e) {
+						player.sendMessage(ChatColor.RED + "There is an error with the configuration.");
+						player.sendMessage(ChatColor.WHITE + "Details:");
+						player.sendMessage("Problematic quest: " + s);
+						player.sendMessage("Error details: " + e.getMessage());
+						player.sendMessage("Attempted line: is = new ItemStack(Material.getMaterial(materialName))");
+						player.sendMessage("Additional information: ");
+						player.sendMessage("materialName: " + materialName);
+						player.sendMessage(ChatColor.BOLD + "Problem: failed to get the material type. Does it exist?");
+						return true;
+					}
 				}
 				if (is == null) {
 					player.sendMessage(ChatColor.RED + "Broken config, path: " + rootPath);
