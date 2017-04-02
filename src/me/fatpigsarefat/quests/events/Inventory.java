@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -16,9 +17,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.fatpigsarefat.quests.Main;
 import me.fatpigsarefat.quests.Reward;
-import me.fatpigsarefat.quests.title.Title_v1_8_R1;
-
-import org.bukkit.ChatColor;
 
 public class Inventory extends BukkitRunnable {
 

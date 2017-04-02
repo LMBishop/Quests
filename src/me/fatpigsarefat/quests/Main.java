@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import me.fatpigsarefat.quests.commands.CommandQuest;
+import me.fatpigsarefat.quests.commands.CommandQuestdesign;
 import me.fatpigsarefat.quests.events.BlockBreak;
 import me.fatpigsarefat.quests.events.BlockPlace;
 import me.fatpigsarefat.quests.events.Inventory;
@@ -39,6 +40,7 @@ public class Main extends JavaPlugin {
 		new PlayerKill(this);
 		new InventoryInteract(this);
 		getCommand("quest").setExecutor(new CommandQuest(this));
+		getCommand("questguidesigner").setExecutor(new CommandQuestdesign());
 		// TODO getCommand("questcreate").setExecutor(new
 		// CommandQuestcreate(this));
 		new CommandQuest(this);

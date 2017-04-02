@@ -1,6 +1,7 @@
 package me.fatpigsarefat.quests.commands;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -40,13 +41,57 @@ public class CommandQuest implements CommandExecutor {
 
 			File d = new File(plugin.getDataFolder() + File.separator + "data.yml");
 			YamlConfiguration data = YamlConfiguration.loadConfiguration((File) d);
+			File questlayout = new File(Main.instance.getDataFolder() + File.separator + "questlayout.yml");
+			YamlConfiguration questlayoutdata = null;
+			if (!questlayout.exists()) {
+				try {
+					player.sendMessage(ChatColor.GREEN + "Creating new file questlayout.yml...");
+					questlayout.createNewFile();
+				} catch (IOException e) {
+					player.sendMessage(ChatColor.RED + "Failed. See console for error details.");
+					e.printStackTrace();
+					return true;
+				}
+			}
+			if (questlayout.exists()) {
+				questlayoutdata = YamlConfiguration.loadConfiguration((File) questlayout);
+				if (!questlayoutdata.contains("active")) {
+					questlayoutdata.set("active", false);
+					try {
+						questlayoutdata.save(questlayout);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 
 			Inventory inv = Bukkit.createInventory(null, 54, ChatColor.BLUE + "Quests");
 
+			if (questlayout.exists() && questlayoutdata.getBoolean("active")) {
+				if (questlayoutdata.contains("slot")) {
+					for (String s : questlayoutdata.getConfigurationSection("slot").getKeys(false)) {
+						if (s.startsWith("CUSTOMITEMSTACK")) {
+							int slotId = questlayoutdata.getInt("slot." + s);
+							ItemStack is = questlayoutdata.getItemStack("itemstack." + slotId);
+							inv.setItem(slotId, is);
+						}
+					}
+				}
+			}
 			Set<String> keys = plugin.getConfig().getConfigurationSection("quests").getKeys(false);
 			plugin.reloadConfig();
 			int slot = 0;
 			for (String s : keys) {
+				if (s.contains("CUSTOMITEMSTACK")) {
+					player.sendMessage(ChatColor.RED + "There is an error with the configuration.");
+					player.sendMessage(ChatColor.WHITE + "Details:");
+					player.sendMessage("Problematic quest: " + s);
+					player.sendMessage("Error details: reserved word");
+					player.sendMessage("Additional information: n/a");
+					player.sendMessage(ChatColor.BOLD
+							+ "Problem: CUSTOMITEMSTACK is a reserved word for the Quest GUI designer and therefore cannot be set as a quest identifier.");
+					return true;
+				}
 				String rootPath = "quests." + s + ".display.";
 
 				List<String> questsCompleted = new ArrayList<String>();
@@ -85,7 +130,11 @@ public class CommandQuest implements CommandExecutor {
 						}
 					}
 					if (questFound && !redoable) {
-						inv.setItem(slot, notRedoable);
+						if (questlayoutdata.contains("slot." + s) && questlayoutdata.getBoolean("active")) {
+							inv.setItem(questlayoutdata.getInt("slot." + s), notRedoable);
+						} else {
+							inv.setItem(slot, notRedoable);
+						}
 						slot++;
 						continue;
 					}
@@ -118,7 +167,11 @@ public class CommandQuest implements CommandExecutor {
 							}
 							notCooldownaM.setLore(lore);
 							notCooldowna.setItemMeta(notCooldownaM);
-							inv.setItem(slot, notCooldowna);
+							if (questlayoutdata.contains("slot." + s) && questlayoutdata.getBoolean("active")) {
+								inv.setItem(questlayoutdata.getInt("slot." + s), notCooldowna);
+							} else {
+								inv.setItem(slot, notCooldowna);
+							}
 							slot++;
 							continue;
 						}
@@ -156,7 +209,11 @@ public class CommandQuest implements CommandExecutor {
 						}
 					}
 					if (!questFound) {
-						inv.setItem(slot, notCompleted);
+						if (questlayoutdata.contains("slot." + s) && questlayoutdata.getBoolean("active")) {
+							inv.setItem(questlayoutdata.getInt("slot." + s), notCompleted);
+						} else {
+							inv.setItem(slot, notCompleted);
+						}
 						slot++;
 						continue;
 					}
@@ -189,7 +246,8 @@ public class CommandQuest implements CommandExecutor {
 						player.sendMessage(ChatColor.WHITE + "Details:");
 						player.sendMessage("Problematic quest: " + s);
 						player.sendMessage("Error details: " + e.getMessage());
-						player.sendMessage("Attempted line: is = new ItemStack(Material.getMaterial(materialName), 1, (byte) datavalue)");
+						player.sendMessage(
+								"Attempted line: is = new ItemStack(Material.getMaterial(materialName), 1, (byte) datavalue)");
 						player.sendMessage("Additional information: ");
 						player.sendMessage("materialName: " + materialName + ", " + "datavalue: " + datavalue);
 						player.sendMessage(ChatColor.BOLD + "Problem: failed to get the material type. Does it exist?");
@@ -211,7 +269,13 @@ public class CommandQuest implements CommandExecutor {
 					}
 				}
 				if (is == null) {
-					player.sendMessage(ChatColor.RED + "Broken config, path: " + rootPath);
+					player.sendMessage(ChatColor.RED + "There is an error with the configuration.");
+					player.sendMessage(ChatColor.WHITE + "Details:");
+					player.sendMessage("Problematic quest: " + s);
+					player.sendMessage("Error details: failed display (itemstack) null check");
+					player.sendMessage("Attempted line: if (is == null)");
+					player.sendMessage("Additional information: n/a");
+					player.sendMessage(ChatColor.BOLD + "Problem: display itemstack is null");
 				}
 				ItemMeta ism = is.getItemMeta();
 				ism.setDisplayName(
@@ -232,7 +296,11 @@ public class CommandQuest implements CommandExecutor {
 				if (questStarted)
 					is.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 10);
 
-				inv.setItem(slot, is);
+				if (questlayoutdata.contains("slot." + s) && questlayoutdata.getBoolean("active")) {
+					inv.setItem(questlayoutdata.getInt("slot." + s), is);
+				} else {
+					inv.setItem(slot, is);
+				}
 				slot++;
 			}
 
