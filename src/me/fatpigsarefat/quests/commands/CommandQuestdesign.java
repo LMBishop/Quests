@@ -21,7 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.fatpigsarefat.quests.Main;
+import me.fatpigsarefat.quests.Quests;
 
 public class CommandQuestdesign implements CommandExecutor {
 
@@ -86,7 +86,7 @@ public class CommandQuestdesign implements CommandExecutor {
 			} else {
 				CommandQuestdesign.confirm.remove(p);
 				inEditor = p;
-				d = new File(Main.instance.getDataFolder() + File.separator + "questlayout.yml");
+				d = new File(Quests.getInstance().getDataFolder() + File.separator + "questlayout.yml");
 				if (!d.exists()) {
 					try {
 						p.sendMessage(ChatColor.GREEN + "Creating new file questlayout.yml...");
@@ -108,7 +108,7 @@ public class CommandQuestdesign implements CommandExecutor {
 						e.printStackTrace();
 					}
 				}
-				Set<String> keys = Main.instance.getConfig().getConfigurationSection("quests").getKeys(false);
+				Set<String> keys = Quests.getInstance().getConfig().getConfigurationSection("quests").getKeys(false);
 				for (String s : keys) {
 					if (s.contains("CUSTOMITEMSTACK")) {
 						p.sendMessage(ChatColor.RED + "There is an error with the configuration.");
@@ -122,7 +122,7 @@ public class CommandQuestdesign implements CommandExecutor {
 					}
 					String rootPath = "quests." + s + ".display.";
 
-					String materialName = Main.instance.getConfig().getString(rootPath + "item").toUpperCase();
+					String materialName = Quests.getInstance().getConfig().getString(rootPath + "item").toUpperCase();
 					boolean datav = false;
 					int datavalue = 0;
 					if (materialName.contains(":")) {
@@ -165,7 +165,7 @@ public class CommandQuestdesign implements CommandExecutor {
 					}
 					ItemMeta ism = is.getItemMeta();
 					ism.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-							Main.instance.getConfig().getString(rootPath + "name")));
+							Quests.getInstance().getConfig().getString(rootPath + "name")));
 					ArrayList<String> lore = new ArrayList<String>();
 					lore.add(ChatColor.GRAY + "Quest ID: " + s);
 					ism.setLore(lore);
@@ -195,7 +195,7 @@ public class CommandQuestdesign implements CommandExecutor {
 					}
 				}
 
-				Inventory inv = Bukkit.createInventory(null, 54, ChatColor.BLUE + "Quest GUI designer");
+				Inventory inv = Bukkit.createInventory(null, Quests.getInstance().getConfig().getInt("gui.slots"), ChatColor.BLUE + "Quest GUI designer");
 
 				Iterator cit = customitemstacks.entrySet().iterator();
 				while (cit.hasNext()) {
@@ -391,7 +391,7 @@ public class CommandQuestdesign implements CommandExecutor {
 	}
 
 	public static void resetEverything() {
-		Set<String> keys = Main.instance.getConfig().getConfigurationSection("quests").getKeys(false);
+		Set<String> keys = Quests.getInstance().getConfig().getConfigurationSection("quests").getKeys(false);
 		for (String s : keys) {
 			if (slots.containsKey(s))
 				slots.remove(s);

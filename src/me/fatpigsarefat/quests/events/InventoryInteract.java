@@ -1,13 +1,7 @@
 package me.fatpigsarefat.quests.events;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,17 +10,16 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.fatpigsarefat.quests.Main;
+import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.commands.CommandQuestdesign;
+import me.fatpigsarefat.quests.utils.Quest;
 import net.md_5.bungee.api.ChatColor;
 
 public class InventoryInteract implements Listener {
 
-	private final Main plugin;
 
-	public InventoryInteract(Main plugin) {
+	public InventoryInteract(Quests plugin) {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		this.plugin = plugin;
 	}
 
 	@EventHandler
@@ -49,10 +42,6 @@ public class InventoryInteract implements Listener {
 	@EventHandler
 	public void playerInteractEvent(InventoryClickEvent event) {
 		Player player = (Player) event.getWhoClicked();
-
-		File d = new File(plugin.getDataFolder() + File.separator + "data.yml");
-		YamlConfiguration data = YamlConfiguration.loadConfiguration((File) d);
-
 		if (event.getInventory().getName().equals(ChatColor.RED + "Quests - Are you sure?")) {
 			event.setCancelled(true);
 			if (event.getSlot() == 10 || event.getSlot() == 11) {
@@ -167,8 +156,8 @@ public class InventoryInteract implements Listener {
 			}
 		}
 
-		if (event.getInventory().getName().equals(ChatColor.BLUE + "Quests")) {
-			if (event.getInventory().getName().equalsIgnoreCase(ChatColor.BLUE + "Quests")) {
+		if (event.getInventory().getName().equals(ChatColor.translateAlternateColorCodes('&', Quests.getInstance().getConfig().getString("gui.title")))) {
+			if (event.getInventory().getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', Quests.getInstance().getConfig().getString("gui.title")))) {
 				event.setCancelled(true);
 				if ((event.getCurrentItem() == null) || (event.getCurrentItem().getType() == Material.AIR)
 						|| (!event.getCurrentItem().hasItemMeta())) {
@@ -191,28 +180,13 @@ public class InventoryInteract implements Listener {
 				if (itemClicked.equals(notCompleted) || itemClicked.equals(notRedoable)) {
 					return;
 				}
-				for (String s : plugin.getConfig().getConfigurationSection("quests").getKeys(false)) {
-					String name = ChatColor.translateAlternateColorCodes('&',
-							plugin.getConfig().getString("quests." + s + ".display.name"));
+				for (Quest quest : Quests.getInstance().getQuestManager().getQuests()) {
+					String name = quest.getDisplayItem().getItemMeta().getDisplayName();
 					if (itemClicked.getItemMeta().getDisplayName().equals(name)) {
-						data.set("progress." + player.getUniqueId() + ".name", player.getName());
-						List<String> questsStarted = new ArrayList<String>();
-						if (data.contains("progress." + player.getUniqueId() + ".quests-started")) {
-							questsStarted = data.getStringList("progress." + player.getUniqueId() + ".quests-started");
+						if (Quests.getInstance().getQuestData().startQuest(player.getUniqueId(), quest)) {
+							player.sendMessage(ChatColor.GREEN + "Started quest: " + name);
+							player.closeInventory();
 						}
-						if (questsStarted.contains(s)) {
-							player.sendMessage(ChatColor.RED + "Quest already started!");
-							return;
-						}
-						questsStarted.add(s);
-						data.set("progress." + player.getUniqueId() + ".quests-started", questsStarted);
-						try {
-							data.save(d);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						player.sendMessage(ChatColor.GREEN + "Started quest: " + name);
-						player.closeInventory();
 						break;
 					}
 				}

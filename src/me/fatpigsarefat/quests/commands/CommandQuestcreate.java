@@ -10,7 +10,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.fatpigsarefat.quests.Main;
+import me.fatpigsarefat.quests.Quests;
 import org.bukkit.ChatColor;
 
 public class CommandQuestcreate implements CommandExecutor {
@@ -18,7 +18,7 @@ public class CommandQuestcreate implements CommandExecutor {
 	// Commented out for my own sanity.
 	// private final Main plugin;
 
-	public CommandQuestcreate(Main plugin) {
+	public CommandQuestcreate(Quests plugin) {
 		// this.plugin = plugin;
 	}
 
