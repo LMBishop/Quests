@@ -18,10 +18,11 @@ public class Quest {
 	private String completionValue;
 	private boolean worldsRestriced;
 	private ArrayList<String> allowedWorlds;
+	private String customName;
 
 	public Quest(QuestType questType, String nameId, ItemStack displayItem, boolean redoable, boolean cooldownEnabled,
 			int cooldown, ArrayList<String> rewards, ArrayList<String> rewardString, ArrayList<String> requirements,
-			String completionValue, boolean worldsRestricted, ArrayList<String> allowedWorlds) {
+			String completionValue, boolean worldsRestricted, ArrayList<String> allowedWorlds, String customName) {
 		this.questType = questType;
 		this.nameId = nameId;
 		this.displayItem = displayItem;
@@ -34,6 +35,7 @@ public class Quest {
 		this.completionValue = completionValue;
 		this.worldsRestriced = worldsRestricted;
 		this.allowedWorlds = allowedWorlds;
+		this.customName = customName;
 	}
 
 	public Quest() {
@@ -130,6 +132,26 @@ public class Quest {
 
 	public ArrayList<String> getAllowedWorlds() {
 		return allowedWorlds;
+	}
+
+	public String getCustomName() {
+		return customName;
+	}
+
+	public void setCustomName(String customName) {
+		this.customName = customName;
+	}
+
+	public void setCooldownEnabled(boolean cooldownEnabled) {
+		this.cooldownEnabled = cooldownEnabled;
+	}
+
+	public void setWorldsRestriced(boolean worldsRestriced) {
+		this.worldsRestriced = worldsRestriced;
+	}
+
+	public void setAllowedWorlds(ArrayList<String> allowedWorlds) {
+		this.allowedWorlds = allowedWorlds;
 	}
 
 }

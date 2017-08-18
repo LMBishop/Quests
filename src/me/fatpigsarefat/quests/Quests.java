@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,6 +25,7 @@ import me.fatpigsarefat.quests.questhandlers.Inventory;
 import me.fatpigsarefat.quests.questhandlers.MobKill;
 import me.fatpigsarefat.quests.questhandlers.PlayerKill;
 import me.fatpigsarefat.quests.questhandlers.Skyblock;
+import me.fatpigsarefat.quests.questhandlers.TimePlayed;
 import me.fatpigsarefat.quests.title.Title;
 import me.fatpigsarefat.quests.title.Title_v1_10_R1;
 import me.fatpigsarefat.quests.title.Title_v1_11_R1;
@@ -33,10 +35,13 @@ import me.fatpigsarefat.quests.title.Title_v1_8_R2;
 import me.fatpigsarefat.quests.title.Title_v1_8_R3;
 import me.fatpigsarefat.quests.title.Title_v1_9_R1;
 import me.fatpigsarefat.quests.title.Title_v1_9_R2;
+import me.fatpigsarefat.quests.utils.ExternalPlaceholders;
+import me.fatpigsarefat.quests.utils.Messages;
 import me.fatpigsarefat.quests.utils.Quest;
 import me.fatpigsarefat.quests.utils.QuestData;
 import me.fatpigsarefat.quests.utils.QuestManager;
 import me.fatpigsarefat.quests.utils.QuestType;
+import me.fatpigsarefat.quests.utils.SelectorType;
 
 public class Quests extends JavaPlugin {
 
@@ -69,6 +74,7 @@ public class Quests extends JavaPlugin {
 		// CommandQuestcreate(this));
 		new Inventory(this).runTaskTimer(this, 50L, 50L);
 		new Skyblock().runTaskTimer(this, 200L, 200L);
+		new TimePlayed().runTaskTimer(this, 1200L, 1200L);
 		File d = new File(this.getDataFolder() + File.separator + "data.yml");
 		if (!d.exists()) {
 			try {
@@ -91,6 +97,7 @@ public class Quests extends JavaPlugin {
 		}
 		cooldownTimer();
 		alternateBlockNames();
+		
 		fullStartUp();
 	}
 
@@ -119,8 +126,16 @@ public class Quests extends JavaPlugin {
 			if (getConfig().contains("quests." + questId + ".requires")) {
 				requirements.add(getConfig().getString("quests." + questId + ".requires"));
 			}
-			ItemStack is = new ItemStack(
-					Material.getMaterial(getConfig().getString("quests." + questId + ".display.item")));
+			Material materialForItemStack = Material.STONE;
+			int dataCode = 0;
+			if (getConfig().getString("quests." + questId + ".display.item").contains(":")) {
+				String[] materialParts = getConfig().getString("quests." + questId + ".display.item").split(":");
+				materialForItemStack = Material.getMaterial(materialParts[0]);
+				dataCode = Integer.parseInt(materialParts[1]);
+			} else {
+				materialForItemStack = Material.getMaterial(getConfig().getString("quests." + questId + ".display.item"));
+			}
+			ItemStack is = new ItemStack(materialForItemStack, 1, (byte) dataCode);
 			ItemMeta ism = is.getItemMeta();
 			ism.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 					getConfig().getString("quests." + questId + ".display.name")));
@@ -140,11 +155,15 @@ public class Quests extends JavaPlugin {
 					allowedWorlds.add(s);
 				}
 			}
+			String customName = "";
+			if (getConfig().contains("quests." + questId + ".custom-type")) {
+				customName = getConfig().getString("quests." + questId + ".custom-type");
+			}
 			Quest quest = new Quest(questType, questId, is, redoable, cooldownEnabled, cooldown,
 					(ArrayList<String>) rewards, (ArrayList<String>) rewardString, (ArrayList<String>) requirements,
-					value, worldsRestricted, allowedWorlds);
+					value, worldsRestricted, allowedWorlds, customName);
 			questManager.registerQuest(quest);
-			System.out.println("[Quests] Registered quest " + questId + ". Type: " + questType.toString() + ".");
+			System.out.println("[Quests] Registered quest " + questId + ". Type: " + questType.toString() + (customName.equals("") ? "." : ", custom type: " + customName + "."));
 		}
 	}
 
@@ -214,6 +233,16 @@ public class Quests extends JavaPlugin {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+					for (String s : data.getConfigurationSection("progress").getKeys(false)) {
+						if (questManager.getSelectorMode() == SelectorType.RANDOM) {
+							if (questData.getRandomQuestsTimeRemaining(UUID.fromString(s)) <= 0) {
+								questData.generateNewRandomQuests(UUID.fromString(s));
+								if (Bukkit.getPlayer(UUID.fromString(s)) != null) {
+									Bukkit.getPlayer(UUID.fromString(s)).sendMessage(Messages.QUESTS_REFRESHED.getMessage());
+								}
+							}
+						}
+					}
 				}
 			}
 		}, 0L, 1200L);
@@ -222,7 +251,6 @@ public class Quests extends JavaPlugin {
 	private void fullStartUp() {
 		BukkitScheduler cooldownTimer = getServer().getScheduler();
 		cooldownTimer.scheduleSyncDelayedTask(this, new Runnable() {
-
 			@Override
 			public void run() {
 				if (Bukkit.getPluginManager().isPluginEnabled("uSkyBlock")) {
@@ -232,6 +260,10 @@ public class Quests extends JavaPlugin {
 				if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
 					System.out.println("[Quests] ASkyBlock detected, all ASKYBLOCK quests are now functional.");
 					askyblockEnabled = true;
+				}
+				if (Bukkit.getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
+					ExternalPlaceholders.register();
+					System.out.println("[Quests] MVdWPlaceholderAPI detected, all external placeholders are now functional.");
 				}
 			}
 

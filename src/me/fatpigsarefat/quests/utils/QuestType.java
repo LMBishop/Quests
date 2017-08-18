@@ -11,7 +11,9 @@ public enum QuestType {
 	PLAYERKILLING,
 	INVENTORY,
 	ASKYBLOCK,
-	USKYBLOCK;
+	USKYBLOCK,
+	TIMEPLAYED,
+	CUSTOM;
 	
 	public static QuestType fromString(String questType) {
 		switch (questType.toUpperCase()) {
@@ -35,6 +37,10 @@ public enum QuestType {
 			return QuestType.ASKYBLOCK;
 		case "USKYBLOCK":
 			return QuestType.USKYBLOCK;
+		case "TIMEPLAYED":
+			return QuestType.TIMEPLAYED;
+		case "CUSTOM":
+			return QuestType.CUSTOM;
 		default:
 			return null;
 		}

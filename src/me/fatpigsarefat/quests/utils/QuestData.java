@@ -3,8 +3,12 @@ package me.fatpigsarefat.quests.utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -152,20 +156,29 @@ public class QuestData {
 		}
 		return false;
 	}
-	
+
 	public ItemStack getDisplayItemReplaced(Quest quest, UUID uuid) {
 		ItemStack is = quest.getDisplayItem().clone();
 		List<String> lore = is.getItemMeta().getLore();
 		List<String> newLore = new ArrayList<String>();
 		for (String s : lore) {
 			if (s.contains("%progress%")) {
-				if (hasProgress(quest, uuid)) {
-					s = s.replace("%progress%", String.valueOf(getProgress(quest, uuid)));
+				if (quest.getQuestType() == QuestType.TIMEPLAYED) {
+					s = s.replace("%progress%", timeConvert(getTimePlayed(uuid)));
 				} else {
-					s = s.replace("%progress%", String.valueOf(0));
+					if (hasProgress(quest, uuid)) {
+						s = s.replace("%progress%", String.valueOf(getProgress(quest, uuid)));
+					} else {
+						s = s.replace("%progress%", String.valueOf(0));
+					}
 				}
 			}
 			newLore.add(s);
+		}
+		if (Quests.getInstance().getQuestManager().getSelectorMode() == SelectorType.RANDOM) {
+			newLore.add(ChatColor.translateAlternateColorCodes('&',
+					Quests.getInstance().getConfig().getString("quest-settings.all.expire-string").replace("%time%",
+							convertToFormat(getRandomQuestsTimeRemaining(uuid)))));
 		}
 		ItemMeta ism = is.getItemMeta();
 		ism.setLore(newLore);
@@ -211,7 +224,7 @@ public class QuestData {
 	public int getProgress(Quest quest, UUID uuid) {
 		return getData().getInt("progress." + uuid + ".quests-progress." + quest.getNameId() + ".value");
 	}
-	
+
 	public boolean hasProgress(Quest quest, UUID uuid) {
 		if (getData().contains("progress." + uuid + ".quests-progress." + quest.getNameId() + ".value")) {
 			return true;
@@ -224,6 +237,20 @@ public class QuestData {
 		value++;
 		YamlConfiguration data = getData();
 		data.set("progress." + uuid + ".quests-progress." + quest.getNameId() + ".value", value);
+		saveData(data);
+	}
+
+	public int getTimePlayed(UUID uuid) {
+		if (getData().contains("progress." + uuid + ".time-played")) {
+			return getData().getInt("progress." + uuid + ".time-played");
+		} else {
+			return 0;
+		}
+	}
+
+	public void setTimePlayed(UUID uuid, int amount) {
+		YamlConfiguration data = getData();
+		data.set("progress." + uuid + ".time-played", amount);
 		saveData(data);
 	}
 
@@ -260,6 +287,14 @@ public class QuestData {
 		saveData(data);
 	}
 	
+	public int getAmountOfCompletedQuests(UUID uuid) {
+		YamlConfiguration data = getData();
+		if (data.contains("progress." + uuid + ".quests-completed")) {
+			return data.getStringList("progress." + uuid + ".quests-completed").size();
+		}
+		return 0;
+	}
+
 	public void dispatchReward(UUID uuid, Quest quest) {
 		Player player = Bukkit.getPlayer(uuid);
 		new Reward(player, quest);
@@ -270,12 +305,12 @@ public class QuestData {
 				titleMessage = ChatColor.translateAlternateColorCodes('&',
 						Quests.getInstance().getConfig().getString("title.mainmessage"));
 				titleMessage = titleMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
-						Quests.getInstance().getConfig().getString("quests." + quest.getNameId() + ".display.name")));
+						quest.getDisplayItem().getItemMeta().getDisplayName()));
 				titleSubMessage = ChatColor.translateAlternateColorCodes('&',
 						Quests.getInstance().getConfig().getString("title.submessage"));
 				titleSubMessage = titleSubMessage.replace("%quest%", ChatColor.translateAlternateColorCodes('&',
-						Quests.getInstance().getConfig().getString("quests." + quest.getNameId() + ".display.name")));
-				if (Quests.getInstance().getConfig().contains("quests." + quest.getNameId() + ".rewardstring")) {
+						quest.getDisplayItem().getItemMeta().getDisplayName()));
+				if (!quest.getRewardString().isEmpty()) {
 					String rewardString = "";
 					boolean comma = false;
 					boolean finalb = false;
@@ -284,29 +319,31 @@ public class QuestData {
 						if (pos + 1 == quest.getRewardString().size()) {
 							finalb = true;
 						}
-						rewardString = rewardString + (comma ? ", " : "") + ChatColor.translateAlternateColorCodes('&', st) + (finalb ? "" : " ");
+						rewardString = rewardString + (comma ? ", " : "")
+								+ ChatColor.translateAlternateColorCodes('&', st) + (finalb ? "" : " ");
 						comma = true;
 						pos++;
 					}
-					titleMessage = titleMessage.replace("%rewardstring%", ChatColor.translateAlternateColorCodes('&',
-							rewardString));
-					titleSubMessage = titleSubMessage.replace("%rewardstring%", ChatColor.translateAlternateColorCodes('&',
-							rewardString));
+					titleMessage = titleMessage.replace("%rewardstring%",
+							ChatColor.translateAlternateColorCodes('&', rewardString));
+					titleSubMessage = titleSubMessage.replace("%rewardstring%",
+							ChatColor.translateAlternateColorCodes('&', rewardString));
 				}
 				try {
 					Quests.getInstance().getTitle().sendTitle(player, titleMessage, titleSubMessage);
 				} catch (Exception e) {
-					player.sendMessage(ChatColor.RED + "An exception occured whilst trying to show the title: " + e.getMessage() + ". Title will not be shown.");
+					player.sendMessage(ChatColor.RED + "An exception occured whilst trying to show the title: "
+							+ e.getMessage() + ". Title will not be shown.");
 				}
 			}
 		}
-		player.sendMessage(ChatColor.GREEN + "Successfully completed " + ChatColor.translateAlternateColorCodes(
-				'&', Quests.getInstance().getConfig().getString("quests." + quest.getNameId()+ ".display.name")));
+		player.sendMessage(Messages.COMPLETE_QUEST.getMessage().replace("%quest%", ChatColor.translateAlternateColorCodes('&',
+				quest.getDisplayItem().getItemMeta().getDisplayName())));
 		if (Quests.getInstance().getConfig().getBoolean("show-rewardstring")) {
-			if (Quests.getInstance().getConfig().contains("quests." + quest.getNameId() + ".rewardstring")) {
-				player.sendMessage(ChatColor.GREEN + "Your rewards:");
-				for (String st : Quests.getInstance().getConfig().getStringList("quests." + quest.getNameId() + ".rewardstring")) {
-					player.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.translateAlternateColorCodes('&', st));
+			if (!quest.getRewardString().isEmpty()) {
+				player.sendMessage(Messages.REWARDS.getMessage());
+				for (String st : quest.getRewardString()) {
+					player.sendMessage(Messages.REWARD_STRING_FORMAT.getMessage().replace("%rewardstring%", ChatColor.translateAlternateColorCodes('&', st)));
 				}
 			}
 		}
@@ -360,6 +397,10 @@ public class QuestData {
 		return null;
 	}
 
+	public String timeConvert(int time) {
+		return time / 24 / 60 + "d " + time / 60 % 24 + "h " + time % 60 + "m";
+	}
+
 	public int parseMiningValue(Quest quest) {
 		return parseNonCertainInteger(quest);
 	}
@@ -381,6 +422,10 @@ public class QuestData {
 	}
 
 	public int parseUskyblockValue(Quest quest) {
+		return parseNonCertainInteger(quest);
+	}
+
+	public int parseTimeplayedValue(Quest quest) {
 		return parseNonCertainInteger(quest);
 	}
 
@@ -449,9 +494,79 @@ public class QuestData {
 		return requiredMaterials;
 	}
 
+	@SuppressWarnings("deprecation")
+	public boolean generateNewRandomQuests(UUID uuid) {
+		ArrayList<String> newQuests = new ArrayList<String>();
+		if (Quests.getInstance().getQuestManager().getQuests().size() < 5) {
+			return false;
+		}
+		while (true) {
+			Random random = new Random();
+			int randomQuest = random.nextInt(Quests.getInstance().getQuestManager().getQuests().size() - 1);
+			if (!newQuests.contains(Quests.getInstance().getQuestManager().getQuests().get(randomQuest).getNameId())) {
+				newQuests.add(Quests.getInstance().getQuestManager().getQuests().get(randomQuest).getNameId());
+			}
+			if (newQuests.size() >= 5) {
+				break;
+			}
+		}
+		YamlConfiguration data = getData();
+		data.set("progress." + uuid.toString() + ".random-quests.quests", newQuests);
+		Calendar cal = Calendar.getInstance();
+		Date now = cal.getTime();
+		now.setMinutes(now.getMinutes()
+				+ Quests.getInstance().getConfig().getInt("quest-settings.all.random-method-refresh-rate"));
+		data.set("progress." + uuid.toString() + ".random-quests.exipry", now.getTime());
+		data.set("progress." + uuid.toString() + ".quests-started", null);
+		data.set("progress." + uuid.toString() + ".quests-progress", null);
+		data.set("progress." + uuid.toString() + ".quests-cooldown", null);
+		data.set("progress." + uuid.toString() + ".quests-completed", null);
+		saveData(data);
+		return true;
+	}
+
+	public List<String> getRandomQuests(UUID uuid) {
+		YamlConfiguration data = getData();
+		if (data.contains("progress." + uuid.toString() + ".random-quests.quests")) {
+			return data.getStringList("progress." + uuid.toString() + ".random-quests.quests");
+		} else if (generateNewRandomQuests(uuid)) {
+			data = null;
+			data = getData();
+			return data.getStringList("progress." + uuid.toString() + ".random-quests.quests");
+		}
+		return new ArrayList<String>();
+	}
+
+	public long getRandomQuestsTimeRemaining(UUID uuid) {
+		YamlConfiguration data = getData();
+		Calendar cal = Calendar.getInstance();
+		Date now = cal.getTime();
+		Date then = new Date(data.getLong("progress." + uuid.toString() + ".random-quests.exipry", now.getTime()));
+		return TimeUnit.MILLISECONDS.toMinutes(then.getTime() - now.getTime());
+	}
+
 	private String convertToFormat(int m) {
 		int hours = m / 60;
 		int minutesLeft = m - hours * 60;
+
+		String formattedTime = "";
+
+		if (hours < 10)
+			formattedTime = formattedTime + "0";
+		formattedTime = formattedTime + hours + "h";
+
+		formattedTime = formattedTime + " ";
+
+		if (minutesLeft < 10)
+			formattedTime = formattedTime + "0";
+		formattedTime = formattedTime + minutesLeft + "m";
+
+		return formattedTime;
+	}
+	
+	private String convertToFormat(long m) {
+		int hours = (int) (m / 60);
+		int minutesLeft = (int) (m - hours * 60);
 
 		String formattedTime = "";
 

@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.commands.CommandQuestdesign;
+import me.fatpigsarefat.quests.utils.Messages;
 import me.fatpigsarefat.quests.utils.Quest;
 import net.md_5.bungee.api.ChatColor;
 
@@ -184,7 +185,7 @@ public class InventoryInteract implements Listener {
 					String name = quest.getDisplayItem().getItemMeta().getDisplayName();
 					if (itemClicked.getItemMeta().getDisplayName().equals(name)) {
 						if (Quests.getInstance().getQuestData().startQuest(player.getUniqueId(), quest)) {
-							player.sendMessage(ChatColor.GREEN + "Started quest: " + name);
+							player.sendMessage(Messages.STARTED_QUEST.getMessage().replace("%quest%", name));
 							player.closeInventory();
 						}
 						break;

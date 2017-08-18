@@ -24,6 +24,7 @@ public class Inventory extends BukkitRunnable {
 		this.plugin = plugin;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void run() {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			File d = new File(plugin.getDataFolder() + File.separator + "data.yml");
@@ -45,7 +46,7 @@ public class Inventory extends BukkitRunnable {
 					inventoryQuests.add(s);
 				}
 			}
-
+			
 			if (inventoryQuests.isEmpty()) {
 				continue;
 			}

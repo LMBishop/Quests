@@ -35,6 +35,24 @@ public class QuestManager {
 		return questsOfType;
 	}
 	
+	public ArrayList<Quest> getQuestsByCustomType(String customType) {
+		ArrayList<Quest> questsOfType = new ArrayList<Quest>();
+		for (Quest q : quests) {
+			if (q.getCustomName().equals(customType)) {
+				questsOfType.add(q);
+			}
+		}
+		return questsOfType;
+	}
+	
+	public SelectorType getSelectorMode() {
+		if (Quests.getInstance().getConfig().getString("quest-settings.all.quest-selector-method").equalsIgnoreCase("RANDOM")) { 
+			return SelectorType.RANDOM;
+		} else {
+			return SelectorType.ALL;
+		}
+	}
+	
 	public Quest getQuestById(String nameId) {
 		for (Quest q : quests) {
 			if (q.getNameId().equals(nameId)) {
