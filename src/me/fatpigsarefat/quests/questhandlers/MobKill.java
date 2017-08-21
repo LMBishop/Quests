@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.utils.Quest;
 import me.fatpigsarefat.quests.utils.QuestType;
+import me.fatpigsarefat.quests.utils.QuestUtil;
 
 public class MobKill implements Listener {
 
@@ -67,7 +68,7 @@ public class MobKill implements Listener {
 				}
 			}
 			if (questsStarted.contains(quest.getNameId())) {
-				EntityType entityType = Quests.getInstance().getQuestData().parseMobkillingCertainValue(quest).getEntity();
+				EntityType entityType = QuestUtil.parseMobkillingCertainValue(quest).getEntity();
 				EntityType killedMob = mob.getType();
 				if (entityType == killedMob) {
 					questsToAddValue.add(quest);
@@ -82,11 +83,11 @@ public class MobKill implements Listener {
 		for (Quest quest : questsToAddValue) {
 			Quests.getInstance().getQuestData().addProgress(quest, player.getUniqueId());
 			if (quest.getQuestType() == QuestType.MOBKILLING) {
-				if (Quests.getInstance().getQuestData().getProgress(quest, player.getUniqueId()) >= Quests.getInstance().getQuestData().parseMobkillingValue(quest)) {
+				if (Quests.getInstance().getQuestData().getProgress(quest, player.getUniqueId()) >= QuestUtil.parseMobkillingValue(quest)) {
 					Quests.getInstance().getQuestData().completeQuest(quest, player.getUniqueId());
 				}
 			} else if (quest.getQuestType() == QuestType.MOBKILLINGCERTAIN) {
-				if (Quests.getInstance().getQuestData().getProgress(quest, player.getUniqueId()) >= Quests.getInstance().getQuestData().parseMobkillingCertainValue(quest).getNeededToKill()) {
+				if (Quests.getInstance().getQuestData().getProgress(quest, player.getUniqueId()) >= QuestUtil.parseMobkillingCertainValue(quest).getNeededToKill()) {
 					Quests.getInstance().getQuestData().completeQuest(quest, player.getUniqueId());
 				}
 			}

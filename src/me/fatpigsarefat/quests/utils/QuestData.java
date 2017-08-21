@@ -165,6 +165,10 @@ public class QuestData {
 			if (s.contains("%progress%")) {
 				if (quest.getQuestType() == QuestType.TIMEPLAYED) {
 					s = s.replace("%progress%", timeConvert(getTimePlayed(uuid)));
+				} else if (quest.getQuestType() == QuestType.EXP) {
+					s = s.replace("%progress%", String.valueOf(Bukkit.getOfflinePlayer(uuid).getPlayer().getLevel()));
+				} else if (quest.getQuestType() == QuestType.TOTALEXP) {
+					s = s.replace("%progress%", String.valueOf(Bukkit.getOfflinePlayer(uuid).getPlayer().getTotalExperience()));
 				} else {
 					if (hasProgress(quest, uuid)) {
 						s = s.replace("%progress%", String.valueOf(getProgress(quest, uuid)));
@@ -397,51 +401,62 @@ public class QuestData {
 		return null;
 	}
 
+	@Deprecated
 	public String timeConvert(int time) {
 		return time / 24 / 60 + "d " + time / 60 % 24 + "h " + time % 60 + "m";
 	}
 
+	@Deprecated
 	public int parseMiningValue(Quest quest) {
 		return parseNonCertainInteger(quest);
 	}
 
+	@Deprecated
 	public int parseBuildingValue(Quest quest) {
 		return parseNonCertainInteger(quest);
 	}
 
+	@Deprecated
 	public int parseMobkillingValue(Quest quest) {
 		return parseNonCertainInteger(quest);
 	}
 
+	@Deprecated
 	public int parsePlayerkillingValue(Quest quest) {
 		return parseNonCertainInteger(quest);
 	}
 
+	@Deprecated
 	public int parseAskyblockValue(Quest quest) {
 		return parseNonCertainInteger(quest);
 	}
 
+	@Deprecated
 	public int parseUskyblockValue(Quest quest) {
 		return parseNonCertainInteger(quest);
 	}
 
+	@Deprecated
 	public int parseTimeplayedValue(Quest quest) {
 		return parseNonCertainInteger(quest);
 	}
 
+	@Deprecated
 	public NormalCertainValue parseMiningCertainValue(Quest quest) {
 		return parseCertainValue(quest);
 	}
 
+	@Deprecated
 	public NormalCertainValue parseBuildingCertainValue(Quest quest) {
 		return parseCertainValue(quest);
 	}
 
+	@Deprecated
 	public MobCertainValue parseMobkillingCertainValue(Quest quest) {
 		return parseMobCertainValue(quest);
 	}
 
-	@SuppressWarnings("deprecation")
+	@Deprecated
 	public ArrayList<ItemStack> parseInventoryValue(Quest quest) {
 		String value = quest.getCompletionValue();
 		value = value.replace("[", "");

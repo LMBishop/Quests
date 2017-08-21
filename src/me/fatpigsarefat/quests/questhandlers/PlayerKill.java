@@ -13,6 +13,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.utils.Quest;
 import me.fatpigsarefat.quests.utils.QuestType;
+import me.fatpigsarefat.quests.utils.QuestUtil;
 
 public class PlayerKill implements Listener {
 
@@ -65,8 +66,7 @@ public class PlayerKill implements Listener {
 
 		for (Quest quest : questsToAddValue) {
 			Quests.getInstance().getQuestData().addProgress(quest, player.getUniqueId());
-			if (Quests.getInstance().getQuestData().getProgress(quest, player.getUniqueId()) >= Quests.getInstance()
-					.getQuestData().parsePlayerkillingValue(quest)) {
+			if (Quests.getInstance().getQuestData().getProgress(quest, player.getUniqueId()) >= QuestUtil.parsePlayerkillingValue(quest)) {
 				Quests.getInstance().getQuestData().completeQuest(quest, player.getUniqueId());
 			}
 		}

@@ -9,6 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.utils.Quest;
 import me.fatpigsarefat.quests.utils.QuestType;
+import me.fatpigsarefat.quests.utils.QuestUtil;
 
 public class TimePlayed extends BukkitRunnable {
 
@@ -21,8 +22,7 @@ public class TimePlayed extends BukkitRunnable {
 
 			for (Quest q : Quests.getInstance().getQuestManager().getQuestsByType(QuestType.TIMEPLAYED)) {
 				if (Quests.getInstance().getQuestData().hasStartedQuest(q, player.getUniqueId())) {
-					if (Quests.getInstance().getQuestData().getTimePlayed(player.getUniqueId()) >= Quests.getInstance()
-							.getQuestData().parseTimeplayedValue(q)) {
+					if (Quests.getInstance().getQuestData().getTimePlayed(player.getUniqueId()) >= QuestUtil.parseTimeplayedValue(q)) {
 						completedQuests.add(q);
 					}
 				}

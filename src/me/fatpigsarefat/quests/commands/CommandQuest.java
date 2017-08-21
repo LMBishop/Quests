@@ -21,6 +21,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.utils.Messages;
 import me.fatpigsarefat.quests.utils.Quest;
+import me.fatpigsarefat.quests.utils.QuestUtil;
 import me.fatpigsarefat.quests.utils.SelectorType;
 import net.md_5.bungee.api.ChatColor;
 
@@ -54,8 +55,8 @@ public class CommandQuest implements CommandExecutor {
 							player.getStatistic(Statistic.PLAY_ONE_TICK) / 20 / 60);
 					player.sendMessage(Messages.SYNC_SUCCESS.getMessage());
 				} else {
-					player.sendMessage(Messages.SYNC_PLAYTIME.getMessage().replace("%playtimebefore%", Quests.getInstance().getQuestData().timeConvert(
-									Quests.getInstance().getQuestData().getTimePlayed(player.getUniqueId()))).replace("%playtimeafter%", Quests.getInstance().getQuestData()
+					player.sendMessage(Messages.SYNC_PLAYTIME.getMessage().replace("%playtimebefore%", QuestUtil.timeConvert(
+									Quests.getInstance().getQuestData().getTimePlayed(player.getUniqueId()))).replace("%playtimeafter%", QuestUtil
 											.timeConvert(player.getStatistic(Statistic.PLAY_ONE_TICK) / 20 / 60)).replace("%command%", "/" + cmd.getName()+ " " + args[0]));
 					syncTime.add(player.getUniqueId());
 

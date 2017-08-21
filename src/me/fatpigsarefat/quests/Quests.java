@@ -21,11 +21,13 @@ import me.fatpigsarefat.quests.commands.CommandQuestdesign;
 import me.fatpigsarefat.quests.events.InventoryInteract;
 import me.fatpigsarefat.quests.questhandlers.BlockBreak;
 import me.fatpigsarefat.quests.questhandlers.BlockPlace;
+import me.fatpigsarefat.quests.questhandlers.Experience;
 import me.fatpigsarefat.quests.questhandlers.Inventory;
 import me.fatpigsarefat.quests.questhandlers.MobKill;
 import me.fatpigsarefat.quests.questhandlers.PlayerKill;
 import me.fatpigsarefat.quests.questhandlers.Skyblock;
 import me.fatpigsarefat.quests.questhandlers.TimePlayed;
+import me.fatpigsarefat.quests.questhandlers.Walking;
 import me.fatpigsarefat.quests.title.Title;
 import me.fatpigsarefat.quests.title.Title_v1_10_R1;
 import me.fatpigsarefat.quests.title.Title_v1_11_R1;
@@ -68,6 +70,8 @@ public class Quests extends JavaPlugin {
 		new MobKill(this);
 		new PlayerKill(this);
 		new InventoryInteract(this);
+		new Experience(this);
+		new Walking(this);
 		getCommand("quest").setExecutor(new CommandQuest());
 		getCommand("questguidesigner").setExecutor(new CommandQuestdesign());
 		// TODO getCommand("questcreate").setExecutor(new

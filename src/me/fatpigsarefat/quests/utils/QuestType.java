@@ -13,6 +13,9 @@ public enum QuestType {
 	ASKYBLOCK,
 	USKYBLOCK,
 	TIMEPLAYED,
+	WALKING,
+	TOTALEXP,
+	EXP,
 	CUSTOM;
 	
 	public static QuestType fromString(String questType) {
@@ -39,6 +42,16 @@ public enum QuestType {
 			return QuestType.USKYBLOCK;
 		case "TIMEPLAYED":
 			return QuestType.TIMEPLAYED;
+		case "WALKING":
+			return QuestType.WALKING;
+		case "TOTALEXP":
+			return QuestType.TOTALEXP;
+		case "TOTALEXPERIENCE":
+			return QuestType.EXP;
+		case "EXP":
+			return QuestType.EXP;
+		case "EXPERIENCE":
+			return QuestType.EXP;
 		case "CUSTOM":
 			return QuestType.CUSTOM;
 		default:

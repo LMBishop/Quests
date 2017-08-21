@@ -10,6 +10,7 @@ import com.wasteofplastic.askyblock.ASkyBlockAPI;
 import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.utils.Quest;
 import me.fatpigsarefat.quests.utils.QuestType;
+import me.fatpigsarefat.quests.utils.QuestUtil;
 import us.talabrek.ultimateskyblock.api.uSkyBlockAPI;
 
 public class Skyblock extends BukkitRunnable {
@@ -24,8 +25,7 @@ public class Skyblock extends BukkitRunnable {
 					if (!Quests.getInstance().getQuestData().hasStartedQuest(quest, player.getUniqueId())) {
 						continue;
 					}
-					if (ASkyBlockAPI.getInstance().getLongIslandLevel(player.getUniqueId()) >= Quests.getInstance()
-							.getQuestData().parseAskyblockValue(quest)) {
+					if (ASkyBlockAPI.getInstance().getLongIslandLevel(player.getUniqueId()) >= QuestUtil.parseAskyblockValue(quest)) {
 						Quests.getInstance().getQuestData().completeQuest(quest, player.getUniqueId());
 					}
 				}
@@ -42,8 +42,7 @@ public class Skyblock extends BukkitRunnable {
 					}
 					Plugin plugin = Bukkit.getPluginManager().getPlugin("uSkyBlock");
 					uSkyBlockAPI usb = (uSkyBlockAPI) plugin;
-					if (usb.getIslandLevel(player) >= Quests.getInstance()
-							.getQuestData().parseAskyblockValue(quest)) {
+					if (usb.getIslandLevel(player) >= QuestUtil.parseAskyblockValue(quest)) {
 						Quests.getInstance().getQuestData().completeQuest(quest, player.getUniqueId());
 					}
 				}
