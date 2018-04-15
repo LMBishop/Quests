@@ -36,7 +36,7 @@ public enum Messages {
         if (Quests.getInstance().getConfig().contains(path)) {
             String message = Quests.getInstance().getConfig().getString(path);
             if (message != null) {
-                return path;
+                return message;
             }
         }
         return path;
