@@ -1,0 +1,17 @@
+name: Quests
+version: 2.0.0
+main: me.fatpigsarefat.quests.Quests
+author: fatpigsarefat
+softdepend: [ASkyBlock, uSkyBlock]
+prefix: Quests
+
+commands:
+  quests:
+    description: Description
+    usage: /quests
+    permission: quests.command
+    aliases: [q, quest]
+
+permissions:
+  quests.command:
+    description: Quests permission

@@ -1,0 +1,747 @@
+# | =================================================== |
+# | Thank you for downloading and trying out my plugin: |
+# |                       Quests                        |
+# |      https://www.spigotmc.org/resources/23696/      |
+# |              Created by fatpigsarefat               |
+# |                                                     |
+# |                         =x=                         |
+# |                                                     |
+# |              File comments should help              |
+# |               you with the new config               |
+# |              and guide you with making              |
+# |                        quests                       |
+# |                                                     |
+# |                         =x=                         |
+# |                                                     |
+# |              Have Discord & need help?              |
+# |           https://www.discord.gg/8amrJnX            |
+# | =================================================== |
+
+# !! READ ME !!
+#
+# A quest is a series of tasks which players must complete for a reward and may require a previous quest to start.
+# A task is an objective such as breaking blocks or obtaining items.
+# A reward is a command executed by the SERVER. Use {player} to get the players name.
+#
+# A quest can have a 'rewardstring' (this is optional). They will be sent to the player when they complete the quest.
+# An example of the rewardstring in use can be seen in the quest example4.
+#
+# Each quest will have ONE "display" item, this is the item shown to the player in the GUI.
+# The display item will have a "name", a "type" and TWO lores.
+# The name is the name of the item, the type is the material and the lore is the text underneath the item (when mouse-over-ing).
+# The first lore you must give is called 'lore-normal'. This is the lore seen if the player has not started the quest.
+# The second lore you must give is 'lore-started'. This will be appended to the first lore IF the player has started the quest - useful for putting progression.
+# Within the lores you can get the players" progress for each task. Use {TASKID:progress} (replace TASKID with the ID of the task).
+#
+# Quests can be put inside a category. When a player does /quests they will first see a menu of categories. They can click one and another menu of quests
+# under that category will show up. Categories can be disabled.
+#
+# !! READ ME !!
+
+# Everything inside of this section is a quest
+quests:
+  # This is the quest ID ("example"). This MUST be unique against all other quest IDs.
+  example1:
+    # Everything inside of this section defines tasks the player must complete to progress.
+    tasks:
+      # This is the task ID ("mining"). This can share the same name as the quest ID but MUST be unique with all other task IDs in the same quest.
+      mining:
+        # This defines what type of task this is. In this instance, it is "blockbreak" (breaking blocks)
+        # NOTE: guides to set up each type of task is on the plugin page!
+        type: "blockbreak"
+        # This defines the amount of blocks which need to be broken
+        amount: 30
+      # You can have multiple tasks for each quest (example further down).
+    # Everything inside of this section defines the display item.
+    display:
+      # This is the name of the item. This allows color codes.
+      name: "&cExample I (Single Task)"
+      # This is the lore of the item if the player has not started the quest. This allows color codes and task/player placeholders.
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Break 30 blocks."
+      - ""
+      - "&7Rewards:"
+      - "&7 - 10 diamonds."
+      # This lore will be appended to the bottom of the above lore when the player starts their quest.
+      # To get the players progress through a task, use {TASKID:progress}  and replace TASKID with the ID of the task.
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {mining:progress}/30 blocks broken."
+      # This is the material of the item. It is recommended to stick to bukkit names.
+      type: "WOOD_PICKAXE"
+    # List all commands to be executed by the server when the player completes the quest. Use {player} to get the players name.
+    rewards:
+     - "give {player} diamond 10"
+    # Everything inside this section define quest-specific options
+    options:
+      # This is the category for the quest, it will appear under the "examples" category. Categories can be disabled.
+      category: "examples"
+      # Set the quest IDs of required quests here, leave empty if none.
+      requires:
+       - ""
+      # Set if the quest can be repeated after being completed for the first time.
+      repeatable: false
+      # Define the cooldown on quests. The above (repeatable) must be true for this to take effect.
+      cooldown:
+        # If true, players will have to wait between repeating quests.
+        enabled: true
+        # Time (in minutes)
+        time: 1440
+
+  # This is a quest which requires the previous quest to be complete to start.
+  example2:
+    tasks:
+      # Unlike the previous quest, this quest has multiple tasks.
+      mining:
+        type: "blockbreak"
+        amount: 100
+      building:
+        type: "blockplace"
+        amount: 100
+    display:
+      name: "&cExample II (Multiple Tasks)"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Break 100 blocks."
+      - "&7 - Place 100 blocks."
+      - ""
+      - "&7Rewards:"
+      - "&7 - 15 diamonds."
+      - "&7 - $50 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {mining:progress}/100 blocks broken."
+      - "&7 - {building:progress}/100 blocks placed."
+      type: "GRASS"
+    rewards:
+     - "give {player} diamond 15"
+     - "eco give {player} 50"
+    options:
+      category: "examples"
+      # Unlike the previous quest, this quest has "example1" as a required quest. You cannot start this quest without "example1" quest complete.
+      requires:
+       - "example1"
+      repeatable: false
+      cooldown:
+        enabled: true
+        time: 1440
+
+  # This is a quest which requires the previous quest to be complete to start.
+  # Unlike the previous quest, this one can be re-done but it has a 10 minute cooldown.
+  example3:
+    tasks:
+      # Unlike the previous two quests, this quest specifies a specific block to be broken.
+      mining:
+        type: "blockbreakcertain"
+        amount: 81
+        block: 14 # (gold ore)
+      building:
+        type: "blockplacecertain"
+        amount: 9
+        block: 41 # (gold blocks)
+    display:
+      name: "&cExample III (Repeatable, 10 minute cooldown)"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Break 81 gold ore."
+      - "&7 - Place 9 gold blocks."
+      - ""
+      - "&7Rewards:"
+      - "&7 - 30 diamonds."
+      - "&7 - $10 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {mining:progress}/81 gold ore broken."
+      - "&7 - {building:progress}/9 gold blocks placed."
+      type: "GOLD_ORE"
+    rewards:
+     - "give {player} diamond 30"
+     - "eco give {player} 10"
+    options:
+      category: "examples"
+      requires:
+       - "example2"
+      # This quest is repeatable, it has cooldowns enabled (meaning the player must wait before repeating it) and the time set to 10 (minutes).
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 10
+
+  # This is a quest which requires the previous quest to be complete to start.
+  # Unlike the previous quests, this quest has a reward string.
+  example4:
+    tasks:
+      mobkilling:
+        type: "mobkilling"
+        amount: 3
+    display:
+      name: "&cExample IV (Reward String)"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Kill 3 mobs."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $50 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {mobkilling:progress}/3 mobs killed."
+      type: "STRING"
+    rewards:
+     - "eco give {player} 50"
+    # Here you can list messages which will be sent to the player (if they are online) upon completion.
+    rewardstring:
+     - ' &8* &c$10 &7was added to your in-game balance.'
+     - ' &8* &c30 diamonds &7was added to your inventory.'
+    options:
+      category: "examples"
+      requires:
+       - "example3"
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  # This is the end of the config example quests.
+  # Hopefully you should be able to understand the quest config from this.
+  # --------------------------------------------------------------------------------------
+  # Below are some basic quests. You should be able to understand what to do from reading these.
+  # These quests show off the other task types this plugin has to offer by default.
+  # Developers can add their own (look at the wiki on GitHub for details).
+
+  mining1:
+    tasks:
+      mining:
+        type: "blockbreak"
+        amount: 100
+    display:
+      name: "&cNovice Miner"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Break 100 blocks."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $50 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {mining:progress}/100 blocks broken."
+      type: "WOOD_PICKAXE"
+    rewards:
+     - "eco give {player} 50"
+    options:
+      category: "easy"
+      requires:
+       - ""
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  building1:
+    tasks:
+      building:
+        type: "blockplace"
+        amount: 100
+    display:
+      name: "&cNovice Builder"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Place 100 blocks."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $50 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {building:progress}/100 blocks placed."
+      type: "STONE"
+    rewards:
+     - "eco give {player} 50"
+    options:
+      category: "easy"
+      requires:
+       - ""
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  youmonster:
+    tasks:
+      mobkilling:
+        type: "mobkilling"
+        amount: 10
+        hostile: false
+    display:
+      name: "&cYou Monster"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Kill 10 non-hostile animals."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $1 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {mobkilling:progress}/10 non-hostile animals."
+      type: "PORK"
+    rewards:
+     - "eco give {player} 1"
+    options:
+      category: "easy"
+      requires:
+       - ''
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  mobkiller:
+    tasks:
+      mobkilling:
+        type: "mobkilling"
+        amount: 10
+        hostile: true
+    display:
+      name: "&cMonster Slayer"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Kill 10 hostile monsters."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $50 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {mobkilling:progress}/10 hostile monsters killed."
+      type: "WOOD_SWORD"
+    rewards:
+     - "eco give {player} 50"
+    options:
+      category: "easy"
+      requires:
+       - ''
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  walking1:
+    tasks:
+      walking:
+        type: "walking"
+        distance: 1000
+    display:
+      name: "&cAdventurer"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Walk 1km."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $50 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {walking:progress}m/1000m walked."
+      type: "LEATHER_BOOTS"
+    rewards:
+     - "eco give {player} 50"
+    options:
+      category: "easy"
+      requires:
+       - ''
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  playerkiller:
+    tasks:
+      playerkilling:
+        type: "playerkilling"
+        amount: 10
+    display:
+      name: "&cMurderer"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Kill 10 players."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $10 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {playerkilling:progress}/10 players killed."
+      type: "IRON_SWORD"
+    rewards:
+     - "eco give {player} 50"
+    options:
+      category: "medium"
+      requires:
+       - ''
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  fisher:
+    tasks:
+      fishing:
+        type: "fishing"
+        amount: 10
+    display:
+      name: "&cProfessional Fisher"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Catch 10 items from the sea."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $30 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {fishing:progress}/10 items caught."
+      type: "FISHING_ROD"
+    rewards:
+     - "eco give {player} 30"
+    options:
+      category: "medium"
+      requires:
+       - ''
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  animals1:
+    tasks:
+      milking:
+        type: "milking"
+        amount: 10
+      shearing:
+        type: "shearing"
+        amount: 10
+      taming:
+        type: "taming"
+        amount: 3
+    display:
+      name: "&cAnimal Keeper"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Milk 10 cows."
+      - "&7 - Shear 10 sheep."
+      - "&7 - Tame 3 animals as pets."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $50 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {milking:progress}/10 cows milked."
+      - "&7 - {shearing:progress}/10 sheep sheared."
+      - "&7 - {taming:progress}/3 animals tamed."
+      type: "MILK_BUCKET"
+    rewards:
+     - "eco give {player} 50"
+    options:
+      category: "medium"
+      requires:
+       - ''
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  mining2:
+    tasks:
+      mining:
+        type: "blockbreak"
+        amount: 350
+      ironmining:
+        type: "blockbreakcertain"
+        block: IRON_ORE
+        amount: 20
+    display:
+      name: "&cSkilled Miner"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Break 350 blocks."
+      - "&7 - Break 20 iron ore."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $150 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {mining:progress}/350 blocks broken."
+      - "&7 - {ironmining:progress}/20 iron ore broken."
+      type: "IRON_PICKAXE"
+    rewards:
+     - "eco give {player} 150"
+    options:
+      category: "medium"
+      requires:
+       - "mining1"
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  building2:
+    tasks:
+      building:
+        type: "blockplace"
+        amount: 350
+      woodbuilding:
+        type: "blockplacecertain"
+        block: 5
+        amount: 20
+      bricksbuilding:
+        type: "blockplacecertain"
+        block: 45
+        amount: 20
+      redwoolbuilding:
+        type: "blockplacecertain"
+        block: 35
+        amount: 20
+        data: 14
+    display:
+      name: "&cVariety Builder"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Place 350 blocks."
+      - "&7 - Place 20 oak wood."
+      - "&7 - Place 20 bricks."
+      - "&7 - Place 20 red wool."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $150 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {building:progress}/350 blocks placed."
+      - "&7 - {woodbuilding:progress}/20 oak wood placed."
+      - "&7 - {bricksbuilding:progress}/20 bricks placed."
+      - "&7 - {redwoolbuilding:progress}/20 red wool placed."
+      type: "WOOL"
+    rewards:
+     - "eco give {player} 150"
+    options:
+      category: "medium"
+      requires:
+       - "building1"
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  walking2:
+    tasks:
+      walking:
+        type: "walking"
+        distance: 10000
+    display:
+      name: "&cMountaineer"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Walk 10km."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $500 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {walking:progress}m/10000m walked."
+      type: "LEATHER_BOOTS"
+    rewards:
+     - "eco give {player} 500"
+    options:
+      category: "medium"
+      requires:
+       - 'walking1'
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  askyblock:
+    tasks:
+      islandlevel:
+        type: "askyblock_level"
+        level: 50
+    display:
+      name: "&cIslander (ASkyBlock)"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Reach island level 50"
+      - ""
+      - "&7Rewards:"
+      - "&7 - $30 added to your in-game balance."
+      - ''
+      - '&cRequires plugin ASkyBlock!'
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {islandlevel:progress}/50 island level."
+      type: "GRASS"
+    rewards:
+     - "eco give {player} 30"
+    options:
+      category: "dependent"
+      requires:
+       - ''
+      repeatable: false
+      cooldown:
+        enabled: true
+        time: 1440
+
+  uskyblock:
+    tasks:
+      islandlevel:
+        type: "uskyblock_level"
+        level: 50
+    display:
+      name: "&cIslander (uSkyBlock)"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Reach island level 50"
+      - ""
+      - "&7Rewards:"
+      - "&7 - $30 added to your in-game balance."
+      - ''
+      - '&cRequires plugin uSkyBlock!'
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {islandlevel:progress}/50 island level."
+      type: "GRASS"
+    rewards:
+     - "eco give {player} 30"
+    options:
+      category: "dependent"
+      requires:
+       - ''
+      repeatable: false
+      cooldown:
+        enabled: true
+        time: 1440
+
+# Categories are a way of grouping up quests.
+# When a player uses /quests, a menu of categories will be presented to them.
+# When a player clicks ona category, a list of quests under that category will show.
+# If categories are disabled, all quests will be shown under one big GUI.
+# Players can access specific categories by command using /quests c [category].
+# If a quest does not have a category, it will not be shown.
+categories:
+  examples:
+    display:
+      name: "&cExample Quests"
+      lore:
+      - "&7This category contains example quests"
+      - "&7which are commented in the config."
+      - "&7The comments should guide you with"
+      - "&7how the config works."
+      - ''
+      - '&cIt is highly recommended you read this'
+      - '&csection and all the comments so you can'
+      - '&cmake the most of this plugin.'
+      type: "327"
+  easy:
+    display:
+      name: "&cEasy Difficulty Quests"
+      lore:
+      - "&7This category contains easy quests."
+      - "&7They do not require you to do much but"
+      - "&7rewards are low."
+      type: "260"
+  medium:
+    display:
+      name: "&cIntermediate Difficulty Quests"
+      lore:
+      - "&7This category contains intermediate quests."
+      - "&7These quests are more challenging than the"
+      - "&7previous with greater rewards."
+      type: "264"
+  dependent:
+    display:
+      name: "&cDependent Quests"
+      lore:
+      - "&7This category contains quests which are dependent"
+      - "&7on other plugins being installed such as &cASkyBlock,"
+      - "&cuSkyBlock &7and &cCitizens&7."
+      type: "GRASS"
+
+# The items listed below are placeholder items for quests which the player cannot start.
+gui:
+  back-button:
+    name: "&cReturn"
+    lore:
+    - "&7Return to the categories menu."
+    type: "ARROW"
+  quest-locked-display:
+    name: "&c&lQuest Locked"
+    lore:
+    - "&7You have not completed the requirements"
+    - "&7for this quest (&c{quest}&7)."
+    - ''
+    - '&7Requires: &c{requirements}'
+    - '&7to be completed to unlock.'
+    type: "160:14"
+  quest-cooldown-display:
+    name: "&e&lQuest On Cooldown"
+    lore:
+    - "&7You have recently completed this quest"
+    - "&7(&e{quest}&7) and you must"
+    - "&7wait another &e{time} &7to unlock again."
+    type: "160:1"
+  quest-completed-display:
+    name: "&a&lQuest Complete"
+    lore:
+    - "&7You have completed this quest"
+    - "&7(&a{quest}&7) and cannot."
+    - '&7repeat it.'
+    type: "160:5"
+
+options:
+  # If categories are disabled, quests will be put into one big gui.
+  categories-enabled: true
+  # If true, the gui size will automatically change based on the amount of quests inside it.
+  trim-gui-size: true
+  titles-enabled: true
+  # Players cannot start any more quests than this at a single time
+  quest-started-limit: 2
+
+titles:
+  quest-start:
+    title: "&cQuest Started"
+    subtitle: "&7{quest}"
+  quest-complete:
+    title: "&cQuest Complete"
+    subtitle: "&7{quest}"
+
+messages:
+  quest-start: "&7Quest &c{quest} &7started!"
+  quest-complete: "&7Quest &c{quest} &7completed!"
+  quest-start-limit: "&7Players are limited to &c{limit} &7started quests at a time."
+  quest-start-disabled: "&7You cannot repeat this quest."
+  quest-start-locked: "&7You have not unlocked this quest yet."
+  quest-start-cooldown: "&7You have recently completed this quest. You have to wait &c{time} &7until you are able to restart it."
+  quest-updater: "&cQuests > &7A new version &c{newver} &7was found on Spigot (your version: &c{oldver}&7). Please update me! <3 - Link: {link}"
+  command-quest-start-doesntexist: "&7The specified quest '&c{quest}&7' does not exist."
+  command-category-open-disabled: "&7Categories are disabled."
+  command-category-open-doesntexist: "&7The specified category '&c{category}&7' does not exist."
+  command-quest-admin-playernotfound: "&7Player '&c{player}&7' could not be found."
+  command-quest-openquests-admin-success: "&7Opened Quest GUI for player &c{player}&7."
+  command-quest-opencategory-admin-success: "&7Opened category &c{category} &7for player &c{player}&7."
+  command-quest-start-admin-success: "&7Successfully started quest '&c{quest}&7' for player &c{player}&7."
+  command-quest-complete-admin-success: "&7Successfully completed quest '&c{quest}&7' for player &c{player}&7."
+  command-quest-reset-admin-success: "&7Successfully reset quest '&c{quest}&7' for player &c{player}&7."
+  command-quest-fullreset-admin-success: "&7Successfully reset player &c{player}&7."
+  command-quest-start-admin-fail: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They may not have unlocked it, on cooldown, etc."
+  command-quest-complete-admin-fail: "&7Failed to complete '&c{quest}&7' for player &c{player}&7. They may have not started it."
+  command-taskview-admin-fail: "&7Task type '&c{task}&7' does not exist."
