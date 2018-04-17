@@ -7,7 +7,6 @@ import me.fatpigsarefat.quests.player.QPlayer;
 import me.fatpigsarefat.quests.player.questprogressfile.QuestProgress;
 import me.fatpigsarefat.quests.quests.Quest;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -22,6 +21,9 @@ public class QMenuQuest implements QMenu {
 
     private HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
     private int backButtonLocation = -1;
+    private int pagePrevLocation = -1;
+    private int pageNextLocation = -1;
+    private int currentPage = -1;
     private boolean backButtonEnabled = true;
     private QMenuCategory superMenu;
     private String categoryName;
@@ -56,12 +58,31 @@ public class QMenuQuest implements QMenu {
         return categoryName;
     }
 
+    public int getPagePrevLocation() {
+        return pagePrevLocation;
+    }
+
+    public int getPageNextLocation() {
+        return pageNextLocation;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
     public Inventory toInventory(int page) {
+        currentPage = page;
         int pageMin = pageSize * (page - 1);
         int pageMax = pageSize * page;
         String title = "Quests";
 
-        ItemStack pageIs = new ItemStack(Material.DIRT);
+        ItemStack pageIs;
+        ItemStack pagePrevIs;
+        ItemStack pageNextIs;
         ItemStack back = Items.BACK_BUTTON.getItem();
 
         Inventory inventory = Bukkit.createInventory(null, 54, title); //TODO make configurable title
@@ -100,14 +121,32 @@ public class QMenuQuest implements QMenu {
             invSlot++;
         }
 
-        inventory.setItem(49, pageIs);
+        pageNextLocation = -1;
+        pagePrevLocation = -1;
+
+        Map<String, String> pageplaceholders = new HashMap<>();
+        pageplaceholders.put("{prevpage}", String.valueOf(page - 1));
+        pageplaceholders.put("{nextpage}", String.valueOf(page + 1));
+        pageplaceholders.put("{page}", String.valueOf(page));
+        pageIs = replaceItemStack(Items.PAGE_DESCRIPTION.getItem(), pageplaceholders);
+        pagePrevIs = replaceItemStack(Items.PAGE_PREV.getItem(), pageplaceholders);
+        pageNextIs = replaceItemStack(Items.PAGE_NEXT.getItem(), pageplaceholders);
 
         if (Options.CATEGORIES_ENABLED.getBooleanValue() && backButtonEnabled) {
             inventory.setItem(45, back);
             backButtonLocation = 45;
         }
-
-        if (Options.TRIM_GUI_SIZE.getBooleanValue() && page == 1) {
+        if (slotsToQuestIds.size() > pageSize) {
+            inventory.setItem(49, pageIs);
+            if (page != 1) {
+                inventory.setItem(48, pagePrevIs);
+                pagePrevLocation = 48;
+            }
+            if (Math.ceil((double) slotsToQuestIds.size() / ((double) 45)) != page) {
+                inventory.setItem(50, pageNextIs);
+                pageNextLocation = 50;
+            }
+        } else if (Options.TRIM_GUI_SIZE.getBooleanValue() && page == 1) {
             int slotsUsed = 0;
             for (int pointer = 0; pointer < pageMax; pointer++) {
                 if (inventory.getItem(pointer) != null) {
@@ -136,9 +175,9 @@ public class QMenuQuest implements QMenu {
                 trimmedInventory.setItem(slot, inventory.getItem(slot));
             }
             return trimmedInventory;
-        } else {
-            return inventory;
         }
+
+        return inventory;
 
         //TODO add page controls
     }
@@ -163,13 +202,16 @@ public class QMenuQuest implements QMenu {
         ItemStack newItemStack = is.clone();
         List<String> lore = newItemStack.getItemMeta().getLore();
         List<String> newLore = new ArrayList<>();
-        for (String s : lore) {
-            for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-                s = s.replace(entry.getKey(), entry.getValue());
-            }
-            newLore.add(s);
-        }
         ItemMeta ism = newItemStack.getItemMeta();
+        if (lore != null) {
+            for (String s : lore) {
+                for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+                    s = s.replace(entry.getKey(), entry.getValue());
+                    ism.setDisplayName(ism.getDisplayName().replace(entry.getKey(), entry.getValue()));
+                }
+                newLore.add(s);
+            }
+        }
         ism.setLore(newLore);
         newItemStack.setItemMeta(ism);
         return newItemStack;

@@ -34,14 +34,22 @@ public class EventInventory implements Listener {
                 QMenuQuest qMenuQuest = (QMenuQuest) qMenu;
 
                 //TODO check page clicks
+                if (qMenuQuest.getPagePrevLocation() == event.getSlot()) {
+                    buffer.add(event.getWhoClicked().getUniqueId());
+                    event.getWhoClicked().openInventory(qMenuQuest.toInventory(qMenuQuest.getCurrentPage() - 1));
 
-                if (Options.CATEGORIES_ENABLED.getBooleanValue() && qMenuQuest.getBackButtonLocation() == event.getSlot()) {
+                } else if (qMenuQuest.getPageNextLocation() == event.getSlot()) {
+                    buffer.add(event.getWhoClicked().getUniqueId());
+                    event.getWhoClicked().openInventory(qMenuQuest.toInventory(qMenuQuest.getCurrentPage() + 1));
+
+                } else if (Options.CATEGORIES_ENABLED.getBooleanValue() && qMenuQuest.getBackButtonLocation() == event.getSlot()) {
                     QMenuCategory qMenuCategory = qMenuQuest.getSuperMenu();
                     buffer.add(event.getWhoClicked().getUniqueId());
                     event.getWhoClicked().openInventory(qMenuCategory.toInventory(1));
                     tracker.put(event.getWhoClicked().getUniqueId(), qMenuCategory);
 
-                } else if (qMenuQuest.getSlotsToMenu().containsKey(event.getSlot())) {
+                } else if (event.getSlot() < qMenuQuest.getPageSize() && qMenuQuest.getSlotsToMenu().containsKey(event.getSlot() + (((qMenuQuest
+                        .getCurrentPage()) - 1) * qMenuQuest.getPageSize()))) {
                     String questid = qMenuQuest.getSlotsToMenu().get(event.getSlot());
                     Quest quest = Quests.getQuestManager().getQuestById(questid);
                     if (qMenuQuest.getOwner().getQuestProgressFile().startQuest(quest)) {

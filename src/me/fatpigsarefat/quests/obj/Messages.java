@@ -24,7 +24,8 @@ public enum Messages {
     TITLE_QUEST_START_TITLE("titles.quest-start.title"),
     TITLE_QUEST_START_SUBTITLE("titles.quest-start.subtitle"),
     TITLE_QUEST_COMPLETE_TITLE("titles.quest-complete.title"),
-    TITLE_QUEST_COMPLETE_SUBTITLE("titles.quest-complete.subtitle");
+    TITLE_QUEST_COMPLETE_SUBTITLE("titles.quest-complete.subtitle"),
+    BETA_REMINDER("messages.beta-reminder");
 
     private String path;
 
@@ -36,7 +37,7 @@ public enum Messages {
         if (Quests.getInstance().getConfig().contains(path)) {
             String message = Quests.getInstance().getConfig().getString(path);
             if (message != null) {
-                return message;
+                return ChatColor.translateAlternateColorCodes('&', message);
             }
         }
         return path;

@@ -32,6 +32,7 @@
 # The first lore you must give is called 'lore-normal'. This is the lore seen if the player has not started the quest.
 # The second lore you must give is 'lore-started'. This will be appended to the first lore IF the player has started the quest - useful for putting progression.
 # Within the lores you can get the players" progress for each task. Use {TASKID:progress} (replace TASKID with the ID of the task).
+# You can also get if a task is complete. Use {TASKID:complete} (replace TASKID with the ID of the task).
 #
 # Quests can be put inside a category. When a player does /quests they will first see a menu of categories. They can click one and another menu of quests
 # under that category will show up. Categories can be disabled.
@@ -349,6 +350,49 @@ quests:
       - "&7Your current progression:"
       - "&7 - {walking:progress}m/1000m walked."
       type: "LEATHER_BOOTS"
+    rewards:
+     - "eco give {player} 50"
+    options:
+      category: "easy"
+      requires:
+       - ''
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  inventory1:
+    tasks:
+      beef:
+        type: "inventory"
+        item: RAW_BEEF
+        amount: 8
+        remove-items-when-complete: false
+      chicken:
+        type: "inventory"
+        item: RAW_CHICKEN
+        amount: 8
+        remove-items-when-complete: false
+      pork:
+        type: "inventory"
+        item: PORK
+        amount: 8
+        remove-items-when-complete: false
+    display:
+      name: "&cMeat Eater"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Collect 8 raw beef, pork & chicken."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $50 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - 8 raw beef collected: {beef:complete}."
+      - "&7 - 8 chicken collected: {chicken:complete}."
+      - "&7 - 8 pork collected: {pork:complete}."
+      type: "PORK"
     rewards:
      - "eco give {player} 50"
     options:
@@ -683,6 +727,21 @@ gui:
     lore:
     - "&7Return to the categories menu."
     type: "ARROW"
+  page-prev:
+    name: "&7Previous Page"
+    lore:
+    - "&7Switch the page to page &c{prevpage}."
+    type: "FEATHER"
+  page-next:
+    name: "&7Next Page"
+    lore:
+    - "&7Switch the page to page &c{nextpage}."
+    type: "FEATHER"
+  page-desc:
+    name: "&7Page &c{page}"
+    lore:
+    - "&7You are currently viewing page &c{page}."
+    type: "PAPER"
   quest-locked-display:
     name: "&c&lQuest Locked"
     lore:
@@ -716,6 +775,17 @@ options:
   # Players cannot start any more quests than this at a single time
   quest-started-limit: 2
 
+# This switches up the entire quest system.
+# By enabling daily-quests, players will no longer be presented with the standard Quest GUI.
+# Instead, they will be presented with 5 random quests.
+# The 'requirements' section in each quest does not apply here.
+# The 'cooldown' section in each quest does not apply here - if it's done, it's done (and will be repeatable next time they get the quest).
+# The 'repeatable' section in each quest does not apply here. It will NOT be repeatable until the next day.
+# Enabling this MAY cause previous quest progress to be modified, wiped or changed irreversibly! If you're testing this on a live server, it is wise to backup
+# the Quests/playerdata/ folder! You've been warned!
+daily-quests:
+  enabled: false
+
 titles:
   quest-start:
     title: "&cQuest Started"
@@ -745,3 +815,4 @@ messages:
   command-quest-start-admin-fail: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They may not have unlocked it, on cooldown, etc."
   command-quest-complete-admin-fail: "&7Failed to complete '&c{quest}&7' for player &c{player}&7. They may have not started it."
   command-taskview-admin-fail: "&7Task type '&c{task}&7' does not exist."
+  beta-reminder: "&cQuests > &7Reminder: you are currently using a &cbeta &7version of Quests. Please send bug reports to https://github.com/fatpigsarefat/Quests/issues and check for updates regularly using &c/quests admin update&7!"

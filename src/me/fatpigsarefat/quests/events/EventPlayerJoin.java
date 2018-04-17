@@ -1,6 +1,7 @@
 package me.fatpigsarefat.quests.events;
 
 import me.fatpigsarefat.quests.Quests;
+import me.fatpigsarefat.quests.obj.Messages;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -13,6 +14,9 @@ public class EventPlayerJoin implements Listener {
     public void onEvent(PlayerJoinEvent event) {
         UUID playerUuid = event.getPlayer().getUniqueId();
         Quests.getPlayerManager().loadPlayer(playerUuid);
+        if (Quests.getInstance().getDescription().getVersion().contains("beta") && event.getPlayer().hasPermission("quests.admin")) {
+            event.getPlayer().sendMessage(Messages.BETA_REMINDER.getMessage());
+        }
         if (Quests.getUpdater().isUpdateReady() && event.getPlayer().hasPermission("quests.admin")) {
             event.getPlayer().sendMessage(Quests.getUpdater().getMessage());
         }
