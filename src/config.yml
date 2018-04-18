@@ -778,7 +778,7 @@ options:
   # Titles for the GUIs
   guinames:
     quests-category: "Quests Categories"
-    quests-menu : "Quests"
+    quests-menu: "Quests"
     daily-quests: "Daily Quests"
 
 # This switches up the entire quest system.

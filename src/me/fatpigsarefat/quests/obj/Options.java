@@ -13,7 +13,7 @@ public enum Options {
     QUESTS_START_LIMIT("options.quest-started-limit"),
     TITLES_ENABLED("options.titles-enabled"),
     GUITITLE_QUESTS_CATEGORY("options.guinames.quests-category"),
-    GUITITLE_QUESTS("options.guinames.quests"),
+    GUITITLE_QUESTS("options.guinames.quests-menu"),
     GUITITLE_DAILY_QUESTS("options.guinames.daily-quests");
 
     private String path;
