@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class Updater {
@@ -19,6 +20,7 @@ public class Updater {
     private URL api;
     private Plugin plugin;
     private boolean updateReady;
+    private long lastCheck;
 
     public Updater(Plugin plugin) {
         this.plugin = plugin;
@@ -35,7 +37,11 @@ public class Updater {
     }
  
     public boolean check() {
+        if (lastCheck != 0 && TimeUnit.MINUTES.convert(System.currentTimeMillis() - lastCheck, TimeUnit.MILLISECONDS) < 10) {
+            return updateReady;
+        }
         try {
+            lastCheck = System.currentTimeMillis();
             URLConnection con = api.openConnection();
             returnedVersion = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
             if (!returnedVersion.equals(installedVersion)) {

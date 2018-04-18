@@ -13,6 +13,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class CommandQuests implements CommandExecutor {
 
@@ -53,6 +54,20 @@ public class CommandQuests implements CommandExecutor {
                             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + taskType.getType());
                         }
                         sender.sendMessage(ChatColor.DARK_GRAY + "View info using /q a types [type].");
+                        return true;
+                    } else if (args[1].equalsIgnoreCase("update")) {
+                        sender.sendMessage(ChatColor.GRAY + "Checking for updates...");
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                Quests.getUpdater().check();
+                                if (Quests.getUpdater().isUpdateReady()) {
+                                    sender.sendMessage(Quests.getUpdater().getMessage());
+                                } else {
+                                    sender.sendMessage(ChatColor.GRAY + "No updates were found.");
+                                }
+                            }
+                        }.runTaskAsynchronously(Quests.getInstance());
                         return true;
                     }
                 } else if (args.length == 3) {
@@ -215,6 +230,7 @@ public class CommandQuests implements CommandExecutor {
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata " + ChatColor.DARK_GRAY + ": view help for quest progression");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a types [type]" + ChatColor.DARK_GRAY + ": view registered task types");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a reload " + ChatColor.DARK_GRAY + ": reload Quests configuration");
+            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a update " + ChatColor.DARK_GRAY + ": check for updates");
         }
         sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----=[" + ChatColor.RED + " requires permission: quests.admin " +
                 ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "]=-----");
