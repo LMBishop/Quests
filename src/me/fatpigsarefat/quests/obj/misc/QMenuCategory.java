@@ -43,11 +43,11 @@ public class QMenuCategory implements QMenu {
     public Inventory toInventory(int page) {
         int pageMin = pageSize * (page - 1);
         int pageMax = pageSize * page;
-        String title = "Quest Categories";
+        String title = Options.GUITITLE_QUESTS_CATEGORY.getStringValue();
 
         ItemStack pageIs = new ItemStack(Material.DIRT);
 
-        Inventory inventory = Bukkit.createInventory(null, 54, title); //TODO make configurable title
+        Inventory inventory = Bukkit.createInventory(null, 54, title);
 
         for (int pointer = pageMin; pointer < pageMax; pointer++) {
             if (slotsToMenuQuest.containsKey(pointer)) {

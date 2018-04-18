@@ -78,14 +78,14 @@ public class QMenuQuest implements QMenu {
         currentPage = page;
         int pageMin = pageSize * (page - 1);
         int pageMax = pageSize * page;
-        String title = "Quests";
+        String title = Options.GUITITLE_QUESTS.getStringValue();
 
         ItemStack pageIs;
         ItemStack pagePrevIs;
         ItemStack pageNextIs;
         ItemStack back = Items.BACK_BUTTON.getItem();
 
-        Inventory inventory = Bukkit.createInventory(null, 54, title); //TODO make configurable title
+        Inventory inventory = Bukkit.createInventory(null, 54, title);
 
         int invSlot = 0;
         for (int pointer = pageMin; pointer < pageMax; pointer++) {
@@ -178,8 +178,6 @@ public class QMenuQuest implements QMenu {
         }
 
         return inventory;
-
-        //TODO add page controls
     }
 
     public boolean isBackButtonEnabled() {

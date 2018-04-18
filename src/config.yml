@@ -771,9 +771,15 @@ options:
   categories-enabled: true
   # If true, the gui size will automatically change based on the amount of quests inside it.
   trim-gui-size: true
+  # Enable/disable titles
   titles-enabled: true
   # Players cannot start any more quests than this at a single time
   quest-started-limit: 2
+  # Titles for the GUIs
+  guinames:
+    quests-category: "Quests Categories"
+    quests-menu : "Quests"
+    daily-quests: "Daily Quests"
 
 # This switches up the entire quest system.
 # By enabling daily-quests, players will no longer be presented with the standard Quest GUI.
@@ -783,9 +789,12 @@ options:
 # The 'repeatable' section in each quest does not apply here. It will NOT be repeatable until the next day.
 # Enabling this MAY cause previous quest progress to be modified, wiped or changed irreversibly! If you're testing this on a live server, it is wise to backup
 # the Quests/playerdata/ folder! You've been warned!
+#
+# Quests BETA: this feature is a work in progress, it does not work yet!
 daily-quests:
   enabled: false
 
+# Configure titles
 titles:
   quest-start:
     title: "&cQuest Started"
@@ -794,6 +803,7 @@ titles:
     title: "&cQuest Complete"
     subtitle: "&7{quest}"
 
+# Configure messages
 messages:
   quest-start: "&7Quest &c{quest} &7started!"
   quest-complete: "&7Quest &c{quest} &7completed!"
