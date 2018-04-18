@@ -59,6 +59,9 @@ quests:
       name: "&cExample I (Single Task)"
       # This is the lore of the item if the player has not started the quest. This allows color codes and task/player placeholders.
       lore-normal:
+      - "&cThis category is designed to show you the different"
+      - "&cattributes a quest can have."
+      - ""
       - "&7This quest requires you to:"
       - "&7 - Break 30 blocks."
       - ""
@@ -104,6 +107,10 @@ quests:
     display:
       name: "&cExample II (Multiple Tasks)"
       lore-normal:
+      - "&cThis category is designed to show you the different"
+      - "&cattributes a quest can have. This quest requires"
+      - "&cmultiple things to be done, unlike the previous one."
+      - ""
       - "&7This quest requires you to:"
       - "&7 - Break 100 blocks."
       - "&7 - Place 100 blocks."
@@ -146,6 +153,10 @@ quests:
     display:
       name: "&cExample III (Repeatable, 10 minute cooldown)"
       lore-normal:
+      - "&cThis category is designed to show you the different"
+      - "&cattributes a quest can have. This quest can be replayed"
+      - "&cafter a cooldown, unlike the previous one."
+      - ""
       - "&7This quest requires you to:"
       - "&7 - Break 81 gold ore."
       - "&7 - Place 9 gold blocks."
@@ -182,6 +193,10 @@ quests:
     display:
       name: "&cExample IV (Reward String)"
       lore-normal:
+      - "&cThis category is designed to show you the different"
+      - "&cattributes a quest can have. This quest has a 'reward string'"
+      - "&c(a series of messages sent when a quest is complete),"
+        "unlike the previous one."
       - "&7This quest requires you to:"
       - "&7 - Kill 3 mobs."
       - ""
@@ -196,8 +211,8 @@ quests:
      - "eco give {player} 50"
     # Here you can list messages which will be sent to the player (if they are online) upon completion.
     rewardstring:
-     - ' &8* &c$10 &7was added to your in-game balance.'
-     - ' &8* &c30 diamonds &7was added to your inventory.'
+     - " &8* &c$10 &7was added to your in-game balance."
+     - " &8* &c30 diamonds &7was added to your inventory."
     options:
       category: "examples"
       requires:
@@ -296,7 +311,7 @@ quests:
     options:
       category: "easy"
       requires:
-       - ''
+       - ""
       repeatable: true
       cooldown:
         enabled: true
@@ -326,7 +341,7 @@ quests:
     options:
       category: "easy"
       requires:
-       - ''
+       - ""
       repeatable: true
       cooldown:
         enabled: true
@@ -355,7 +370,7 @@ quests:
     options:
       category: "easy"
       requires:
-       - ''
+       - ""
       repeatable: true
       cooldown:
         enabled: true
@@ -398,7 +413,7 @@ quests:
     options:
       category: "easy"
       requires:
-       - ''
+       - ""
       repeatable: true
       cooldown:
         enabled: true
@@ -427,7 +442,7 @@ quests:
     options:
       category: "medium"
       requires:
-       - ''
+       - ""
       repeatable: true
       cooldown:
         enabled: true
@@ -456,7 +471,7 @@ quests:
     options:
       category: "medium"
       requires:
-       - ''
+       - ""
       repeatable: true
       cooldown:
         enabled: true
@@ -495,7 +510,7 @@ quests:
     options:
       category: "medium"
       requires:
-       - ''
+       - ""
       repeatable: true
       cooldown:
         enabled: true
@@ -607,7 +622,7 @@ quests:
     options:
       category: "medium"
       requires:
-       - 'walking1'
+       - "walking1"
       repeatable: true
       cooldown:
         enabled: true
@@ -626,8 +641,8 @@ quests:
       - ""
       - "&7Rewards:"
       - "&7 - $30 added to your in-game balance."
-      - ''
-      - '&cRequires plugin ASkyBlock!'
+      - ""
+      - "&cRequires plugin ASkyBlock!"
       lore-started:
       - ""
       - "&7Your current progression:"
@@ -638,7 +653,7 @@ quests:
     options:
       category: "dependent"
       requires:
-       - ''
+       - ""
       repeatable: false
       cooldown:
         enabled: true
@@ -657,8 +672,8 @@ quests:
       - ""
       - "&7Rewards:"
       - "&7 - $30 added to your in-game balance."
-      - ''
-      - '&cRequires plugin uSkyBlock!'
+      - ""
+      - "&cRequires plugin uSkyBlock!"
       lore-started:
       - ""
       - "&7Your current progression:"
@@ -669,7 +684,7 @@ quests:
     options:
       category: "dependent"
       requires:
-       - ''
+       - ""
       repeatable: false
       cooldown:
         enabled: true
@@ -690,10 +705,10 @@ categories:
       - "&7which are commented in the config."
       - "&7The comments should guide you with"
       - "&7how the config works."
-      - ''
-      - '&cIt is highly recommended you read this'
-      - '&csection and all the comments so you can'
-      - '&cmake the most of this plugin.'
+      - ""
+      - "&cIt is highly recommended you read this"
+      - "&csection and all the comments so you can"
+      - "&cmake the most of this plugin."
       type: "327"
   easy:
     display:
@@ -747,9 +762,9 @@ gui:
     lore:
     - "&7You have not completed the requirements"
     - "&7for this quest (&c{quest}&7)."
-    - ''
-    - '&7Requires: &c{requirements}'
-    - '&7to be completed to unlock.'
+    - ""
+    - "&7Requires: &c{requirements}"
+    - "&7to be completed to unlock."
     type: "160:14"
   quest-cooldown-display:
     name: "&e&lQuest On Cooldown"
@@ -763,7 +778,7 @@ gui:
     lore:
     - "&7You have completed this quest"
     - "&7(&a{quest}&7) and cannot."
-    - '&7repeat it.'
+    - "&7repeat it."
     type: "160:5"
 
 options:

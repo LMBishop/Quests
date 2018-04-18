@@ -216,7 +216,7 @@ public class Quests extends JavaPlugin {
             QItemStack displayItem = getQItemStack(root + ".display");
             List<String> rewards = getConfig().getStringList(root + ".rewards");
             List<String> requirements = getConfig().getStringList(root + ".options.requires");
-            List<String> rewardString = getConfig().getStringList(root + ".options.rewardstring");
+            List<String> rewardString = getConfig().getStringList(root + ".rewardstring");
             boolean repeatable = getConfig().getBoolean(root + ".options.repeatable", false);
             boolean cooldown = getConfig().getBoolean(root + ".options.cooldown.enabled", false);
             int cooldownTime = getConfig().getInt(root + ".options.cooldown.time", 10);
@@ -226,10 +226,10 @@ public class Quests extends JavaPlugin {
                 rewardString = new ArrayList<>();
             }
             if (requirements == null) {
-                rewardString = new ArrayList<>();
+                requirements = new ArrayList<>();
             }
             if (rewards == null) {
-                rewardString = new ArrayList<>();
+                rewards = new ArrayList<>();
             }
             if (category == null) {
                 category = "";
