@@ -78,7 +78,8 @@ public class QItemStack {
             tempLore.addAll(loreStarted);
             ism.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
             try {
-                is.getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                ism.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                ism.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
             } catch (Exception ignored) {
 
             }
