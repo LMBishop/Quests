@@ -33,7 +33,6 @@ public class EventInventory implements Listener {
             if (qMenu instanceof QMenuQuest) {
                 QMenuQuest qMenuQuest = (QMenuQuest) qMenu;
 
-                //TODO check page clicks
                 if (qMenuQuest.getPagePrevLocation() == event.getSlot()) {
                     buffer.add(event.getWhoClicked().getUniqueId());
                     event.getWhoClicked().openInventory(qMenuQuest.toInventory(qMenuQuest.getCurrentPage() - 1));
