@@ -7,42 +7,26 @@ import me.fatpigsarefat.quests.player.questprogressfile.TaskProgress;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class QPlayerManager {
 
-    private List<QPlayer> qPlayers = new ArrayList<>();
+    private Map<UUID, QPlayer> qPlayers = new HashMap<>();
 
     public void addPlayer(QPlayer qPlayer) {
-        qPlayers.add(qPlayer);
+        qPlayers.put(qPlayer.getUuid(), qPlayer);
     }
 
     public QPlayer getPlayer(UUID uuid) {
-        for (QPlayer qPlayer : qPlayers) {
-            if (qPlayer.getUuid().equals(uuid)) {
-                return qPlayer;
-            }
-        }
-        return null;
+        return qPlayers.getOrDefault(uuid, null);
     }
 
     public void removePlayer(UUID uuid) {
-        QPlayer toRemove = null;
-        for (QPlayer qPlayer : qPlayers) {
-            if (qPlayer.getUuid().equals(uuid)) {
-                toRemove = qPlayer;
-                break;
-            }
-        }
-        if (toRemove != null) {
-            qPlayers.remove(toRemove);
-        }
+        qPlayers.remove(uuid);
     }
 
-    public List<QPlayer> getQPlayers() {
-        return qPlayers;
+    public Collection<QPlayer> getQPlayers() {
+        return qPlayers.values();
     }
 
     public void loadPlayer(UUID uuid) {
@@ -79,7 +63,7 @@ public class QPlayerManager {
 
             QPlayer qPlayer = new QPlayer(uuid, questProgressFile);
 
-            Quests.getPlayerManager().addPlayer(qPlayer);
+            addPlayer(qPlayer);
         }
     }
 
