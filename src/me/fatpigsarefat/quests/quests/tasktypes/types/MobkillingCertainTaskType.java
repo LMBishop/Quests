@@ -68,8 +68,10 @@ public final class MobkillingCertainTaskType extends TaskType {
                     String configEntity = (String) task.getConfigValue("mob");
                     String configName = (String) task.getConfigValue("name");
 
-                    EntityType entity = EntityType.fromName(configEntity);
-                    if (entity == null) {
+                    EntityType entity;
+                    try {
+                        entity = EntityType.valueOf(configEntity);
+                    } catch (IllegalArgumentException ex) {
                         continue;
                     }
 
