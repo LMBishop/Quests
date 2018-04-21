@@ -12,6 +12,7 @@ public enum Options {
     TRIM_GUI_SIZE("options.trim-gui-size"),
     QUESTS_START_LIMIT("options.quest-started-limit"),
     TITLES_ENABLED("options.titles-enabled"),
+    GUI_HIDE_LOCKED("options.gui-hide-locked"),
     GUITITLE_QUESTS_CATEGORY("options.guinames.quests-category"),
     GUITITLE_QUESTS("options.guinames.quests-menu"),
     GUITITLE_DAILY_QUESTS("options.guinames.daily-quests");

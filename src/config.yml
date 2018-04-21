@@ -823,6 +823,8 @@ options:
   titles-enabled: true
   # Players cannot start any more quests than this at a single time
   quest-started-limit: 2
+  # Hide locked quests, quests on cooldown and completed (but not repeatable) quests
+  gui-hide-locked: false
   # Titles for the GUIs
   guinames:
     quests-category: "Quests Categories"

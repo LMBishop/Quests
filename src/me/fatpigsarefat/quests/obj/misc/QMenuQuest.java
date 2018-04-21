@@ -39,6 +39,13 @@ public class QMenuQuest implements QMenu {
     public void populate(List<Quest> quests) {
         int slot = 0;
         for (Quest quest : quests) {
+            if (Options.GUI_HIDE_LOCKED.getBooleanValue()) {
+                QuestProgress questProgress = owner.getQuestProgressFile().getQuestProgress(quest);
+                long cooldown = owner.getQuestProgressFile().getCooldownFor(quest);
+                if (!owner.getQuestProgressFile().hasMetRequirements(quest) || (!quest.isRepeatable() && questProgress.isCompletedBefore()) || cooldown > 0) {
+                    continue;
+                }
+            }
             slotsToQuestIds.put(slot, quest.getId());
             slot++;
         }
