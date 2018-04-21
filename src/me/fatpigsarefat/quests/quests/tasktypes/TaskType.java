@@ -4,6 +4,7 @@ import me.fatpigsarefat.quests.quests.Quest;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class TaskType implements Listener {
@@ -37,7 +38,6 @@ public abstract class TaskType implements Listener {
         return quests;
     }
 
-
     public final String getType() {
         return type;
     }
@@ -48,5 +48,9 @@ public abstract class TaskType implements Listener {
 
     public String getDescription() {
         return description;
+    }
+
+    public List<ConfigValue> getCreatorConfigValues() {
+        return Collections.emptyList();
     }
 }

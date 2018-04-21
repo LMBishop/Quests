@@ -1,4 +1,4 @@
-package me.fatpigsarefat.quests.quests.tasktypes;
+package me.fatpigsarefat.quests.quests.tasktypes.types;
 
 import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.player.QPlayer;
@@ -7,20 +7,34 @@ import me.fatpigsarefat.quests.player.questprogressfile.QuestProgressFile;
 import me.fatpigsarefat.quests.player.questprogressfile.TaskProgress;
 import me.fatpigsarefat.quests.quests.Quest;
 import me.fatpigsarefat.quests.quests.Task;
+import me.fatpigsarefat.quests.quests.tasktypes.ConfigValue;
+import me.fatpigsarefat.quests.quests.tasktypes.TaskType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerShearEntityEvent;
 
-public final class WalkingTaskType extends TaskType {
+import java.util.ArrayList;
+import java.util.List;
 
-    public WalkingTaskType() {
-        super("walking", "fatpigsarefat", "Walk a set distance.");
+public final class ShearingTaskType extends TaskType {
+
+    private List<ConfigValue> creatorConfigValues = new ArrayList<>();
+
+    public ShearingTaskType() {
+        super("shearing", "fatpigsarefat", "Shear a set amount of sheep.");
+        this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of cows to be milked."));
+    }
+
+    @Override
+    public List<ConfigValue> getCreatorConfigValues() {
+        return creatorConfigValues;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onMove(PlayerMoveEvent event) {
-        if (event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
+    public void onShear(PlayerShearEntityEvent event) {
+        if (!(event.getEntity() instanceof Sheep)) {
             return;
         }
 
@@ -40,18 +54,18 @@ public final class WalkingTaskType extends TaskType {
                         continue;
                     }
 
-                    int distanceNeeded = (int) task.getConfigValue("distance");
+                    int sheepNeeded = (int) task.getConfigValue("amount");
 
-                    int progressDistance;
+                    int progressSheared;
                     if (taskProgress.getProgress() == null) {
-                        progressDistance = 0;
+                        progressSheared = 0;
                     } else {
-                        progressDistance = (int) taskProgress.getProgress();
+                        progressSheared = (int) taskProgress.getProgress();
                     }
 
-                    taskProgress.setProgress(progressDistance + 1);
+                    taskProgress.setProgress(progressSheared + 1);
 
-                    if (((int) taskProgress.getProgress()) >= distanceNeeded) {
+                    if (((int) taskProgress.getProgress()) >= sheepNeeded) {
                         taskProgress.setCompleted(true);
                     }
                 }

@@ -1,4 +1,4 @@
-package me.fatpigsarefat.quests.quests.tasktypes;
+package me.fatpigsarefat.quests.quests.tasktypes.types;
 
 import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.player.QPlayer;
@@ -7,32 +7,37 @@ import me.fatpigsarefat.quests.player.questprogressfile.QuestProgressFile;
 import me.fatpigsarefat.quests.player.questprogressfile.TaskProgress;
 import me.fatpigsarefat.quests.quests.Quest;
 import me.fatpigsarefat.quests.quests.Task;
-import org.bukkit.entity.Entity;
+import me.fatpigsarefat.quests.quests.tasktypes.ConfigValue;
+import me.fatpigsarefat.quests.quests.tasktypes.TaskType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
-public final class PlayerkillingTaskType extends TaskType {
+import java.util.ArrayList;
+import java.util.List;
 
-    public PlayerkillingTaskType() {
-        super("playerkilling", "fatpigsarefat", "Kill a set amount of players.");
+public final class WalkingTaskType extends TaskType {
+
+    private List<ConfigValue> creatorConfigValues = new ArrayList<>();
+
+    public WalkingTaskType() {
+        super("walking", "fatpigsarefat", "Walk a set distance.");
+        this.creatorConfigValues.add(new ConfigValue("distance", true, "Amount of meters (blocks) to be travelled."));
+    }
+
+    @Override
+    public List<ConfigValue> getCreatorConfigValues() {
+        return creatorConfigValues;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onMobKill(EntityDeathEvent event) {
-        Entity killer = event.getEntity().getKiller();
-        Entity mob = event.getEntity();
-
-        if (!(mob instanceof Player)) {
+    public void onMove(PlayerMoveEvent event) {
+        if (event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
             return;
         }
 
-        if (killer == null) {
-            return;
-        }
-
-        Player player = event.getEntity().getKiller();
+        Player player = event.getPlayer();
 
         QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
@@ -48,18 +53,18 @@ public final class PlayerkillingTaskType extends TaskType {
                         continue;
                     }
 
-                    int playerKillsNeeded = (int) task.getConfigValue("amount");
+                    int distanceNeeded = (int) task.getConfigValue("distance");
 
-                    int progressKills;
+                    int progressDistance;
                     if (taskProgress.getProgress() == null) {
-                        progressKills = 0;
+                        progressDistance = 0;
                     } else {
-                        progressKills = (int) taskProgress.getProgress();
+                        progressDistance = (int) taskProgress.getProgress();
                     }
 
-                    taskProgress.setProgress(progressKills + 1);
+                    taskProgress.setProgress(progressDistance + 1);
 
-                    if (((int) taskProgress.getProgress()) >= playerKillsNeeded) {
+                    if (((int) taskProgress.getProgress()) >= distanceNeeded) {
                         taskProgress.setCompleted(true);
                     }
                 }

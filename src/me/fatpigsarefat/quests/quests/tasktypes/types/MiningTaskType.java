@@ -1,4 +1,4 @@
-package me.fatpigsarefat.quests.quests.tasktypes;
+package me.fatpigsarefat.quests.quests.tasktypes.types;
 
 import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.player.QPlayer;
@@ -7,15 +7,31 @@ import me.fatpigsarefat.quests.player.questprogressfile.QuestProgressFile;
 import me.fatpigsarefat.quests.player.questprogressfile.TaskProgress;
 import me.fatpigsarefat.quests.quests.Quest;
 import me.fatpigsarefat.quests.quests.Task;
+import me.fatpigsarefat.quests.quests.tasktypes.ConfigValue;
+import me.fatpigsarefat.quests.quests.tasktypes.TaskType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class MiningTaskType extends TaskType {
+
+    private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public MiningTaskType() {
         // type, author, description
         super("blockbreak", "fatpigsarefat", "Break a set amount of blocks.");
+
+        // config values for the quest creator to use, if unspecified then the quest creator will not know what to put here (and will require users to
+        // go into the config and manually configure there)
+        this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of blocks to be broken."));
+    }
+
+    @Override
+    public List<ConfigValue> getCreatorConfigValues() {
+        return creatorConfigValues;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

@@ -1,4 +1,4 @@
-package me.fatpigsarefat.quests.quests.tasktypes;
+package me.fatpigsarefat.quests.quests.tasktypes.types;
 
 import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.player.QPlayer;
@@ -7,18 +7,30 @@ import me.fatpigsarefat.quests.player.questprogressfile.QuestProgressFile;
 import me.fatpigsarefat.quests.player.questprogressfile.TaskProgress;
 import me.fatpigsarefat.quests.quests.Quest;
 import me.fatpigsarefat.quests.quests.Task;
-import org.bukkit.ChatColor;
+import me.fatpigsarefat.quests.quests.tasktypes.ConfigValue;
+import me.fatpigsarefat.quests.quests.tasktypes.TaskType;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
 
-public final class MobkillingCertainTaskType extends TaskType {
+import java.util.ArrayList;
+import java.util.List;
 
-    public MobkillingCertainTaskType() {
-        super("mobkillingcertain", "fatpigsarefat", "Kill a set amount of a specific entity type.");
+public final class PlayerkillingTaskType extends TaskType {
+
+    private List<ConfigValue> creatorConfigValues = new ArrayList<>();
+
+    public PlayerkillingTaskType() {
+        super("playerkilling", "fatpigsarefat", "Kill a set amount of players.");
+        this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of mobs to be killed."));
+        this.creatorConfigValues.add(new ConfigValue("hostile", false, "Only allow hostile or non-hostile mobs (unspecified = any type allowed)."));
+    }
+
+    @Override
+    public List<ConfigValue> getCreatorConfigValues() {
+        return creatorConfigValues;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -26,7 +38,7 @@ public final class MobkillingCertainTaskType extends TaskType {
         Entity killer = event.getEntity().getKiller();
         Entity mob = event.getEntity();
 
-        if (mob instanceof Player) {
+        if (!(mob instanceof Player)) {
             return;
         }
 
@@ -50,26 +62,7 @@ public final class MobkillingCertainTaskType extends TaskType {
                         continue;
                     }
 
-                    String configEntity = (String) task.getConfigValue("mob");
-                    String configName = (String) task.getConfigValue("name");
-
-                    EntityType entity = EntityType.fromName(configEntity);
-                    if (entity == null) {
-                        continue;
-                    }
-
-                    if (configName != null) {
-                        configName = ChatColor.translateAlternateColorCodes('&', configName);
-                        if (!mob.getCustomName().equals(configName)) {
-                            return;
-                        }
-                    }
-
-                    if (mob.getType() != entity) {
-                        continue;
-                    }
-
-                    int mobKillsNeeded = (int) task.getConfigValue("amount");
+                    int playerKillsNeeded = (int) task.getConfigValue("amount");
 
                     int progressKills;
                     if (taskProgress.getProgress() == null) {
@@ -80,7 +73,7 @@ public final class MobkillingCertainTaskType extends TaskType {
 
                     taskProgress.setProgress(progressKills + 1);
 
-                    if (((int) taskProgress.getProgress()) >= mobKillsNeeded) {
+                    if (((int) taskProgress.getProgress()) >= playerKillsNeeded) {
                         taskProgress.setCompleted(true);
                     }
                 }

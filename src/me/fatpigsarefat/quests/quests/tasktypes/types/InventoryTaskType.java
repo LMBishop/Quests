@@ -1,4 +1,4 @@
-package me.fatpigsarefat.quests.quests.tasktypes;
+package me.fatpigsarefat.quests.quests.tasktypes.types;
 
 import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.player.QPlayer;
@@ -7,6 +7,8 @@ import me.fatpigsarefat.quests.player.questprogressfile.QuestProgressFile;
 import me.fatpigsarefat.quests.player.questprogressfile.TaskProgress;
 import me.fatpigsarefat.quests.quests.Quest;
 import me.fatpigsarefat.quests.quests.Task;
+import me.fatpigsarefat.quests.quests.tasktypes.ConfigValue;
+import me.fatpigsarefat.quests.quests.tasktypes.TaskType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,10 +20,23 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class InventoryTaskType extends TaskType {
+
+    private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public InventoryTaskType() {
         super("inventory", "fatpigsarefat", "Obtain a set of items.");
+        this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of item to retrieve."));
+        this.creatorConfigValues.add(new ConfigValue("item", true, "Name or ID of item."));
+        this.creatorConfigValues.add(new ConfigValue("remove-items-when-complete", false, "Take the items away from the player on completion (true/false, default = false)."));
+    }
+
+    @Override
+    public List<ConfigValue> getCreatorConfigValues() {
+        return creatorConfigValues;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

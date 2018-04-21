@@ -1,4 +1,4 @@
-package me.fatpigsarefat.quests.quests.tasktypes;
+package me.fatpigsarefat.quests.quests.tasktypes.types;
 
 import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.player.QPlayer;
@@ -7,21 +7,35 @@ import me.fatpigsarefat.quests.player.questprogressfile.QuestProgressFile;
 import me.fatpigsarefat.quests.player.questprogressfile.TaskProgress;
 import me.fatpigsarefat.quests.quests.Quest;
 import me.fatpigsarefat.quests.quests.Task;
+import me.fatpigsarefat.quests.quests.tasktypes.ConfigValue;
+import me.fatpigsarefat.quests.quests.tasktypes.TaskType;
+import org.bukkit.Material;
+import org.bukkit.entity.Cow;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerShearEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-public final class ShearingTaskType extends TaskType {
+import java.util.ArrayList;
+import java.util.List;
 
-    public ShearingTaskType() {
-        super("shearing", "fatpigsarefat", "Shear a set amount of sheep.");
+public final class MilkingTaskType extends TaskType {
+
+    private List<ConfigValue> creatorConfigValues = new ArrayList<>();
+
+    public MilkingTaskType() {
+        super("milking", "fatpigsarefat", "Milk a set amount of cows.");
+        this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of cows to be milked."));
+    }
+
+    @Override
+    public List<ConfigValue> getCreatorConfigValues() {
+        return creatorConfigValues;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onShear(PlayerShearEntityEvent event) {
-        if (!(event.getEntity() instanceof Sheep)) {
+    public void onMilk(PlayerInteractEntityEvent event) {
+        if (!(event.getRightClicked() instanceof Cow) || (event.getPlayer().getItemInHand().getType() != Material.BUCKET)) {
             return;
         }
 
@@ -41,18 +55,18 @@ public final class ShearingTaskType extends TaskType {
                         continue;
                     }
 
-                    int sheepNeeded = (int) task.getConfigValue("amount");
+                    int cowsNeeded = (int) task.getConfigValue("amount");
 
-                    int progressSheared;
+                    int progressMilked;
                     if (taskProgress.getProgress() == null) {
-                        progressSheared = 0;
+                        progressMilked = 0;
                     } else {
-                        progressSheared = (int) taskProgress.getProgress();
+                        progressMilked = (int) taskProgress.getProgress();
                     }
 
-                    taskProgress.setProgress(progressSheared + 1);
+                    taskProgress.setProgress(progressMilked + 1);
 
-                    if (((int) taskProgress.getProgress()) >= sheepNeeded) {
+                    if (((int) taskProgress.getProgress()) >= cowsNeeded) {
                         taskProgress.setCompleted(true);
                     }
                 }
