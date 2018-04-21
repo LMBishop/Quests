@@ -196,7 +196,8 @@ quests:
       - "&cThis category is designed to show you the different"
       - "&cattributes a quest can have. This quest has a 'reward string'"
       - "&c(a series of messages sent when a quest is complete),"
-        "unlike the previous one."
+      - "&cunlike the previous one."
+      - ""
       - "&7This quest requires you to:"
       - "&7 - Kill 3 mobs."
       - ""
@@ -220,7 +221,7 @@ quests:
       repeatable: true
       cooldown:
         enabled: true
-        time: 1440
+        time: 10
 
   # This is the end of the config example quests.
   # Hopefully you should be able to understand the quest config from this.
@@ -507,6 +508,38 @@ quests:
       type: "MILK_BUCKET"
     rewards:
      - "eco give {player} 50"
+    options:
+      category: "medium"
+      requires:
+       - ""
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  position1:
+    tasks:
+      position:
+        type: "position"
+        x: 0
+        y: 0
+        z: 0
+        world: "world"
+    display:
+      name: "&cOrigin Point"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Reach position: 0, 0, 0 in world world."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $100 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - Position reached: {position:complete}."
+      type: "GOLD_BOOTS"
+    rewards:
+     - "eco give {player} 100"
     options:
       category: "medium"
       requires:

@@ -117,6 +117,7 @@ public class Quests extends JavaPlugin {
         taskTypeManager.registerTaskType(new TamingTaskType());
         taskTypeManager.registerTaskType(new MilkingTaskType());
         taskTypeManager.registerTaskType(new ShearingTaskType());
+        taskTypeManager.registerTaskType(new PositionTaskType());
         if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
             taskTypeManager.registerTaskType(new ASkyBlockLevelType());
         }
