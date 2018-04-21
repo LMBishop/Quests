@@ -17,6 +17,7 @@ import me.fatpigsarefat.quests.quests.Quest;
 import me.fatpigsarefat.quests.quests.QuestManager;
 import me.fatpigsarefat.quests.quests.Task;
 import me.fatpigsarefat.quests.quests.tasktypes.*;
+import me.fatpigsarefat.quests.quests.tasktypes.types.*;
 import me.fatpigsarefat.quests.title.*;
 import me.fatpigsarefat.quests.updater.Updater;
 import org.apache.commons.lang.StringUtils;
