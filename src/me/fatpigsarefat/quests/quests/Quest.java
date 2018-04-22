@@ -3,12 +3,12 @@ package me.fatpigsarefat.quests.quests;
 import me.fatpigsarefat.quests.obj.misc.QItemStack;
 import org.bukkit.ChatColor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Quest {
 
-    private List<Task> tasks = new ArrayList<>();
+    private Map<String, Task> tasks = new HashMap<>();
+    //TODO: maybe store by <tasktypename (string), list<task>> since we never get task by id, but always get tasks by type.
     private String id;
     private QItemStack displayItem;
     private List<String> rewards;
@@ -37,16 +37,16 @@ public class Quest {
     }
 
     public void registerTask(Task task) {
-        tasks.add(task);
+        tasks.put(task.getId(), task);
     }
 
-    public List<Task> getTasks() {
-        return tasks;
+    public Collection<Task> getTasks() {
+        return tasks.values();
     }
 
     public List<Task> getTasksOfType(String type) {
         List<Task> tasks = new ArrayList<>();
-        for (Task task : this.tasks) {
+        for (Task task : getTasks()) {
             if (task.getType().equals(type)) {
                 tasks.add(task);
             }

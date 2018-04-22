@@ -1,12 +1,10 @@
 package me.fatpigsarefat.quests.player.questprogressfile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class QuestProgress {
 
-    private List<TaskProgress> taskProgress = new ArrayList<>();
+    private Map<String, TaskProgress> taskProgress = new HashMap<>();
     private String questid;
     private boolean started;
     private boolean completed;
@@ -74,20 +72,15 @@ public class QuestProgress {
     }
 
     public void addTaskProgress(TaskProgress taskProgress) {
-        this.taskProgress.add(taskProgress);
+        this.taskProgress.put(taskProgress.getTaskId(), taskProgress);
     }
 
-    public List<TaskProgress> getTaskProgress() {
-        return taskProgress;
+    public Collection<TaskProgress> getTaskProgress() {
+        return taskProgress.values();
     }
 
     public TaskProgress getTaskProgress(String taskId) {
-        for (TaskProgress taskProgress : this.taskProgress) {
-            if (taskProgress.getTaskId().equals(taskId)) {
-                return taskProgress;
-            }
-        }
-        return null;
+        return taskProgress.getOrDefault(taskId, null);
     }
 
     public boolean isWorthSaving() {

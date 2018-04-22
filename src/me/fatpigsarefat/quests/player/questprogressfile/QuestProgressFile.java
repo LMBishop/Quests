@@ -12,14 +12,12 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class QuestProgressFile {
 
-    private List<QuestProgress> questProgress = new ArrayList<>();
+    private Map<String, QuestProgress> questProgress = new HashMap<>();
     private UUID player;
 
     public QuestProgressFile(UUID player) {
@@ -102,12 +100,12 @@ public class QuestProgressFile {
     }
 
     public void addQuestProgress(QuestProgress questProgress) {
-        this.questProgress.add(questProgress);
+        this.questProgress.put(questProgress.getQuestId(), questProgress);
     }
 
     public List<Quest> getStartedQuests() {
         List<Quest> startedQuests = new ArrayList<>();
-        for (QuestProgress questProgress : questProgress) {
+        for (QuestProgress questProgress : questProgress.values()) {
             if (questProgress.isStarted()) {
                 startedQuests.add(Quests.getQuestManager().getQuestById(questProgress.getQuestId()));
             }
@@ -116,12 +114,7 @@ public class QuestProgressFile {
     }
 
     public boolean hasQuestProgress(Quest quest) {
-        for (QuestProgress questProgress : this.questProgress) {
-            if (questProgress.getQuestId().equals(quest.getId())) {
-                return true;
-            }
-        }
-        return false;
+        return questProgress.containsKey(quest.getId());
     }
 
     public boolean hasStartedQuest(Quest quest) {
@@ -165,12 +158,9 @@ public class QuestProgressFile {
     }
 
     public QuestProgress getQuestProgress(Quest quest) {
-        for (QuestProgress questProgress : this.questProgress) {
-            if (questProgress.getQuestId().equals(quest.getId())) {
-                return questProgress;
-            }
-        }
-        if (generateBlankQuestProgress(quest.getId())) {
+        if (questProgress.containsKey(quest.getId())) {
+            return questProgress.get(quest.getId());
+        } else if (generateBlankQuestProgress(quest.getId())) {
             return getQuestProgress(quest);
         }
         return null;
@@ -185,7 +175,7 @@ public class QuestProgressFile {
                 questProgress.addTaskProgress(taskProgress);
             }
 
-            this.questProgress.add(questProgress);
+            addQuestProgress(questProgress);
             return true;
         }
         return false;
@@ -207,7 +197,7 @@ public class QuestProgressFile {
 
         YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
         data.set("quest-progress", null);
-        for (QuestProgress questProgress : this.questProgress) {
+        for (QuestProgress questProgress : questProgress.values()) {
             if (!questProgress.isWorthSaving()) {
                 continue;
             }
