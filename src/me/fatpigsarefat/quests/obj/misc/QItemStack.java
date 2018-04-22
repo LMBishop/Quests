@@ -25,6 +25,7 @@ public class QItemStack {
         this.loreNormal = loreNormal;
         this.loreStarted = loreStarted;
         this.type = type;
+        this.data = data;
     }
 
     public String getName() {
