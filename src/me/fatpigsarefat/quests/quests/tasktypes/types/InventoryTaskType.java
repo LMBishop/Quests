@@ -10,6 +10,7 @@ import me.fatpigsarefat.quests.quests.Task;
 import me.fatpigsarefat.quests.quests.tasktypes.ConfigValue;
 import me.fatpigsarefat.quests.quests.tasktypes.TaskType;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,11 +18,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public final class InventoryTaskType extends TaskType {
 
@@ -95,16 +99,20 @@ public final class InventoryTaskType extends TaskType {
                     }
                     ItemStack is;
                     if (configData != null) {
-                        is = new ItemStack(material, amount, (Short) configData);
+                        is = new ItemStack(material, 1, ((Integer) configData).shortValue());
                     } else {
-                        is = new ItemStack(material, amount);
+                        is = new ItemStack(material, 1);
                     }
 
-                    if (player.getInventory().contains(is)) {
-                        taskProgress.setCompleted(true);
+                    if (player.getInventory().containsAtLeast(is, amount)) {
+                        is.setAmount(amount);
+                        Map<Integer, ItemStack> failures = player.getInventory().removeItem(is);
+                        if (failures.size() == 0) {
+                            taskProgress.setCompleted(true);
 
-                        if (remove != null && ((Boolean) remove)) {
-                            player.getInventory().remove(is);
+                            if (remove != null && ((Boolean) remove)) {
+                                player.getInventory().remove(is);
+                            }
                         }
                     }
                 }
