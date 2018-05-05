@@ -25,7 +25,17 @@ public enum Messages {
     TITLE_QUEST_START_SUBTITLE("titles.quest-start.subtitle"),
     TITLE_QUEST_COMPLETE_TITLE("titles.quest-complete.title"),
     TITLE_QUEST_COMPLETE_SUBTITLE("titles.quest-complete.subtitle"),
-    BETA_REMINDER("messages.beta-reminder");
+    BETA_REMINDER("messages.beta-reminder"),
+    COMMAND_QUEST_ADMIN_LOADDATA("messages.command-quest-admin-loaddata"),
+    COMMAND_QUEST_ADMIN_NODATA("messages.command-quest-admin-nodata"),
+    COMMAND_QUEST_ADMIN_FULLRESET("messages.command-quest-admin-fullreset"),
+    COMMAND_QUEST_ADMIN_START_FAILLOCKED("messages.command-quest-admin-start-faillocked"),
+    COMMAND_QUEST_ADMIN_START_FAILCOOLDOWN("messages.command-quest-admin-start-failcooldown"),
+    COMMAND_QUEST_ADMIN_START_FAILCOMPLETE("messages.command-quest-admin-start-failcomplete"),
+    COMMAND_QUEST_ADMIN_START_FAILLIMIT("messages.command-quest-admin-start-faillimit"),
+    COMMAND_QUEST_ADMIN_START_SUCCESS("messages.command-quest-admin-start-success"),
+    COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS("messages.command-quest-admin-complete-success"),
+    COMMAND_QUEST_ADMIN_RESET_SUCCESS("messages.command-quest-admin-reset-success");
 
     private String path;
 

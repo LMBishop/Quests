@@ -147,6 +147,9 @@ public class Quests extends JavaPlugin {
             @Override
             public void run() {
                 for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
+                    if (qPlayer.isOnlyDataLoaded()) {
+                        continue;
+                    }
                     qPlayer.getQuestProgressFile().saveToDisk();
                 }
             }
@@ -155,6 +158,9 @@ public class Quests extends JavaPlugin {
             @Override
             public void run() {
                 for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
+                    if (qPlayer.isOnlyDataLoaded()) {
+                        continue;
+                    }
                     QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                     for (Map.Entry<String, Quest> entry : Quests.getQuestManager().getQuests().entrySet()) {
                         String id = entry.getKey();
@@ -188,6 +194,9 @@ public class Quests extends JavaPlugin {
     @Override
     public void onDisable() {
         for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
+            if (qPlayer.isOnlyDataLoaded()) {
+                continue;
+            }
             qPlayer.getQuestProgressFile().saveToDisk();
         }
     }

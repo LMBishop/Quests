@@ -50,13 +50,19 @@ public class QuestProgressFile {
         return true;
     }
 
-    public boolean startQuest(Quest quest) {
+    /**
+     * Start a quest for the player.
+     *
+     * @param quest the quest to check
+     * @return 0 if successful, 1 if limit reached, 2 if quest is already completed, 3 if quest has cooldown, 4 if still locked
+     */
+    public int startQuest(Quest quest) {
         if (getStartedQuests().size() >= Options.QUESTS_START_LIMIT.getIntValue()) {
             if (Bukkit.getPlayer(player) != null) {
                 Player player = Bukkit.getPlayer(getPlayer());
                 player.sendMessage(Messages.QUEST_START_LIMIT.getMessage().replace("{limit}", String.valueOf(Options.QUESTS_START_LIMIT.getIntValue())));
             }
-            return false;
+            return 1;
         }
         QuestProgress questProgress = getQuestProgress(quest);
         if (!quest.isRepeatable() && questProgress.isCompletedBefore()) {
@@ -64,7 +70,7 @@ public class QuestProgressFile {
                 Player player = Bukkit.getPlayer(getPlayer());
                 player.sendMessage(Messages.QUEST_START_DISABLED.getMessage());
             }
-            return false;
+            return 2;
         }
         long cooldown = getCooldownFor(quest);
         if (cooldown > 0) {
@@ -72,14 +78,14 @@ public class QuestProgressFile {
                 Player player = Bukkit.getPlayer(getPlayer());
                 player.sendMessage(Messages.QUEST_START_COOLDOWN.getMessage().replace("{time}", String.valueOf(Quests.convertToFormat(TimeUnit.MINUTES.convert(cooldown, TimeUnit.MILLISECONDS)))));
             }
-            return false;
+            return 3;
         }
         if (!hasMetRequirements(quest)) {
             if (Bukkit.getPlayer(player) != null) {
                 Player player = Bukkit.getPlayer(getPlayer());
                 player.sendMessage(Messages.QUEST_START_LOCKED.getMessage());
             }
-            return false;
+            return 4;
         }
         questProgress.setStarted(true);
         for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
@@ -96,7 +102,7 @@ public class QuestProgressFile {
                         .getDisplayNameStripped()));
             }
         }
-        return true;
+        return 0;
     }
 
     public void addQuestProgress(QuestProgress questProgress) {
@@ -218,6 +224,10 @@ public class QuestProgressFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void clear() {
+        questProgress.clear();
     }
 
 }

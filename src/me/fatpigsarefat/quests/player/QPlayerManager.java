@@ -30,7 +30,11 @@ public class QPlayerManager {
     }
 
     public void loadPlayer(UUID uuid) {
-        if (getPlayer(uuid) == null) {
+        loadPlayer(uuid, false);
+    }
+
+    public void loadPlayer(UUID uuid, boolean onlyData) {
+        if (getPlayer(uuid) == null || getPlayer(uuid).isOnlyDataLoaded()) {
             QuestProgressFile questProgressFile = new QuestProgressFile(uuid);
 
             File directory = new File(Quests.getInstance().getDataFolder() + File.separator + "playerdata");
@@ -61,7 +65,7 @@ public class QPlayerManager {
                 }
             }
 
-            QPlayer qPlayer = new QPlayer(uuid, questProgressFile);
+            QPlayer qPlayer = new QPlayer(uuid, questProgressFile, onlyData);
 
             addPlayer(qPlayer);
         }

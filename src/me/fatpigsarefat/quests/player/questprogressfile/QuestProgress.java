@@ -86,4 +86,8 @@ public class QuestProgress {
     public boolean isWorthSaving() {
         return modified;
     }
+
+    public void setWorthSaving(boolean modified) {
+        this.modified = modified;
+    }
 }

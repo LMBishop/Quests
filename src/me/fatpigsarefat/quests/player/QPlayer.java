@@ -21,10 +21,16 @@ public class QPlayer {
 
     private UUID uuid;
     private QuestProgressFile questProgressFile;
+    private boolean onlyDataLoaded;
 
     public QPlayer(UUID uuid, QuestProgressFile questProgressFile) {
+        this(uuid, questProgressFile, false);
+    }
+
+    public QPlayer(UUID uuid, QuestProgressFile questProgressFile, boolean onlyDataLoaded) {
         this.uuid = uuid;
         this.questProgressFile = questProgressFile;
+        this.onlyDataLoaded = onlyDataLoaded;
     }
 
     public UUID getUuid() {
@@ -32,6 +38,10 @@ public class QPlayer {
     }
 
     public void openCategory(Category category) {
+        if (onlyDataLoaded) {
+            return;
+        }
+
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) {
             return;
@@ -53,6 +63,10 @@ public class QPlayer {
     }
 
     public void openQuests() {
+        if (onlyDataLoaded) {
+            return;
+        }
+
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) {
             return;
@@ -89,6 +103,14 @@ public class QPlayer {
             player.openInventory(qMenuQuest.toInventory(1));
             EventInventory.track(player.getUniqueId(), qMenuQuest);
         }
+    }
+
+    public boolean isOnlyDataLoaded() {
+        return onlyDataLoaded;
+    }
+
+    public void setOnlyDataLoaded(boolean onlyDataLoaded) {
+        this.onlyDataLoaded = onlyDataLoaded;
     }
 
     public QuestProgressFile getQuestProgressFile() {

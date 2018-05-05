@@ -4,16 +4,20 @@ import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.obj.Messages;
 import me.fatpigsarefat.quests.obj.Options;
 import me.fatpigsarefat.quests.player.QPlayer;
+import me.fatpigsarefat.quests.player.questprogressfile.QuestProgressFile;
 import me.fatpigsarefat.quests.quests.Category;
 import me.fatpigsarefat.quests.quests.Quest;
 import me.fatpigsarefat.quests.quests.tasktypes.TaskType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.UUID;
 
 public class CommandQuests implements CommandExecutor {
 
@@ -108,41 +112,137 @@ public class CommandQuests implements CommandExecutor {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.getMessage().replace("{player}", args[3]));
                             return true;
                         }
-                        //TODO finish moddata command
                         showAdminHelp(sender, "opengui");
                         return true;
                     } else if (args[1].equalsIgnoreCase("moddata")) {
+                        Player player;
+                        OfflinePlayer ofp;
+                        UUID uuid;
+                        String name;
+                        if ((player = Bukkit.getPlayer(args[3])) != null) {
+                            uuid = player.getUniqueId();
+                            name = player.getName();
+                        } else if ((ofp = Bukkit.getOfflinePlayer(args[3])) != null) {
+                            uuid = ofp.getUniqueId();
+                            name = ofp.getName();
+                        } else {
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.getMessage().replace("{player}", args[3]));
+                            return true;
+                        }
+                        if (args[2].equalsIgnoreCase("fullreset")) {
+                            if (Quests.getPlayerManager().getPlayer(uuid) == null) {
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", name));
+                                Quests.getPlayerManager().loadPlayer(uuid, true);
+                            }
+                            if (Quests.getPlayerManager().getPlayer(uuid) == null) {
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_NODATA.getMessage().replace("{player}", name));
+                                return true;
+                            }
+                            QuestProgressFile questProgressFile = Quests.getPlayerManager().getPlayer(uuid).getQuestProgressFile();
+                            questProgressFile.clear();
+                            questProgressFile.saveToDisk();
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_FULLRESET.getMessage().replace("{player}", name));
+                            return true;
+                        }
+                        if (Quests.getPlayerManager().getPlayer(uuid).isOnlyDataLoaded()) {
+                            Quests.getPlayerManager().removePlayer(uuid);
+                        }
                         showAdminHelp(sender, "moddata");
                         return true;
                     }
                 } else if (args.length == 5) {
-                    if (args[2].equalsIgnoreCase("c") || args[2].equalsIgnoreCase("category")) {
-                        if (!Options.CATEGORIES_ENABLED.getBooleanValue()) {
-                            sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DISABLED.getMessage());
-                            return true;
-                        }
-                        Category category = Quests.getQuestManager().getCategoryById(args[4]);
-                        if (category == null) {
-                            sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.getMessage().replace("{category}", args[4]));
-                            return true;
-                        }
-                        Player player = Bukkit.getPlayer(args[3]);
-                        if (player != null) {
-                            QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
-                            if (qPlayer != null) {
-                                qPlayer.openCategory(category);
-                                sender.sendMessage(Messages.COMMAND_QUEST_OPENCATEGORY_ADMIN_SUCCESS.getMessage().replace("{player}", player.getName())
-                                        .replace("{category}", category.getId()));
+                    if (args[1].equalsIgnoreCase("opengui")) {
+                        if (args[2].equalsIgnoreCase("c") || args[2].equalsIgnoreCase("category")) {
+                            if (!Options.CATEGORIES_ENABLED.getBooleanValue()) {
+                                sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DISABLED.getMessage());
                                 return true;
                             }
+                            Category category = Quests.getQuestManager().getCategoryById(args[4]);
+                            if (category == null) {
+                                sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.getMessage().replace("{category}", args[4]));
+                                return true;
+                            }
+                            Player player = Bukkit.getPlayer(args[3]);
+                            if (player != null) {
+                                QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
+                                if (qPlayer != null) {
+                                    qPlayer.openCategory(category);
+                                    sender.sendMessage(Messages.COMMAND_QUEST_OPENCATEGORY_ADMIN_SUCCESS.getMessage().replace("{player}", player.getName())
+                                            .replace("{category}", category.getId()));
+                                    return true;
+                                }
+                            }
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.getMessage().replace("{player}", args[3]));
+                            return true;
                         }
-                        sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.getMessage().replace("{player}", args[3]));
+                    } else if (args[1].equalsIgnoreCase("moddata")) {
+                        Player player;
+                        OfflinePlayer ofp;
+                        UUID uuid;
+                        String name;
+                        if ((player = Bukkit.getPlayer(args[3])) != null) {
+                            uuid = player.getUniqueId();
+                            name = player.getName();
+                        } else if ((ofp = Bukkit.getOfflinePlayer(args[3])) != null) {
+                            uuid = ofp.getUniqueId();
+                            name = ofp.getName();
+                        } else {
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.getMessage().replace("{player}", args[3]));
+                            return true;
+                        }
+                        if (Quests.getPlayerManager().getPlayer(uuid) == null) {
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", name));
+                            Quests.getPlayerManager().loadPlayer(uuid, true);
+                        }
+                        if (Quests.getPlayerManager().getPlayer(uuid) == null) {
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_NODATA.getMessage().replace("{player}", name));
+                            return true;
+                        }
+                        QuestProgressFile questProgressFile = Quests.getPlayerManager().getPlayer(uuid).getQuestProgressFile();
+                        Quest quest = Quests.getQuestManager().getQuestById(args[4]);
+                        if (quest == null) {
+                            sender.sendMessage(Messages.COMMAND_QUEST_START_DOESNTEXIST.getMessage().replace("{quest}", args[4]));
+                            return true;
+                        }
+                        if (args[2].equalsIgnoreCase("reset")) {
+                            questProgressFile.generateBlankQuestProgress(quest.getId());
+                            questProgressFile.saveToDisk();
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                            return true;
+                        } else if (args[2].equalsIgnoreCase("start")) {
+                            int response = questProgressFile.startQuest(quest);
+                            if (response == 1) {
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILLIMIT.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                return true;
+                            } else if (response == 2) {
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCOMPLETE.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                return true;
+                            } else if (response == 3) {
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCOOLDOWN.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                return true;
+                            } else if (response == 4) {
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILLOCKED.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                return true;
+                            }
+                            questProgressFile.saveToDisk();
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                            return true;
+                        } else if (args[2].equalsIgnoreCase("complete")) {
+                            questProgressFile.completeQuest(quest);
+                            questProgressFile.saveToDisk();
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                            return true;
+                        }
+                        if (Quests.getPlayerManager().getPlayer(uuid).isOnlyDataLoaded()) {
+                            Quests.getPlayerManager().removePlayer(uuid);
+                        }
+                        showAdminHelp(sender, "moddata");
                         return true;
                     }
-                }
 
-                showAdminHelp(sender, null);
-                return true;
+                    showAdminHelp(sender, null);
+                    return true;
+                }
             }
             if (sender instanceof Player && (args[0].equalsIgnoreCase("q") || args[0].equalsIgnoreCase("quests"))) {
                 Player player = (Player) sender;
