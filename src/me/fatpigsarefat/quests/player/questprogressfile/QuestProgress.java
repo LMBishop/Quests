@@ -1,6 +1,9 @@
 package me.fatpigsarefat.quests.player.questprogressfile;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class QuestProgress {
 
@@ -35,8 +38,8 @@ public class QuestProgress {
         return completed;
     }
 
-    public void setStarted(boolean started) {
-        this.started = started;
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
         this.modified = true;
     }
 
@@ -44,8 +47,8 @@ public class QuestProgress {
         return started;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public void setStarted(boolean started) {
+        this.started = started;
         this.modified = true;
     }
 
@@ -80,7 +83,17 @@ public class QuestProgress {
     }
 
     public TaskProgress getTaskProgress(String taskId) {
-        return taskProgress.getOrDefault(taskId, null);
+        TaskProgress tP = taskProgress.getOrDefault(taskId, null);
+        if (tP == null) {
+            repairTaskProgress(taskId);
+            tP = taskProgress.getOrDefault(taskId, null);
+        }
+        return tP;
+    }
+
+    public void repairTaskProgress(String taskid) {
+        TaskProgress taskProgress = new TaskProgress(taskid, null, player, false);
+        this.addTaskProgress(taskProgress);
     }
 
     public boolean isWorthSaving() {
