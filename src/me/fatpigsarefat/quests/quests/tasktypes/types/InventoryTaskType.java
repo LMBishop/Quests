@@ -10,22 +10,17 @@ import me.fatpigsarefat.quests.quests.Task;
 import me.fatpigsarefat.quests.quests.tasktypes.ConfigValue;
 import me.fatpigsarefat.quests.quests.tasktypes.TaskType;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public final class InventoryTaskType extends TaskType {
 
@@ -35,7 +30,8 @@ public final class InventoryTaskType extends TaskType {
         super("inventory", "fatpigsarefat", "Obtain a set of items.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of item to retrieve."));
         this.creatorConfigValues.add(new ConfigValue("item", true, "Name or ID of item."));
-        this.creatorConfigValues.add(new ConfigValue("remove-items-when-complete", false, "Take the items away from the player on completion (true/false, default = false)."));
+        this.creatorConfigValues.add(new ConfigValue("remove-items-when-complete", false, "Take the items away from the player on completion (true/false, " +
+                "default = false)."));
     }
 
     @Override
@@ -106,13 +102,10 @@ public final class InventoryTaskType extends TaskType {
 
                     if (player.getInventory().containsAtLeast(is, amount)) {
                         is.setAmount(amount);
-                        Map<Integer, ItemStack> failures = player.getInventory().removeItem(is);
-                        if (failures.size() == 0) {
-                            taskProgress.setCompleted(true);
+                        taskProgress.setCompleted(true);
 
-                            if (remove != null && ((Boolean) remove)) {
-                                player.getInventory().remove(is);
-                            }
+                        if (remove != null && ((Boolean) remove)) {
+                            player.getInventory().removeItem(is);
                         }
                     }
                 }

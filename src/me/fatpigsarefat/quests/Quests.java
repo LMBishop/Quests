@@ -1,6 +1,7 @@
 package me.fatpigsarefat.quests;
 
 import com.google.common.io.ByteStreams;
+import me.fatpigsarefat.quests.blocktype.SimilarBlocks;
 import me.fatpigsarefat.quests.bstats.Metrics;
 import me.fatpigsarefat.quests.commands.CommandQuests;
 import me.fatpigsarefat.quests.events.EventInventory;
@@ -16,7 +17,7 @@ import me.fatpigsarefat.quests.quests.Category;
 import me.fatpigsarefat.quests.quests.Quest;
 import me.fatpigsarefat.quests.quests.QuestManager;
 import me.fatpigsarefat.quests.quests.Task;
-import me.fatpigsarefat.quests.quests.tasktypes.*;
+import me.fatpigsarefat.quests.quests.tasktypes.TaskTypeManager;
 import me.fatpigsarefat.quests.quests.tasktypes.types.*;
 import me.fatpigsarefat.quests.title.*;
 import me.fatpigsarefat.quests.updater.Updater;
@@ -132,6 +133,8 @@ public class Quests extends JavaPlugin {
 
         Metrics metrics = new Metrics(this);
         this.getLogger().log(Level.INFO, "Metrics started. This can be disabled at /plugins/bStats/config.yml.");
+
+        SimilarBlocks.addBlocks();
 
         new BukkitRunnable() {
             @Override
