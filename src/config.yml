@@ -420,6 +420,35 @@ quests:
         enabled: true
         time: 1440
 
+  playtime:
+    tasks:
+      playtime:
+        type: "playtime"
+        minutes: 10
+    display:
+      name: "&cPlay Time"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Play for 10 minutes."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $50 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {playtime:progress} minutes/10 minutes."
+      type: "WATCH"
+    rewards:
+     - "eco give {player} 50"
+    options:
+      category: "easy"
+      requires:
+       - ""
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
   playerkiller:
     tasks:
       playerkilling:
