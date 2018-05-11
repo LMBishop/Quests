@@ -1,5 +1,5 @@
 name: Quests
-version: 2.0.7-beta
+version: 2.0.8-beta
 main: me.fatpigsarefat.quests.Quests
 author: fatpigsarefat
 softdepend: [ASkyBlock, uSkyBlock]
