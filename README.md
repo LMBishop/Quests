@@ -6,6 +6,7 @@ The latest version of Quests can be found on [Spigot](https://www.spigotmc.org/r
 
 ### Authors and Contributors
 - fatpigsarefat (original author)
+- Reinatix (playtime task type)
 
 ### Support
 For support please open a [GitHub issue](https://github.com/fatpigsarefat/Quests/issues) or join our [Discord server](https://discord.gg/8amrJnX). Please provide information of the issue, any errors that may come up and make sure you are using the latest version of the plugin.
