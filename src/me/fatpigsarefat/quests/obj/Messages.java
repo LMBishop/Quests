@@ -7,10 +7,12 @@ public enum Messages {
 
     QUEST_START("messages.quest-start"),
     QUEST_COMPLETE("messages.quest-complete"),
+    QUEST_CANCEL("messages.quest-cancel"),
     QUEST_START_LIMIT("messages.quest-start-limit"),
     QUEST_START_DISABLED("messages.quest-start-disabled"),
     QUEST_START_LOCKED("messages.quest-start-locked"),
     QUEST_START_COOLDOWN("messages.quest-start-cooldown"),
+    QUEST_CANCEL_NOTSTARTED("messages.quest-cancel-notstarted"),
     QUEST_UPDATER("messages.quest-updater"),
     COMMAND_QUEST_START_DOESNTEXIST("messages.command-quest-start-doesntexist"),
     COMMAND_QUEST_OPENCATEGORY_ADMIN_SUCCESS("messages.command-quest-opencategory-admin-success"),

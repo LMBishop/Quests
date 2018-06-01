@@ -176,6 +176,7 @@ public class CommandQuests implements CommandExecutor {
                             return true;
                         }
                     } else if (args[1].equalsIgnoreCase("moddata")) {
+                        boolean success = false;
                         Player player;
                         OfflinePlayer ofp;
                         UUID uuid;
@@ -196,19 +197,19 @@ public class CommandQuests implements CommandExecutor {
                         }
                         if (Quests.getPlayerManager().getPlayer(uuid) == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_NODATA.getMessage().replace("{player}", name));
-                            return true;
+                            success = true;
                         }
                         QuestProgressFile questProgressFile = Quests.getPlayerManager().getPlayer(uuid).getQuestProgressFile();
                         Quest quest = Quests.getQuestManager().getQuestById(args[4]);
                         if (quest == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_START_DOESNTEXIST.getMessage().replace("{quest}", args[4]));
-                            return true;
+                            success = true;
                         }
                         if (args[2].equalsIgnoreCase("reset")) {
                             questProgressFile.generateBlankQuestProgress(quest.getId());
                             questProgressFile.saveToDisk();
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
-                            return true;
+                            success = true;
                         } else if (args[2].equalsIgnoreCase("start")) {
                             int response = questProgressFile.startQuest(quest);
                             if (response == 1) {
@@ -226,17 +227,19 @@ public class CommandQuests implements CommandExecutor {
                             }
                             questProgressFile.saveToDisk();
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
-                            return true;
+                            success = true;
                         } else if (args[2].equalsIgnoreCase("complete")) {
                             questProgressFile.completeQuest(quest);
                             questProgressFile.saveToDisk();
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
-                            return true;
+                            success = true;
                         }
                         if (Quests.getPlayerManager().getPlayer(uuid).isOnlyDataLoaded()) {
                             Quests.getPlayerManager().removePlayer(uuid);
                         }
-                        showAdminHelp(sender, "moddata");
+                        if (!success) {
+                            showAdminHelp(sender, "moddata");
+                        }
                         return true;
                     }
 

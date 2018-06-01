@@ -15,7 +15,8 @@ public enum Options {
     GUI_HIDE_LOCKED("options.gui-hide-locked"),
     GUITITLE_QUESTS_CATEGORY("options.guinames.quests-category"),
     GUITITLE_QUESTS("options.guinames.quests-menu"),
-    GUITITLE_DAILY_QUESTS("options.guinames.daily-quests");
+    GUITITLE_DAILY_QUESTS("options.guinames.daily-quests"),
+    ALLOW_QUEST_CANCEL("options.allow-quest-cancel");
 
     private String path;
 

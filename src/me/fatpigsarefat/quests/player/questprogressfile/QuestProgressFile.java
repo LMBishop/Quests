@@ -105,6 +105,24 @@ public class QuestProgressFile {
         return 0;
     }
 
+    public boolean cancelQuest(Quest quest) {
+        QuestProgress questProgress = getQuestProgress(quest);
+        if (!questProgress.isStarted()) {
+            if (Bukkit.getPlayer(player) != null) {
+                Bukkit.getPlayer(getPlayer()).sendMessage(Messages.QUEST_CANCEL_NOTSTARTED.getMessage());
+            }
+            return false;
+        }
+        questProgress.setStarted(false);
+        for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
+            taskProgress.setProgress(null);
+        }
+        if (Bukkit.getPlayer(player) != null) {
+            Bukkit.getPlayer(getPlayer()).sendMessage(Messages.QUEST_CANCEL.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
+        }
+        return true;
+    }
+
     public void addQuestProgress(QuestProgress questProgress) {
         this.questProgress.put(questProgress.getQuestId(), questProgress);
     }

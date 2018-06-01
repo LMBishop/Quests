@@ -8,6 +8,7 @@ import me.fatpigsarefat.quests.obj.misc.QMenuQuest;
 import me.fatpigsarefat.quests.quests.Quest;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
@@ -51,8 +52,14 @@ public class EventInventory implements Listener {
                         .getCurrentPage()) - 1) * qMenuQuest.getPageSize()))) {
                     String questid = qMenuQuest.getSlotsToMenu().get(event.getSlot());
                     Quest quest = Quests.getQuestManager().getQuestById(questid);
-                    if (qMenuQuest.getOwner().getQuestProgressFile().startQuest(quest) == 0) {
-                        event.getWhoClicked().closeInventory();
+                    if (event.getClick() == ClickType.LEFT) {
+                        if (qMenuQuest.getOwner().getQuestProgressFile().startQuest(quest) == 0) {
+                            event.getWhoClicked().closeInventory();
+                        }
+                    } else if (event.getClick() == ClickType.RIGHT) {
+                        if (qMenuQuest.getOwner().getQuestProgressFile().cancelQuest(quest)) {
+                            event.getWhoClicked().closeInventory();
+                        }
                     }
                 }
             } else if (qMenu instanceof QMenuCategory) {

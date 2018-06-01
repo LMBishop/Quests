@@ -854,6 +854,8 @@ options:
   quest-started-limit: 2
   # Hide locked quests, quests on cooldown and completed (but not repeatable) quests
   gui-hide-locked: false
+  # Allow players to cancel a quest
+  allow-quest-cancel: true
   # Titles for the GUIs
   guinames:
     quests-category: "Quests Categories"
@@ -886,10 +888,12 @@ titles:
 messages:
   quest-start: "&7Quest &c{quest} &7started!"
   quest-complete: "&7Quest &c{quest} &7completed!"
+  quest-cancel: "&7Quest &c{quest} &7cancelled!"
   quest-start-limit: "&7Players are limited to &c{limit} &7started quests at a time."
   quest-start-disabled: "&7You cannot repeat this quest."
   quest-start-locked: "&7You have not unlocked this quest yet."
   quest-start-cooldown: "&7You have recently completed this quest. You have to wait &c{time} &7until you are able to restart it."
+  quest-cancel-notstarted: "&7You have not started this quest."
   quest-updater: "&cQuests > &7A new version &c{newver} &7was found on Spigot (your version: &c{oldver}&7). Please update me! <3 - Link: {link}"
   command-quest-start-doesntexist: "&7The specified quest '&c{quest}&7' does not exist."
   command-category-open-disabled: "&7Categories are disabled."
