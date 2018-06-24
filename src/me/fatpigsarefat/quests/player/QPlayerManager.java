@@ -37,32 +37,36 @@ public class QPlayerManager {
         if (getPlayer(uuid) == null || getPlayer(uuid).isOnlyDataLoaded()) {
             QuestProgressFile questProgressFile = new QuestProgressFile(uuid);
 
-            File directory = new File(Quests.getInstance().getDataFolder() + File.separator + "playerdata");
-            if (directory.exists() && directory.isDirectory()) {
-                File file = new File(Quests.getInstance().getDataFolder() + File.separator + "playerdata" + File.separator + uuid.toString() + ".yml");
-                if (file.exists()) {
-                    YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
-                    if (data.contains("quest-progress")) {
-                        for (String id : data.getConfigurationSection("quest-progress").getKeys(false)) {
-                            boolean started = data.getBoolean("quest-progress." + id + ".started");
-                            boolean completed = data.getBoolean("quest-progress." + id + ".completed");
-                            boolean completedBefore = data.getBoolean("quest-progress." + id + ".completed-before");
-                            long completionDate = data.getLong("quest-progress." + id + ".completion-date");
+            try {
+                File directory = new File(Quests.getInstance().getDataFolder() + File.separator + "playerdata");
+                if (directory.exists() && directory.isDirectory()) {
+                    File file = new File(Quests.getInstance().getDataFolder() + File.separator + "playerdata" + File.separator + uuid.toString() + ".yml");
+                    if (file.exists()) {
+                        YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
+                        if (data.contains("quest-progress")) {
+                            for (String id : data.getConfigurationSection("quest-progress").getKeys(false)) {
+                                boolean started = data.getBoolean("quest-progress." + id + ".started");
+                                boolean completed = data.getBoolean("quest-progress." + id + ".completed");
+                                boolean completedBefore = data.getBoolean("quest-progress." + id + ".completed-before");
+                                long completionDate = data.getLong("quest-progress." + id + ".completion-date");
 
-                            QuestProgress questProgress = new QuestProgress(id, completed, completedBefore, completionDate, uuid, started, true);
+                                QuestProgress questProgress = new QuestProgress(id, completed, completedBefore, completionDate, uuid, started, true);
 
-                            for (String taskid : data.getConfigurationSection("quest-progress." + id + ".task-progress").getKeys(false)) {
-                                boolean taskCompleted = data.getBoolean("quest-progress." + id + ".task-progress." + taskid + ".completed");
-                                Object taskProgression = data.get("quest-progress." + id + ".task-progress." + taskid + ".progress");
+                                for (String taskid : data.getConfigurationSection("quest-progress." + id + ".task-progress").getKeys(false)) {
+                                    boolean taskCompleted = data.getBoolean("quest-progress." + id + ".task-progress." + taskid + ".completed");
+                                    Object taskProgression = data.get("quest-progress." + id + ".task-progress." + taskid + ".progress");
 
-                                TaskProgress taskProgress = new TaskProgress(taskid, taskProgression, uuid, taskCompleted);
-                                questProgress.addTaskProgress(taskProgress);
+                                    TaskProgress taskProgress = new TaskProgress(taskid, taskProgression, uuid, taskCompleted);
+                                    questProgress.addTaskProgress(taskProgress);
+                                }
+
+                                questProgressFile.addQuestProgress(questProgress);
                             }
-
-                            questProgressFile.addQuestProgress(questProgress);
                         }
                     }
                 }
+            } catch (Exception ignored) {
+                // fuck
             }
 
             QPlayer qPlayer = new QPlayer(uuid, questProgressFile, onlyData);
