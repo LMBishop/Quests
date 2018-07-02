@@ -34,9 +34,11 @@ public class QuestProgressFile {
         questProgress.setCompletionDate(System.currentTimeMillis());
         if (Bukkit.getPlayer(player) != null) {
             Player player = Bukkit.getPlayer(this.player);
-            for (String s : quest.getRewards()) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), s.replace("{player}", player.getName()));
-            }
+            Bukkit.getServer().getScheduler().runTask(Quests.getInstance(), () -> {
+                for (String s : quest.getRewards()) {
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), s.replace("{player}", player.getName()));
+                }
+            });
             player.sendMessage(Messages.QUEST_COMPLETE.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
             if (Options.TITLES_ENABLED.getBooleanValue()) {
                 Quests.getTitle().sendTitle(player, Messages.TITLE_QUEST_COMPLETE_TITLE.getMessage().replace("{quest}", quest
