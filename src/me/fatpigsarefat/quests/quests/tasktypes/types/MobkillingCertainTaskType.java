@@ -41,7 +41,7 @@ public final class MobkillingCertainTaskType extends TaskType {
         Entity killer = event.getEntity().getKiller();
         Entity mob = event.getEntity();
 
-        if (mob instanceof Player) {
+        if (mob == null || mob instanceof Player) {
             return;
         }
 
@@ -77,7 +77,7 @@ public final class MobkillingCertainTaskType extends TaskType {
 
                     if (configName != null) {
                         configName = ChatColor.translateAlternateColorCodes('&', configName);
-                        if (!mob.getCustomName().equals(configName)) {
+                        if (mob.getCustomName() != null && !mob.getCustomName().equals(configName)) {
                             return;
                         }
                     }
