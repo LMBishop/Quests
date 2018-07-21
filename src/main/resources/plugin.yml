@@ -1,5 +1,8 @@
 name: Quests
-version: 2.0.11-beta
+
+# This will be replaced with the property "release.version" in pom.xml upon build.
+version: %PLUGIN_VERSION%
+
 main: me.fatpigsarefat.quests.Quests
 author: fatpigsarefat
 softdepend: [ASkyBlock, uSkyBlock]

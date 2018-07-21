@@ -18,7 +18,7 @@ public class QPlayerManager {
     }
 
     public QPlayer getPlayer(UUID uuid) {
-        return qPlayers.getOrDefault(uuid, null);
+        return qPlayers.get(uuid);
     }
 
     public void removePlayer(UUID uuid) {

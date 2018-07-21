@@ -2,5 +2,4 @@ out/
 .idea/
 test/
 *.iml
-*.xml
 .github/

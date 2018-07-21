@@ -386,33 +386,43 @@ public class Quests extends JavaPlugin {
             return false;
         }
         boolean success = false;
-        getLogger().info("Your server is running version " + version);
+        getLogger().info("Your server is running version " + version + ".");
         if (version.equals("v1_8_R3")) {
-            title = new Title_v1_8_R3();
+            title = new Title_BukkitNoTimings();
             success = true;
         } else if (version.equals("v1_8_R2")) {
-            title = new Title_v1_8_R2();
+            title = new Title_BukkitNoTimings();
             success = true;
         } else if (version.equals("v1_8_R1")) {
-            title = new Title_v1_8_R1();
+            title = new Title_BukkitNoTimings();
             success = true;
         } else if (version.equals("v1_9_R2")) {
-            title = new Title_v1_9_R2();
+            title = new Title_BukkitNoTimings();
             success = true;
         } else if (version.equals("v1_9_R1")) {
-            title = new Title_v1_9_R1();
+            title = new Title_BukkitNoTimings();
             success = true;
         } else if (version.equals("v1_10_R1")) {
-            title = new Title_v1_10_R1();
+            title = new Title_BukkitNoTimings();
             success = true;
         } else if (version.equals("v1_11_R1")) {
-            title = new Title_v1_11_R1();
+            title = new Title_Bukkit();
             success = true;
         } else if (version.equals("v1_12_R1")) {
-            title = new Title_v1_12_R1();
+            title = new Title_Bukkit();
+            success = true;
+        } else if (version.equals("v1_13_R1")) {
+            title = new Title_Bukkit();
             success = true;
         } else {
             title = new Title_Other();
+        }
+        if (title instanceof Title_Bukkit) {
+            getLogger().info("Titles have been enabled.");
+        } else if (title instanceof Title_BukkitNoTimings) {
+            getLogger().info("Titles have been enabled, although they have limited timings.");
+        } else  {
+            getLogger().info("Titles are not supported for this version.");
         }
         return success;
     }
