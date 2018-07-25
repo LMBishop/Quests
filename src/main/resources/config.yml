@@ -842,6 +842,18 @@ gui:
     - "&7(&a{quest}&7) and cannot."
     - "&7repeat it."
     type: "160:5"
+  quest-cancel-yes:
+    name: "&a&lConfirm Cancel"
+    lore:
+    - "&7Confirm you wish to cancel"
+    - "&7this quest and lose all"
+    - "&7progress."
+    type: "160:5"
+  quest-cancel-no:
+    name: "&c&lAbort Cancel"
+    lore:
+    - "&7Return to the quest menu."
+    type: "160:14"
 
 options:
   # If categories are disabled, quests will be put into one big gui.
@@ -861,6 +873,7 @@ options:
     quests-category: "Quests Categories"
     quests-menu: "Quests"
     daily-quests: "Daily Quests"
+    quest-cancel: "Cancel Quest"
 
 # This switches up the entire quest system.
 # By enabling daily-quests, players will no longer be presented with the standard Quest GUI.

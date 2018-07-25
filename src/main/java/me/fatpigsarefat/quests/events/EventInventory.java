@@ -3,6 +3,7 @@ package me.fatpigsarefat.quests.events;
 import me.fatpigsarefat.quests.Quests;
 import me.fatpigsarefat.quests.obj.Options;
 import me.fatpigsarefat.quests.obj.misc.QMenu;
+import me.fatpigsarefat.quests.obj.misc.QMenuCancel;
 import me.fatpigsarefat.quests.obj.misc.QMenuCategory;
 import me.fatpigsarefat.quests.obj.misc.QMenuQuest;
 import me.fatpigsarefat.quests.quests.Quest;
@@ -56,10 +57,11 @@ public class EventInventory implements Listener {
                         if (qMenuQuest.getOwner().getQuestProgressFile().startQuest(quest) == 0) {
                             event.getWhoClicked().closeInventory();
                         }
-                    } else if (event.getClick() == ClickType.RIGHT) {
-                        if (qMenuQuest.getOwner().getQuestProgressFile().cancelQuest(quest)) {
-                            event.getWhoClicked().closeInventory();
-                        }
+                    } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()) {
+                        QMenuCancel qMenuCancel = new QMenuCancel(qMenuQuest.getOwner(), qMenuQuest, quest);
+                        buffer.add(event.getWhoClicked().getUniqueId());
+                        event.getWhoClicked().openInventory(qMenuCancel.toInventory());
+                        tracker.put(event.getWhoClicked().getUniqueId(), qMenuCancel);
                     }
                 }
             } else if (qMenu instanceof QMenuCategory) {
@@ -70,6 +72,20 @@ public class EventInventory implements Listener {
                     buffer.add(event.getWhoClicked().getUniqueId());
                     event.getWhoClicked().openInventory(qMenuQuest.toInventory(1));
                     tracker.put(event.getWhoClicked().getUniqueId(), qMenuQuest);
+                }
+            } else if (qMenu instanceof QMenuCancel) {
+                QMenuCancel qMenuCancel = (QMenuCancel) qMenu;
+
+                event.setCancelled(true);
+                if (event.getSlot() == 10 || event.getSlot() == 11 || event.getSlot() == 12) {
+                    QMenuQuest qMenuQuest = qMenuCancel.getSuperMenu();
+                    buffer.add(event.getWhoClicked().getUniqueId());
+                    event.getWhoClicked().openInventory(qMenuQuest.toInventory(1));
+                    tracker.put(event.getWhoClicked().getUniqueId(), qMenuQuest);
+                } else if (event.getSlot() == 14 || event.getSlot() == 15 || event.getSlot() == 16) {
+                    if (qMenuCancel.getOwner().getQuestProgressFile().cancelQuest(qMenuCancel.getQuest())) {
+                        event.getWhoClicked().closeInventory();
+                    }
                 }
             }
         }

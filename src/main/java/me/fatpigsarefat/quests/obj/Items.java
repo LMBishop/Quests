@@ -11,7 +11,9 @@ public enum Items {
     QUEST_COMPLETED("gui.quest-completed-display"),
     PAGE_PREV("gui.page-prev"),
     PAGE_NEXT("gui.page-next"),
-    PAGE_DESCRIPTION("gui.page-desc");
+    PAGE_DESCRIPTION("gui.page-desc"),
+    QUEST_CANCEL_YES("gui.quest-cancel-yes"),
+    QUEST_CANCEL_NO("gui.quest-cancel-no");
 
     String path;
 

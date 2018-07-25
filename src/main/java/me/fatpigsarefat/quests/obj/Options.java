@@ -16,6 +16,7 @@ public enum Options {
     GUITITLE_QUESTS_CATEGORY("options.guinames.quests-category"),
     GUITITLE_QUESTS("options.guinames.quests-menu"),
     GUITITLE_DAILY_QUESTS("options.guinames.daily-quests"),
+    GUITITLE_QUEST_CANCEL("options.guinames.quest-cancel"),
     ALLOW_QUEST_CANCEL("options.allow-quest-cancel");
 
     private String path;
