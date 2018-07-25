@@ -242,10 +242,9 @@ public class CommandQuests implements CommandExecutor {
                         }
                         return true;
                     }
-
-                    showAdminHelp(sender, null);
-                    return true;
                 }
+                showAdminHelp(sender, null);
+                return true;
             }
             if (sender instanceof Player && (args[0].equalsIgnoreCase("q") || args[0].equalsIgnoreCase("quests"))) {
                 Player player = (Player) sender;
