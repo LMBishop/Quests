@@ -48,7 +48,7 @@ public class QMenuCancel implements QMenu {
     }
 
     public Inventory toInventory() {
-        String title = Options.GUITITLE_QUEST_CANCEL.getStringValue();
+        String title = Options.color(Options.GUITITLE_QUEST_CANCEL.getStringValue());
 
         ItemStack yes = Items.QUEST_CANCEL_YES.getItem();
         ItemStack no = Items.QUEST_CANCEL_NO.getItem();

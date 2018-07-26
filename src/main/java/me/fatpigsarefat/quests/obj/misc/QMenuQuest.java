@@ -85,7 +85,7 @@ public class QMenuQuest implements QMenu {
         currentPage = page;
         int pageMin = pageSize * (page - 1);
         int pageMax = pageSize * page;
-        String title = Options.GUITITLE_QUESTS.getStringValue();
+        String title = Options.color(Options.GUITITLE_QUESTS.getStringValue());
 
         ItemStack pageIs;
         ItemStack pagePrevIs;
