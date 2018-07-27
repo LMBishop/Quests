@@ -690,6 +690,33 @@ quests:
         enabled: true
         time: 1440
 
+  brewing:
+    tasks:
+      brewing:
+        type: "brewing"
+        amount: 10
+    display:
+      name: "&cBrewer"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Brew 10 potions."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $500 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {brewing:progress}/10 potions brewed."
+      type: "BREWING_STAND_ITEM"
+    rewards:
+     - "eco give {player} 500"
+    options:
+      category: "medium"
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
   askyblock:
     tasks:
       islandlevel:
