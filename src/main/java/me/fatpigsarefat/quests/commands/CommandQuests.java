@@ -39,7 +39,7 @@ public class CommandQuests implements CommandExecutor {
             qPlayer.openQuests();
             return true;
         } else if (args.length >= 1) {
-            if (args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin") && sender.hasPermission("quests.admin")) {
+            if ((args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin")) && sender.hasPermission("quests.admin")) {
                 if (args.length == 2) {
                     if (args[1].equalsIgnoreCase("opengui")) {
                         showAdminHelp(sender, "opengui");
