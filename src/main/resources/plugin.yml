@@ -18,5 +18,5 @@ commands:
 permissions:
   quests.command:
     description: Quests permission
-  quests.admin
+  quests.admin:
     description: Permission for the admin commands 
