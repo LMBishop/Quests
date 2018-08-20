@@ -6,7 +6,7 @@
 
     <groupId>com.fatpigsarefat</groupId>
     <artifactId>quests</artifactId>
-    <version>2.0.13</version>
+    <version>2.0.14</version>
     <name>Quests</name>
 
     <properties>
