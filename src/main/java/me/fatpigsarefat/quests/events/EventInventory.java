@@ -51,7 +51,7 @@ public class EventInventory implements Listener {
 
                 } else if (event.getSlot() < qMenuQuest.getPageSize() && qMenuQuest.getSlotsToMenu().containsKey(event.getSlot() + (((qMenuQuest
                         .getCurrentPage()) - 1) * qMenuQuest.getPageSize()))) {
-                    String questid = qMenuQuest.getSlotsToMenu().get(event.getSlot());
+                    String questid = qMenuQuest.getSlotsToMenu().get(event.getSlot() + (((qMenuQuest.getCurrentPage()) - 1) * qMenuQuest.getPageSize()));
                     Quest quest = Quests.getQuestManager().getQuestById(questid);
                     if (event.getClick() == ClickType.LEFT) {
                         if (qMenuQuest.getOwner().getQuestProgressFile().startQuest(quest) == 0) {
