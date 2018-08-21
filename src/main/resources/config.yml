@@ -578,6 +578,39 @@ quests:
         enabled: true
         time: 1440
 
+  distancefrom1:
+    tasks:
+      distancefrom:
+        type: "distancefrom"
+        x: 0
+        y: 0
+        z: 0
+        world: "world"
+        distance: 10000
+    display:
+      name: "&cExplorer"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Walk 10km away from the coords 0,0."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $500 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {distancefrom:progress}m/10000m walked."
+      type: "STICK"
+    rewards:
+     - "eco give {player} 100"
+    options:
+      category: "medium"
+      requires:
+       - ""
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
   mining2:
     tasks:
       mining:
