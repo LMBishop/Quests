@@ -56,38 +56,41 @@ public class QuestProgressFile {
      * Start a quest for the player.
      *
      * @param quest the quest to check
-     * @return 0 if successful, 1 if limit reached, 2 if quest is already completed, 3 if quest has cooldown, 4 if still locked
+     * @return 0 if successful, 1 if limit reached, 2 if quest is already completed, 3 if quest has cooldown, 4 if still locked, 5 if already started
      */
     public int startQuest(Quest quest) {
+        Player p = Bukkit.getPlayer(player);
         if (getStartedQuests().size() >= Options.QUESTS_START_LIMIT.getIntValue()) {
-            if (Bukkit.getPlayer(player) != null) {
-                Player player = Bukkit.getPlayer(getPlayer());
-                player.sendMessage(Messages.QUEST_START_LIMIT.getMessage().replace("{limit}", String.valueOf(Options.QUESTS_START_LIMIT.getIntValue())));
+            if (player != null) {
+                p.sendMessage(Messages.QUEST_START_LIMIT.getMessage().replace("{limit}", String.valueOf(Options.QUESTS_START_LIMIT.getIntValue())));
             }
             return 1;
         }
         QuestProgress questProgress = getQuestProgress(quest);
         if (!quest.isRepeatable() && questProgress.isCompletedBefore()) {
-            if (Bukkit.getPlayer(player) != null) {
-                Player player = Bukkit.getPlayer(getPlayer());
-                player.sendMessage(Messages.QUEST_START_DISABLED.getMessage());
+            if (player != null) {
+                p.sendMessage(Messages.QUEST_START_DISABLED.getMessage());
             }
             return 2;
         }
         long cooldown = getCooldownFor(quest);
         if (cooldown > 0) {
-            if (Bukkit.getPlayer(player) != null) {
-                Player player = Bukkit.getPlayer(getPlayer());
-                player.sendMessage(Messages.QUEST_START_COOLDOWN.getMessage().replace("{time}", String.valueOf(Quests.convertToFormat(TimeUnit.MINUTES.convert(cooldown, TimeUnit.MILLISECONDS)))));
+            if (player != null) {
+                p.sendMessage(Messages.QUEST_START_COOLDOWN.getMessage().replace("{time}", String.valueOf(Quests.convertToFormat(TimeUnit.MINUTES.convert(cooldown, TimeUnit.MILLISECONDS)))));
             }
             return 3;
         }
         if (!hasMetRequirements(quest)) {
-            if (Bukkit.getPlayer(player) != null) {
-                Player player = Bukkit.getPlayer(getPlayer());
-                player.sendMessage(Messages.QUEST_START_LOCKED.getMessage());
+            if (player != null) {
+                p.sendMessage(Messages.QUEST_START_LOCKED.getMessage());
             }
             return 4;
+        }
+        if (!questProgress.isStarted()) {
+            if (player != null) {
+                p.sendMessage(Messages.QUEST_START_STARTED.getMessage());
+            }
+            return 5;
         }
         questProgress.setStarted(true);
         for (TaskProgress taskProgress : questProgress.getTaskProgress()) {

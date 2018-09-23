@@ -12,6 +12,7 @@ public enum Messages {
     QUEST_START_DISABLED("messages.quest-start-disabled"),
     QUEST_START_LOCKED("messages.quest-start-locked"),
     QUEST_START_COOLDOWN("messages.quest-start-cooldown"),
+    QUEST_START_STARTED("messages.quest-start-started"),
     QUEST_CANCEL_NOTSTARTED("messages.quest-cancel-notstarted"),
     QUEST_UPDATER("messages.quest-updater"),
     COMMAND_QUEST_START_DOESNTEXIST("messages.command-quest-start-doesntexist"),
@@ -35,6 +36,7 @@ public enum Messages {
     COMMAND_QUEST_ADMIN_START_FAILCOOLDOWN("messages.command-quest-admin-start-failcooldown"),
     COMMAND_QUEST_ADMIN_START_FAILCOMPLETE("messages.command-quest-admin-start-failcomplete"),
     COMMAND_QUEST_ADMIN_START_FAILLIMIT("messages.command-quest-admin-start-faillimit"),
+    COMMAND_QUEST_ADMIN_START_FAILSTARTED("messages.command-quest-admin-start-failstarted"),
     COMMAND_QUEST_ADMIN_START_SUCCESS("messages.command-quest-admin-start-success"),
     COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS("messages.command-quest-admin-complete-success"),
     COMMAND_QUEST_ADMIN_RESET_SUCCESS("messages.command-quest-admin-reset-success");

@@ -204,6 +204,7 @@ public class CommandQuests implements CommandExecutor {
                         if (quest == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_START_DOESNTEXIST.getMessage().replace("{quest}", args[4]));
                             success = true;
+                            return true;
                         }
                         if (args[2].equalsIgnoreCase("reset")) {
                             questProgressFile.generateBlankQuestProgress(quest.getId());
@@ -223,6 +224,9 @@ public class CommandQuests implements CommandExecutor {
                                 return true;
                             } else if (response == 4) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILLOCKED.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                return true;
+                            } else if (response == 5) {
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILSTARTED.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                                 return true;
                             }
                             questProgressFile.saveToDisk();
