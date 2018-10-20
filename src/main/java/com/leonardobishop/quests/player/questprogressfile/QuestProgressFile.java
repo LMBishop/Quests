@@ -86,7 +86,7 @@ public class QuestProgressFile {
             }
             return 4;
         }
-        if (!questProgress.isStarted()) {
+        if (questProgress.isStarted()) {
             if (player != null) {
                 p.sendMessage(Messages.QUEST_START_STARTED.getMessage());
             }

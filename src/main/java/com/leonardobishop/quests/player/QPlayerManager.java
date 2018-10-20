@@ -65,7 +65,9 @@ public class QPlayerManager {
                         }
                     }
                 }
-            } catch (Exception ignored) {
+            } catch (Exception ex) {
+                Quests.getInstance().getLogger().severe("Failed to load player: " + uuid + "! This WILL cause errors.");
+                ex.printStackTrace();
                 // fuck
             }
 

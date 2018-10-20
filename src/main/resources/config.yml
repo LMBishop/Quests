@@ -812,6 +812,71 @@ quests:
         enabled: true
         time: 1440
 
+  citizensdeliver:
+    tasks:
+      deliver:
+        type: "citizens_deliver"
+        item: IRON_BLOCK
+        amount: 1
+        npc-name: "Gerald"
+        remove-items-when-complete: true
+    display:
+      name: "&cDeliverer (Citizens)"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Deliver 1 iron block to a NPC named Gerald"
+      - ""
+      - "&7Rewards:"
+      - "&7 - $30 added to your in-game balance."
+      - ""
+      - "&cRequires plugin Citizens!"
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - Iron block delivered: {deliver:complete}."
+      type: "MILK_BUCKET"
+    rewards:
+     - "eco give {player} 30"
+    options:
+      category: "dependent"
+      requires:
+       - ""
+      repeatable: false
+      cooldown:
+        enabled: true
+        time: 1440
+
+  citizensinteract:
+    tasks:
+      talker:
+        type: "citizens_interact"
+        npc-name: "Krystina"
+    display:
+      name: "&cTalker (Citizens)"
+      lore-normal:
+      - "&7This quest requires you to:"
+      - "&7 - Deliver 1 iron block to a NPC named Krystina"
+      - ""
+      - "&7Rewards:"
+      - "&7 - $30 added to your in-game balance."
+      - ""
+      - "&cRequires plugin Citizens!"
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - Citizen talked to: {deliver:complete}."
+      type: "PAPER"
+    rewards:
+     - "eco give {player} 30"
+    options:
+      category: "dependent"
+      requires:
+       - ""
+      repeatable: false
+      cooldown:
+        enabled: true
+        time: 1440
+
 # Categories are a way of grouping up quests.
 # When a player uses /quests, a menu of categories will be presented to them.
 # When a player clicks ona category, a list of quests under that category will show.

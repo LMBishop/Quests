@@ -1,6 +1,9 @@
 package com.leonardobishop.quests;
 
+import com.google.common.io.ByteStreams;
+import com.leonardobishop.quests.blocktype.SimilarBlocks;
 import com.leonardobishop.quests.bstats.Metrics;
+import com.leonardobishop.quests.commands.CommandQuests;
 import com.leonardobishop.quests.events.EventInventory;
 import com.leonardobishop.quests.events.EventPlayerJoin;
 import com.leonardobishop.quests.events.EventPlayerLeave;
@@ -15,17 +18,11 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.QuestManager;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.TaskTypeManager;
-import com.fatpigsarefat.quests.quests.tasktypes.types.*;
+import com.leonardobishop.quests.quests.tasktypes.types.*;
 import com.leonardobishop.quests.title.Title;
 import com.leonardobishop.quests.title.Title_Bukkit;
 import com.leonardobishop.quests.title.Title_BukkitNoTimings;
 import com.leonardobishop.quests.title.Title_Other;
-import com.google.common.io.ByteStreams;
-import com.leonardobishop.quests.blocktype.SimilarBlocks;
-import com.leonardobishop.quests.commands.CommandQuests;
-import com.leonardobishop.quests.quests.tasktypes.types.*;
-import me.fatpigsarefat.quests.quests.tasktypes.types.*;
-import me.fatpigsarefat.quests.title.*;
 import com.leonardobishop.quests.updater.Updater;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -134,6 +131,10 @@ public class Quests extends JavaPlugin {
         }
         if (Bukkit.getPluginManager().isPluginEnabled("uSkyBlock")) {
             taskTypeManager.registerTaskType(new uSkyBlockLevelType());
+        }
+        if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
+            taskTypeManager.registerTaskType(new CitizensDeliverTaskType());
+            taskTypeManager.registerTaskType(new CitizensInteractTaskType());
         }
 
         Bukkit.getPluginCommand("quests").setExecutor(new CommandQuests());

@@ -10,7 +10,7 @@
     <name>Quests</name>
 
     <properties>
-        <release.version>${version}-beta</release.version>
+        <release.version>${version}</release.version>
     </properties>
 
     <repositories>
@@ -36,6 +36,12 @@
                 <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
+
+        <!-- Citizens -->
+        <repository>
+            <id>everything</id>
+            <url>http://repo.citizensnpcs.co/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -60,6 +66,15 @@
             <groupId>com.github.rlf</groupId>
             <artifactId>uSkyBlock-API</artifactId>
             <version>2.6.4</version>
+        </dependency>
+
+        <!-- Citizens -->
+        <dependency>
+            <groupId>net.citizensnpcs</groupId>
+            <artifactId>citizens</artifactId>
+            <version>2.0.24-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
