@@ -23,7 +23,7 @@ public final class PlayerkillingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public PlayerkillingTaskType() {
-        super("playerkilling", "fatpigsarefat", "Kill a set amount of players.");
+        super("playerkilling", "lmbishop", "Kill a set amount of players.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of mobs to be killed."));
         this.creatorConfigValues.add(new ConfigValue("hostile", false, "Only allow hostile or non-hostile mobs (unspecified = any type allowed)."));
     }

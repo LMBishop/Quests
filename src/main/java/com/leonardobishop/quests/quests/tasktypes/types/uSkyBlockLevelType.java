@@ -21,7 +21,7 @@ public final class uSkyBlockLevelType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public uSkyBlockLevelType() {
-        super("uskyblock_level", "fatpigsarefat", "Reach a certain island level for uSkyBlock.");
+        super("uskyblock_level", "lmbishop", "Reach a certain island level for uSkyBlock.");
         this.creatorConfigValues.add(new ConfigValue("level", true, "Minimum island level needed."));
     }
 

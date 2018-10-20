@@ -22,7 +22,7 @@ public final class MiningTaskType extends TaskType {
 
     public MiningTaskType() {
         // type, author, description
-        super("blockbreak", "fatpigsarefat", "Break a set amount of blocks.");
+        super("blockbreak", "lmbishop", "Break a set amount of blocks.");
 
         // config values for the quest creator to use, if unspecified then the quest creator will not know what to put here (and will require users to
         // go into the config and manually configure there)

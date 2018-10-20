@@ -24,7 +24,7 @@ public final class MilkingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public MilkingTaskType() {
-        super("milking", "fatpigsarefat", "Milk a set amount of cows.");
+        super("milking", "lmbishop", "Milk a set amount of cows.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of cows to be milked."));
     }
 

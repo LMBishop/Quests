@@ -24,7 +24,7 @@ public final class FarmingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public FarmingTaskType() {
-        super("farming", "fatpigsarefat", "Break a set amount of a crop.");
+        super("farming", "lmbishop", "Break a set amount of a crop.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of crops to be broken."));
         this.creatorConfigValues.add(new ConfigValue("crop", true, "Name or ID of crop."));
     }

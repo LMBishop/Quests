@@ -27,7 +27,7 @@ public final class InventoryTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public InventoryTaskType() {
-        super("inventory", "fatpigsarefat", "Obtain a set of items.");
+        super("inventory", "lmbishop", "Obtain a set of items.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of item to retrieve."));
         this.creatorConfigValues.add(new ConfigValue("item", true, "Name or ID of item."));
         this.creatorConfigValues.add(new ConfigValue("remove-items-when-complete", false, "Take the items away from the player on completion (true/false, " +

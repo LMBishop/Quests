@@ -21,7 +21,7 @@ public final class BuildingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public BuildingTaskType() {
-        super("blockplace", "fatpigsarefat", "Place a set amount of blocks.");
+        super("blockplace", "lmbishop", "Place a set amount of blocks.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of blocks to be placed."));
     }
 

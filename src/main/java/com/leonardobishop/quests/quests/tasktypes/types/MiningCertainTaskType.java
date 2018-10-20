@@ -25,7 +25,7 @@ public final class MiningCertainTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public MiningCertainTaskType() {
-        super("blockbreakcertain", "fatpigsarefat", "Break a set amount of a specific block.");
+        super("blockbreakcertain", "lmbishop", "Break a set amount of a specific block.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of blocks to be broken."));
         this.creatorConfigValues.add(new ConfigValue("block", true, "Name or ID of block."));
         this.creatorConfigValues.add(new ConfigValue("data", false, "Data code for block."));

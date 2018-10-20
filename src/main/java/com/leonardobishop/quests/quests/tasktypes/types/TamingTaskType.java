@@ -22,7 +22,7 @@ public final class TamingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public TamingTaskType() {
-        super("taming", "fatpigsarefat", "Tame a set amount of animals.");
+        super("taming", "lmbishop", "Tame a set amount of animals.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of animals to be tamed."));
     }
 

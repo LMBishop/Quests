@@ -22,7 +22,7 @@ public final class FishingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public FishingTaskType() {
-        super("fishing", "fatpigsarefat", "Catch a set amount of items from the sea.");
+        super("fishing", "lmbishop", "Catch a set amount of items from the sea.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of fish to be caught."));
     }
 

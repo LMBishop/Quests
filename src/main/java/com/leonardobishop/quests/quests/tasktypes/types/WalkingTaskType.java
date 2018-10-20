@@ -22,7 +22,7 @@ public final class WalkingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public WalkingTaskType() {
-        super("walking", "fatpigsarefat", "Walk a set distance.");
+        super("walking", "lmbishop", "Walk a set distance.");
         this.creatorConfigValues.add(new ConfigValue("distance", true, "Amount of meters (blocks) to be travelled."));
     }
 

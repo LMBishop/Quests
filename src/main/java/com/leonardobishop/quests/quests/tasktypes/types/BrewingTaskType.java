@@ -31,7 +31,7 @@ public final class BrewingTaskType extends TaskType {
     private HashMap<Location, UUID> brewingStands = new HashMap<>();
 
     public BrewingTaskType() {
-        super("brewing", "fatpigsarefat", "Brew a potion.");
+        super("brewing", "lmbishop", "Brew a potion.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of potions to be brewed."));
     }
 
