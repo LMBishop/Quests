@@ -3,8 +3,8 @@ name: Quests
 # This will be replaced with the property "release.version" in pom.xml upon build.
 version: %PLUGIN_VERSION%
 
-main: me.fatpigsarefat.quests.Quests
-author: fatpigsarefat
+main: com.leonardobishop.quests.Quests
+author: lmbishop
 softdepend: [ASkyBlock, uSkyBlock]
 prefix: Quests
 
