@@ -33,7 +33,7 @@ public final class FishingTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFishCaught(PlayerFishEvent event) {
-        if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
+        if (event.getState() == PlayerFishEvent.State.BITE) {
             return;
         }
         Player player = event.getPlayer();
