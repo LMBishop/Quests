@@ -1,3 +1,4 @@
+[![Build Status](https://ci.leonardobishop.com/buildStatus/icon?job=Quests)](https://ci.leonardobishop.com/job/Quests)
 ## About Quests
 This plugin will allow your players to do quests in-game to earn rewards. This can all be configured.
 
