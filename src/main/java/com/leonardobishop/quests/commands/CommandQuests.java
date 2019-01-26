@@ -301,8 +301,8 @@ public class CommandQuests implements CommandExecutor {
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests c/category <categoryid> " + ChatColor.DARK_GRAY + ": open category by ID");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests q/quest <questid> " + ChatColor.DARK_GRAY + ": start quest by ID");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a/admin " + ChatColor.DARK_GRAY + ": view help for admins");
-        sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----=[" + ChatColor.RED + " made with <3 by fatpigsarefat " + ChatColor
-                .GRAY.toString() + ChatColor.STRIKETHROUGH + "]=-----");
+        sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------=[" + ChatColor.RED + " made with <3 by lmbishop " + ChatColor
+                .GRAY.toString() + ChatColor.STRIKETHROUGH + "]=--------");
     }
 
     private void showAdminHelp(CommandSender sender, String command) {

@@ -1,6 +1,5 @@
 out/
 .idea/
-test/
 *.iml
 .github/
 target/

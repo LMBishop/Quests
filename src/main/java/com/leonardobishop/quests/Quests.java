@@ -32,7 +32,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.*;
@@ -97,6 +99,23 @@ public class Quests extends JavaPlugin {
 
         return formattedTime;
     }
+
+    public Quests() {
+    }
+
+    public Quests(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+        super(loader, description, dataFolder, file);
+    }
+
+    public void prepareForTest() {
+        instance = this;
+        taskTypeManager = new TaskTypeManager();
+        questManager = new QuestManager();
+        qPlayerManager = new QPlayerManager();
+
+        updater = new Updater(this);
+    }
+
 
     @Override
     public void onEnable() {
@@ -177,7 +196,6 @@ public class Quests extends JavaPlugin {
                     }
                     QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                     for (Map.Entry<String, Quest> entry : Quests.getQuestManager().getQuests().entrySet()) {
-                        String id = entry.getKey();
                         Quest quest = entry.getValue();
                         QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
                         if (questProgress != null && questProgress.isStarted()) {
