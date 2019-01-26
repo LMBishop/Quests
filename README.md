@@ -1,4 +1,4 @@
-[![Build Status](https://ci.leonardobishop.com/buildStatus/icon?job=Quests)](https://ci.leonardobishop.com/job/Quests)
+[![Build Status](https://ci.leonardobishop.com/buildStatus/icon?job=Quests)](https://ci.leonardobishop.com/job/Quests) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/lmbishop/Quests.svg)](http://isitmaintained.com/project/lmbishop/Quests "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/lmbishop/Quests.svg)](http://isitmaintained.com/project/lmbishop/Quests "Percentage of issues still open")
 ## About Quests
 This plugin will allow your players to do quests in-game to earn rewards. This can all be configured.
 
