@@ -303,7 +303,7 @@ public class Quests extends JavaPlugin {
                 quest.registerTask(task);
             }
 
-            if (this.getConfig().getBoolean("options.show-quests-registrations")) {
+            if (getConfig().getBoolean("options.show-quest-registrations")) {
                 this.getLogger().log(Level.INFO, "Registering quest " + quest.getId() + " with " + quest.getTasks().size() + " tasks.");
             }
             questManager.registerQuest(quest);
