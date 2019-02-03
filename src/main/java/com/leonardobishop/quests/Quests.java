@@ -213,7 +213,7 @@ public class Quests extends JavaPlugin {
                     }
                 }
             }
-        }.runTaskTimerAsynchronously(this, 20L, 20L);
+        }.runTaskTimer(this, 20L, 20L);
         new BukkitRunnable() {
             @Override
             public void run() {
