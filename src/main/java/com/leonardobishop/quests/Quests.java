@@ -415,7 +415,10 @@ public class Quests extends JavaPlugin {
         }
         boolean success = false;
         getLogger().info("Your server is running version " + version + ".");
-        if (version.equals("v1_8_R3")) {
+        if (version.startsWith("v1_7")) {
+            title = new Title_Other();
+            success = true;
+        } else if (version.equals("v1_8_R3")) {
             title = new Title_BukkitNoTimings();
             success = true;
         } else if (version.equals("v1_8_R2")) {
@@ -436,20 +439,23 @@ public class Quests extends JavaPlugin {
         } else if (version.equals("v1_11_R1")) {
             title = new Title_Bukkit();
             success = true;
-        } else if (version.equals("v1_12_R1")) {
+        } else if (version.startsWith("v1_12")) {
             title = new Title_Bukkit();
             success = true;
-        } else if (version.equals("v1_13_R1")) {
+        } else if (version.startsWith("v1_13")) {
+            title = new Title_Bukkit();
+            success = true;
+        } else if (version.startsWith("v1_14")) {
             title = new Title_Bukkit();
             success = true;
         } else {
-            title = new Title_Other();
+            title = new Title_BukkitNoTimings();
         }
         if (title instanceof Title_Bukkit) {
             getLogger().info("Titles have been enabled.");
         } else if (title instanceof Title_BukkitNoTimings) {
             getLogger().info("Titles have been enabled, although they have limited timings.");
-        } else  {
+        } else {
             getLogger().info("Titles are not supported for this version.");
         }
         return success;
