@@ -166,9 +166,13 @@ public class CommandQuests implements CommandExecutor {
                             if (player != null) {
                                 QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
                                 if (qPlayer != null) {
-                                    qPlayer.openCategory(category);
-                                    sender.sendMessage(Messages.COMMAND_QUEST_OPENCATEGORY_ADMIN_SUCCESS.getMessage().replace("{player}", player.getName())
-                                            .replace("{category}", category.getId()));
+                                    if (qPlayer.openCategory(category, null) == 0) {
+                                        sender.sendMessage(Messages.COMMAND_QUEST_OPENCATEGORY_ADMIN_SUCCESS.getMessage().replace("{player}", player.getName())
+                                                .replace("{category}", category.getId()));
+                                    } else {
+                                        sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_CATEGORY_PERMISSION.getMessage().replace("{player}", player.getName())
+                                                .replace("{category}", category.getId()));
+                                    }
                                     return true;
                                 }
                             }
@@ -228,6 +232,12 @@ public class CommandQuests implements CommandExecutor {
                             } else if (response == 5) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILSTARTED.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                                 return true;
+                            } else if (response == 6) {
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILPERMISSION.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                return true;
+                            } else if (response == 7) {
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCATEGORYPERMISSION.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                return true;
                             }
                             questProgressFile.saveToDisk();
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
@@ -279,7 +289,7 @@ public class CommandQuests implements CommandExecutor {
                         sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.getMessage().replace("{category}", args[1]));
                     } else {
                         QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
-                        qPlayer.openCategory(category);
+                        qPlayer.openCategory(category, null);
                         return true;
                     }
                     return true;

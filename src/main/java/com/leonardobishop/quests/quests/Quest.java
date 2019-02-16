@@ -17,15 +17,16 @@ public class Quest {
     private boolean repeatable;
     private boolean cooldownEnabled;
     private int cooldown;
+    private boolean permissionRequired;
     private String categoryid;
 
 
-    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, List<String> rewardString, String categoryid) {
-        this(id, displayItem, rewards, requirements, repeatable, cooldownEnabled, cooldown, rewardString);
+    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString, String categoryid) {
+        this(id, displayItem, rewards, requirements, repeatable, cooldownEnabled, cooldown, permissionRequired, rewardString);
         this.categoryid = categoryid;
     }
 
-    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, List<String> rewardString) {
+    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString) {
         this.id = id;
         this.displayItem = displayItem;
         this.rewards = rewards;
@@ -33,6 +34,7 @@ public class Quest {
         this.repeatable = repeatable;
         this.cooldownEnabled = cooldownEnabled;
         this.cooldown = cooldown;
+        this.permissionRequired = permissionRequired;
         this.rewardString = rewardString;
     }
 
@@ -52,6 +54,15 @@ public class Quest {
             }
         }
         return tasks;
+    }
+
+
+    public boolean isPermissionRequired() {
+        return permissionRequired;
+    }
+
+    public void setPermissionRequired(boolean permissionRequired) {
+        this.permissionRequired = permissionRequired;
     }
 
     public List<String> getRewardString() {

@@ -249,7 +249,9 @@ public class Quests extends JavaPlugin {
 
         for (String id : getConfig().getConfigurationSection("categories").getKeys(false)) {
             ItemStack displayItem = getItemStack("categories." + id + ".display");
-            Category category = new Category(id, displayItem);
+            boolean permissionRequired = getConfig().getBoolean("categories." + id + ".permission-required", false);
+
+            Category category = new Category(id, displayItem, permissionRequired);
             questManager.registerCategory(category);
         }
 
@@ -262,6 +264,7 @@ public class Quests extends JavaPlugin {
             List<String> rewardString = getConfig().getStringList(root + ".rewardstring");
             boolean repeatable = getConfig().getBoolean(root + ".options.repeatable", false);
             boolean cooldown = getConfig().getBoolean(root + ".options.cooldown.enabled", false);
+            boolean permissionRequired = getConfig().getBoolean(root + ".options.permission-required", false);
             int cooldownTime = getConfig().getInt(root + ".options.cooldown.time", 10);
             String category = getConfig().getString(root + ".options.category");
 
@@ -281,9 +284,9 @@ public class Quests extends JavaPlugin {
 
             Quest quest;
             if (category.equals("")) {
-                quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, rewardString);
+                quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString);
             } else {
-                quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, rewardString, category);
+                quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, category);
                 Category c = questManager.getCategoryById(category);
                 if (c != null) {
                     c.registerQuestId(id);

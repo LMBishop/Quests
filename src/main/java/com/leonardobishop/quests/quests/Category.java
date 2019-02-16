@@ -9,11 +9,13 @@ public class Category {
 
     private String id;
     private ItemStack displayItem;
+    private boolean permissionRequired;
     private List<String> registeredQuestIds = new ArrayList<>();
 
-    public Category(String id, ItemStack displayItem) {
+    public Category(String id, ItemStack displayItem, boolean permissionRequired) {
         this.id = id;
         this.displayItem = displayItem;
+        this.permissionRequired = permissionRequired;
     }
 
     public String getId() {
@@ -22,6 +24,14 @@ public class Category {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isPermissionRequired() {
+        return permissionRequired;
+    }
+
+    public void setPermissionRequired(boolean permissionRequired) {
+        this.permissionRequired = permissionRequired;
     }
 
     public ItemStack getDisplayItem() {

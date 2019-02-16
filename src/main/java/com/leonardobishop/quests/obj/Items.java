@@ -9,6 +9,7 @@ public enum Items {
     QUEST_LOCKED("gui.quest-locked-display"),
     QUEST_COOLDOWN("gui.quest-cooldown-display"),
     QUEST_COMPLETED("gui.quest-completed-display"),
+    QUEST_PERMISSION("gui.quest-permission-display"),
     PAGE_PREV("gui.page-prev"),
     PAGE_NEXT("gui.page-next"),
     PAGE_DESCRIPTION("gui.page-desc"),

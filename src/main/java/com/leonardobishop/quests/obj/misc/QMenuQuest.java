@@ -46,6 +46,11 @@ public class QMenuQuest implements QMenu {
                     continue;
                 }
             }
+            if (Options.GUI_HIDE_QUESTS_NOPERMISSION.getBooleanValue() && quest.isPermissionRequired()) {
+                if (!Bukkit.getPlayer(owner.getUuid()).hasPermission("quests.quest." + quest.getId())) {
+                    continue;
+                }
+            }
             slotsToQuestIds.put(slot, quest.getId());
             slot++;
         }
@@ -114,6 +119,11 @@ public class QMenuQuest implements QMenu {
                     Map<String, String> placeholders = new HashMap<>();
                     placeholders.put("{quest}", quest.getDisplayNameStripped());
                     ItemStack is = replaceItemStack(Items.QUEST_COMPLETED.getItem(), placeholders);
+                    inventory.setItem(invSlot, is);
+                } else if (quest.isPermissionRequired() && !Bukkit.getPlayer(owner.getUuid()).hasPermission("quests.quest." + quest.getId())) {
+                    Map<String, String> placeholders = new HashMap<>();
+                    placeholders.put("{quest}", quest.getDisplayNameStripped());
+                    ItemStack is = replaceItemStack(Items.QUEST_PERMISSION.getItem(), placeholders);
                     inventory.setItem(invSlot, is);
                 } else if (cooldown > 0) {
                     Map<String, String> placeholders = new HashMap<>();

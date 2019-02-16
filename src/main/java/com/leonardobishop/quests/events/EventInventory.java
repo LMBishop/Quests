@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.events;
 
+import com.leonardobishop.quests.obj.Messages;
 import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.obj.Options;
@@ -70,8 +71,10 @@ public class EventInventory implements Listener {
                 if (qMenuCategory.getSlotsToMenu().containsKey(event.getSlot())) {
                     QMenuQuest qMenuQuest = qMenuCategory.getSlotsToMenu().get(event.getSlot());
                     buffer.add(event.getWhoClicked().getUniqueId());
-                    event.getWhoClicked().openInventory(qMenuQuest.toInventory(1));
-                    tracker.put(event.getWhoClicked().getUniqueId(), qMenuQuest);
+                    if (qMenuCategory.getOwner().openCategory(Quests.getQuestManager().getCategoryById(qMenuQuest.getCategoryName()), qMenuQuest) != 0) {
+                        buffer.remove(event.getWhoClicked().getUniqueId());
+                        event.getWhoClicked().sendMessage(Messages.QUEST_CATEGORY_PERMISSION.getMessage());
+                    }
                 }
             } else if (qMenu instanceof QMenuCancel) {
                 QMenuCancel qMenuCancel = (QMenuCancel) qMenu;

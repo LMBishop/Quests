@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.player;
 
+import com.leonardobishop.quests.obj.misc.QMenu;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.quests.Quest;
@@ -36,17 +37,20 @@ public class QPlayer {
         return uuid;
     }
 
-    public void openCategory(Category category) {
+    /**
+     * @return 0 if success, 1 if no permission, 2 is only data loaded, 3 if player not found
+     */
+    public int openCategory(Category category, QMenuCategory superMenu, boolean backButton) {
         if (onlyDataLoaded) {
-            return;
+            return 2;
         }
 
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) {
-            return;
+            return 3;
         }
 
-        QMenuQuest qMenuQuest = new QMenuQuest(Quests.getPlayerManager().getPlayer(player.getUniqueId()), category.getId(), null);
+        QMenuQuest qMenuQuest = new QMenuQuest(Quests.getPlayerManager().getPlayer(player.getUniqueId()), category.getId(), superMenu);
         List<Quest> quests = new ArrayList<>();
         for (String questid : category.getRegisteredQuestIds()) {
             Quest quest = Quests.getQuestManager().getQuestById(questid);
@@ -55,10 +59,30 @@ public class QPlayer {
             }
         }
         qMenuQuest.populate(quests);
-        qMenuQuest.setBackButtonEnabled(false);
+        qMenuQuest.setBackButtonEnabled(backButton);
+        return openCategory(category, qMenuQuest);
+    }
+
+    /**
+     * @return 0 if success, 1 if no permission, 2 is only data loaded, 3 if player not found
+     */
+    public int openCategory(Category category, QMenuQuest qMenuQuest) {
+        if (onlyDataLoaded) {
+            return 2;
+        }
+
+        Player player = Bukkit.getPlayer(uuid);
+        if (player == null) {
+            return 3;
+        }
+
+        if (category.isPermissionRequired() && !player.hasPermission("quests.category." + category.getId())) {
+            return 1;
+        }
 
         player.openInventory(qMenuQuest.toInventory(1));
         EventInventory.track(player.getUniqueId(), qMenuQuest);
+        return 0;
     }
 
     public void openQuests() {
@@ -66,6 +90,9 @@ public class QPlayer {
             return;
         }
 
+        if (uuid == null) {
+            return;
+        }
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) {
             return;

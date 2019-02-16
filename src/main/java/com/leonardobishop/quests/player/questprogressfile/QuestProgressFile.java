@@ -56,7 +56,8 @@ public class QuestProgressFile {
      * Start a quest for the player.
      *
      * @param quest the quest to check
-     * @return 0 if successful, 1 if limit reached, 2 if quest is already completed, 3 if quest has cooldown, 4 if still locked, 5 if already started
+     * @return 0 if successful, 1 if limit reached, 2 if quest is already completed, 3 if quest has cooldown, 4 if still locked, 5 if already started, 6 if
+     * no permission, 7 if no permission for category
      */
     public int startQuest(Quest quest) {
         Player p = Bukkit.getPlayer(player);
@@ -76,7 +77,8 @@ public class QuestProgressFile {
         long cooldown = getCooldownFor(quest);
         if (cooldown > 0) {
             if (player != null) {
-                p.sendMessage(Messages.QUEST_START_COOLDOWN.getMessage().replace("{time}", String.valueOf(Quests.convertToFormat(TimeUnit.MINUTES.convert(cooldown, TimeUnit.MILLISECONDS)))));
+                p.sendMessage(Messages.QUEST_START_COOLDOWN.getMessage().replace("{time}", String.valueOf(Quests.convertToFormat(TimeUnit.MINUTES.convert
+                        (cooldown, TimeUnit.MILLISECONDS)))));
             }
             return 3;
         }
@@ -92,6 +94,28 @@ public class QuestProgressFile {
             }
             return 5;
         }
+        if (quest.isPermissionRequired()) {
+            if (player != null) {
+                if (!p.hasPermission("quests.quest." + quest.getId())) {
+                    p.sendMessage(Messages.QUEST_START_PERMISSION.getMessage());
+                    return 6;
+                }
+            } else {
+                return 6;
+            }
+        }
+        if (quest.getCategoryId() != null && Quests.getQuestManager().getCategoryById(quest.getCategoryId()) != null && Quests.getQuestManager()
+                .getCategoryById(quest.getCategoryId()).isPermissionRequired()) {
+            if (player != null) {
+                if (!p.hasPermission("quests.category." + quest.getCategoryId())) {
+                    p.sendMessage(Messages.QUEST_CATEGORY_QUEST_PERMISSION.getMessage());
+                    return 7;
+                }
+            } else {
+                return 7;
+            }
+        }
+
         questProgress.setStarted(true);
         for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
             taskProgress.setCompleted(false);

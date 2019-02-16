@@ -13,6 +13,9 @@ public enum Messages {
     QUEST_START_LOCKED("messages.quest-start-locked"),
     QUEST_START_COOLDOWN("messages.quest-start-cooldown"),
     QUEST_START_STARTED("messages.quest-start-started"),
+    QUEST_START_PERMISSION("messages.quest-start-permission"),
+    QUEST_CATEGORY_QUEST_PERMISSION("messages.quest-category-quest-permission"),
+    QUEST_CATEGORY_PERMISSION("messages.quest-category-permission"),
     QUEST_CANCEL_NOTSTARTED("messages.quest-cancel-notstarted"),
     QUEST_UPDATER("messages.quest-updater"),
     COMMAND_QUEST_START_DOESNTEXIST("messages.command-quest-start-doesntexist"),
@@ -37,7 +40,12 @@ public enum Messages {
     COMMAND_QUEST_ADMIN_START_FAILCOMPLETE("messages.command-quest-admin-start-failcomplete"),
     COMMAND_QUEST_ADMIN_START_FAILLIMIT("messages.command-quest-admin-start-faillimit"),
     COMMAND_QUEST_ADMIN_START_FAILSTARTED("messages.command-quest-admin-start-failstarted"),
+    COMMAND_QUEST_ADMIN_START_FAILPERMISSION("messages.command-quest-admin-start-failpermission"),
+    COMMAND_QUEST_ADMIN_START_FAILCATEGORY("messages.command-quest-admin-start-failpermission"),
+    COMMAND_QUEST_ADMIN_START_FAILCATEGORYPERMISSION("messages.command-quest-admin-start-failcategorypermission"),
+    COMMAND_QUEST_ADMIN_START_FAILOTHER("messages.command-quest-admin-start-failother"),
     COMMAND_QUEST_ADMIN_START_SUCCESS("messages.command-quest-admin-start-success"),
+    COMMAND_QUEST_ADMIN_CATEGORY_PERMISSION("messages.command-quest-admin-category-permission"),
     COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS("messages.command-quest-admin-complete-success"),
     COMMAND_QUEST_ADMIN_RESET_SUCCESS("messages.command-quest-admin-reset-success");
 

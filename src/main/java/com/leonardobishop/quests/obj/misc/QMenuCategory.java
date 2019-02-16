@@ -25,6 +25,11 @@ public class QMenuCategory implements QMenu {
     public void populate(List<QMenuQuest> menuQuests) {
         int slot = 0;
         for (QMenuQuest qMenuQuest : menuQuests) {
+            if (Options.GUI_HIDE_CATEGORIES_NOPERMISSION.getBooleanValue() && Quests.getQuestManager().getCategoryById(qMenuQuest.getCategoryName()).isPermissionRequired()) {
+                if (!Bukkit.getPlayer(owner.getUuid()).hasPermission("quests.category." + qMenuQuest.getCategoryName())) {
+                    continue;
+                }
+            }
             slotsToMenuQuest.put(slot, qMenuQuest);
             slot++;
         }

@@ -223,6 +223,74 @@ quests:
         enabled: true
         time: 10
 
+  example5:
+    tasks:
+      building:
+        type: "blockplace"
+        amount: 10
+    display:
+      name: "&cExample V (Permission)"
+      lore-normal:
+      - "&cThis category is designed to show you the different"
+      - "&cattributes a quest can have. This quest requires"
+      - "&ccertain permissions."
+      - ""
+      - "&7This quest requires you to:"
+      - "&7 - Place 10 blocks."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $10 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {building:progress}/10 blocks placed."
+      type: "GRASS"
+    rewards:
+     - "eco give {player} 10"
+    options:
+      category: "examples"
+      requires:
+       - "example4"
+      # Unlike the previous quests, this one requires you to have the permission "quests.quest.example5" to start.
+      # The permission for other quests is: "quests.quest.<id>".
+      permission-required: true
+      repeatable: false
+      cooldown:
+        enabled: true
+        time: 1440
+
+  example6:
+    tasks:
+      building:
+        type: "blockplace"
+        amount: 10
+    display:
+      name: "&cExample VI (Different category, permissions)"
+      lore-normal:
+      - "&cThis category is designed to show you the different"
+      - "&cattributes a quest can have. This quest requires"
+      - "&ccertain permissions."
+      - ""
+      - "&7This quest requires you to:"
+      - "&7 - Place 10 blocks."
+      - ""
+      - "&7Rewards:"
+      - "&7 - $10 added to your in-game balance."
+      lore-started:
+      - ""
+      - "&7Your current progression:"
+      - "&7 - {building:progress}/10 blocks placed."
+      type: "GRASS"
+    rewards:
+     - "eco give {player} 10"
+    options:
+      category: "permissionexample"
+      # This quest has no specific permission, however its category does. The permission for the category is "quests.category.permissionexample"
+      repeatable: false
+      cooldown:
+        enabled: true
+        time: 1440
+
   # This is the end of the config example quests.
   # Hopefully you should be able to understand the quest config from this.
   # --------------------------------------------------------------------------------------
@@ -897,6 +965,20 @@ categories:
       - "&csection and all the comments so you can"
       - "&cmake the most of this plugin."
       type: "327"
+  permissionexample:
+    display:
+      name: "&cPermission Example"
+      lore:
+      - "&7This category is an example of one which"
+      - "&7requires a permission to open."
+      - ""
+      - "&cIt is highly recommended you read this"
+      - "&csection and all the comments so you can"
+      - "&cmake the most of this plugin."
+      type: "327"
+    # This category needs the permission "quests.category.permissionexample", because the category ID is 'permissionexample'.
+    # The permission for other categories is: "quests.category.<id>".
+    permission-required: true
   easy:
     display:
       name: "&cEasy Difficulty Quests"
@@ -953,6 +1035,12 @@ gui:
     - "&7Requires: &c{requirements}"
     - "&7to be completed to unlock."
     type: "160:14"
+  quest-permission-display:
+    name: "&6&lNo Permission"
+    lore:
+    - "&7You do not have permission for this"
+    - "&7quest (&6{quest}&7)."
+    type: "160:12"
   quest-cooldown-display:
     name: "&e&lQuest On Cooldown"
     lore:
@@ -1001,6 +1089,10 @@ options:
     quest-cancel: "Cancel Quest"
   # Show when quests register in console. Disable if you want less console spam at startup.
   show-quest-registrations: true
+  # Hide quests which a player cannot start due to permissions.
+  gui-hide-quests-nopermission: false
+  # Hide categories which a player cannot open due to permissions.
+  gui-hide-categories-nopermission: false
 
 # This switches up the entire quest system.
 # By enabling daily-quests, players will no longer be presented with the standard Quest GUI.
@@ -1034,6 +1126,9 @@ messages:
   quest-start-locked: "&7You have not unlocked this quest yet."
   quest-start-cooldown: "&7You have recently completed this quest. You have to wait &c{time} &7until you are able to restart it."
   quest-start-started: "&7You have already started this quest."
+  quest-start-permission: "&7You do not have permission to start this quest."
+  quest-category-permission: "&7You do not have permission to view this category."
+  quest-category-quest-permission: "&7You do not have permission to start this quest since it is in a category you do not have permission to view."
   quest-cancel-notstarted: "&7You have not started this quest."
   quest-updater: "&cQuests > &7A new version &c{newver} &7was found on Spigot (your version: &c{oldver}&7). Please update me! <3 - Link: {link}"
   command-quest-start-doesntexist: "&7The specified quest '&c{quest}&7' does not exist."
@@ -1052,7 +1147,11 @@ messages:
   command-quest-admin-start-failcomplete: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They have already completed it."
   command-quest-admin-start-faillimit: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They have reached their quest start limit."
   command-quest-admin-start-failstarted: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. It is already started."
+  command-quest-admin-start-failpermission: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They do not have permission."
+  command-quest-admin-start-failcategorypermission: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They do not have permission for the category which the quest is in."
+  command-quest-admin-start-failother: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7."
   command-quest-admin-start-success: "&7Quest &c{quest} &7started for player &c{player}&7."
+  command-quest-admin-category-permission: "&7Category &c{category} &7 could not be opened for player &c{player}&7. They do not have permission to view it."
   command-quest-admin-complete-success: "&7Quest &c{quest} &7completed for player &c{player}&7."
   command-quest-admin-reset-success: "&7Successfully reset quest '&c{quest}&7' for player &c{player}&7."
 
