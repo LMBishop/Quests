@@ -200,8 +200,9 @@ public class Quests extends JavaPlugin {
                         QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
                         if (questProgress != null && questProgress.isStarted()) {
                             boolean complete = true;
-                            for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
-                                if (!taskProgress.isCompleted()) {
+                            for (Task task : quest.getTasks()) {
+                                TaskProgress taskProgress;
+                                if ((taskProgress = questProgress.getTaskProgress(task.getId())) == null || !taskProgress.isCompleted()) {
                                     complete = false;
                                     break;
                                 }
