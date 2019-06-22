@@ -50,6 +50,10 @@ public class QPlayer {
             return 3;
         }
 
+        if (category.isPermissionRequired() && !player.hasPermission("quests.category." + category.getId())) {
+            return 1;
+        }
+
         QMenuQuest qMenuQuest = new QMenuQuest(Quests.getPlayerManager().getPlayer(player.getUniqueId()), category.getId(), superMenu);
         List<Quest> quests = new ArrayList<>();
         for (String questid : category.getRegisteredQuestIds()) {

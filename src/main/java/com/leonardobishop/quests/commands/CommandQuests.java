@@ -166,7 +166,7 @@ public class CommandQuests implements CommandExecutor {
                             if (player != null) {
                                 QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
                                 if (qPlayer != null) {
-                                    if (qPlayer.openCategory(category, null) == 0) {
+                                    if (qPlayer.openCategory(category, null, false) == 0) {
                                         sender.sendMessage(Messages.COMMAND_QUEST_OPENCATEGORY_ADMIN_SUCCESS.getMessage().replace("{player}", player.getName())
                                                 .replace("{category}", category.getId()));
                                     } else {
@@ -289,7 +289,7 @@ public class CommandQuests implements CommandExecutor {
                         sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.getMessage().replace("{category}", args[1]));
                     } else {
                         QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
-                        qPlayer.openCategory(category, null);
+                        qPlayer.openCategory(category, null, false);
                         return true;
                     }
                     return true;

@@ -12,6 +12,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Menu list of categories.
+ */
 public class QMenuCategory implements QMenu {
 
     private final int pageSize = 45;

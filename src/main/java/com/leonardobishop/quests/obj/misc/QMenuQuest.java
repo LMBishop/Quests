@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Menu for a specific category.
+ */
 public class QMenuQuest implements QMenu {
 
     private HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
