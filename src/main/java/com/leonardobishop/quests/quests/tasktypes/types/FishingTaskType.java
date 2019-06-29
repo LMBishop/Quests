@@ -9,6 +9,9 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,6 +39,13 @@ public final class FishingTaskType extends TaskType {
         if (event.getState() == PlayerFishEvent.State.BITE) {
             return;
         }
+        
+        Location hookLocation = event.getHook().getLocation().add(0, -1, 0);
+        if (!hookLocation.getBlock().getType().equals(Material.STATIONARY_WATER) | 
+        		hookLocation.getBlock().getType().equals(Material.WATER)) {
+        	return;
+        }
+        
         Player player = event.getPlayer();
 
         QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
