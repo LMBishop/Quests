@@ -3,3 +3,4 @@ out/
 *.iml
 .github/
 target/
+/bin/
