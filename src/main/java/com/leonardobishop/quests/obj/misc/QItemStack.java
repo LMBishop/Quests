@@ -1,6 +1,9 @@
 package com.leonardobishop.quests.obj.misc;
 
+import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
+import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
+import com.leonardobishop.quests.quests.Quest;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -68,14 +71,14 @@ public class QItemStack {
         this.data = data;
     }
 
-    public ItemStack toItemStack(QuestProgress questProgress) {
+    public ItemStack toItemStack(Quest quest, QuestProgressFile questProgressFile, QuestProgress questProgress) {
         ItemStack is = new ItemStack(type, 1, (short) data);
         ItemMeta ism = is.getItemMeta();
         ism.setDisplayName(name);
         List<String> formattedLore = new ArrayList<>();
         List<String> tempLore = new ArrayList<>();
         tempLore.addAll(loreNormal);
-        if (questProgress != null && questProgress.isStarted()) {
+        if (questProgressFile.hasStartedQuest(quest)) {
             tempLore.addAll(loreStarted);
             ism.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
             try {

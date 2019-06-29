@@ -127,35 +127,6 @@ public class Quests extends JavaPlugin {
         dataGenerator();
         setupTitle();
 
-        taskTypeManager.registerTaskType(new MiningTaskType());
-        taskTypeManager.registerTaskType(new MiningCertainTaskType());
-        taskTypeManager.registerTaskType(new BuildingTaskType());
-        taskTypeManager.registerTaskType(new BuildingCertainTaskType());
-        taskTypeManager.registerTaskType(new MobkillingTaskType());
-        taskTypeManager.registerTaskType(new MobkillingCertainTaskType());
-        taskTypeManager.registerTaskType(new PlayerkillingTaskType());
-        taskTypeManager.registerTaskType(new FishingTaskType());
-        taskTypeManager.registerTaskType(new InventoryTaskType());
-        taskTypeManager.registerTaskType(new WalkingTaskType());
-        taskTypeManager.registerTaskType(new TamingTaskType());
-        taskTypeManager.registerTaskType(new MilkingTaskType());
-        taskTypeManager.registerTaskType(new ShearingTaskType());
-        taskTypeManager.registerTaskType(new PositionTaskType());
-        taskTypeManager.registerTaskType(new PlaytimeTaskType());
-        taskTypeManager.registerTaskType(new BrewingTaskType());
-        // TODO: FIX
-        // taskTypeManager.registerTaskType(new BrewingCertainTaskType());
-        if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
-            taskTypeManager.registerTaskType(new ASkyBlockLevelType());
-        }
-        if (Bukkit.getPluginManager().isPluginEnabled("uSkyBlock")) {
-            taskTypeManager.registerTaskType(new uSkyBlockLevelType());
-        }
-        if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
-            taskTypeManager.registerTaskType(new CitizensDeliverTaskType());
-            taskTypeManager.registerTaskType(new CitizensInteractTaskType());
-        }
-
         Bukkit.getPluginCommand("quests").setExecutor(new CommandQuests());
         Bukkit.getPluginManager().registerEvents(new EventPlayerJoin(), this);
         Bukkit.getPluginManager().registerEvents(new EventInventory(), this);
@@ -169,6 +140,35 @@ public class Quests extends JavaPlugin {
         new BukkitRunnable() {
             @Override
             public void run() {
+                taskTypeManager.registerTaskType(new MiningTaskType());
+                taskTypeManager.registerTaskType(new MiningCertainTaskType());
+                taskTypeManager.registerTaskType(new BuildingTaskType());
+                taskTypeManager.registerTaskType(new BuildingCertainTaskType());
+                taskTypeManager.registerTaskType(new MobkillingTaskType());
+                taskTypeManager.registerTaskType(new MobkillingCertainTaskType());
+                taskTypeManager.registerTaskType(new PlayerkillingTaskType());
+                taskTypeManager.registerTaskType(new FishingTaskType());
+                taskTypeManager.registerTaskType(new InventoryTaskType());
+                taskTypeManager.registerTaskType(new WalkingTaskType());
+                taskTypeManager.registerTaskType(new TamingTaskType());
+                taskTypeManager.registerTaskType(new MilkingTaskType());
+                taskTypeManager.registerTaskType(new ShearingTaskType());
+                taskTypeManager.registerTaskType(new PositionTaskType());
+                taskTypeManager.registerTaskType(new PlaytimeTaskType());
+                taskTypeManager.registerTaskType(new BrewingTaskType());
+                // TODO: FIX
+                // taskTypeManager.registerTaskType(new BrewingCertainTaskType());
+                if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
+                    taskTypeManager.registerTaskType(new ASkyBlockLevelType());
+                }
+                if (Bukkit.getPluginManager().isPluginEnabled("uSkyBlock")) {
+                    taskTypeManager.registerTaskType(new uSkyBlockLevelType());
+                }
+                if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
+                    taskTypeManager.registerTaskType(new CitizensDeliverTaskType());
+                    taskTypeManager.registerTaskType(new CitizensInteractTaskType());
+                }
+
                 reloadQuests();
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
@@ -198,7 +198,7 @@ public class Quests extends JavaPlugin {
                     for (Map.Entry<String, Quest> entry : Quests.getQuestManager().getQuests().entrySet()) {
                         Quest quest = entry.getValue();
                         QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
-                        if (questProgress != null && questProgress.isStarted()) {
+                        if (questProgressFile.hasStartedQuest(quest)) {
                             boolean complete = true;
                             for (Task task : quest.getTasks()) {
                                 TaskProgress taskProgress;

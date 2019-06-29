@@ -135,7 +135,7 @@ public class QMenuQuest implements QMenu {
                     ItemStack is = replaceItemStack(Items.QUEST_COOLDOWN.getItem(), placeholders);
                     inventory.setItem(invSlot, is);
                 } else {
-                    inventory.setItem(invSlot, Quests.getQuestManager().getQuestById(quest.getId()).getDisplayItem().toItemStack(questProgress));
+                    inventory.setItem(invSlot, Quests.getQuestManager().getQuestById(quest.getId()).getDisplayItem().toItemStack(quest, owner.getQuestProgressFile(), questProgress));
                 }
             }
             invSlot++;
