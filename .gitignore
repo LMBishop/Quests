@@ -4,3 +4,6 @@ out/
 .github/
 target/
 /bin/
+.classpath
+.project
+.settings/

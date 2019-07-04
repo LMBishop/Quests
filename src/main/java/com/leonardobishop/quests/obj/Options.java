@@ -19,7 +19,8 @@ public enum Options {
     GUITITLE_QUESTS("options.guinames.quests-menu"),
     GUITITLE_DAILY_QUESTS("options.guinames.daily-quests"),
     GUITITLE_QUEST_CANCEL("options.guinames.quest-cancel"),
-    ALLOW_QUEST_CANCEL("options.allow-quest-cancel");
+    ALLOW_QUEST_CANCEL("options.allow-quest-cancel"),
+    QUEST_AUTOSTART("options.quest-autostart");
 
     private String path;
 

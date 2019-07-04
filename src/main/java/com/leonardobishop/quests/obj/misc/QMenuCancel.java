@@ -66,7 +66,7 @@ public class QMenuCancel implements QMenu {
         inventory.setItem(10, no);
         inventory.setItem(11, no);
         inventory.setItem(12, no);
-        inventory.setItem(13, quest.getDisplayItem().toItemStack(owner.getQuestProgressFile().getQuestProgress(quest)));
+        inventory.setItem(13, quest.getDisplayItem().toItemStack(quest, owner.getQuestProgressFile(), owner.getQuestProgressFile().getQuestProgress(quest)));
         inventory.setItem(14, yes);
         inventory.setItem(15, yes);
         inventory.setItem(16, yes);

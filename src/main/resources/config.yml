@@ -1093,6 +1093,8 @@ options:
   gui-hide-quests-nopermission: false
   # Hide categories which a player cannot open due to permissions.
   gui-hide-categories-nopermission: false
+  # Make it so players do not have to start quest themselves
+  quest-autostart: false
 
 # This switches up the entire quest system.
 # By enabling daily-quests, players will no longer be presented with the standard Quest GUI.
