@@ -575,6 +575,122 @@ quests:
         enabled: true
         time: 1440
 
+  breeding1:
+    tasks:
+      breeding:
+        type: "breeding"
+        amount: 5
+    display:
+      name: "&cBreeder"
+      lore-normal:
+        - "&7This quest requires you to:"
+        - "&7 - Breed 5 animals"
+        - ""
+        - "&7Rewards:"
+        - "&7 - $30 added to your in-game balance."
+      lore-started:
+        - ""
+        - "&7Your current progression:"
+        - "&7 - Animals bred: {breeding:progress}"
+      type: "WHEAT"
+    rewards:
+      - "eco give {player} 30"
+    options:
+      category: "medium"
+      requires:
+        - ""
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  expearn1:
+    tasks:
+      expearn:
+        type: "expearn"
+        amount: 10
+    display:
+      name: "&cExperience Earner"
+      lore-normal:
+        - "&7This quest requires you to:"
+        - "&7 - Gain 10 XP"
+        - ""
+        - "&7Rewards:"
+        - "&7 - $30 added to your in-game balance."
+      lore-started:
+        - ""
+        - "&7Your current progression:"
+        - "&7 - XP earned: {expearn:progress}"
+      type: "EXP_BOTTLE"
+    rewards:
+      - "eco give {player} 30"
+    options:
+      category: "medium"
+      requires:
+        - ""
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  dealdamage1:
+    tasks:
+      dealdamage:
+        type: "dealdamage"
+        amount: 100
+    display:
+      name: "&cPain Giver"
+      lore-normal:
+        - "&7This quest requires you to:"
+        - "&7 - Deal 100 HP damage"
+        - ""
+        - "&7Rewards:"
+        - "&7 - $100 added to your in-game balance."
+      lore-started:
+        - ""
+        - "&7Your current progression:"
+        - "&7 - Damage dealt: {dealdamage:progress} HP"
+      type: "REDSTONE"
+    rewards:
+      - "eco give {player} 100"
+    options:
+      category: "medium"
+      requires:
+        - ""
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
+  enchanting1:
+    tasks:
+      enchanting:
+        type: "enchanting"
+        amount: 5
+    display:
+      name: "&cEnchanter"
+      lore-normal:
+        - "&7This quest requires you to:"
+        - "&7 - Enchant 5 items"
+        - ""
+        - "&7Rewards:"
+        - "&7 - $100 added to your in-game balance."
+      lore-started:
+        - ""
+        - "&7Your current progression:"
+        - "&7 - Items enchanted: {enchanting:progress}"
+      type: "REDSTONE"
+    rewards:
+      - "eco give {player} 100"
+    options:
+      category: "medium"
+      requires:
+        - ""
+      repeatable: true
+      cooldown:
+        enabled: true
+        time: 1440
+
   animals1:
     tasks:
       milking:
