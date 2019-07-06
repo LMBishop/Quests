@@ -39,11 +39,11 @@ public final class FishingTaskType extends TaskType {
         if (event.getState() == PlayerFishEvent.State.BITE) {
             return;
         }
-        
+
         Location hookLocation = event.getHook().getLocation().add(0, -1, 0);
-        if (!hookLocation.getBlock().getType().equals(Material.STATIONARY_WATER) | 
-        		hookLocation.getBlock().getType().equals(Material.WATER)) {
-        	return;
+        if (!(hookLocation.getBlock().getType() == Material.STATIONARY_WATER ||
+                hookLocation.getBlock().getType() == Material.WATER)) {
+            return;
         }
         
         Player player = event.getPlayer();
