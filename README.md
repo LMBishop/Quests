@@ -1,17 +1,18 @@
-[![Build Status](https://ci.leonardobishop.com/buildStatus/icon?job=Quests)](https://ci.leonardobishop.com/job/Quests) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/lmbishop/Quests.svg)](http://isitmaintained.com/project/lmbishop/Quests "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/lmbishop/Quests.svg)](http://isitmaintained.com/project/lmbishop/Quests "Percentage of issues still open")
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/lmbishop/Quests.svg)](http://isitmaintained.com/project/LMBishop/Quests "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/lmbishop/Quests.svg)](http://isitmaintained.com/project/LMBishop/Quests "Percentage of issues still open")
 ## About Quests
 This plugin will allow your players to do quests in-game to earn rewards. This can all be configured.
 
 ## Downloads/Building
-The latest version of Quests can be found on [Spigot](https://www.spigotmc.org/resources/▶-quests-◀-set-up-goals-for-players.23696/)
+The latest release version of Quests can be found on [Spigot](https://www.spigotmc.org/resources/▶-quests-◀-set-up-goals-for-players.23696/)
 
-Alternatively, you can build Quests via Maven using ``mvn clean package`` (or clicking the appropiate buttons in your IDE).
-## Authors and Contributors
-- fatpigsarefat (original author)
-- Reinatix (playtime task type)
+Alternatively, you can build Quests via Maven using ``mvn clean package``.
+## Contributors
+- LMBishop
+- Reinatix
+- ToastedCoconut
 
 ## Support
-For support please open a [GitHub issue](https://github.com/fatpigsarefat/Quests/issues) or join our [Discord server](https://discord.gg/8amrJnX). Please provide information of the issue, any errors that may come up and make sure you are using the latest version of the plugin.
+For support please open a [GitHub issue](https://github.com/LMBishop/Quests/issues) or join our [Discord server](https://discord.gg/8amrJnX). Please provide information of the issue, any errors that may come up and make sure you are using the latest version of the plugin.
 
 ### Issue Tracker
 **This is the perferred method of bug reporting & feature requests**. Please use one of the two templates which are provided. If it is neither a bug report or a feature request and is a question, Discord would be a better place to asked this instead. **Follow the template in the issue tracker**. There is nothing more frustrating than people not reporting a bug correctly by missing out vital steps to reproduce the bug or an incomplete description. If the issue is not correctly formated, it will be closed and ignored.
@@ -23,10 +24,10 @@ For support please open a [GitHub issue](https://github.com/fatpigsarefat/Quests
 Please speak English and do not use any vulgar or harmful language. Insulting myself or any other contributors will lead to you being blocked, please remember this is a *voulenteer driven project*.
 
 ## Configuration Assistance
-The configuration documentation can be found at the [wiki](https://github.com/fatpigsarefat/Quests/wiki/Creating-A-Quest-Or-Category).
+The configuration documentation can be found at the [wiki](https://github.com/LMBishop/Quests/wiki/Creating-A-Quest-Or-Category).
 
 ## Developing Alongside Quests
-Creating new Task Types within Quests is supported, [see the wiki](https://github.com/fatpigsarefat/Quests/wiki/New-Task-Type) for help.
+Creating new Task Types within Quests is supported, [see the wiki](https://github.com/LMBishop/Quests/wiki/New-Task-Type) for help.
 
 ## Contributing To Quests
 Fork and make a pull request. Please be consistent with the formatting of the file, please state what you have changed, please test what you have changed before submitting a pull request to make sure it works. Include your DiscordTag if you want a 'contributors' role in our [Discord server](https://discord.gg/8amrJnX).
