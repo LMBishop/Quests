@@ -23,7 +23,7 @@ public enum Items {
     }
 
     public ItemStack getItem() {
-        return Quests.getInstance().getItemStack(path);
+        return Quests.getInstance().getItemStack(path, Quests.getInstance().getConfig());
     }
 
 }

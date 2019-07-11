@@ -1,0 +1,42 @@
+# This is a quest which requires the previous quest to be complete to start.
+
+tasks:
+  # Unlike the previous quest, this quest has multiple tasks.
+  mining:
+    type: "blockbreak"
+    amount: 100
+  building:
+    type: "blockplace"
+    amount: 100
+display:
+  name: "&cExample II (Multiple Tasks)"
+  lore-normal:
+    - "&cThis category is designed to show you the different"
+    - "&cattributes a quest can have. This quest requires"
+    - "&cmultiple things to be done, unlike the previous one."
+    - ""
+    - "&7This quest requires you to:"
+    - "&7 - Break 100 blocks."
+    - "&7 - Place 100 blocks."
+    - ""
+    - "&7Rewards:"
+    - "&7 - 15 diamonds."
+    - "&7 - $50 added to your in-game balance."
+  lore-started:
+    - ""
+    - "&7Your current progression:"
+    - "&7 - {mining:progress}/100 blocks broken."
+    - "&7 - {building:progress}/100 blocks placed."
+  type: "GRASS"
+rewards:
+  - "give {player} diamond 15"
+  - "eco give {player} 50"
+options:
+  category: "examples"
+  # Unlike the previous quest, this quest has "example1" as a required quest. You cannot start this quest without "example1" quest complete.
+  requires:
+    - "example1"
+  repeatable: false
+  cooldown:
+    enabled: true
+    time: 1440

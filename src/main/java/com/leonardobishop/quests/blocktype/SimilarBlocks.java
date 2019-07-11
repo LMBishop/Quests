@@ -9,7 +9,7 @@ public class SimilarBlocks {
 
     private static HashMap<Block, Block> similarBlocks = new HashMap<>();
 
-    public static void addBlocks() {
+    static {
         // Redstone Ore
         similarBlocks.put(new Block(Material.REDSTONE_ORE), new Block(Material.GLOWING_REDSTONE_ORE));
         similarBlocks.put(new Block(Material.GLOWING_REDSTONE_ORE), new Block(Material.REDSTONE_ORE));

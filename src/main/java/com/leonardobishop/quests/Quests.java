@@ -28,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -52,6 +53,7 @@ public class Quests extends JavaPlugin {
     private static Updater updater;
     private static Title title;
     private boolean brokenConfig = false;
+    private QuestsConfigLoader questsConfigLoader;
 
     public static Quests getInstance() {
         return instance;
@@ -73,12 +75,20 @@ public class Quests extends JavaPlugin {
         return brokenConfig;
     }
 
+    public void setBrokenConfig(boolean brokenConfig) {
+        this.brokenConfig = brokenConfig;
+    }
+
     public static Title getTitle() {
         return title;
     }
 
     public static Updater getUpdater() {
         return updater;
+    }
+
+    public QuestsConfigLoader getQuestsConfigLoader() {
+        return questsConfigLoader;
     }
 
     public static String convertToFormat(long m) {
@@ -135,7 +145,7 @@ public class Quests extends JavaPlugin {
         Metrics metrics = new Metrics(this);
         this.getLogger().log(Level.INFO, "Metrics started. This can be disabled at /plugins/bStats/config.yml.");
 
-        SimilarBlocks.addBlocks();
+        questsConfigLoader = new QuestsConfigLoader(Quests.this);
 
         new BukkitRunnable() {
             @Override
@@ -174,6 +184,12 @@ public class Quests extends JavaPlugin {
                 }
 
                 reloadQuests();
+                if (!questsConfigLoader.getBrokenFiles().isEmpty()) {
+                    Quests.this.getLogger().warning("Quests has failed to load the following files:");
+                    for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : questsConfigLoader.getBrokenFiles().entrySet()) {
+                        Quests.this.getLogger().warning(" - " + entry.getKey() + ": " + entry.getValue().getMessage());
+                    }
+                }
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     qPlayerManager.loadPlayer(player.getUniqueId());
@@ -243,136 +259,13 @@ public class Quests extends JavaPlugin {
         questManager.getCategories().clear();
         taskTypeManager.resetTaskTypes();
 
-        // test file integrity
-        try {
-            YamlConfiguration config = new YamlConfiguration();
-            config.load(new File(String.valueOf(Quests.this.getDataFolder() + File.separator + "config.yml")));
-        } catch (Exception ex) {
-            Quests.this.getLogger().log(Level.SEVERE, "You have a YAML error in your Quests config. If this is your first time using Quests, please remove the Quests folder and RESTART (not reload!) the server and try again.");
-            brokenConfig = true;
-        }
-
-        for (String id : getConfig().getConfigurationSection("categories").getKeys(false)) {
-            ItemStack displayItem = getItemStack("categories." + id + ".display");
-            boolean permissionRequired = getConfig().getBoolean("categories." + id + ".permission-required", false);
-
-            Category category = new Category(id, displayItem, permissionRequired);
-            questManager.registerCategory(category);
-        }
-
-        for (String id : getConfig().getConfigurationSection("quests").getKeys(false)) {
-            String root = "quests." + id;
-
-            QItemStack displayItem = getQItemStack(root + ".display");
-            List<String> rewards = getConfig().getStringList(root + ".rewards");
-            List<String> requirements = getConfig().getStringList(root + ".options.requires");
-            List<String> rewardString = getConfig().getStringList(root + ".rewardstring");
-            boolean repeatable = getConfig().getBoolean(root + ".options.repeatable", false);
-            boolean cooldown = getConfig().getBoolean(root + ".options.cooldown.enabled", false);
-            boolean permissionRequired = getConfig().getBoolean(root + ".options.permission-required", false);
-            int cooldownTime = getConfig().getInt(root + ".options.cooldown.time", 10);
-            String category = getConfig().getString(root + ".options.category");
-
-            if (rewardString == null) {
-                rewardString = new ArrayList<>();
-            }
-            if (requirements == null) {
-                requirements = new ArrayList<>();
-            }
-            if (rewards == null) {
-                rewards = new ArrayList<>();
-            }
-            if (category == null) {
-                category = "";
-            }
-
-
-            Quest quest;
-            if (category.equals("")) {
-                quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString);
-            } else {
-                quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, category);
-                Category c = questManager.getCategoryById(category);
-                if (c != null) {
-                    c.registerQuestId(id);
-                }
-            }
-
-            for (String taskId : getConfig().getConfigurationSection(root + ".tasks").getKeys(false)) {
-                String taskRoot = root + ".tasks." + taskId;
-                String taskType = getConfig().getString(taskRoot + ".type");
-
-                Task task = new Task(taskId, taskType);
-
-                for (String key : getConfig().getConfigurationSection(taskRoot).getKeys(false)) {
-                    task.addConfigValue(key, getConfig().get(taskRoot + "." + key));
-                }
-
-                quest.registerTask(task);
-            }
-
-            if (getConfig().getBoolean("options.show-quest-registrations")) {
-                this.getLogger().log(Level.INFO, "Registering quest " + quest.getId() + " with " + quest.getTasks().size() + " tasks.");
-            }
-            questManager.registerQuest(quest);
-            taskTypeManager.registerQuestTasksWithTaskTypes(quest);
-        }
+        questsConfigLoader.loadConfig();
     }
 
-    private QItemStack getQItemStack(String path) {
-        String cName = this.getConfig().getString(path + ".name", path + ".name");
-        String cType = this.getConfig().getString(path + ".type", path + ".type");
-        List<String> cLoreNormal = this.getConfig().getStringList(path + ".lore-normal");
-        List<String> cLoreStarted = this.getConfig().getStringList(path + ".lore-started");
-
-        String name;
-        Material type = null;
-        int data = 0;
-        List<String> loreNormal = new ArrayList<>();
-        if (cLoreNormal != null) {
-            for (String s : cLoreNormal) {
-                loreNormal.add(ChatColor.translateAlternateColorCodes('&', s));
-            }
-        }
-        List<String> loreStarted = new ArrayList<>();
-        if (cLoreStarted != null) {
-            for (String s : cLoreStarted) {
-                loreStarted.add(ChatColor.translateAlternateColorCodes('&', s));
-            }
-        }
-        name = ChatColor.translateAlternateColorCodes('&', cName);
-
-        if (StringUtils.isNumeric(cType)) {
-            type = Material.getMaterial(Integer.parseInt(cType));
-        } else if (Material.getMaterial(cType) != null) {
-            type = Material.getMaterial(cType);
-        } else if (cType.contains(":")) {
-            String[] parts = cType.split(":");
-            if (parts.length > 1) {
-                if (StringUtils.isNumeric(parts[0])) {
-                    type = Material.getMaterial(Integer.parseInt(parts[0]));
-                } else if (Material.getMaterial(parts[0]) != null) {
-                    type = Material.getMaterial(parts[0]);
-                }
-                if (StringUtils.isNumeric(parts[1])) {
-                    data = Integer.parseInt(parts[1]);
-                }
-            }
-        }
-
-        if (type == null) {
-            type = Material.STONE;
-        }
-
-        QItemStack is = new QItemStack(name, loreNormal, loreStarted, type, data);
-
-        return is;
-    }
-
-    public ItemStack getItemStack(String path) {
-        String cName = this.getConfig().getString(path + ".name", path + ".name");
-        String cType = this.getConfig().getString(path + ".type", path + ".type");
-        List<String> cLore = this.getConfig().getStringList(path + ".lore");
+    public ItemStack getItemStack(String path, FileConfiguration config) {
+        String cName = config.getString(path + ".name", path + ".name");
+        String cType = config.getString(path + ".type", path + ".type");
+        List<String> cLore = config.getStringList(path + ".lore");
 
         String name;
         Material type = null;
@@ -489,7 +382,35 @@ public class Quests extends JavaPlugin {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                return;
+            }
+        }
+
+        File questsDirectory = new File(String.valueOf(this.getDataFolder() + File.separator + "quests"));
+        if (!questsDirectory.exists() && !questsDirectory.isDirectory()) {
+            questsDirectory.mkdir();
+
+            ArrayList<String> examples = new ArrayList<>();
+            examples.add("example1.yml");
+            examples.add("example2.yml");
+            examples.add("example3.yml");
+            examples.add("example4.yml");
+            examples.add("example5.yml");
+            examples.add("example6.yml");
+            examples.add("README.txt");
+
+            for (String name : examples) {
+                File file = new File(this.getDataFolder() + File.separator + "quests" + File.separator + name);
+                try {
+                    file.createNewFile();
+                    try (InputStream in = Quests.class.getClassLoader().getResourceAsStream("quests/" + name)) {
+                        OutputStream out = new FileOutputStream(file);
+                        ByteStreams.copy(in, out);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

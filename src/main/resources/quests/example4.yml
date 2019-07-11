@@ -1,0 +1,39 @@
+# This is a quest which requires the previous quest to be complete to start.
+# Unlike the previous quests, this quest has a reward string.
+
+tasks:
+  mobkilling:
+    type: "mobkilling"
+    amount: 3
+display:
+  name: "&cExample IV (Reward String)"
+  lore-normal:
+    - "&cThis category is designed to show you the different"
+    - "&cattributes a quest can have. This quest has a 'reward string'"
+    - "&c(a series of messages sent when a quest is complete),"
+    - "&cunlike the previous one."
+    - ""
+    - "&7This quest requires you to:"
+    - "&7 - Kill 3 mobs."
+    - ""
+    - "&7Rewards:"
+    - "&7 - $50 added to your in-game balance."
+  lore-started:
+    - ""
+    - "&7Your current progression:"
+    - "&7 - {mobkilling:progress}/3 mobs killed."
+  type: "STRING"
+rewards:
+  - "eco give {player} 50"
+# Here you can list messages which will be sent to the player (if they are online) upon completion.
+rewardstring:
+  - " &8* &c$10 &7was added to your in-game balance."
+  - " &8* &c30 diamonds &7was added to your inventory."
+options:
+  category: "examples"
+  requires:
+    - "example3"
+  repeatable: true
+  cooldown:
+    enabled: true
+    time: 10

@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.commands;
 
 import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.obj.Messages;
 import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.player.QPlayer;
@@ -17,6 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Map;
 import java.util.UUID;
 
 public class CommandQuests implements CommandExecutor {
@@ -50,7 +52,14 @@ public class CommandQuests implements CommandExecutor {
                     } else if (args[1].equalsIgnoreCase("reload")) {
                         Quests.getInstance().reloadConfig();
                         Quests.getInstance().reloadQuests();
-                        sender.sendMessage(ChatColor.GRAY + "Quests was reloaded.");
+                        if (!Quests.getInstance().getQuestsConfigLoader().getBrokenFiles().isEmpty()) {
+                            sender.sendMessage(ChatColor.RED + "Quests has failed to load the following files:");
+                            for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : Quests.getInstance().getQuestsConfigLoader().getBrokenFiles().entrySet()) {
+                                sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + entry.getKey() + ": " + ChatColor.GRAY + entry.getValue().getMessage());
+                            }
+                        } else {
+                            sender.sendMessage(ChatColor.GRAY + "Quests was reloaded.");
+                        }
                         return true;
                     } else if (args[1].equalsIgnoreCase("types")) {
                         sender.sendMessage(ChatColor.GRAY + "Registered task types:");
