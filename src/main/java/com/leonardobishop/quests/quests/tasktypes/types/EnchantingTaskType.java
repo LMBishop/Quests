@@ -1,14 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.enchantment.EnchantItemEvent;
-
-import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
@@ -17,6 +9,13 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.enchantment.EnchantItemEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class EnchantingTaskType extends TaskType {
 	
@@ -36,7 +35,7 @@ public final class EnchantingTaskType extends TaskType {
 	public void onEnchant(EnchantItemEvent e) {
 		Player player = e.getEnchanter();
 		
-		QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
+		QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
 		QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 		
 		for (Quest quest : super.getRegisteredQuests()) {

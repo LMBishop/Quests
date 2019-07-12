@@ -1,6 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
-import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
@@ -24,7 +24,7 @@ public final class MilkingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public MilkingTaskType() {
-        super("milking", "lmbishop", "Milk a set amount of cows.");
+        super("milking", "LMBishop", "Milk a set amount of cows.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of cows to be milked."));
     }
 
@@ -41,7 +41,7 @@ public final class MilkingTaskType extends TaskType {
 
         Player player = event.getPlayer();
 
-        QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
         for (Quest quest : super.getRegisteredQuests()) {

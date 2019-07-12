@@ -10,21 +10,27 @@ import java.util.UUID;
 
 public class EventPlayerLeave implements Listener {
 
+    private Quests plugin;
+
+    public EventPlayerLeave(Quests plugin) {
+        this.plugin = plugin;
+    }
+
     @EventHandler
     public void onEvent(PlayerQuitEvent event) {
         UUID playerUuid = event.getPlayer().getUniqueId();
         new BukkitRunnable() {
             @Override
             public void run() {
-                 Quests.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile().saveToDisk();
+                 plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile().saveToDisk();
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        Quests.getPlayerManager().removePlayer(playerUuid);
+                        plugin.getPlayerManager().removePlayer(playerUuid);
                     }
-                }.runTask(Quests.getInstance());
+                }.runTask(plugin);
             }
-        }.runTaskAsynchronously(Quests.getInstance());
+        }.runTaskAsynchronously(plugin);
     }
 
 }

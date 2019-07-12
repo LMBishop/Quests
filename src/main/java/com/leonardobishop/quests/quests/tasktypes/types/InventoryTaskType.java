@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
 import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
@@ -27,7 +28,7 @@ public final class InventoryTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public InventoryTaskType() {
-        super("inventory", "lmbishop", "Obtain a set of items.");
+        super("inventory", "LMBishop", "Obtain a set of items.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of item to retrieve."));
         this.creatorConfigValues.add(new ConfigValue("item", true, "Name or ID of item."));
         this.creatorConfigValues.add(new ConfigValue("remove-items-when-complete", false, "Take the items away from the player on completion (true/false, " +
@@ -46,7 +47,7 @@ public final class InventoryTaskType extends TaskType {
             public void run() {
                 checkInventory(event.getPlayer());
             }
-        }.runTaskLater(Quests.getInstance(), 1L);
+        }.runTaskLater(Quests.get(), 1L);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -56,11 +57,11 @@ public final class InventoryTaskType extends TaskType {
             public void run() {
                 checkInventory((Player) event.getWhoClicked());
             }
-        }.runTaskLater(Quests.getInstance(), 1L);
+        }.runTaskLater(Quests.get(), 1L);
     }
 
     private void checkInventory(Player player) {
-        QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
         }

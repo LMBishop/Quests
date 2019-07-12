@@ -1,6 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
-import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.QuestsAPI;
 import com.leonardobishop.quests.blocktype.Block;
 import com.leonardobishop.quests.blocktype.SimilarBlocks;
 import com.leonardobishop.quests.player.QPlayer;
@@ -25,7 +25,7 @@ public final class MiningCertainTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public MiningCertainTaskType() {
-        super("blockbreakcertain", "lmbishop", "Break a set amount of a specific block.");
+        super("blockbreakcertain", "LMBishop", "Break a set amount of a specific block.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of blocks to be broken."));
         this.creatorConfigValues.add(new ConfigValue("block", true, "Name or ID of block."));
         this.creatorConfigValues.add(new ConfigValue("data", false, "Data code for block."));
@@ -39,7 +39,7 @@ public final class MiningCertainTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        QPlayer qPlayer = Quests.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
         for (Quest quest : super.getRegisteredQuests()) {

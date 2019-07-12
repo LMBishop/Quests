@@ -21,10 +21,10 @@ import java.util.logging.Level;
 public class QuestsConfigLoader {
 
     private Map<String, ConfigLoadError> brokenFiles = new HashMap<>();
-    private Quests quests;
+    private Quests plugin;
 
-    public QuestsConfigLoader(Quests quests) {
-        this.quests = quests;
+    public QuestsConfigLoader(Quests plugin) {
+        this.plugin = plugin;
     }
 
     /**
@@ -36,22 +36,22 @@ public class QuestsConfigLoader {
         // test CONFIG file integrity
         try {
             YamlConfiguration config = new YamlConfiguration();
-            config.load(new File(String.valueOf(quests.getDataFolder() + File.separator + "config.yml")));
+            config.load(new File(String.valueOf(plugin.getDataFolder() + File.separator + "config.yml")));
         } catch (Exception ex) {
             brokenFiles.put("<MAIN CONFIG> config.yml", ConfigLoadError.MAIN_CONFIG_ERROR);
-            quests.setBrokenConfig(true);
+            plugin.setBrokenConfig(true);
             return;
         }
 
-        for (String id : quests.getConfig().getConfigurationSection("categories").getKeys(false)) {
-            ItemStack displayItem = quests.getItemStack("categories." + id + ".display", quests.getConfig());
-            boolean permissionRequired = quests.getConfig().getBoolean("categories." + id + ".permission-required", false);
+        for (String id : plugin.getConfig().getConfigurationSection("categories").getKeys(false)) {
+            ItemStack displayItem = plugin.getItemStack("categories." + id + ".display", plugin.getConfig());
+            boolean permissionRequired = plugin.getConfig().getBoolean("categories." + id + ".permission-required", false);
 
             Category category = new Category(id, displayItem, permissionRequired);
-            Quests.getQuestManager().registerCategory(category);
+            plugin.getQuestManager().registerCategory(category);
         }
 
-        File questDirectory = new File(quests.getDataFolder() + File.separator + "quests");
+        File questDirectory = new File(plugin.getDataFolder() + File.separator + "quests");
         if (questDirectory.isDirectory()) {
             File[] fileList = questDirectory.listFiles();
             for (File questFile : fileList) {
@@ -102,7 +102,7 @@ public class QuestsConfigLoader {
                     quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString);
                 } else {
                     quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, category);
-                    Category c = Quests.getQuestManager().getCategoryById(category);
+                    Category c = plugin.getQuestManager().getCategoryById(category);
                     if (c != null) {
                         c.registerQuestId(id);
                     }
@@ -121,11 +121,11 @@ public class QuestsConfigLoader {
                     quest.registerTask(task);
                 }
 
-                if (quests.getConfig().getBoolean("options.show-quest-registrations")) {
-                    quests.getLogger().log(Level.INFO, "Registering quest " + quest.getId() + " with " + quest.getTasks().size() + " tasks.");
+                if (plugin.getConfig().getBoolean("options.show-quest-registrations")) {
+                    plugin.getLogger().log(Level.INFO, "Registering quest " + quest.getId() + " with " + quest.getTasks().size() + " tasks.");
                 }
-                Quests.getQuestManager().registerQuest(quest);
-                Quests.getTaskTypeManager().registerQuestTasksWithTaskTypes(quest);
+                plugin.getQuestManager().registerQuest(quest);
+                plugin.getTaskTypeManager().registerQuestTasksWithTaskTypes(quest);
             }
         }
     }

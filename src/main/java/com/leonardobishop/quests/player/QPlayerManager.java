@@ -11,6 +11,12 @@ import java.util.*;
 
 public class QPlayerManager {
 
+    private Quests plugin;
+
+    public QPlayerManager(Quests plugin) {
+        this.plugin = plugin;
+    }
+
     private Map<UUID, QPlayer> qPlayers = new HashMap<>();
 
     public void addPlayer(QPlayer qPlayer) {
@@ -35,12 +41,12 @@ public class QPlayerManager {
 
     public void loadPlayer(UUID uuid, boolean onlyData) {
         if (getPlayer(uuid) == null || getPlayer(uuid).isOnlyDataLoaded()) {
-            QuestProgressFile questProgressFile = new QuestProgressFile(uuid);
+            QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
 
             try {
-                File directory = new File(Quests.getInstance().getDataFolder() + File.separator + "playerdata");
+                File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
                 if (directory.exists() && directory.isDirectory()) {
-                    File file = new File(Quests.getInstance().getDataFolder() + File.separator + "playerdata" + File.separator + uuid.toString() + ".yml");
+                    File file = new File(plugin.getDataFolder() + File.separator + "playerdata" + File.separator + uuid.toString() + ".yml");
                     if (file.exists()) {
                         YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
                         if (data.contains("quest-progress")) {
@@ -66,12 +72,12 @@ public class QPlayerManager {
                     }
                 }
             } catch (Exception ex) {
-                Quests.getInstance().getLogger().severe("Failed to load player: " + uuid + "! This WILL cause errors.");
+                plugin.getLogger().severe("Failed to load player: " + uuid + "! This WILL cause errors.");
                 ex.printStackTrace();
                 // fuck
             }
 
-            QPlayer qPlayer = new QPlayer(uuid, questProgressFile, onlyData);
+            QPlayer qPlayer = new QPlayer(uuid, questProgressFile, onlyData, plugin);
 
             addPlayer(qPlayer);
         }

@@ -1,6 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
-import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
@@ -22,7 +22,7 @@ public final class MiningTaskType extends TaskType {
 
     public MiningTaskType() {
         // type, author, description
-        super("blockbreak", "lmbishop", "Break a set amount of blocks.");
+        super("blockbreak", "LMBishop", "Break a set amount of blocks.");
 
         // config values for the quest creator to use, if unspecified then the quest creator will not know what to put here (and will require users to
         // go into the config and manually configure there)
@@ -36,7 +36,7 @@ public final class MiningTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        QPlayer qPlayer = Quests.getPlayerManager().getPlayer(event.getPlayer().getUniqueId()); // get the qplayer so you can get their progress
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId()); // get the qplayer so you can get their progress
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile(); // the quest progress file stores progress about all quests and tasks
 
         for (Quest quest : super.getRegisteredQuests()) { // iterate through all quests which are registered to use this task type

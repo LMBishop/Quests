@@ -28,7 +28,7 @@ public class QMenuCategory implements QMenu {
     public void populate(List<QMenuQuest> menuQuests) {
         int slot = 0;
         for (QMenuQuest qMenuQuest : menuQuests) {
-            if (Options.GUI_HIDE_CATEGORIES_NOPERMISSION.getBooleanValue() && Quests.getQuestManager().getCategoryById(qMenuQuest.getCategoryName()).isPermissionRequired()) {
+            if (Options.GUI_HIDE_CATEGORIES_NOPERMISSION.getBooleanValue() && Quests.get().getQuestManager().getCategoryById(qMenuQuest.getCategoryName()).isPermissionRequired()) {
                 if (!Bukkit.getPlayer(owner.getUuid()).hasPermission("quests.category." + qMenuQuest.getCategoryName())) {
                     continue;
                 }
@@ -59,7 +59,7 @@ public class QMenuCategory implements QMenu {
 
         for (int pointer = pageMin; pointer < pageMax; pointer++) {
             if (slotsToMenuQuest.containsKey(pointer)) {
-                Category category = Quests.getQuestManager().getCategoryById(slotsToMenuQuest.get(pointer).getCategoryName());
+                Category category = Quests.get().getQuestManager().getCategoryById(slotsToMenuQuest.get(pointer).getCategoryName());
                 if (category != null) {
                     inventory.setItem(pointer, category.getDisplayItem());
                 }

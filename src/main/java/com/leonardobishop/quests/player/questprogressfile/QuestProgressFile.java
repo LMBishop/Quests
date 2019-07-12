@@ -19,9 +19,11 @@ public class QuestProgressFile {
 
     private Map<String, QuestProgress> questProgress = new HashMap<>();
     private UUID player;
+    private Quests plugin;
 
-    public QuestProgressFile(UUID player) {
+    public QuestProgressFile(UUID player, Quests plugin) {
         this.player = player;
+        this.plugin = plugin;
     }
 
     //TODO change back to quest id to save performance
@@ -34,14 +36,14 @@ public class QuestProgressFile {
         questProgress.setCompletionDate(System.currentTimeMillis());
         if (Bukkit.getPlayer(player) != null) {
             Player player = Bukkit.getPlayer(this.player);
-            Bukkit.getServer().getScheduler().runTask(Quests.getInstance(), () -> {
+            Bukkit.getServer().getScheduler().runTask(plugin, () -> {
                 for (String s : quest.getRewards()) {
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), s.replace("{player}", player.getName()));
                 }
             });
             player.sendMessage(Messages.QUEST_COMPLETE.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
             if (Options.TITLES_ENABLED.getBooleanValue()) {
-                Quests.getTitle().sendTitle(player, Messages.TITLE_QUEST_COMPLETE_TITLE.getMessage().replace("{quest}", quest
+                plugin.getTitle().sendTitle(player, Messages.TITLE_QUEST_COMPLETE_TITLE.getMessage().replace("{quest}", quest
                         .getDisplayNameStripped()), Messages.TITLE_QUEST_COMPLETE_SUBTITLE.getMessage().replace("{quest}", quest
                         .getDisplayNameStripped()));
             }
@@ -92,7 +94,7 @@ public class QuestProgressFile {
                 return 6;
             }
         }
-        if (quest.getCategoryId() != null && Quests.getQuestManager().getCategoryById(quest.getCategoryId()) != null && Quests.getQuestManager()
+        if (quest.getCategoryId() != null && plugin.getQuestManager().getCategoryById(quest.getCategoryId()) != null && plugin.getQuestManager()
                 .getCategoryById(quest.getCategoryId()).isPermissionRequired()) {
             if (player != null) {
                 if (!p.hasPermission("quests.category." + quest.getCategoryId())) {
@@ -129,7 +131,7 @@ public class QuestProgressFile {
                     break;
                 case 3:
                     long cooldown = getCooldownFor(quest);
-                    p.sendMessage(Messages.QUEST_START_COOLDOWN.getMessage().replace("{time}", String.valueOf(Quests.convertToFormat(TimeUnit.MINUTES.convert
+                    p.sendMessage(Messages.QUEST_START_COOLDOWN.getMessage().replace("{time}", String.valueOf(plugin.convertToFormat(TimeUnit.MINUTES.convert
                             (cooldown, TimeUnit.MILLISECONDS)))));
                     break;
                 case 4:
@@ -158,7 +160,7 @@ public class QuestProgressFile {
                 Player player = Bukkit.getPlayer(getPlayer());
                 player.sendMessage(Messages.QUEST_START.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
                 if (Options.TITLES_ENABLED.getBooleanValue()) {
-                    Quests.getTitle().sendTitle(player, Messages.TITLE_QUEST_START_TITLE.getMessage().replace("{quest}", quest
+                    plugin.getTitle().sendTitle(player, Messages.TITLE_QUEST_START_TITLE.getMessage().replace("{quest}", quest
                             .getDisplayNameStripped()), Messages.TITLE_QUEST_START_SUBTITLE.getMessage().replace("{quest}", quest
                             .getDisplayNameStripped()));
                 }
@@ -193,7 +195,7 @@ public class QuestProgressFile {
         List<Quest> startedQuests = new ArrayList<>();
         for (QuestProgress questProgress : questProgress.values()) {
             if (questProgress.isStarted()) {
-                startedQuests.add(Quests.getQuestManager().getQuestById(questProgress.getQuestId()));
+                startedQuests.add(plugin.getQuestManager().getQuestById(questProgress.getQuestId()));
             }
         }
         return startedQuests;
@@ -229,7 +231,7 @@ public class QuestProgressFile {
 
     public boolean hasMetRequirements(Quest quest) {
         for (String id : quest.getRequirements()) {
-            Quest q = Quests.getQuestManager().getQuestById(id);
+            Quest q = plugin.getQuestManager().getQuestById(id);
             if (q == null) {
                 continue;
             }
@@ -256,8 +258,8 @@ public class QuestProgressFile {
     }
 
     public boolean generateBlankQuestProgress(String questid) {
-        if (Quests.getQuestManager().getQuestById(questid) != null) {
-            Quest quest = Quests.getQuestManager().getQuestById(questid);
+        if (plugin.getQuestManager().getQuestById(questid) != null) {
+            Quest quest = plugin.getQuestManager().getQuestById(questid);
             QuestProgress questProgress = new QuestProgress(quest.getId(), false, false, 0, player, false, false);
             for (Task task : quest.getTasks()) {
                 TaskProgress taskProgress = new TaskProgress(task.getId(), null, player, false);
@@ -271,11 +273,11 @@ public class QuestProgressFile {
     }
 
     public void saveToDisk() {
-        File directory = new File(Quests.getInstance().getDataFolder() + File.separator + "playerdata");
+        File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
         if (!directory.exists() && !directory.isDirectory()) {
             directory.mkdirs();
         }
-        File file = new File(Quests.getInstance().getDataFolder() + File.separator + "playerdata" + File.separator + player.toString() + ".yml");
+        File file = new File(plugin.getDataFolder() + File.separator + "playerdata" + File.separator + player.toString() + ".yml");
         if (!file.exists()) {
             try {
                 file.createNewFile();

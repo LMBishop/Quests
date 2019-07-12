@@ -1,11 +1,19 @@
 package com.leonardobishop.quests.quests;
 
+import com.leonardobishop.quests.Quests;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class QuestManager {
+
+    private Quests plugin;
+
+    public QuestManager(Quests plugin) {
+        this.plugin = plugin;
+    }
 
     private Map<String, Quest> quests = new LinkedHashMap<>();
     private List<Category> categories = new ArrayList<>();

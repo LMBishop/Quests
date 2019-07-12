@@ -56,8 +56,8 @@ public enum Messages {
     }
 
     public String getMessage() {
-        if (Quests.getInstance().getConfig().contains(path)) {
-            String message = Quests.getInstance().getConfig().getString(path);
+        if (Quests.get().getConfig().contains(path)) {
+            String message = Quests.get().getConfig().getString(path);
             if (message != null) {
                 return ChatColor.translateAlternateColorCodes('&', message);
             }

@@ -10,6 +10,12 @@ import java.util.logging.Level;
 
 public class TaskTypeManager {
 
+    private Quests plugin;
+
+    public TaskTypeManager(Quests plugin) {
+        this.plugin = plugin;
+    }
+
     private ArrayList<TaskType> taskTypes = new ArrayList<>();
 
     public ArrayList<TaskType> getTaskTypes() {
@@ -23,8 +29,8 @@ public class TaskTypeManager {
     }
 
     public void registerTaskType(TaskType taskType) {
-        Bukkit.getPluginManager().registerEvents(taskType, Quests.getInstance());
-        Quests.getInstance().getLogger().log(Level.INFO, "Task type " + taskType.getType() + " has been registered.");
+        Bukkit.getPluginManager().registerEvents(taskType, plugin);
+        plugin.getLogger().log(Level.INFO, "Task type " + taskType.getType() + " has been registered.");
         taskTypes.add(taskType);
     }
 

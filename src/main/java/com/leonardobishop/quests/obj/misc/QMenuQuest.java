@@ -105,13 +105,13 @@ public class QMenuQuest implements QMenu {
         int invSlot = 0;
         for (int pointer = pageMin; pointer < pageMax; pointer++) {
             if (slotsToQuestIds.containsKey(pointer)) {
-                Quest quest = Quests.getQuestManager().getQuestById(slotsToQuestIds.get(pointer));
+                Quest quest = Quests.get().getQuestManager().getQuestById(slotsToQuestIds.get(pointer));
                 QuestProgress questProgress = owner.getQuestProgressFile().getQuestProgress(quest);
                 long cooldown = owner.getQuestProgressFile().getCooldownFor(quest);
                 if (!owner.getQuestProgressFile().hasMetRequirements(quest)) {
                     List<String> quests = new ArrayList<>();
                     for (String requirement : quest.getRequirements()) {
-                        quests.add(Quests.getQuestManager().getQuestById(requirement).getDisplayNameStripped());
+                        quests.add(Quests.get().getQuestManager().getQuestById(requirement).getDisplayNameStripped());
                     }
                     Map<String, String> placeholders = new HashMap<>();
                     placeholders.put("{quest}", quest.getDisplayNameStripped());
@@ -130,12 +130,12 @@ public class QMenuQuest implements QMenu {
                     inventory.setItem(invSlot, is);
                 } else if (cooldown > 0) {
                     Map<String, String> placeholders = new HashMap<>();
-                    placeholders.put("{time}", Quests.convertToFormat(TimeUnit.MINUTES.convert(cooldown, TimeUnit.MILLISECONDS)));
+                    placeholders.put("{time}", Quests.get().convertToFormat(TimeUnit.MINUTES.convert(cooldown, TimeUnit.MILLISECONDS)));
                     placeholders.put("{quest}", quest.getDisplayNameStripped());
                     ItemStack is = replaceItemStack(Items.QUEST_COOLDOWN.getItem(), placeholders);
                     inventory.setItem(invSlot, is);
                 } else {
-                    inventory.setItem(invSlot, Quests.getQuestManager().getQuestById(quest.getId()).getDisplayItem().toItemStack(quest, owner.getQuestProgressFile(), questProgress));
+                    inventory.setItem(invSlot, Quests.get().getQuestManager().getQuestById(quest.getId()).getDisplayItem().toItemStack(quest, owner.getQuestProgressFile(), questProgress));
                 }
             }
             invSlot++;

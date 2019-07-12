@@ -4,7 +4,7 @@ name: Quests
 version: %PLUGIN_VERSION%
 
 main: com.leonardobishop.quests.Quests
-author: lmbishop
+author: LMBishop
 softdepend: [ASkyBlock, uSkyBlock, Citizens]
 prefix: Quests
 

@@ -1,6 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
-import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
@@ -24,7 +24,7 @@ public final class FarmingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public FarmingTaskType() {
-        super("farming", "lmbishop", "Break a set amount of a crop.");
+        super("farming", "LMBishop", "Break a set amount of a crop.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of crops to be broken."));
         this.creatorConfigValues.add(new ConfigValue("crop", true, "Name or ID of crop."));
     }
@@ -42,7 +42,7 @@ public final class FarmingTaskType extends TaskType {
         }
         Crops crop = (Crops) event.getBlock().getState();
 
-        QPlayer qPlayer = Quests.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
         for (Quest quest : super.getRegisteredQuests()) {

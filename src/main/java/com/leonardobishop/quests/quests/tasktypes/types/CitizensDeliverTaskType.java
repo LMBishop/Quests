@@ -9,7 +9,6 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
-import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -17,8 +16,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.inventory.InventoryInteractEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -30,7 +27,7 @@ public final class CitizensDeliverTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public CitizensDeliverTaskType() {
-        super("citizens_deliver", "lmbishop", "Deliver a set of items to a NPC.");
+        super("citizens_deliver", "LMBishop", "Deliver a set of items to a NPC.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of item to retrieve."));
         this.creatorConfigValues.add(new ConfigValue("item", true, "Name or ID of item."));
         this.creatorConfigValues.add(new ConfigValue("npc-name", true, "Name of the NPC."));
@@ -50,11 +47,11 @@ public final class CitizensDeliverTaskType extends TaskType {
             public void run() {
                 checkInventory(event.getClicker(), event.getNPC().getName());
             }
-        }.runTaskLater(Quests.getInstance(), 1L);
+        }.runTaskLater(Quests.get(), 1L);
     }
 
     private void checkInventory(Player player, String citizenName) {
-        QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
+        QPlayer qPlayer = Quests.get().getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
         }

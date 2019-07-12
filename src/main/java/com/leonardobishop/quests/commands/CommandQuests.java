@@ -23,8 +23,14 @@ import java.util.UUID;
 
 public class CommandQuests implements CommandExecutor {
 
+    private Quests plugin;
+
+    public CommandQuests(Quests plugin) {
+        this.plugin = plugin;
+    }
+
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (Quests.getInstance().isBrokenConfig()) {
+        if (plugin.isBrokenConfig()) {
             sender.sendMessage(ChatColor.RED + "You have a YAML error in your config and Quests cannot load. If this is your first time using Quests, please " +
                     "delete the Quests folder and RESTART (not reload!) the server. If you have modified the config, check for errors in a YAML parser.");
             return true;
@@ -37,7 +43,7 @@ public class CommandQuests implements CommandExecutor {
 
         if (args.length == 0 && sender instanceof Player) {
             Player player = (Player) sender;
-            QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
+            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
             qPlayer.openQuests();
             return true;
         } else if (args.length >= 1) {
@@ -50,11 +56,11 @@ public class CommandQuests implements CommandExecutor {
                         showAdminHelp(sender, "moddata");
                         return true;
                     } else if (args[1].equalsIgnoreCase("reload")) {
-                        Quests.getInstance().reloadConfig();
-                        Quests.getInstance().reloadQuests();
-                        if (!Quests.getInstance().getQuestsConfigLoader().getBrokenFiles().isEmpty()) {
+                        plugin.reloadConfig();
+                        plugin.reloadQuests();
+                        if (!plugin.getQuestsConfigLoader().getBrokenFiles().isEmpty()) {
                             sender.sendMessage(ChatColor.RED + "Quests has failed to load the following files:");
-                            for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : Quests.getInstance().getQuestsConfigLoader().getBrokenFiles().entrySet()) {
+                            for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : plugin.getQuestsConfigLoader().getBrokenFiles().entrySet()) {
                                 sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + entry.getKey() + ": " + ChatColor.GRAY + entry.getValue().getMessage());
                             }
                         } else {
@@ -63,7 +69,7 @@ public class CommandQuests implements CommandExecutor {
                         return true;
                     } else if (args[1].equalsIgnoreCase("types")) {
                         sender.sendMessage(ChatColor.GRAY + "Registered task types:");
-                        for (TaskType taskType : Quests.getTaskTypeManager().getTaskTypes()) {
+                        for (TaskType taskType : plugin.getTaskTypeManager().getTaskTypes()) {
                             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + taskType.getType());
                         }
                         sender.sendMessage(ChatColor.DARK_GRAY + "View info using /q a types [type].");
@@ -73,14 +79,14 @@ public class CommandQuests implements CommandExecutor {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                Quests.getUpdater().check();
-                                if (Quests.getUpdater().isUpdateReady()) {
-                                    sender.sendMessage(Quests.getUpdater().getMessage());
+                                plugin.getUpdater().check();
+                                if (plugin.getUpdater().isUpdateReady()) {
+                                    sender.sendMessage(plugin.getUpdater().getMessage());
                                 } else {
                                     sender.sendMessage(ChatColor.GRAY + "No updates were found.");
                                 }
                             }
-                        }.runTaskAsynchronously(Quests.getInstance());
+                        }.runTaskAsynchronously(plugin);
                         return true;
                     }
                 } else if (args.length == 3) {
@@ -92,7 +98,7 @@ public class CommandQuests implements CommandExecutor {
                         return true;
                     } else if (args[1].equalsIgnoreCase("types")) {
                         TaskType taskType = null;
-                        for (TaskType task : Quests.getTaskTypeManager().getTaskTypes()) {
+                        for (TaskType task : plugin.getTaskTypeManager().getTaskTypes()) {
                             if (task.getType().equals(args[2])) {
                                 taskType = task;
                             }
@@ -111,7 +117,7 @@ public class CommandQuests implements CommandExecutor {
                         if (args[2].equalsIgnoreCase("q") || args[2].equalsIgnoreCase("quests")) {
                             Player player = Bukkit.getPlayer(args[3]);
                             if (player != null) {
-                                QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
+                                QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                                 if (qPlayer != null) {
                                     qPlayer.openQuests();
                                     sender.sendMessage(Messages.COMMAND_QUEST_OPENQUESTS_ADMIN_SUCCESS.getMessage().replace("{player}", player.getName()));
@@ -139,22 +145,22 @@ public class CommandQuests implements CommandExecutor {
                             return true;
                         }
                         if (args[2].equalsIgnoreCase("fullreset")) {
-                            if (Quests.getPlayerManager().getPlayer(uuid) == null) {
+                            if (plugin.getPlayerManager().getPlayer(uuid) == null) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", name));
-                                Quests.getPlayerManager().loadPlayer(uuid, true);
+                                plugin.getPlayerManager().loadPlayer(uuid, true);
                             }
-                            if (Quests.getPlayerManager().getPlayer(uuid) == null) {
+                            if (plugin.getPlayerManager().getPlayer(uuid) == null) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_NODATA.getMessage().replace("{player}", name));
                                 return true;
                             }
-                            QuestProgressFile questProgressFile = Quests.getPlayerManager().getPlayer(uuid).getQuestProgressFile();
+                            QuestProgressFile questProgressFile = plugin.getPlayerManager().getPlayer(uuid).getQuestProgressFile();
                             questProgressFile.clear();
                             questProgressFile.saveToDisk();
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_FULLRESET.getMessage().replace("{player}", name));
                             return true;
                         }
-                        if (Quests.getPlayerManager().getPlayer(uuid).isOnlyDataLoaded()) {
-                            Quests.getPlayerManager().removePlayer(uuid);
+                        if (plugin.getPlayerManager().getPlayer(uuid).isOnlyDataLoaded()) {
+                            plugin.getPlayerManager().removePlayer(uuid);
                         }
                         showAdminHelp(sender, "moddata");
                         return true;
@@ -166,14 +172,14 @@ public class CommandQuests implements CommandExecutor {
                                 sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DISABLED.getMessage());
                                 return true;
                             }
-                            Category category = Quests.getQuestManager().getCategoryById(args[4]);
+                            Category category = plugin.getQuestManager().getCategoryById(args[4]);
                             if (category == null) {
                                 sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.getMessage().replace("{category}", args[4]));
                                 return true;
                             }
                             Player player = Bukkit.getPlayer(args[3]);
                             if (player != null) {
-                                QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
+                                QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                                 if (qPlayer != null) {
                                     if (qPlayer.openCategory(category, null, false) == 0) {
                                         sender.sendMessage(Messages.COMMAND_QUEST_OPENCATEGORY_ADMIN_SUCCESS.getMessage().replace("{player}", player.getName())
@@ -204,16 +210,16 @@ public class CommandQuests implements CommandExecutor {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.getMessage().replace("{player}", args[3]));
                             return true;
                         }
-                        if (Quests.getPlayerManager().getPlayer(uuid) == null) {
+                        if (plugin.getPlayerManager().getPlayer(uuid) == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", name));
-                            Quests.getPlayerManager().loadPlayer(uuid, true);
+                            plugin.getPlayerManager().loadPlayer(uuid, true);
                         }
-                        if (Quests.getPlayerManager().getPlayer(uuid) == null) {
+                        if (plugin.getPlayerManager().getPlayer(uuid) == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_NODATA.getMessage().replace("{player}", name));
                             success = true;
                         }
-                        QuestProgressFile questProgressFile = Quests.getPlayerManager().getPlayer(uuid).getQuestProgressFile();
-                        Quest quest = Quests.getQuestManager().getQuestById(args[4]);
+                        QuestProgressFile questProgressFile = plugin.getPlayerManager().getPlayer(uuid).getQuestProgressFile();
+                        Quest quest = plugin.getQuestManager().getQuestById(args[4]);
                         if (quest == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_START_DOESNTEXIST.getMessage().replace("{quest}", args[4]));
                             success = true;
@@ -257,8 +263,8 @@ public class CommandQuests implements CommandExecutor {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         }
-                        if (Quests.getPlayerManager().getPlayer(uuid).isOnlyDataLoaded()) {
-                            Quests.getPlayerManager().removePlayer(uuid);
+                        if (plugin.getPlayerManager().getPlayer(uuid).isOnlyDataLoaded()) {
+                            plugin.getPlayerManager().removePlayer(uuid);
                         }
                         if (!success) {
                             showAdminHelp(sender, "moddata");
@@ -272,11 +278,11 @@ public class CommandQuests implements CommandExecutor {
             if (sender instanceof Player && (args[0].equalsIgnoreCase("q") || args[0].equalsIgnoreCase("quests"))) {
                 Player player = (Player) sender;
                 if (args.length >= 2) {
-                    Quest quest = Quests.getQuestManager().getQuestById(args[1]);
+                    Quest quest = plugin.getQuestManager().getQuestById(args[1]);
                     if (quest == null) {
                         sender.sendMessage(Messages.COMMAND_QUEST_START_DOESNTEXIST.getMessage().replace("{quest}", args[1]));
                     } else {
-                        QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
+                        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                         if (qPlayer == null) {
                             // shit + fan
                             sender.sendMessage(ChatColor.RED + "An error occurred finding your player.");
@@ -293,11 +299,11 @@ public class CommandQuests implements CommandExecutor {
                 }
                 Player player = (Player) sender;
                 if (args.length >= 2) {
-                    Category category = Quests.getQuestManager().getCategoryById(args[1]);
+                    Category category = plugin.getQuestManager().getCategoryById(args[1]);
                     if (category == null) {
                         sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.getMessage().replace("{category}", args[1]));
                     } else {
-                        QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
+                        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                         qPlayer.openCategory(category, null, false);
                         return true;
                     }
@@ -313,14 +319,14 @@ public class CommandQuests implements CommandExecutor {
     }
 
     private void showHelp(CommandSender sender) {
-        sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "------------=[" + ChatColor.RED + " Quests v" + Quests.getInstance()
+        sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "------------=[" + ChatColor.RED + " Quests v" + plugin
                 .getDescription().getVersion() + " " + ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "]=------------");
         sender.sendMessage(ChatColor.GRAY + "The following commands are available: ");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests " + ChatColor.DARK_GRAY + ": show quests");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests c/category <categoryid> " + ChatColor.DARK_GRAY + ": open category by ID");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests q/quest <questid> " + ChatColor.DARK_GRAY + ": start quest by ID");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a/admin " + ChatColor.DARK_GRAY + ": view help for admins");
-        sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------=[" + ChatColor.RED + " made with <3 by lmbishop " + ChatColor
+        sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------=[" + ChatColor.RED + " made with <3 by LMBishop " + ChatColor
                 .GRAY.toString() + ChatColor.STRIKETHROUGH + "]=--------");
     }
 

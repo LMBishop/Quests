@@ -1,6 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
-import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
@@ -22,7 +22,7 @@ public final class TamingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public TamingTaskType() {
-        super("taming", "lmbishop", "Tame a set amount of animals.");
+        super("taming", "LMBishop", "Tame a set amount of animals.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of animals to be tamed."));
     }
 
@@ -39,7 +39,7 @@ public final class TamingTaskType extends TaskType {
 
         Player player = (Player) event.getOwner();
 
-        QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
         for (Quest quest : super.getRegisteredQuests()) {

@@ -1,6 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
-import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
@@ -21,7 +21,7 @@ public final class uSkyBlockLevelType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public uSkyBlockLevelType() {
-        super("uskyblock_level", "lmbishop", "Reach a certain island level for uSkyBlock.");
+        super("uskyblock_level", "LMBishop", "Reach a certain island level for uSkyBlock.");
         this.creatorConfigValues.add(new ConfigValue("level", true, "Minimum island level needed."));
     }
 
@@ -32,7 +32,7 @@ public final class uSkyBlockLevelType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onIslandLevel(uSkyBlockScoreChangedEvent event) {
-        QPlayer qPlayer = Quests.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
         if (qPlayer == null) {
             return;
         }

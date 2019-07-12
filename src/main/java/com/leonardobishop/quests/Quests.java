@@ -51,23 +51,24 @@ public class Quests extends JavaPlugin {
     private static QPlayerManager qPlayerManager;
     private static TaskTypeManager taskTypeManager;
     private static Updater updater;
+    private static Metrics metrics;
     private static Title title;
     private boolean brokenConfig = false;
     private QuestsConfigLoader questsConfigLoader;
 
-    public static Quests getInstance() {
+    public static Quests get() {
         return instance;
     }
 
-    public static QuestManager getQuestManager() {
+    public QuestManager getQuestManager() {
         return questManager;
     }
 
-    public static QPlayerManager getPlayerManager() {
+    public QPlayerManager getPlayerManager() {
         return qPlayerManager;
     }
 
-    public static TaskTypeManager getTaskTypeManager() {
+    public TaskTypeManager getTaskTypeManager() {
         return taskTypeManager;
     }
 
@@ -79,11 +80,11 @@ public class Quests extends JavaPlugin {
         this.brokenConfig = brokenConfig;
     }
 
-    public static Title getTitle() {
+    public Title getTitle() {
         return title;
     }
 
-    public static Updater getUpdater() {
+    public Updater getUpdater() {
         return updater;
     }
 
@@ -91,7 +92,7 @@ public class Quests extends JavaPlugin {
         return questsConfigLoader;
     }
 
-    public static String convertToFormat(long m) {
+    public String convertToFormat(long m) {
         long hours = m / 60;
         long minutesLeft = m - hours * 60;
 
@@ -117,32 +118,24 @@ public class Quests extends JavaPlugin {
         super(loader, description, dataFolder, file);
     }
 
-    public void prepareForTest() {
-        instance = this;
-        taskTypeManager = new TaskTypeManager();
-        questManager = new QuestManager();
-        qPlayerManager = new QPlayerManager();
-
-        updater = new Updater(this);
-    }
-
 
     @Override
     public void onEnable() {
         instance = this;
-        taskTypeManager = new TaskTypeManager();
-        questManager = new QuestManager();
-        qPlayerManager = new QPlayerManager();
+        taskTypeManager = new TaskTypeManager(this);
+        questManager = new QuestManager(this);
+        qPlayerManager = new QPlayerManager(this);
+        QuestsAPI.initialise(this);
 
         dataGenerator();
         setupTitle();
 
-        Bukkit.getPluginCommand("quests").setExecutor(new CommandQuests());
-        Bukkit.getPluginManager().registerEvents(new EventPlayerJoin(), this);
-        Bukkit.getPluginManager().registerEvents(new EventInventory(), this);
-        Bukkit.getPluginManager().registerEvents(new EventPlayerLeave(), this);
+        Bukkit.getPluginCommand("quests").setExecutor(new CommandQuests(this));
+        Bukkit.getPluginManager().registerEvents(new EventPlayerJoin(this), this);
+        Bukkit.getPluginManager().registerEvents(new EventInventory(this), this);
+        Bukkit.getPluginManager().registerEvents(new EventPlayerLeave(this), this);
 
-        Metrics metrics = new Metrics(this);
+        metrics = new Metrics(this);
         this.getLogger().log(Level.INFO, "Metrics started. This can be disabled at /plugins/bStats/config.yml.");
 
         questsConfigLoader = new QuestsConfigLoader(Quests.this);
@@ -215,7 +208,7 @@ public class Quests extends JavaPlugin {
                         continue;
                     }
                     QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-                    for (Map.Entry<String, Quest> entry : Quests.getQuestManager().getQuests().entrySet()) {
+                    for (Map.Entry<String, Quest> entry : Quests.this.getQuestManager().getQuests().entrySet()) {
                         Quest quest = entry.getValue();
                         QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
                         if (questProgressFile.hasStartedQuest(quest)) {

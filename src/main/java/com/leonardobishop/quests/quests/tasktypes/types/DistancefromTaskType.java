@@ -1,6 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
-import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
@@ -25,7 +25,7 @@ public final class DistancefromTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public DistancefromTaskType() {
-        super("distancefrom", "lmbishop", "Distance yourself from a set of co-ordinates.");
+        super("distancefrom", "LMBishop", "Distance yourself from a set of co-ordinates.");
         this.creatorConfigValues.add(new ConfigValue("x", true, "X position."));
         this.creatorConfigValues.add(new ConfigValue("y", true, "Y position."));
         this.creatorConfigValues.add(new ConfigValue("z", true, "Z position."));
@@ -46,7 +46,7 @@ public final class DistancefromTaskType extends TaskType {
 
         Player player = event.getPlayer();
 
-        QPlayer qPlayer = Quests.getPlayerManager().getPlayer(player.getUniqueId());
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
         for (Quest quest : super.getRegisteredQuests()) {

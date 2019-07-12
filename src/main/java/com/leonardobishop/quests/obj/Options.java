@@ -29,19 +29,19 @@ public enum Options {
     }
 
     public int getIntValue() {
-        return Quests.getInstance().getConfig().getInt(path);
+        return Quests.get().getConfig().getInt(path);
     }
 
     public String getStringValue() {
-        return Quests.getInstance().getConfig().getString(path);
+        return Quests.get().getConfig().getString(path);
     }
 
     public boolean getBooleanValue() {
-        return Quests.getInstance().getConfig().getBoolean(path);
+        return Quests.get().getConfig().getBoolean(path);
     }
 
     public List<String> getStringListValue() {
-        return Quests.getInstance().getConfig().getStringList(path);
+        return Quests.get().getConfig().getStringList(path);
     }
 
     public static String color(String s) {

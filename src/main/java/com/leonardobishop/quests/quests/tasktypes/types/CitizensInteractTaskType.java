@@ -1,6 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
-import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
@@ -10,14 +10,9 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +22,7 @@ public final class CitizensInteractTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public CitizensInteractTaskType() {
-        super("citizens_interact", "lmbishop", "Interact with an NPC to complete the quest.");
+        super("citizens_interact", "LMBishop", "Interact with an NPC to complete the quest.");
         this.creatorConfigValues.add(new ConfigValue("npc-name", true, "Name of the NPC."));
     }
 
@@ -38,7 +33,7 @@ public final class CitizensInteractTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onNPCClick(NPCRightClickEvent event) {
-        QPlayer qPlayer = Quests.getPlayerManager().getPlayer(event.getClicker().getUniqueId());
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getClicker().getUniqueId());
         if (qPlayer == null) {
             return;
         }
