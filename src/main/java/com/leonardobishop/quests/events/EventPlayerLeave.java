@@ -17,7 +17,12 @@ public class EventPlayerLeave implements Listener {
             @Override
             public void run() {
                  Quests.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile().saveToDisk();
-                 Quests.getPlayerManager().removePlayer(playerUuid);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Quests.getPlayerManager().removePlayer(playerUuid);
+                    }
+                }.runTask(Quests.getInstance());
             }
         }.runTaskAsynchronously(Quests.getInstance());
     }
