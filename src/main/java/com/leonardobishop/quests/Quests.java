@@ -181,6 +181,7 @@ public class Quests extends JavaPlugin {
                     for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : questsConfigLoader.getBrokenFiles().entrySet()) {
                         Quests.this.getLogger().warning(" - " + entry.getKey() + ": " + entry.getValue().getMessage());
                     }
+                    Quests.this.getLogger().warning(ChatColor.GRAY.toString() + ChatColor.ITALIC + "If this is your first time using Quests, please delete the Quests folder and RESTART (not reload!) the server.");
                 }
 
                 for (Player player : Bukkit.getOnlinePlayers()) {

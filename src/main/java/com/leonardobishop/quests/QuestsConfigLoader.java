@@ -38,7 +38,7 @@ public class QuestsConfigLoader {
             YamlConfiguration config = new YamlConfiguration();
             config.load(new File(String.valueOf(plugin.getDataFolder() + File.separator + "config.yml")));
         } catch (Exception ex) {
-            brokenFiles.put("<MAIN CONFIG> config.yml", ConfigLoadError.MAIN_CONFIG_ERROR);
+            brokenFiles.put("<MAIN CONFIG> config.yml", ConfigLoadError.MALFORMED_YAML);
             plugin.setBrokenConfig(true);
             return;
         }
@@ -189,7 +189,6 @@ public class QuestsConfigLoader {
 
     public enum ConfigLoadError {
 
-        MAIN_CONFIG_ERROR("You have a YAML error in your Quests config. If this is your first time using Quests, please remove the Quests folder and RESTART (not reload!) the server and try again."),
         MALFORMED_YAML("Malformed YAML"),
         INVALID_QUEST_ID("Invalid quest ID (must be alphanumeric)");
 
