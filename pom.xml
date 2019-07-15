@@ -42,6 +42,12 @@
             <id>everything</id>
             <url>http://repo.citizensnpcs.co/</url>
         </repository>
+
+        <!-- MythicMobs -->
+        <repository>
+            <id>mythicmobs</id>
+            <url>http://mc.hackerzlair.org:8888/repository/public</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -66,6 +72,16 @@
             <groupId>com.github.rlf</groupId>
             <artifactId>uSkyBlock-API</artifactId>
             <version>2.6.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- MythicMobs -->
+        <dependency>
+            <groupId>io.lumine.xikage</groupId>
+            <artifactId>mythicmobs</artifactId>
+            <version>4.5.7</version>
+            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Citizens -->
@@ -77,7 +93,8 @@
             <scope>provided</scope>
         </dependency>
 
-<!--        &lt;!&ndash; Test &ndash;&gt;-->
+
+        <!--        &lt;!&ndash; Test &ndash;&gt;-->
 <!--        <dependency>-->
 <!--            <groupId>org.powermock</groupId>-->
 <!--            <artifactId>powermock-module-junit4</artifactId>-->

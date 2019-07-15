@@ -1,19 +1,16 @@
 package com.leonardobishop.quests;
 
 import com.google.common.io.ByteStreams;
-import com.leonardobishop.quests.blocktype.SimilarBlocks;
 import com.leonardobishop.quests.bstats.Metrics;
 import com.leonardobishop.quests.commands.CommandQuests;
 import com.leonardobishop.quests.events.EventInventory;
 import com.leonardobishop.quests.events.EventPlayerJoin;
 import com.leonardobishop.quests.events.EventPlayerLeave;
-import com.leonardobishop.quests.obj.misc.QItemStack;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.QPlayerManager;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
-import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.QuestManager;
 import com.leonardobishop.quests.quests.Task;
@@ -29,7 +26,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -174,6 +170,9 @@ public class Quests extends JavaPlugin {
                 if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
                     taskTypeManager.registerTaskType(new CitizensDeliverTaskType());
                     taskTypeManager.registerTaskType(new CitizensInteractTaskType());
+                }
+                if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
+                    taskTypeManager.registerTaskType(new MythicMobsKillingType());
                 }
 
                 reloadQuests();
