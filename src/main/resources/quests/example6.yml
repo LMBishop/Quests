@@ -28,3 +28,5 @@ options:
   cooldown:
     enabled: true
     time: 1440
+  # The quest is in a different category so the sort order is 1.
+  sort-order: 1

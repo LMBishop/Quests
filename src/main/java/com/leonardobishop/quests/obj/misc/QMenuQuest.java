@@ -11,10 +11,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,6 +37,7 @@ public class QMenuQuest implements QMenu {
     }
 
     public void populate(List<Quest> quests) {
+        Collections.sort(quests);
         int slot = 0;
         for (Quest quest : quests) {
             if (Options.GUI_HIDE_LOCKED.getBooleanValue()) {

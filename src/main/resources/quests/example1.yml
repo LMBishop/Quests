@@ -53,3 +53,5 @@ options:
     enabled: true
     # Time (in minutes)
     time: 1440
+  # This is the relative position in the GUI
+  sort-order: 1

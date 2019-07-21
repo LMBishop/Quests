@@ -81,6 +81,7 @@ public class QuestsConfigLoader {
                 boolean cooldown = config.getBoolean("options.cooldown.enabled", false);
                 boolean permissionRequired = config.getBoolean("options.permission-required", false);
                 int cooldownTime = config.getInt("options.cooldown.time", 10);
+                int sortOrder = config.getInt("options.sort-order", 1);
                 String category = config.getString("options.category");
 
                 if (rewardString == null) {
@@ -99,9 +100,9 @@ public class QuestsConfigLoader {
 
                 Quest quest;
                 if (category.equals("")) {
-                    quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString);
+                    quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, sortOrder);
                 } else {
-                    quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, category);
+                    quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, category, sortOrder);
                     Category c = plugin.getQuestManager().getCategoryById(category);
                     if (c != null) {
                         c.registerQuestId(id);

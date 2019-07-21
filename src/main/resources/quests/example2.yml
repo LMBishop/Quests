@@ -40,3 +40,5 @@ options:
   cooldown:
     enabled: true
     time: 1440
+  # The sort order has been changed so this quest will appear after in the GUI
+  sort-order: 2

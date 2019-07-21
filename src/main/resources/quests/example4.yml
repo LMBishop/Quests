@@ -37,3 +37,4 @@ options:
   cooldown:
     enabled: true
     time: 10
+  sort-order: 4

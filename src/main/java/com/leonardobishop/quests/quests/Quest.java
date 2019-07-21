@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 
 import java.util.*;
 
-public class Quest {
+public class Quest implements Comparable<Quest> {
 
     private Map<String, Task> tasks = new HashMap<>();
     //TODO: maybe store by <tasktypename (string), list<task>> since we never get task by id, but always get tasks by type.
@@ -17,16 +17,17 @@ public class Quest {
     private boolean repeatable;
     private boolean cooldownEnabled;
     private int cooldown;
+    private int sortOrder;
     private boolean permissionRequired;
     private String categoryid;
 
 
-    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString, String categoryid) {
-        this(id, displayItem, rewards, requirements, repeatable, cooldownEnabled, cooldown, permissionRequired, rewardString);
+    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString, String categoryid, int sortOrder) {
+        this(id, displayItem, rewards, requirements, repeatable, cooldownEnabled, cooldown, permissionRequired, rewardString, sortOrder);
         this.categoryid = categoryid;
     }
 
-    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString) {
+    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString, int sortOrder) {
         this.id = id;
         this.displayItem = displayItem;
         this.rewards = rewards;
@@ -36,6 +37,7 @@ public class Quest {
         this.cooldown = cooldown;
         this.permissionRequired = permissionRequired;
         this.rewardString = rewardString;
+        this.sortOrder = sortOrder;
     }
 
     public void registerTask(Task task) {
@@ -103,5 +105,10 @@ public class Quest {
 
     public String getDisplayNameStripped() {
         return ChatColor.stripColor(this.displayItem.getName());
+    }
+
+    @Override
+    public int compareTo(Quest quest) {
+        return(sortOrder - quest.sortOrder);
     }
 }
