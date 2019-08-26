@@ -10,13 +10,13 @@ prefix: Quests
 
 commands:
   quests:
-    description: Description
+    description: Main command
     usage: /quests
     permission: quests.command
     aliases: [q, quest]
 
 permissions:
   quests.command:
-    description: Quests permission
+    description: Permission for main command
   quests.admin:
     description: Permission for the admin commands 
