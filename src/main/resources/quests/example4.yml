@@ -1,5 +1,5 @@
 # This is a quest which requires the previous quest to be complete to start.
-# Unlike the previous quests, this quest has a reward string.
+# Unlike the previous quests, this quest has a reward string and a start string.
 
 tasks:
   mobkilling:
@@ -18,17 +18,24 @@ display:
     - ""
     - "&7Rewards:"
     - "&7 - $50 added to your in-game balance."
+    - "&7 - 1 diamond ."
   lore-started:
     - ""
     - "&7Your current progression:"
     - "&7 - {mobkilling:progress}/3 mobs killed."
   type: "STRING"
+# Here you can list messages which will be sent to the player (if they are online) upon the quest starting.
+startstring:
+  - "&7Upon completion of this quest, you will be rewarded with"
+  - " &8* &c$50"
+  - " &8* &c1 diamonds"
 rewards:
   - "eco give {player} 50"
+  - "give {player} diamond 1"
 # Here you can list messages which will be sent to the player (if they are online) upon completion.
 rewardstring:
-  - " &8* &c$10 &7was added to your in-game balance."
-  - " &8* &c30 diamonds &7was added to your inventory."
+  - " &8* &c$1000 &7was added to your in-game balance."
+  - " &8* &c1 diamond &7was added to your inventory."
 options:
   category: "examples"
   requires:

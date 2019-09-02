@@ -164,6 +164,9 @@ public class QuestProgressFile {
                             .getDisplayNameStripped()), Messages.TITLE_QUEST_START_SUBTITLE.getMessage().replace("{quest}", quest
                             .getDisplayNameStripped()));
                 }
+                for (String s : quest.getStartString()) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
+                }
             }
         }
         return code;

@@ -77,6 +77,7 @@ public class QuestsConfigLoader {
                 List<String> rewards = config.getStringList("rewards");
                 List<String> requirements = config.getStringList("options.requires");
                 List<String> rewardString = config.getStringList("rewardstring");
+                List<String> startString = config.getStringList("startstring");
                 boolean repeatable = config.getBoolean("options.repeatable", false);
                 boolean cooldown = config.getBoolean("options.cooldown.enabled", false);
                 boolean permissionRequired = config.getBoolean("options.permission-required", false);
@@ -84,25 +85,17 @@ public class QuestsConfigLoader {
                 int sortOrder = config.getInt("options.sort-order", 1);
                 String category = config.getString("options.category");
 
-                if (rewardString == null) {
-                    rewardString = new ArrayList<>();
-                }
-                if (requirements == null) {
-                    requirements = new ArrayList<>();
-                }
-                if (rewards == null) {
-                    rewards = new ArrayList<>();
-                }
-                if (category == null) {
-                    category = "";
-                }
-
+                if (rewardString == null) rewardString = new ArrayList<>();
+                if (startString == null) startString = new ArrayList<>();
+                if (requirements == null) requirements = new ArrayList<>();
+                if (rewards == null) rewards = new ArrayList<>();
+                if (category == null) category = "";
 
                 Quest quest;
                 if (category.equals("")) {
-                    quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, sortOrder);
+                    quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, startString, sortOrder);
                 } else {
-                    quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, category, sortOrder);
+                    quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, startString, category, sortOrder);
                     Category c = plugin.getQuestManager().getCategoryById(category);
                     if (c != null) {
                         c.registerQuestId(id);

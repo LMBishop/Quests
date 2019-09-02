@@ -14,6 +14,7 @@ public class Quest implements Comparable<Quest> {
     private List<String> rewards;
     private List<String> requirements;
     private List<String> rewardString;
+    private List<String> startString;
     private boolean repeatable;
     private boolean cooldownEnabled;
     private int cooldown;
@@ -22,12 +23,12 @@ public class Quest implements Comparable<Quest> {
     private String categoryid;
 
 
-    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString, String categoryid, int sortOrder) {
-        this(id, displayItem, rewards, requirements, repeatable, cooldownEnabled, cooldown, permissionRequired, rewardString, sortOrder);
+    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString, List<String> startString, String categoryid, int sortOrder) {
+        this(id, displayItem, rewards, requirements, repeatable, cooldownEnabled, cooldown, permissionRequired, rewardString, startString, sortOrder);
         this.categoryid = categoryid;
     }
 
-    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString, int sortOrder) {
+    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString, List<String> startString, int sortOrder) {
         this.id = id;
         this.displayItem = displayItem;
         this.rewards = rewards;
@@ -37,6 +38,7 @@ public class Quest implements Comparable<Quest> {
         this.cooldown = cooldown;
         this.permissionRequired = permissionRequired;
         this.rewardString = rewardString;
+        this.startString = startString;
         this.sortOrder = sortOrder;
     }
 
@@ -69,6 +71,10 @@ public class Quest implements Comparable<Quest> {
 
     public List<String> getRewardString() {
         return rewardString;
+    }
+
+    public List<String> getStartString() {
+        return startString;
     }
 
     public String getId() {
