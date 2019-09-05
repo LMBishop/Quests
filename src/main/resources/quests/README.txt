@@ -8,8 +8,9 @@
 # A task is an objective such as breaking blocks or obtaining items.
 # A reward is a command executed by the SERVER. Use {player} to get the players name.
 #
+# A quest can have a 'startstring' (this is optional). They will be sent to the player when they start the quest.
 # A quest can have a 'rewardstring' (this is optional). They will be sent to the player when they complete the quest.
-# An example of the rewardstring in use can be seen in the quest example4.
+# An example of the startstring/rewardstring in use can be seen in the quest example4.
 #
 # Each quest will have ONE "display" item, this is the item shown to the player in the GUI.
 # The display item will have a "name", a "type" and TWO lores.
