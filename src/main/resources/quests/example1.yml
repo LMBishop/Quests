@@ -32,7 +32,7 @@ display:
     - "&7Your current progression:"
     - "&7 - {mining:progress}/30 blocks broken."
   # This is the material of the item. It is recommended to stick to bukkit names.
-  type: "WOOD_PICKAXE"
+  type: "WOODEN_PICKAXE"
 
 # List all commands to be executed by the server when the player completes the quest. Use {player} to get the players name.
 rewards:

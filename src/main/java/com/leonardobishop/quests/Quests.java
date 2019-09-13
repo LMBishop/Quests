@@ -21,7 +21,6 @@ import com.leonardobishop.quests.title.Title_Bukkit;
 import com.leonardobishop.quests.title.Title_BukkitNoTimings;
 import com.leonardobishop.quests.title.Title_Other;
 import com.leonardobishop.quests.updater.Updater;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -132,7 +131,9 @@ public class Quests extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EventPlayerLeave(this), this);
 
         metrics = new Metrics(this);
-        this.getLogger().log(Level.INFO, "Metrics started. This can be disabled at /plugins/bStats/config.yml.");
+        if (metrics.isEnabled()) {
+            this.getLogger().log(Level.INFO, "Metrics started. This can be disabled at /plugins/bStats/config.yml.");
+        }
 
         questsConfigLoader = new QuestsConfigLoader(Quests.this);
 
@@ -270,24 +271,8 @@ public class Quests extends JavaPlugin {
             }
         }
         name = ChatColor.translateAlternateColorCodes('&', cName);
+        type = Material.matchMaterial(cType);
 
-        if (StringUtils.isNumeric(cType)) {
-            type = Material.getMaterial(Integer.parseInt(cType));
-        } else if (Material.getMaterial(cType) != null) {
-            type = Material.getMaterial(cType);
-        } else if (cType.contains(":")) {
-            String[] parts = cType.split(":");
-            if (parts.length > 1) {
-                if (StringUtils.isNumeric(parts[0])) {
-                    type = Material.getMaterial(Integer.parseInt(parts[0]));
-                } else if (Material.getMaterial(parts[0]) != null) {
-                    type = Material.getMaterial(parts[0]);
-                }
-                if (StringUtils.isNumeric(parts[1])) {
-                    data = Integer.parseInt(parts[1]);
-                }
-            }
-        }
 
         if (type == null) {
             type = Material.STONE;

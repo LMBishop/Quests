@@ -60,11 +60,8 @@ public final class FarmingTaskType extends TaskType {
                     Object configBlock = task.getConfigValue("block");
                     Object configData = task.getConfigValue("data");
 
-                    if (StringUtils.isNumeric(String.valueOf(configBlock))) {
-                        material = Material.getMaterial((int) configBlock);
-                    } else {
-                        material = Material.getMaterial(String.valueOf(configBlock));
-                    }
+                    material = Material.matchMaterial(String.valueOf(configBlock));
+
 
                     if (material != null && event.getBlock().getType().equals(material)) {
 

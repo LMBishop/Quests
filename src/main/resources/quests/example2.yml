@@ -27,7 +27,7 @@ display:
     - "&7Your current progression:"
     - "&7 - {mining:progress}/100 blocks broken."
     - "&7 - {building:progress}/100 blocks placed."
-  type: "GRASS"
+  type: "GRASS_BLOCK"
 rewards:
   - "give {player} diamond 15"
   - "eco give {player} 50"

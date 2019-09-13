@@ -1,8 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
 import com.leonardobishop.quests.QuestsAPI;
-import com.leonardobishop.quests.blocktype.Block;
-import com.leonardobishop.quests.blocktype.SimilarBlocks;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
@@ -11,7 +9,6 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -29,7 +26,7 @@ public final class BuildingCertainTaskType extends TaskType {
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of blocks to be placed."));
         this.creatorConfigValues.add(new ConfigValue("block", true, "Name or ID of block."));
         this.creatorConfigValues.add(new ConfigValue("data", false, "Data code for block."));
-        this.creatorConfigValues.add(new ConfigValue("use-similar-blocks", false, "If true, this will ignore orientation of doors, logs etc."));
+        this.creatorConfigValues.add(new ConfigValue("use-similar-blocks", false, "(Deprecated) If true, this will ignore orientation of doors, logs etc."));
     }
 
     @Override
@@ -58,22 +55,11 @@ public final class BuildingCertainTaskType extends TaskType {
                     Object configData = task.getConfigValue("data");
                     Object configSimilarBlocks = task.getConfigValue("use-similar-blocks");
 
-                    if (StringUtils.isNumeric(String.valueOf(configBlock))) {
-                        material = Material.getMaterial((int) configBlock);
-                    } else {
-                        material = Material.getMaterial(String.valueOf(configBlock));
-                    }
+                    material = Material.matchMaterial(String.valueOf(configBlock));
+
 
                     Material blockType = event.getBlock().getType();
                     short blockData = event.getBlock().getData();
-
-                    if (configSimilarBlocks != null && ((Boolean) configSimilarBlocks)) {
-                        Block block;
-                        if ((block = SimilarBlocks.getSimilarBlock(new Block(blockType, blockData))) != null) {
-                            blockType = block.getMaterial();
-                            blockData = block.getData();
-                        }
-                    }
 
                     if (blockType.equals(material)) {
                         if (configData != null && (((int) blockData) != ((int) configData))) {

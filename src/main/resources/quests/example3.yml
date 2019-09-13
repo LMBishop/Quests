@@ -6,11 +6,11 @@ tasks:
   mining:
     type: "blockbreakcertain"
     amount: 81
-    block: 14 # (gold ore)
+    block: GOLD_ORE
   building:
     type: "blockplacecertain"
     amount: 9
-    block: 41 # (gold blocks)
+    block: GOLD_BLOCK
 display:
   name: "&cExample III (Repeatable, 10 minute cooldown)"
   lore-normal:

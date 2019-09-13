@@ -36,7 +36,7 @@ categories:
       - "&cIt is highly recommended you read this"
       - "&csection and all the comments so you can"
       - "&cmake the most of this plugin."
-      type: "327"
+      type: "WATER_BUCKET"
   permissionexample:
     display:
       name: "&cPermission Example"
@@ -47,7 +47,7 @@ categories:
       - "&cIt is highly recommended you read this"
       - "&csection and all the comments so you can"
       - "&cmake the most of this plugin."
-      type: "327"
+      type: "WATER_BUCKET"
     # This category needs the permission "quests.category.permissionexample", because the category ID is 'permissionexample'.
     # The permission for other categories is: "quests.category.<id>".
     permission-required: true
@@ -82,39 +82,39 @@ gui:
     - ""
     - "&7Requires: &c{requirements}"
     - "&7to be completed to unlock."
-    type: "160:14"
+    type: "RED_STAINED_GLASS_PANE"
   quest-permission-display:
     name: "&6&lNo Permission"
     lore:
     - "&7You do not have permission for this"
     - "&7quest (&6{quest}&7)."
-    type: "160:12"
+    type: "BROWN_STAINED_GLASS_PANE"
   quest-cooldown-display:
     name: "&e&lQuest On Cooldown"
     lore:
     - "&7You have recently completed this quest"
     - "&7(&e{quest}&7) and you must"
     - "&7wait another &e{time} &7to unlock again."
-    type: "160:1"
+    type: "ORANGE_STAINED_GLASS_PANE"
   quest-completed-display:
     name: "&a&lQuest Complete"
     lore:
     - "&7You have completed this quest"
     - "&7(&a{quest}&7) and cannot."
     - "&7repeat it."
-    type: "160:5"
+    type: "GREEN_STAINED_GLASS_PANE"
   quest-cancel-yes:
     name: "&a&lConfirm Cancel"
     lore:
     - "&7Confirm you wish to cancel"
     - "&7this quest and lose all"
     - "&7progress."
-    type: "160:5"
+    type: "GREEN_STAINED_GLASS_PANE"
   quest-cancel-no:
     name: "&c&lAbort Cancel"
     lore:
     - "&7Return to the quest menu."
-    type: "160:14"
+    type: "RED_STAINED_GLASS_PANE"
 
 options:
   # If categories are disabled, quests will be put into one big gui.

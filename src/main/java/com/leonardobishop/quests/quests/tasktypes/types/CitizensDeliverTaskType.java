@@ -79,11 +79,7 @@ public final class CitizensDeliverTaskType extends TaskType {
                     Object configData = task.getConfigValue("data");
                     Object remove = task.getConfigValue("remove-items-when-complete");
 
-                    if (StringUtils.isNumeric(String.valueOf(configBlock))) {
-                        material = Material.getMaterial((int) configBlock);
-                    } else {
-                        material = Material.getMaterial(String.valueOf(configBlock));
-                    }
+                    material = Material.matchMaterial(String.valueOf(configBlock));
 
                     if (material == null) {
                         continue;

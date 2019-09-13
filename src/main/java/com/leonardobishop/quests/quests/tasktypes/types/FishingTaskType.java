@@ -35,13 +35,12 @@ public final class FishingTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFishCaught(PlayerFishEvent event) {
-        if (event.getState() == PlayerFishEvent.State.BITE) {
+        if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
             return;
         }
 
         Location hookLocation = event.getHook().getLocation().add(0, -1, 0);
-        if (!(hookLocation.getBlock().getType() == Material.STATIONARY_WATER ||
-                hookLocation.getBlock().getType() == Material.WATER)) {
+        if (!(hookLocation.getBlock().getType() == Material.WATER)) {
             return;
         }
         

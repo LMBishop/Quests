@@ -85,10 +85,6 @@ public class QuestsConfigLoader {
                 int sortOrder = config.getInt("options.sort-order", 1);
                 String category = config.getString("options.category");
 
-                if (rewardString == null) rewardString = new ArrayList<>();
-                if (startString == null) startString = new ArrayList<>();
-                if (requirements == null) requirements = new ArrayList<>();
-                if (rewards == null) rewards = new ArrayList<>();
                 if (category == null) category = "";
 
                 Quest quest;
@@ -156,23 +152,8 @@ public class QuestsConfigLoader {
         }
         name = ChatColor.translateAlternateColorCodes('&', cName);
 
-        if (StringUtils.isNumeric(cType)) {
-            type = Material.getMaterial(Integer.parseInt(cType));
-        } else if (Material.getMaterial(cType) != null) {
-            type = Material.getMaterial(cType);
-        } else if (cType.contains(":")) {
-            String[] parts = cType.split(":");
-            if (parts.length > 1) {
-                if (StringUtils.isNumeric(parts[0])) {
-                    type = Material.getMaterial(Integer.parseInt(parts[0]));
-                } else if (Material.getMaterial(parts[0]) != null) {
-                    type = Material.getMaterial(parts[0]);
-                }
-                if (StringUtils.isNumeric(parts[1])) {
-                    data = Integer.parseInt(parts[1]);
-                }
-            }
-        }
+        type = Material.matchMaterial(cType);
+
 
         if (type == null) {
             type = Material.STONE;
