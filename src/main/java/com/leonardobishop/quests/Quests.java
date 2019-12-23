@@ -24,6 +24,7 @@ import com.leonardobishop.quests.updater.Updater;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -257,9 +258,13 @@ public class Quests extends JavaPlugin {
     }
 
     public ItemStack getItemStack(String path, FileConfiguration config) {
-        String cName = config.getString(path + ".name", path + ".name");
-        String cType = config.getString(path + ".type", path + ".type");
-        List<String> cLore = config.getStringList(path + ".lore");
+        return getItemStack(config.getConfigurationSection(path));
+    }
+
+    public ItemStack getItemStack(ConfigurationSection config) {
+        String cName = config.getString("name", "name");
+        String cType = config.getString("type", "type");
+        List<String> cLore = config.getStringList("lore");
 
         String name;
         Material type = null;

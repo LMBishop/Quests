@@ -10,9 +10,9 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -79,16 +79,20 @@ public final class CitizensDeliverTaskType extends TaskType {
                     Object configData = task.getConfigValue("data");
                     Object remove = task.getConfigValue("remove-items-when-complete");
 
-                    material = Material.matchMaterial(String.valueOf(configBlock));
-
-                    if (material == null) {
-                        continue;
-                    }
                     ItemStack is;
-                    if (configData != null) {
-                        is = new ItemStack(material, 1, ((Integer) configData).shortValue());
+                    if (configBlock instanceof ConfigurationSection) {
+                        is = Quests.get().getItemStack((org.bukkit.configuration.ConfigurationSection) configBlock);
                     } else {
-                        is = new ItemStack(material, 1);
+                        material = Material.matchMaterial(String.valueOf(configBlock));
+
+                        if (material == null) {
+                            continue;
+                        }
+                        if (configData != null) {
+                            is = new ItemStack(material, 1, ((Integer) configData).shortValue());
+                        } else {
+                            is = new ItemStack(material, 1);
+                        }
                     }
 
                     if (player.getInventory().containsAtLeast(is, amount)) {
