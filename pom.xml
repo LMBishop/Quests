@@ -6,7 +6,7 @@
 
     <groupId>com.leonardobishop</groupId>
     <artifactId>quests</artifactId>
-    <version>2.6.1</version>
+    <version>2.6.2</version>
     <name>Quests</name>
 
     <properties>
