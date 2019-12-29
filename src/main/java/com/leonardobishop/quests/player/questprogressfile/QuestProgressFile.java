@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -265,7 +266,7 @@ public class QuestProgressFile {
             Quest quest = plugin.getQuestManager().getQuestById(questid);
             QuestProgress questProgress = new QuestProgress(quest.getId(), false, false, 0, player, false, false);
             for (Task task : quest.getTasks()) {
-                TaskProgress taskProgress = new TaskProgress(task.getId(), null, player, false);
+                TaskProgress taskProgress = new TaskProgress(task.getId(), null, player, false, false);
                 questProgress.addTaskProgress(taskProgress);
             }
 
@@ -309,6 +310,14 @@ public class QuestProgressFile {
 
         try {
             data.save(file);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    for (QuestProgress questProgress : questProgress.values()) {
+                        questProgress.resetModified();
+                    }
+                }
+            }.runTask(plugin);
         } catch (IOException e) {
             e.printStackTrace();
         }

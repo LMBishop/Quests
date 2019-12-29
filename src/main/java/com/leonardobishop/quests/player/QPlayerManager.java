@@ -62,7 +62,7 @@ public class QPlayerManager {
                                     boolean taskCompleted = data.getBoolean("quest-progress." + id + ".task-progress." + taskid + ".completed");
                                     Object taskProgression = data.get("quest-progress." + id + ".task-progress." + taskid + ".progress");
 
-                                    TaskProgress taskProgress = new TaskProgress(taskid, taskProgression, uuid, taskCompleted);
+                                    TaskProgress taskProgress = new TaskProgress(taskid, taskProgression, uuid, taskCompleted, false);
                                     questProgress.addTaskProgress(taskProgress);
                                 }
 

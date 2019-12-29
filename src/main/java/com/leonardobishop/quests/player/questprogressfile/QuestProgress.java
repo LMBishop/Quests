@@ -92,15 +92,24 @@ public class QuestProgress {
     }
 
     public void repairTaskProgress(String taskid) {
-        TaskProgress taskProgress = new TaskProgress(taskid, null, player, false);
+        TaskProgress taskProgress = new TaskProgress(taskid, null, player, false, false);
         this.addTaskProgress(taskProgress);
     }
 
     public boolean isWorthSaving() {
-        return modified;
+        if (modified) return true;
+        else {
+            for (TaskProgress progress : this.taskProgress.values()) {
+                if (progress.isModified()) return true;
+            }
+            return false;
+        }
     }
 
-    public void setWorthSaving(boolean modified) {
-        this.modified = modified;
+    public void resetModified() {
+        this.modified = false;
+        for (TaskProgress progress : this.taskProgress.values()) {
+            progress.setModified(false);
+        }
     }
 }
