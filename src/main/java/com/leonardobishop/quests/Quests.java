@@ -303,39 +303,10 @@ public class Quests extends JavaPlugin {
         getLogger().info("Your server is running version " + version + ".");
         if (version.startsWith("v1_7")) {
             title = new Title_Other();
-            success = true;
-        } else if (version.equals("v1_8_R3")) {
+        } else if (version.startsWith("v1_8") || version.startsWith("v1_9") || version.startsWith("v1_10")) {
             title = new Title_BukkitNoTimings();
-            success = true;
-        } else if (version.equals("v1_8_R2")) {
-            title = new Title_BukkitNoTimings();
-            success = true;
-        } else if (version.equals("v1_8_R1")) {
-            title = new Title_BukkitNoTimings();
-            success = true;
-        } else if (version.equals("v1_9_R2")) {
-            title = new Title_BukkitNoTimings();
-            success = true;
-        } else if (version.equals("v1_9_R1")) {
-            title = new Title_BukkitNoTimings();
-            success = true;
-        } else if (version.equals("v1_10_R1")) {
-            title = new Title_BukkitNoTimings();
-            success = true;
-        } else if (version.equals("v1_11_R1")) {
-            title = new Title_Bukkit();
-            success = true;
-        } else if (version.startsWith("v1_12")) {
-            title = new Title_Bukkit();
-            success = true;
-        } else if (version.startsWith("v1_13")) {
-            title = new Title_Bukkit();
-            success = true;
-        } else if (version.startsWith("v1_14")) {
-            title = new Title_Bukkit();
-            success = true;
         } else {
-            title = new Title_BukkitNoTimings();
+            title = new Title_Bukkit();
         }
         if (title instanceof Title_Bukkit) {
             getLogger().info("Titles have been enabled.");
