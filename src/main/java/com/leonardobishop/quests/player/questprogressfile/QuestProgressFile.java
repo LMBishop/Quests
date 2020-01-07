@@ -276,7 +276,7 @@ public class QuestProgressFile {
         return false;
     }
 
-    public void saveToDisk() {
+    public void saveToDisk(boolean disable) {
         File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
         if (!directory.exists() && !directory.isDirectory()) {
             directory.mkdirs();
@@ -310,14 +310,19 @@ public class QuestProgressFile {
 
         try {
             data.save(file);
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    for (QuestProgress questProgress : questProgress.values()) {
-                        questProgress.resetModified();
-                    }
+            if (disable)
+                for (QuestProgress questProgress : questProgress.values()) {
+                    questProgress.resetModified();
                 }
-            }.runTask(plugin);
+            else
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        for (QuestProgress questProgress : questProgress.values()) {
+                            questProgress.resetModified();
+                        }
+                    }
+                }.runTask(plugin);
         } catch (IOException e) {
             e.printStackTrace();
         }
