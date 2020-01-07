@@ -159,7 +159,7 @@ public class CommandQuests implements CommandExecutor {
                             }
                             QuestProgressFile questProgressFile = plugin.getPlayerManager().getPlayer(uuid).getQuestProgressFile();
                             questProgressFile.clear();
-                            questProgressFile.saveToDisk();
+                            questProgressFile.saveToDisk(false);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_FULLRESET.getMessage().replace("{player}", name));
                             return true;
                         }
@@ -231,7 +231,7 @@ public class CommandQuests implements CommandExecutor {
                         }
                         if (args[2].equalsIgnoreCase("reset")) {
                             questProgressFile.generateBlankQuestProgress(quest.getId());
-                            questProgressFile.saveToDisk();
+                            questProgressFile.saveToDisk(false);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         } else if (args[2].equalsIgnoreCase("start")) {
@@ -258,12 +258,12 @@ public class CommandQuests implements CommandExecutor {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCATEGORYPERMISSION.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                                 return true;
                             }
-                            questProgressFile.saveToDisk();
+                            questProgressFile.saveToDisk(false);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         } else if (args[2].equalsIgnoreCase("complete")) {
                             questProgressFile.completeQuest(quest);
-                            questProgressFile.saveToDisk();
+                            questProgressFile.saveToDisk(false);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         }

@@ -22,7 +22,7 @@ public class EventPlayerLeave implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                 plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile().saveToDisk();
+                 plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile().saveToDisk(false);
                 new BukkitRunnable() {
                     @Override
                     public void run() {

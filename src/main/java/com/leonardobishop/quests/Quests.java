@@ -198,7 +198,7 @@ public class Quests extends JavaPlugin {
                     if (qPlayer.isOnlyDataLoaded()) {
                         continue;
                     }
-                    qPlayer.getQuestProgressFile().saveToDisk();
+                    qPlayer.getQuestProgressFile().saveToDisk(false);
                 }
             }
         }.runTaskTimerAsynchronously(this, 12000L, 12000L);
@@ -245,7 +245,7 @@ public class Quests extends JavaPlugin {
             if (qPlayer.isOnlyDataLoaded()) {
                 continue;
             }
-            qPlayer.getQuestProgressFile().saveToDisk();
+            qPlayer.getQuestProgressFile().saveToDisk(true);
         }
     }
 
