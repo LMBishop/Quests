@@ -310,9 +310,16 @@ public class Quests extends JavaPlugin {
         if (!config.exists()) {
             try {
                 config.createNewFile();
-                try (InputStream in = Quests.class.getClassLoader().getResourceAsStream("config.yml")) {
+                //try (InputStream in = Quests.class.getClassLoader().getResourceAsStream("config.yml")) {
+                try (InputStream in = this.getResource("config.yml")) {
                     OutputStream out = new FileOutputStream(config);
-                    ByteStreams.copy(in, out); //Marked as BETA, causing data loss. TODO
+                    byte[] buffer = new byte[1024];
+                    int lenght = in.read(buffer);
+                    while (lenght != -1) {
+                        out.write(buffer, 0, lenght);
+                        lenght = in.read(buffer);
+                    }
+                    //ByteStreams.copy(in, out); Marked as BETA, causing data loss.
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -338,9 +345,16 @@ public class Quests extends JavaPlugin {
                 File file = new File(this.getDataFolder() + File.separator + "quests" + File.separator + name);
                 try {
                     file.createNewFile();
-                    try (InputStream in = Quests.class.getClassLoader().getResourceAsStream("quests/" + name)) {
+                    //try (InputStream in = Quests.class.getClassLoader().getResourceAsStream("quests/" + name)) {
+                    try (InputStream in = this.getResource("quests/" + name)) {
                         OutputStream out = new FileOutputStream(file);
-                        ByteStreams.copy(in, out); //Marked as BETA, causing data loss. TODO
+                        byte[] buffer = new byte[1024];
+                        int lenght = in.read(buffer);
+                        while (lenght != -1) {
+                            out.write(buffer, 0, lenght);
+                            lenght = in.read(buffer);
+                        }
+                        //ByteStreams.copy(in, out); Marked as BETA, causing data loss.
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
