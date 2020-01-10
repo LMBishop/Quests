@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,12 +17,12 @@ import java.util.concurrent.TimeUnit;
 
 public class QuestProgressFile {
 
-    private Map<String, QuestProgress> questProgress = new HashMap<>();
-    private UUID player;
-    private Quests plugin;
+    private final Map<String, QuestProgress> questProgress = new HashMap<>();
+    private final UUID playerUUID;
+    private final Quests plugin;
 
     public QuestProgressFile(UUID player, Quests plugin) {
-        this.player = player;
+        this.playerUUID = player;
         this.plugin = plugin;
     }
 
@@ -35,8 +34,8 @@ public class QuestProgressFile {
         questProgress.setCompleted(true);
         questProgress.setCompletedBefore(true);
         questProgress.setCompletionDate(System.currentTimeMillis());
-        if (Bukkit.getPlayer(player) != null) {
-            Player player = Bukkit.getPlayer(this.player);
+        if (Bukkit.getPlayer(playerUUID) != null) {
+            Player player = Bukkit.getPlayer(this.playerUUID);
             Bukkit.getServer().getScheduler().runTask(plugin, () -> {
                 for (String s : quest.getRewards()) {
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), s.replace("{player}", player.getName()));
@@ -65,15 +64,15 @@ public class QuestProgressFile {
      * no permission, 7 if no permission for category
      */
     public int canStartQuest(Quest quest) {
-        Player p = Bukkit.getPlayer(player);
+        Player p = Bukkit.getPlayer(playerUUID);
         if (getStartedQuests().size() >= Options.QUESTS_START_LIMIT.getIntValue()) {
             return 1;
         }
         QuestProgress questProgress = getQuestProgress(quest);
         if (!quest.isRepeatable() && questProgress.isCompletedBefore()) {
-            if (player != null) {
-
-            }
+            //if (playerUUID != null) {
+            // ???
+            //}
             return 2;
         }
         long cooldown = getCooldownFor(quest);
@@ -87,7 +86,7 @@ public class QuestProgressFile {
             return 5;
         }
         if (quest.isPermissionRequired()) {
-            if (player != null) {
+            if (playerUUID != null) {
                 if (!p.hasPermission("quests.quest." + quest.getId())) {
                     return 6;
                 }
@@ -97,7 +96,7 @@ public class QuestProgressFile {
         }
         if (quest.getCategoryId() != null && plugin.getQuestManager().getCategoryById(quest.getCategoryId()) != null && plugin.getQuestManager()
                 .getCategoryById(quest.getCategoryId()).isPermissionRequired()) {
-            if (player != null) {
+            if (playerUUID != null) {
                 if (!p.hasPermission("quests.category." + quest.getCategoryId())) {
                     return 7;
                 }
@@ -118,7 +117,7 @@ public class QuestProgressFile {
      * no permission, 7 if no permission for category, 8 if other
      */
     public int startQuest(Quest quest) {
-        Player p = Bukkit.getPlayer(player);
+        Player p = Bukkit.getPlayer(playerUUID);
         int code = canStartQuest(quest);
         if (p != null) {
             switch (code) {
@@ -157,8 +156,8 @@ public class QuestProgressFile {
                 taskProgress.setProgress(null);
             }
             questProgress.setCompleted(false);
-            if (Bukkit.getPlayer(player) != null) {
-                Player player = Bukkit.getPlayer(getPlayer());
+            if (Bukkit.getPlayer(playerUUID) != null) {
+                Player player = Bukkit.getPlayer(getPlayerUUID());
                 player.sendMessage(Messages.QUEST_START.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
                 if (Options.TITLES_ENABLED.getBooleanValue()) {
                     plugin.getTitle().sendTitle(player, Messages.TITLE_QUEST_START_TITLE.getMessage().replace("{quest}", quest
@@ -176,8 +175,8 @@ public class QuestProgressFile {
     public boolean cancelQuest(Quest quest) {
         QuestProgress questProgress = getQuestProgress(quest);
         if (!questProgress.isStarted()) {
-            if (Bukkit.getPlayer(player) != null) {
-                Bukkit.getPlayer(getPlayer()).sendMessage(Messages.QUEST_CANCEL_NOTSTARTED.getMessage());
+            if (Bukkit.getPlayer(playerUUID) != null) {
+                Bukkit.getPlayer(getPlayerUUID()).sendMessage(Messages.QUEST_CANCEL_NOTSTARTED.getMessage());
             }
             return false;
         }
@@ -185,8 +184,8 @@ public class QuestProgressFile {
         for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
             taskProgress.setProgress(null);
         }
-        if (Bukkit.getPlayer(player) != null) {
-            Bukkit.getPlayer(getPlayer()).sendMessage(Messages.QUEST_CANCEL.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
+        if (Bukkit.getPlayer(playerUUID) != null) {
+            Bukkit.getPlayer(getPlayerUUID()).sendMessage(Messages.QUEST_CANCEL.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
         }
         return true;
     }
@@ -211,15 +210,11 @@ public class QuestProgressFile {
 
     public boolean hasStartedQuest(Quest quest) {
         if (!Options.QUEST_AUTOSTART.getBooleanValue()) {
-            if (hasQuestProgress(quest) && getQuestProgress(quest).isStarted()) {
-                return true;
-            }
+            return hasQuestProgress(quest) && getQuestProgress(quest).isStarted();
         } else {
             int response = canStartQuest(quest);
-            if (response == 0 || response == 5) return true;
+            return response == 0 || response == 5;
         }
-
-        return false;
     }
 
     public long getCooldownFor(Quest quest) {
@@ -248,8 +243,8 @@ public class QuestProgressFile {
         return true;
     }
 
-    public UUID getPlayer() {
-        return player;
+    public UUID getPlayerUUID() {
+        return playerUUID;
     }
 
     public QuestProgress getQuestProgress(Quest quest) {
@@ -264,9 +259,9 @@ public class QuestProgressFile {
     public boolean generateBlankQuestProgress(String questid) {
         if (plugin.getQuestManager().getQuestById(questid) != null) {
             Quest quest = plugin.getQuestManager().getQuestById(questid);
-            QuestProgress questProgress = new QuestProgress(quest.getId(), false, false, 0, player, false, false);
+            QuestProgress questProgress = new QuestProgress(quest.getId(), false, false, 0, playerUUID, false, false);
             for (Task task : quest.getTasks()) {
-                TaskProgress taskProgress = new TaskProgress(task.getId(), null, player, false, false);
+                TaskProgress taskProgress = new TaskProgress(task.getId(), null, playerUUID, false, false);
                 questProgress.addTaskProgress(taskProgress);
             }
 
@@ -281,7 +276,7 @@ public class QuestProgressFile {
         if (!directory.exists() && !directory.isDirectory()) {
             directory.mkdirs();
         }
-        File file = new File(plugin.getDataFolder() + File.separator + "playerdata" + File.separator + player.toString() + ".yml");
+        File file = new File(plugin.getDataFolder() + File.separator + "playerdata" + File.separator + playerUUID.toString() + ".yml");
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -311,18 +306,17 @@ public class QuestProgressFile {
         try {
             data.save(file);
             if (disable)
-                for (QuestProgress questProgress : questProgress.values()) {
-                    questProgress.resetModified();
+                synchronized (this.questProgress) {
+                    for (QuestProgress questProgress : questProgress.values()) {
+                        questProgress.resetModified();
+                    }
                 }
             else
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        for (QuestProgress questProgress : questProgress.values()) {
-                            questProgress.resetModified();
-                        }
+                Bukkit.getScheduler().runTask(this.plugin, () -> {
+                    for (QuestProgress questProgress : questProgress.values()) {
+                        questProgress.resetModified();
                     }
-                }.runTask(plugin);
+                });
         } catch (IOException e) {
             e.printStackTrace();
         }
