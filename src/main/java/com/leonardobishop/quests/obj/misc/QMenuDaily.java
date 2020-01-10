@@ -15,13 +15,13 @@ import java.util.Map;
 
 public class QMenuDaily implements QMenu {
 
-    private HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
+    private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
     private int backButtonLocation = -1;
     private boolean backButtonEnabled = true;
-    private QMenuCategory superMenu;
+    private final QMenuCategory superMenu;
     private String categoryName;
     private final int pageSize = 45;
-    private QPlayer owner;
+    private final QPlayer owner;
 
     public QMenuDaily(QPlayer owner, QMenuCategory superMenu) {
         this.owner = owner;
@@ -58,7 +58,7 @@ public class QMenuDaily implements QMenu {
         int pageMax = pageSize * page;
         String title = Options.GUITITLE_DAILY_QUESTS.toString();
 
-        Inventory inventory = Bukkit.createInventory(null, 27, title);
+ //       Inventory inventory = Bukkit.createInventory(null, 27, title);
 
         //TODO daily quests
 
@@ -95,8 +95,8 @@ public class QMenuDaily implements QMenu {
 //            }
 //            invSlot++;
 //        }
-
-        return inventory;
+//      return inventory;
+        return Bukkit.createInventory(null, 27, title);
     }
 
     public ItemStack replaceItemStack(ItemStack is, Map<String, String> placeholders) {
@@ -113,5 +113,14 @@ public class QMenuDaily implements QMenu {
         ism.setLore(newLore);
         newItemStack.setItemMeta(ism);
         return newItemStack;
+    }
+
+    //Implement too
+    public QMenuCategory getSuperMenu() {
+        return this.superMenu;
+    }
+
+    public int getPageSize() {
+        return this.pageSize;
     }
 }

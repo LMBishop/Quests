@@ -17,10 +17,10 @@ import java.util.Map;
 
 public class QMenuCancel implements QMenu {
 
-    private HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
-    private QMenuQuest superMenu;
-    private QPlayer owner;
-    private Quest quest;
+    private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
+    private final QMenuQuest superMenu;
+    private final QPlayer owner;
+    private final Quest quest;
 
     public QMenuCancel(QPlayer owner, QMenuQuest superMenu, Quest quest) {
         this.owner = owner;

@@ -19,16 +19,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class QMenuQuest implements QMenu {
 
-    private HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
+    private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
     private int backButtonLocation = -1;
     private int pagePrevLocation = -1;
     private int pageNextLocation = -1;
     private int currentPage = -1;
     private boolean backButtonEnabled = true;
-    private QMenuCategory superMenu;
-    private String categoryName;
+    private final QMenuCategory superMenu;
+    private final String categoryName;
     private final int pageSize = 45;
-    private QPlayer owner;
+    private final QPlayer owner;
 
     public QMenuQuest(QPlayer owner, String categoryName, QMenuCategory superMenu) {
         this.owner = owner;

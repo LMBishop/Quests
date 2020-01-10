@@ -5,9 +5,9 @@ package com.leonardobishop.quests.quests.tasktypes;
  */
 public final class ConfigValue {
 
-    private String key;
-    private boolean required;
-    private String description;
+    private final String key;
+    private final boolean required;
+    private final String description;
 
     public ConfigValue(String key, boolean required, String description) {
         this.key = key;

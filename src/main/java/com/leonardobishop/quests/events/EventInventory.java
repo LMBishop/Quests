@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ public class EventInventory implements Listener {
     /**
      * Add a player to the tracker so the event can watch them in the menu.
      *
-     * @param uuid UUID of player to track
+     * @param uuid  UUID of player to track
      * @param qMenu The menu they have open
      */
     public static void track(UUID uuid, QMenu qMenu) {
@@ -46,6 +47,10 @@ public class EventInventory implements Listener {
         // check if the player has a quest menu open
         if (tracker.containsKey(event.getWhoClicked().getUniqueId())) {
             event.setCancelled(true);
+            if (event.getClickedInventory() == null)
+                return; //The player clicked outside the inventory
+            if (event.getClickedInventory().getType() == InventoryType.PLAYER)
+                return; //The clicked inventory is a player inventory type
             QMenu qMenu = tracker.get(event.getWhoClicked().getUniqueId());
 
             // **** MENU TYPE: QUESTS IN CATEGORY/ALL QUESTS ****
@@ -58,18 +63,20 @@ public class EventInventory implements Listener {
                     event.getWhoClicked().openInventory(qMenuQuest.toInventory(qMenuQuest.getCurrentPage() - 1));
 
                 } else if (qMenuQuest.getPageNextLocation() == event.getSlot()) {
+                    if (!event.getClickedInventory().equals(qMenuQuest.toInventory(qMenuQuest.getCurrentPage() + 1)))
+                        return;
                     buffer.add(event.getWhoClicked().getUniqueId());
                     event.getWhoClicked().openInventory(qMenuQuest.toInventory(qMenuQuest.getCurrentPage() + 1));
 
-                // return to QMenuCategory (category listing)
+                    // return to QMenuCategory (category listing)
                 } else if (Options.CATEGORIES_ENABLED.getBooleanValue() && qMenuQuest.getBackButtonLocation() == event.getSlot()) {
                     QMenuCategory qMenuCategory = qMenuQuest.getSuperMenu();
                     buffer.add(event.getWhoClicked().getUniqueId());
                     event.getWhoClicked().openInventory(qMenuCategory.toInventory(1));
                     tracker.put(event.getWhoClicked().getUniqueId(), qMenuCategory);
 
-                // handle when player wishes to start a quest by matching the slot they clicked to a predetermined
-                // map which maps quests to slots so you do not have to compare the item stack
+                    // handle when player wishes to start a quest by matching the slot they clicked to a predetermined
+                    // map which maps quests to slots so you do not have to compare the item stack
                 } else if (event.getSlot() < qMenuQuest.getPageSize() && qMenuQuest.getSlotsToMenu().containsKey(event.getSlot() + (((qMenuQuest
                         .getCurrentPage()) - 1) * qMenuQuest.getPageSize()))) {
                     if (Options.QUEST_AUTOSTART.getBooleanValue()) return;
@@ -88,7 +95,7 @@ public class EventInventory implements Listener {
                     }
                 }
 
-            // **** MENU TYPE: CATEGORY LISTING ****
+                // **** MENU TYPE: CATEGORY LISTING ****
             } else if (qMenu instanceof QMenuCategory) {
                 QMenuCategory qMenuCategory = (QMenuCategory) qMenu;
 
@@ -101,7 +108,7 @@ public class EventInventory implements Listener {
                     }
                 }
 
-            // **** MENU TYPE: CANCELLING QUEST MENU ****
+                // **** MENU TYPE: CANCELLING QUEST MENU ****
             } else if (qMenu instanceof QMenuCancel) {
                 QMenuCancel qMenuCancel = (QMenuCancel) qMenu;
 
@@ -126,9 +133,7 @@ public class EventInventory implements Listener {
         // an anticipated menu change
         if (buffer.contains(event.getPlayer().getUniqueId())) {
             buffer.remove(event.getPlayer().getUniqueId());
-        } else if (tracker.containsKey(event.getPlayer().getUniqueId())) {
-            tracker.remove(event.getPlayer().getUniqueId());
-        }
+        } else tracker.remove(event.getPlayer().getUniqueId());
     }
 
 }

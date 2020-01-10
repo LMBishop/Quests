@@ -22,7 +22,7 @@ public enum Options {
     ALLOW_QUEST_CANCEL("options.allow-quest-cancel"),
     QUEST_AUTOSTART("options.quest-autostart");
 
-    private String path;
+    private final String path;
 
     Options(String path) {
         this.path = path;
