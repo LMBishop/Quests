@@ -16,19 +16,20 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Map;
 import java.util.UUID;
 
 public class CommandQuests implements CommandExecutor {
 
-    private Quests plugin;
+    private final Quests plugin;
 
     public CommandQuests(Quests plugin) {
         this.plugin = plugin;
     }
 
+    @SuppressWarnings("deprecation")
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (plugin.isBrokenConfig()) {
             sender.sendMessage(ChatColor.RED + "The main config must be in tact before quests can be used. Quests has failed to load the following files:");
@@ -80,17 +81,14 @@ public class CommandQuests implements CommandExecutor {
                         return true;
                     } else if (args[1].equalsIgnoreCase("update")) {
                         sender.sendMessage(ChatColor.GRAY + "Checking for updates...");
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                plugin.getUpdater().check();
-                                if (plugin.getUpdater().isUpdateReady()) {
-                                    sender.sendMessage(plugin.getUpdater().getMessage());
-                                } else {
-                                    sender.sendMessage(ChatColor.GRAY + "No updates were found.");
-                                }
+                        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
+                            plugin.getUpdater().check();
+                            if (plugin.getUpdater().isUpdateReady()) {
+                                sender.sendMessage(plugin.getUpdater().getMessage());
+                            } else {
+                                sender.sendMessage(ChatColor.GRAY + "No updates were found.");
                             }
-                        }.runTaskAsynchronously(plugin);
+                        });
                         return true;
                     }
                 } else if (args.length == 3) {
@@ -134,14 +132,12 @@ public class CommandQuests implements CommandExecutor {
                         showAdminHelp(sender, "opengui");
                         return true;
                     } else if (args[1].equalsIgnoreCase("moddata")) {
-                        Player player;
-                        OfflinePlayer ofp;
+                        OfflinePlayer ofp = Bukkit.getOfflinePlayer(args[3]);
                         UUID uuid;
                         String name;
-                        if ((player = Bukkit.getPlayer(args[3])) != null) {
-                            uuid = player.getUniqueId();
-                            name = player.getName();
-                        } else if ((ofp = Bukkit.getOfflinePlayer(args[3])) != null) {
+                        // Player.class is a superclass for OfflinePlayer.
+                        // getofflinePlayer return a player regardless if exists or not
+                         if (ofp != null) {
                             uuid = ofp.getUniqueId();
                             name = ofp.getName();
                         } else {
@@ -226,7 +222,7 @@ public class CommandQuests implements CommandExecutor {
                         Quest quest = plugin.getQuestManager().getQuestById(args[4]);
                         if (quest == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_START_DOESNTEXIST.getMessage().replace("{quest}", args[4]));
-                            success = true;
+                            //success = true;
                             return true;
                         }
                         if (args[2].equalsIgnoreCase("reset")) {

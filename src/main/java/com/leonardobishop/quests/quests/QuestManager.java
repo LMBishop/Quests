@@ -6,7 +6,7 @@ import java.util.*;
 
 public class QuestManager {
 
-    private Quests plugin;
+    private final Quests plugin;
 
     public QuestManager(Quests plugin) {
         this.plugin = plugin;
@@ -40,4 +40,7 @@ public class QuestManager {
         return null;
     }
 
+    public Quests getPlugin() {
+        return this.plugin;
+    }
 }

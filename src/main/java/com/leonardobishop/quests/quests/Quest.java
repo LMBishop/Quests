@@ -9,16 +9,16 @@ public class Quest implements Comparable<Quest> {
 
     private Map<String, Task> tasks = new HashMap<>();
     //TODO: maybe store by <tasktypename (string), list<task>> since we never get task by id, but always get tasks by type.
-    private String id;
-    private QItemStack displayItem;
-    private List<String> rewards;
-    private List<String> requirements;
-    private List<String> rewardString;
-    private List<String> startString;
-    private boolean repeatable;
-    private boolean cooldownEnabled;
-    private int cooldown;
-    private int sortOrder;
+    private final String id;
+    private final QItemStack displayItem;
+    private final List<String> rewards;
+    private final List<String> requirements;
+    private final List<String> rewardString;
+    private final List<String> startString;
+    private final boolean repeatable;
+    private final boolean cooldownEnabled;
+    private final int cooldown;
+    private final int sortOrder;
     private boolean permissionRequired;
     private String categoryid;
 
@@ -115,6 +115,6 @@ public class Quest implements Comparable<Quest> {
 
     @Override
     public int compareTo(Quest quest) {
-        return(sortOrder - quest.sortOrder);
+        return (sortOrder - quest.sortOrder);
     }
 }

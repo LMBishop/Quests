@@ -15,8 +15,8 @@ import java.util.List;
  */
 public abstract class TaskType implements Listener {
 
-    private List<Quest> quests = new ArrayList<>();
-    private String type;
+    private final List<Quest> quests = new ArrayList<>();
+    private final String type;
     private String author;
     private String description;
 

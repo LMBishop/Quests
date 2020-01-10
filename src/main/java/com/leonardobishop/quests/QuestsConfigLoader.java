@@ -20,8 +20,8 @@ import java.util.logging.Level;
 
 public class QuestsConfigLoader {
 
-    private Map<String, ConfigLoadError> brokenFiles = new HashMap<>();
-    private Quests plugin;
+    private final Map<String, ConfigLoadError> brokenFiles = new HashMap<>();
+    private final Quests plugin;
 
     public QuestsConfigLoader(Quests plugin) {
         this.plugin = plugin;
@@ -36,7 +36,7 @@ public class QuestsConfigLoader {
         // test CONFIG file integrity
         try {
             YamlConfiguration config = new YamlConfiguration();
-            config.load(new File(String.valueOf(plugin.getDataFolder() + File.separator + "config.yml")));
+            config.load(new File(plugin.getDataFolder() + File.separator + "config.yml"));
         } catch (Exception ex) {
             brokenFiles.put("<MAIN CONFIG> config.yml", ConfigLoadError.MALFORMED_YAML);
             plugin.setBrokenConfig(true);
@@ -136,7 +136,7 @@ public class QuestsConfigLoader {
         List<String> cLoreStarted = config.getStringList(path + ".lore-started");
 
         String name;
-        Material type = null;
+        Material type;
         int data = 0;
         List<String> loreNormal = new ArrayList<>();
         if (cLoreNormal != null) {

@@ -3,6 +3,7 @@ package com.leonardobishop.quests;
 import com.leonardobishop.quests.player.QPlayerManager;
 import com.leonardobishop.quests.quests.QuestManager;
 import com.leonardobishop.quests.quests.tasktypes.TaskTypeManager;
+import org.bukkit.Bukkit;
 
 /**
  * This contains some methods from the main Quests class which
@@ -16,11 +17,7 @@ import com.leonardobishop.quests.quests.tasktypes.TaskTypeManager;
  */
 public class QuestsAPI {
 
-    private static Quests plugin;
-
-    protected static void initialise(Quests plugin) {
-        QuestsAPI.plugin = plugin;
-    }
+    private final static Quests plugin = (Quests) Bukkit.getPluginManager().getPlugin("Quests") ;
 
     public static QuestManager getQuestManager() {
         return plugin.getQuestManager();

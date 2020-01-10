@@ -18,8 +18,8 @@ import java.util.List;
 public class QMenuCategory implements QMenu {
 
     private final int pageSize = 45;
-    private HashMap<Integer, QMenuQuest> slotsToMenuQuest = new HashMap<>();
-    private QPlayer owner;
+    private final HashMap<Integer, QMenuQuest> slotsToMenuQuest = new HashMap<>();
+    private final QPlayer owner;
 
     public QMenuCategory(QPlayer owner) {
         this.owner = owner;

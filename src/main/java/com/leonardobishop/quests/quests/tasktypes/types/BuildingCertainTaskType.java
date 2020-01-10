@@ -85,6 +85,7 @@ public final class BuildingCertainTaskType extends TaskType {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private boolean matchBlock(Task task, Block block) {
         Material material;
         Object configBlock = task.getConfigValue("block");
@@ -97,11 +98,7 @@ public final class BuildingCertainTaskType extends TaskType {
         short blockData = block.getData();
 
         if (blockType.equals(material)) {
-            if (configData != null && (((int) blockData) != ((int) configData))) {
-                return false;
-            } else {
-                return true;
-            }
+            return configData == null || (((int) blockData) == ((int) configData));
         }
         return false;
     }

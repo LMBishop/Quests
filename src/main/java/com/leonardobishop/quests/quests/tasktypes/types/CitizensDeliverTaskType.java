@@ -10,6 +10,7 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,7 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,14 +42,10 @@ public final class CitizensDeliverTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onNPCClick(NPCRightClickEvent event) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                checkInventory(event.getClicker(), event.getNPC().getName());
-            }
-        }.runTaskLater(Quests.get(), 1L);
+        Bukkit.getScheduler().runTaskLater(Quests.get(), () -> checkInventory(event.getClicker(), event.getNPC().getName()), 1L);
     }
 
+    @SuppressWarnings("deprecation")
     private void checkInventory(Player player, String citizenName) {
         QPlayer qPlayer = Quests.get().getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
