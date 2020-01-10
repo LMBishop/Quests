@@ -1,6 +1,5 @@
 package com.leonardobishop.quests;
 
-import com.google.common.io.ByteStreams;
 import com.leonardobishop.quests.bstats.Metrics;
 import com.leonardobishop.quests.commands.CommandQuests;
 import com.leonardobishop.quests.events.EventInventory;
@@ -32,7 +31,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -243,6 +241,7 @@ public class Quests extends JavaPlugin {
         return getItemStack(config.getConfigurationSection(path));
     }
 
+    @SuppressWarnings("deprecation")
     public ItemStack getItemStack(ConfigurationSection config) {
         String cName = config.getString("name", "name");
         String cType = config.getString("type", "type");
@@ -265,7 +264,11 @@ public class Quests extends JavaPlugin {
             type = Material.STONE;
         }
 
-        ItemStack is = new ItemStack(type, 1, (short) data);
+        ItemStack is;
+        if (data == 0)
+            is = new ItemStack(type, 1);
+        else
+            is = new ItemStack(type, 1, (short) data);
         ItemMeta ism = is.getItemMeta();
         ism.setLore(lore);
         ism.setDisplayName(name);

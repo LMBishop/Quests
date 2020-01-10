@@ -16,7 +16,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Map;
 import java.util.UUID;
@@ -29,6 +28,7 @@ public class CommandQuests implements CommandExecutor {
         this.plugin = plugin;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (plugin.isBrokenConfig()) {
@@ -81,17 +81,14 @@ public class CommandQuests implements CommandExecutor {
                         return true;
                     } else if (args[1].equalsIgnoreCase("update")) {
                         sender.sendMessage(ChatColor.GRAY + "Checking for updates...");
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                plugin.getUpdater().check();
-                                if (plugin.getUpdater().isUpdateReady()) {
-                                    sender.sendMessage(plugin.getUpdater().getMessage());
-                                } else {
-                                    sender.sendMessage(ChatColor.GRAY + "No updates were found.");
-                                }
+                        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
+                            plugin.getUpdater().check();
+                            if (plugin.getUpdater().isUpdateReady()) {
+                                sender.sendMessage(plugin.getUpdater().getMessage());
+                            } else {
+                                sender.sendMessage(ChatColor.GRAY + "No updates were found.");
                             }
-                        }.runTaskAsynchronously(plugin);
+                        });
                         return true;
                     }
                 } else if (args.length == 3) {

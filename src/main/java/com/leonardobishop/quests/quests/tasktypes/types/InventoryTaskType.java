@@ -10,7 +10,7 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
-import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,14 +40,10 @@ public final class InventoryTaskType extends TaskType {
         return creatorConfigValues;
     }
 
+    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onItemPickup(PlayerPickupItemEvent event) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                checkInventory(event.getPlayer());
-            }
-        }.runTaskLater(Quests.get(), 1L);
+        Bukkit.getScheduler().runTaskLater(Quests.get(), () -> this.checkInventory(event.getPlayer()), 1L);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -60,6 +56,7 @@ public final class InventoryTaskType extends TaskType {
         }.runTaskLater(Quests.get(), 1L);
     }
 
+    @SuppressWarnings("deprecation")
     private void checkInventory(Player player) {
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {

@@ -1,17 +1,11 @@
 package com.leonardobishop.quests.obj.misc.creator;
 
-import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.obj.misc.QMenu;
+import com.leonardobishop.quests.player.QPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class QMenuCreator implements QMenu {
 
