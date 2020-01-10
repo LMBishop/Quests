@@ -11,17 +11,14 @@ import com.leonardobishop.quests.quests.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class QPlayer {
 
-    private UUID uuid;
-    private QuestProgressFile questProgressFile;
+    private final UUID uuid;
+    private final QuestProgressFile questProgressFile;
     private boolean onlyDataLoaded;
-    private Quests plugin;
+    private final Quests plugin;
 
     public QPlayer(UUID uuid, QuestProgressFile questProgressFile, Quests plugin) {
         this(uuid, questProgressFile, false, plugin);
@@ -150,5 +147,17 @@ public class QPlayer {
 
     public QuestProgressFile setQuestProgressFile() {
         return questProgressFile;
+    }
+
+    @Override //Used by java GC
+    public boolean equals(Object o) {
+        if (!(o instanceof QPlayer)) return false;
+        QPlayer qPlayer = (QPlayer) o;
+        return this.uuid == qPlayer.getUuid();
+    }
+
+    @Override //Used by java GC
+    public int hashCode() {
+        return uuid.hashCode() * 73; //uuid hash * prime number
     }
 }

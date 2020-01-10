@@ -16,7 +16,7 @@ public enum Items {
     QUEST_CANCEL_YES("gui.quest-cancel-yes"),
     QUEST_CANCEL_NO("gui.quest-cancel-no");
 
-    String path;
+    private final String path;
 
     Items(String path) {
         this.path = path;

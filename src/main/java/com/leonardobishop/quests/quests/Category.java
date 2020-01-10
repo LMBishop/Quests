@@ -10,7 +10,7 @@ public class Category {
     private String id;
     private ItemStack displayItem;
     private boolean permissionRequired;
-    private List<String> registeredQuestIds = new ArrayList<>();
+    private final List<String> registeredQuestIds = new ArrayList<>();
 
     public Category(String id, ItemStack displayItem, boolean permissionRequired) {
         this.id = id;

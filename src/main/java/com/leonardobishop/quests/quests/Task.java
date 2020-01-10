@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Task {
 
-    private Map<String, Object> configValues = new HashMap<>();
+    private final Map<String, Object> configValues = new HashMap<>();
 
     private String id;
     private String type;
@@ -24,7 +24,7 @@ public class Task {
     }
 
     public Object getConfigValue(String key) {
-        return configValues.getOrDefault(key, null);
+        return configValues.getOrDefault(key, null); //??? this will return null without the need of `OrDefault(key, null)`
     }
 
     public Map<String, Object> getConfigValues() {

@@ -55,10 +55,9 @@ public final class DealDamageTaskType extends TaskType {
 						continue;
 					}
 					
-					Double progressDamage;
+					double progressDamage;
 					int damageNeeded = (int) task.getConfigValue("amount");
-					Double damageNeededDouble = (double) damageNeeded;
-					
+
 					if (taskProgress.getProgress() == null) {
 						progressDamage = 0.0;
 					} else {
@@ -67,7 +66,7 @@ public final class DealDamageTaskType extends TaskType {
 					
 					taskProgress.setProgress(progressDamage + damage);
 					
-					if (((double) taskProgress.getProgress()) >= damageNeededDouble) {
+					if (((double) taskProgress.getProgress()) >= (double) damageNeeded) {
 						taskProgress.setCompleted(true);
 					}					
 				}

@@ -11,13 +11,13 @@ import java.util.*;
 
 public class QPlayerManager {
 
-    private Quests plugin;
+    private final Quests plugin;
 
     public QPlayerManager(Quests plugin) {
         this.plugin = plugin;
     }
 
-    private Map<UUID, QPlayer> qPlayers = new HashMap<>();
+    private final Map<UUID, QPlayer> qPlayers = new HashMap<>();
 
     public void addPlayer(QPlayer qPlayer) {
         qPlayers.put(qPlayer.getUuid(), qPlayer);
@@ -49,7 +49,7 @@ public class QPlayerManager {
                     File file = new File(plugin.getDataFolder() + File.separator + "playerdata" + File.separator + uuid.toString() + ".yml");
                     if (file.exists()) {
                         YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
-                        if (data.contains("quest-progress")) {
+                        if (data.isConfigurationSection("quest-progress")) { //Same job as "isSet" + it checks if is CfgSection
                             for (String id : data.getConfigurationSection("quest-progress").getKeys(false)) {
                                 boolean started = data.getBoolean("quest-progress." + id + ".started");
                                 boolean completed = data.getBoolean("quest-progress." + id + ".completed");

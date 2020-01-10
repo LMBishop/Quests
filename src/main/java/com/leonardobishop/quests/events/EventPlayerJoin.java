@@ -2,10 +2,10 @@ package com.leonardobishop.quests.events;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.obj.Messages;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
@@ -26,12 +26,7 @@ public class EventPlayerJoin implements Listener {
         }
         if (plugin.getUpdater().isUpdateReady() && event.getPlayer().hasPermission("quests.admin")) {
             // delay for a bit so they actually see the message
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    event.getPlayer().sendMessage(plugin.getUpdater().getMessage());
-                }
-            }.runTaskLater(plugin, 50L);
+            Bukkit.getScheduler().runTaskLater(this.plugin, () -> event.getPlayer().sendMessage(plugin.getUpdater().getMessage()), 50L);
         }
     }
 

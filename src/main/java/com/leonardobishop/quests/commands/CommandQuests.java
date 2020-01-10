@@ -23,12 +23,13 @@ import java.util.UUID;
 
 public class CommandQuests implements CommandExecutor {
 
-    private Quests plugin;
+    private final Quests plugin;
 
     public CommandQuests(Quests plugin) {
         this.plugin = plugin;
     }
 
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (plugin.isBrokenConfig()) {
             sender.sendMessage(ChatColor.RED + "The main config must be in tact before quests can be used. Quests has failed to load the following files:");
@@ -134,14 +135,12 @@ public class CommandQuests implements CommandExecutor {
                         showAdminHelp(sender, "opengui");
                         return true;
                     } else if (args[1].equalsIgnoreCase("moddata")) {
-                        Player player;
-                        OfflinePlayer ofp;
+                        OfflinePlayer ofp = Bukkit.getOfflinePlayer(args[3]);
                         UUID uuid;
                         String name;
-                        if ((player = Bukkit.getPlayer(args[3])) != null) {
-                            uuid = player.getUniqueId();
-                            name = player.getName();
-                        } else if ((ofp = Bukkit.getOfflinePlayer(args[3])) != null) {
+                        // Player.class is a superclass for OfflinePlayer.
+                        // getofflinePlayer return a player regardless if exists or not
+                         if (ofp != null) {
                             uuid = ofp.getUniqueId();
                             name = ofp.getName();
                         } else {
@@ -226,7 +225,7 @@ public class CommandQuests implements CommandExecutor {
                         Quest quest = plugin.getQuestManager().getQuestById(args[4]);
                         if (quest == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_START_DOESNTEXIST.getMessage().replace("{quest}", args[4]));
-                            success = true;
+                            //success = true;
                             return true;
                         }
                         if (args[2].equalsIgnoreCase("reset")) {

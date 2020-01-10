@@ -42,18 +42,16 @@ import java.util.logging.Level;
 
 public class Quests extends JavaPlugin {
 
-    private static Quests instance;
     private static QuestManager questManager;
     private static QPlayerManager qPlayerManager;
     private static TaskTypeManager taskTypeManager;
     private static Updater updater;
-    private static Metrics metrics;
     private static Title title;
     private boolean brokenConfig = false;
     private QuestsConfigLoader questsConfigLoader;
 
     public static Quests get() {
-        return instance;
+        return (Quests) Bukkit.getPluginManager().getPlugin("Quests");
     }
 
     public QuestManager getQuestManager() {
@@ -117,126 +115,110 @@ public class Quests extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        instance = this;
         taskTypeManager = new TaskTypeManager(this);
         questManager = new QuestManager(this);
         qPlayerManager = new QPlayerManager(this);
-        QuestsAPI.initialise(this);
 
         dataGenerator();
         setupTitle();
-
         Bukkit.getPluginCommand("quests").setExecutor(new CommandQuests(this));
         Bukkit.getPluginManager().registerEvents(new EventPlayerJoin(this), this);
         Bukkit.getPluginManager().registerEvents(new EventInventory(this), this);
         Bukkit.getPluginManager().registerEvents(new EventPlayerLeave(this), this);
 
-        metrics = new Metrics(this);
+        Metrics metrics = new Metrics(this);
         if (metrics.isEnabled()) {
             this.getLogger().log(Level.INFO, "Metrics started. This can be disabled at /plugins/bStats/config.yml.");
         }
 
         questsConfigLoader = new QuestsConfigLoader(Quests.this);
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                taskTypeManager.registerTaskType(new MiningTaskType());
-                taskTypeManager.registerTaskType(new MiningCertainTaskType());
-                taskTypeManager.registerTaskType(new BuildingTaskType());
-                taskTypeManager.registerTaskType(new BuildingCertainTaskType());
-                taskTypeManager.registerTaskType(new MobkillingTaskType());
-                taskTypeManager.registerTaskType(new MobkillingCertainTaskType());
-                taskTypeManager.registerTaskType(new PlayerkillingTaskType());
-                taskTypeManager.registerTaskType(new FishingTaskType());
-                taskTypeManager.registerTaskType(new InventoryTaskType());
-                taskTypeManager.registerTaskType(new WalkingTaskType());
-                taskTypeManager.registerTaskType(new TamingTaskType());
-                taskTypeManager.registerTaskType(new MilkingTaskType());
-                taskTypeManager.registerTaskType(new ShearingTaskType());
-                taskTypeManager.registerTaskType(new PositionTaskType());
-                taskTypeManager.registerTaskType(new PlaytimeTaskType());
-                taskTypeManager.registerTaskType(new BrewingTaskType());
-                taskTypeManager.registerTaskType(new ExpEarnTaskType());
-                taskTypeManager.registerTaskType(new BreedingTaskType());
-                taskTypeManager.registerTaskType(new EnchantingTaskType());
-                taskTypeManager.registerTaskType(new DealDamageTaskType());
-                // TODO: FIX
-                // taskTypeManager.registerTaskType(new BrewingCertainTaskType());
-                if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
-                    taskTypeManager.registerTaskType(new ASkyBlockLevelType());
-                }
-                if (Bukkit.getPluginManager().isPluginEnabled("uSkyBlock")) {
-                    taskTypeManager.registerTaskType(new uSkyBlockLevelType());
-                }
-                if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
-                    taskTypeManager.registerTaskType(new CitizensDeliverTaskType());
-                    taskTypeManager.registerTaskType(new CitizensInteractTaskType());
-                }
-                if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
-                    taskTypeManager.registerTaskType(new MythicMobsKillingType());
-                }
-
-                reloadQuests();
-                if (!questsConfigLoader.getBrokenFiles().isEmpty()) {
-                    Quests.this.getLogger().warning("Quests has failed to load the following files:");
-                    for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : questsConfigLoader.getBrokenFiles().entrySet()) {
-                        Quests.this.getLogger().warning(" - " + entry.getKey() + ": " + entry.getValue().getMessage());
-                    }
-                    Quests.this.getLogger().warning(ChatColor.GRAY.toString() + ChatColor.ITALIC + "If this is your first time using Quests, please delete the Quests folder and RESTART (not reload!) the server.");
-                }
-
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    qPlayerManager.loadPlayer(player.getUniqueId());
-                }
+        Bukkit.getScheduler().runTask(this, () -> {
+            taskTypeManager.registerTaskType(new MiningTaskType());
+            taskTypeManager.registerTaskType(new MiningCertainTaskType());
+            taskTypeManager.registerTaskType(new BuildingTaskType());
+            taskTypeManager.registerTaskType(new BuildingCertainTaskType());
+            taskTypeManager.registerTaskType(new MobkillingTaskType());
+            taskTypeManager.registerTaskType(new MobkillingCertainTaskType());
+            taskTypeManager.registerTaskType(new PlayerkillingTaskType());
+            taskTypeManager.registerTaskType(new FishingTaskType());
+            taskTypeManager.registerTaskType(new InventoryTaskType());
+            taskTypeManager.registerTaskType(new WalkingTaskType());
+            taskTypeManager.registerTaskType(new TamingTaskType());
+            taskTypeManager.registerTaskType(new MilkingTaskType());
+            taskTypeManager.registerTaskType(new ShearingTaskType());
+            taskTypeManager.registerTaskType(new PositionTaskType());
+            taskTypeManager.registerTaskType(new PlaytimeTaskType());
+            taskTypeManager.registerTaskType(new BrewingTaskType());
+            taskTypeManager.registerTaskType(new ExpEarnTaskType());
+            taskTypeManager.registerTaskType(new BreedingTaskType());
+            taskTypeManager.registerTaskType(new EnchantingTaskType());
+            taskTypeManager.registerTaskType(new DealDamageTaskType());
+            // TODO: FIX
+            // taskTypeManager.registerTaskType(new BrewingCertainTaskType());
+            if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
+                taskTypeManager.registerTaskType(new ASkyBlockLevelType());
             }
-        }.runTask(this);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
-                    if (qPlayer.isOnlyDataLoaded()) {
-                        continue;
-                    }
-                    qPlayer.getQuestProgressFile().saveToDisk(false);
-                }
+            if (Bukkit.getPluginManager().isPluginEnabled("uSkyBlock")) {
+                taskTypeManager.registerTaskType(new uSkyBlockLevelType());
             }
-        }.runTaskTimerAsynchronously(this, 12000L, 12000L);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
-                    if (qPlayer.isOnlyDataLoaded()) {
-                        continue;
-                    }
-                    QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-                    for (Map.Entry<String, Quest> entry : Quests.this.getQuestManager().getQuests().entrySet()) {
-                        Quest quest = entry.getValue();
-                        QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
-                        if (questProgressFile.hasStartedQuest(quest)) {
-                            boolean complete = true;
-                            for (Task task : quest.getTasks()) {
-                                TaskProgress taskProgress;
-                                if ((taskProgress = questProgress.getTaskProgress(task.getId())) == null || !taskProgress.isCompleted()) {
-                                    complete = false;
-                                    break;
-                                }
+            if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
+                taskTypeManager.registerTaskType(new CitizensDeliverTaskType());
+                taskTypeManager.registerTaskType(new CitizensInteractTaskType());
+            }
+            if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
+                taskTypeManager.registerTaskType(new MythicMobsKillingType());
+            }
+
+            reloadQuests();
+            if (!questsConfigLoader.getBrokenFiles().isEmpty()) {
+                Quests.this.getLogger().warning("Quests has failed to load the following files:");
+                for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : questsConfigLoader.getBrokenFiles().entrySet()) {
+                    Quests.this.getLogger().warning(" - " + entry.getKey() + ": " + entry.getValue().getMessage());
+                }
+                Quests.this.getLogger().warning(ChatColor.GRAY.toString() + ChatColor.ITALIC + "If this is your first time using Quests, please delete the Quests folder and RESTART (not reload!) the server.");
+            }
+
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                qPlayerManager.loadPlayer(player.getUniqueId());
+            }
+        });
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+            for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
+                if (qPlayer.isOnlyDataLoaded()) {
+                    continue;
+                }
+                qPlayer.getQuestProgressFile().saveToDisk(false);
+            }
+        }, 12000L, 12000L);
+        Bukkit.getScheduler().runTaskTimer(this, () -> {
+            for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
+                if (qPlayer.isOnlyDataLoaded()) {
+                    continue;
+                }
+                QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+                for (Map.Entry<String, Quest> entry : Quests.this.getQuestManager().getQuests().entrySet()) {
+                    Quest quest = entry.getValue();
+                    QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+                    if (questProgressFile.hasStartedQuest(quest)) {
+                        boolean complete = true;
+                        for (Task task : quest.getTasks()) {
+                            TaskProgress taskProgress;
+                            if ((taskProgress = questProgress.getTaskProgress(task.getId())) == null || !taskProgress.isCompleted()) {
+                                complete = false;
+                                break;
                             }
-                            if (complete) {
-                                questProgressFile.completeQuest(quest);
-                            }
+                        }
+                        if (complete) {
+                            questProgressFile.completeQuest(quest);
                         }
                     }
                 }
             }
-        }.runTaskTimer(this, 20L, 20L);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                updater = new Updater(Quests.this);
-                updater.check();
-            }
-        }.runTaskAsynchronously(this);
+        }, 20L, 20L);
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            updater = new Updater(Quests.this);
+            updater.check();
+        });
     }
 
     @Override
@@ -267,7 +249,7 @@ public class Quests extends JavaPlugin {
         List<String> cLore = config.getStringList("lore");
 
         String name;
-        Material type = null;
+        Material type;
         int data = 0;
         List<String> lore = new ArrayList<>();
         if (cLore != null) {
@@ -330,7 +312,7 @@ public class Quests extends JavaPlugin {
                 config.createNewFile();
                 try (InputStream in = Quests.class.getClassLoader().getResourceAsStream("config.yml")) {
                     OutputStream out = new FileOutputStream(config);
-                    ByteStreams.copy(in, out);
+                    ByteStreams.copy(in, out); //Marked as BETA, causing data loss. TODO
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -339,7 +321,7 @@ public class Quests extends JavaPlugin {
             }
         }
 
-        File questsDirectory = new File(String.valueOf(this.getDataFolder() + File.separator + "quests"));
+        File questsDirectory = new File(this.getDataFolder() + File.separator + "quests");
         if (!questsDirectory.exists() && !questsDirectory.isDirectory()) {
             questsDirectory.mkdir();
 
@@ -358,7 +340,7 @@ public class Quests extends JavaPlugin {
                     file.createNewFile();
                     try (InputStream in = Quests.class.getClassLoader().getResourceAsStream("quests/" + name)) {
                         OutputStream out = new FileOutputStream(file);
-                        ByteStreams.copy(in, out);
+                        ByteStreams.copy(in, out); //Marked as BETA, causing data loss. TODO
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

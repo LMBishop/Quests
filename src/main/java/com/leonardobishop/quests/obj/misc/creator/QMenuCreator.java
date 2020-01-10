@@ -15,7 +15,7 @@ import java.util.List;
 
 public class QMenuCreator implements QMenu {
 
-    private QPlayer owner;
+    private final QPlayer owner;
 
     public QMenuCreator(QPlayer owner) {
         this.owner = owner;
@@ -34,7 +34,7 @@ public class QMenuCreator implements QMenu {
     public Inventory toInventory(int page) {
         String title = "Quest Creator";
 
-        Inventory inventory = Bukkit.createInventory(null, 9, title);
+//        Inventory inventory = Bukkit.createInventory(null, 9, title);
 //
 //        ItemStack newQuest = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5);
 //        ItemMeta newQuestM = newQuest.getItemMeta();
@@ -63,8 +63,9 @@ public class QMenuCreator implements QMenu {
 //        inventory.setItem(2, newQuest);
 //        inventory.setItem(4, editQuest);
 //        inventory.setItem(6, removeQuest);
+//        return inventory;
 
-        return inventory;
+        return Bukkit.createInventory(null, 9, title);
     }
 
 }
