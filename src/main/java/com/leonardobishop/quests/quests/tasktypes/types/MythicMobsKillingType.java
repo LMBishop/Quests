@@ -12,8 +12,10 @@ import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,15 +44,22 @@ public final class MythicMobsKillingType extends TaskType {
             return;
         }
 
+        if (killer instanceof Projectile) {
+            ProjectileSource source = ((Projectile) killer).getShooter();
+            if (source == null)
+                return;
+            if (source instanceof Player)
+                killer = (Entity) source;
+            else return;
+        }
+
         if (killer == null) {
             return;
         }
 
-        Player player = (Player) event.getKiller();
-
         String mobName = event.getMobType().getInternalName();
 
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(killer.getUniqueId());
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
         for (Quest quest : super.getRegisteredQuests()) {

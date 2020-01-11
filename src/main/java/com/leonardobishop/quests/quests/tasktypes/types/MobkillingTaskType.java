@@ -9,13 +9,11 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,20 +35,27 @@ public final class MobkillingTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMobKill(EntityDeathEvent event) {
-        Entity killer = event.getEntity().getKiller();
+        Entity killer = event.getEntity().getKiller(); //The killer is an entity, and projectiles counts as entities too.
         Entity mob = event.getEntity();
 
-        if (mob instanceof Player) {
+        if (mob == null || mob instanceof Player) {
             return;
+        }
+
+        if (killer instanceof Projectile) {
+            ProjectileSource source = ((Projectile) killer).getShooter();
+            if (source == null)
+                return;
+            if (source instanceof Player)
+                killer = (Entity) source;
+            else return;
         }
 
         if (killer == null) {
             return;
         }
 
-        Player player = event.getEntity().getKiller();
-
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(killer.getUniqueId());
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
         for (Quest quest : super.getRegisteredQuests()) {

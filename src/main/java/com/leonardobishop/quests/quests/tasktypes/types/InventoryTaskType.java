@@ -18,7 +18,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,12 +47,7 @@ public final class InventoryTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryClick(InventoryInteractEvent event) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                checkInventory((Player) event.getWhoClicked());
-            }
-        }.runTaskLater(Quests.get(), 1L);
+        Bukkit.getScheduler().runTaskLater(Quests.get(), () -> checkInventory((Player) event.getWhoClicked()), 1L);
     }
 
     @SuppressWarnings("deprecation")

@@ -13,9 +13,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,13 +47,20 @@ public final class MobkillingCertainTaskType extends TaskType {
             return;
         }
 
+        if (killer instanceof Projectile) {
+            ProjectileSource source = ((Projectile) killer).getShooter();
+            if (source == null)
+                return;
+            if (source instanceof Player)
+                killer = (Entity) source;
+            else return;
+        }
+
         if (killer == null) {
             return;
         }
 
-        Player player = event.getEntity().getKiller();
-
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(killer.getUniqueId());
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
         for (Quest quest : super.getRegisteredQuests()) {
