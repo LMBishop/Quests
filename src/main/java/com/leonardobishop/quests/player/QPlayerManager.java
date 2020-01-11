@@ -28,7 +28,7 @@ public class QPlayerManager {
     }
 
     public void removePlayer(UUID uuid) {
-        this.getPlayer(uuid).getQuestProgressFile().saveToDisk(false); //WHY THE HECK THE DATA WAS NOT SAVED???
+        this.getPlayer(uuid).getQuestProgressFile().saveToDisk(false);
         qPlayers.remove(uuid);
     }
 

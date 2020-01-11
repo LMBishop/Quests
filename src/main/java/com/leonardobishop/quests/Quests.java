@@ -214,7 +214,7 @@ public class Quests extends JavaPlugin {
                     }
                 }
             }
-        }, 20L, 20L);
+        }, 10 * 20L, 10 * 20L); //Data is saved every 10 seconds in case of crash; the player data is also saved when the player leaves the server
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             updater = new Updater(Quests.this);
             updater.check();
