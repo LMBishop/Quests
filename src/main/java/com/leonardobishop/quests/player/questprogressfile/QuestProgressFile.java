@@ -286,7 +286,7 @@ public class QuestProgressFile {
         }
 
         YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
-        data.set("quest-progress", null);
+        //data.set("quest-progress", null);
         for (QuestProgress questProgress : questProgress.values()) {
             if (!questProgress.isWorthSaving()) {
                 continue;
