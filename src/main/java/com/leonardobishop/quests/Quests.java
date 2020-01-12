@@ -1,5 +1,6 @@
 package com.leonardobishop.quests;
 
+import com.leonardobishop.quests.api.QuestsPlaceholders;
 import com.leonardobishop.quests.bstats.Metrics;
 import com.leonardobishop.quests.commands.CommandQuests;
 import com.leonardobishop.quests.events.EventInventory;
@@ -107,6 +108,10 @@ public class Quests extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EventPlayerJoin(this), this);
         Bukkit.getPluginManager().registerEvents(new EventInventory(this), this);
         Bukkit.getPluginManager().registerEvents(new EventPlayerLeave(this), this);
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new QuestsPlaceholders(this).register();
+        }
 
         Metrics metrics = new Metrics(this);
         if (metrics.isEnabled()) {

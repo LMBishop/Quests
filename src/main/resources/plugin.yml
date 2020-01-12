@@ -5,7 +5,7 @@ version: %PLUGIN_VERSION%
 
 main: com.leonardobishop.quests.Quests
 author: LMBishop
-softdepend: [ASkyBlock, uSkyBlock, Citizens]
+softdepend: [ASkyBlock, uSkyBlock, Citizens, PlaceholderAPI]
 prefix: Quests
 api-version: 1.14
 
