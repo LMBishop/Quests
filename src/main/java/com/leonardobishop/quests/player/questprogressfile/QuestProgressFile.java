@@ -146,8 +146,8 @@ public class QuestProgressFile {
                     break;
                 case QUEST_COOLDOWN:
                     long cooldown = getCooldownFor(quest);
-                    questResultMessage = Messages.QUEST_START_COOLDOWN.getMessage().replace("{time}", String.valueOf(plugin.convertToFormat(TimeUnit.MINUTES.convert
-                            (cooldown, TimeUnit.SECONDS))));
+                    questResultMessage = Messages.QUEST_START_COOLDOWN.getMessage().replace("{time}", String.valueOf(plugin.convertToFormat(TimeUnit.SECONDS.convert
+                            (cooldown, TimeUnit.MINUTES))));
                     break;
                 case QUEST_LOCKED:
                     questResultMessage = Messages.QUEST_START_LOCKED.getMessage();

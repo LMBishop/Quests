@@ -84,9 +84,9 @@ public class Quests extends JavaPlugin {
     }
 
     public String convertToFormat(long m) { //seconds please
-        long hours = m / 60;
-        long minutes = (m % 60) / 60;
-        long seconds = ((m % 60) % 60) % 60;
+        long hours = m / 3600;
+        long minutes = (m % 3600) / 60;
+        long seconds = ((m % 3600) % 60) % 60;
 
         return Messages.TIME_FORMAT.getMessage()
                 .replace("{hours}", String.format("%02d", hours))
