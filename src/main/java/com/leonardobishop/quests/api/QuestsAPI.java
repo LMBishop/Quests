@@ -1,5 +1,6 @@
-package com.leonardobishop.quests;
+package com.leonardobishop.quests.api;
 
+import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.player.QPlayerManager;
 import com.leonardobishop.quests.quests.QuestManager;
 import com.leonardobishop.quests.quests.tasktypes.TaskTypeManager;

@@ -1,6 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
-import com.leonardobishop.quests.QuestsAPI;
+import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
