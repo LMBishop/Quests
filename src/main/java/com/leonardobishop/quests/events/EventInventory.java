@@ -64,8 +64,7 @@ public class EventInventory implements Listener {
                     event.getWhoClicked().openInventory(qMenuQuest.toInventory(qMenuQuest.getCurrentPage() - 1));
 
                 } else if (qMenuQuest.getPageNextLocation() == event.getSlot()) {
-                    if (!event.getClickedInventory().equals(qMenuQuest.toInventory(qMenuQuest.getCurrentPage() + 1)))
-                        return;
+                    //This shouldn't be here lol, forgot about it
                     buffer.add(event.getWhoClicked().getUniqueId());
                     event.getWhoClicked().openInventory(qMenuQuest.toInventory(qMenuQuest.getCurrentPage() + 1));
 
