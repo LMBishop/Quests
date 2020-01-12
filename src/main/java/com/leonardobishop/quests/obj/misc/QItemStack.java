@@ -71,13 +71,13 @@ public class QItemStack {
         this.data = data;
     }
 
+    @SuppressWarnings("deprecation")
     public ItemStack toItemStack(Quest quest, QuestProgressFile questProgressFile, QuestProgress questProgress) {
         ItemStack is = new ItemStack(type, 1, (short) data);
         ItemMeta ism = is.getItemMeta();
         ism.setDisplayName(name);
         List<String> formattedLore = new ArrayList<>();
-        List<String> tempLore = new ArrayList<>();
-        tempLore.addAll(loreNormal);
+        List<String> tempLore = new ArrayList<>(loreNormal);
         if (questProgressFile.hasStartedQuest(quest)) {
             tempLore.addAll(loreStarted);
             ism.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
@@ -90,7 +90,7 @@ public class QItemStack {
         }
         if (questProgress != null) {
             for (String s : tempLore) {
-                Matcher m = Pattern.compile("\\{([^}]+)\\}").matcher(s);
+                Matcher m = Pattern.compile("\\{([^}]+)}").matcher(s);
                 while (m.find()) {
                     String[] parts = m.group(1).split(":");
                     if (parts.length > 1) {

@@ -168,6 +168,7 @@ titles:
 
 # Configure messages
 messages:
+  time-format: "{hours}h {minutes}m {seconds}s"
   quest-start: "&7Quest &c{quest} &7started!"
   quest-complete: "&7Quest &c{quest} &7completed!"
   quest-cancel: "&7Quest &c{quest} &7cancelled!"

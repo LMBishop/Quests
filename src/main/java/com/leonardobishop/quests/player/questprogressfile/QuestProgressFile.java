@@ -2,9 +2,11 @@ package com.leonardobishop.quests.player.questprogressfile;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.api.QuestsAPI;
+import com.leonardobishop.quests.api.enums.QuestStartResult;
 import com.leonardobishop.quests.api.events.PlayerCancelQuestEvent;
 import com.leonardobishop.quests.api.events.PlayerFinishQuestEvent;
 import com.leonardobishop.quests.api.events.PlayerStartQuestEvent;
+import com.leonardobishop.quests.api.events.PreStartQuestEvent;
 import com.leonardobishop.quests.obj.Messages;
 import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.player.QPlayer;
@@ -72,51 +74,50 @@ public class QuestProgressFile {
      * Warning: will fail if the player is not online.
      *
      * @param quest the quest to check
-     * @return 0 if true, 1 if limit reached, 2 if quest is already completed, 3 if quest has cooldown, 4 if still locked, 5 if already started, 6 if
-     * no permission, 7 if no permission for category
+     * @return the quest start result
      */
-    public int canStartQuest(Quest quest) {
+    public QuestStartResult canStartQuest(Quest quest) {
         Player p = Bukkit.getPlayer(playerUUID);
         if (getStartedQuests().size() >= Options.QUESTS_START_LIMIT.getIntValue()) {
-            return 1;
+            return QuestStartResult.QUEST_LIMIT_REACHED;
         }
         QuestProgress questProgress = getQuestProgress(quest);
         if (!quest.isRepeatable() && questProgress.isCompletedBefore()) {
             //if (playerUUID != null) {
             // ???
             //}
-            return 2;
+            return QuestStartResult.QUEST_ALREADY_COMPLETED;
         }
         long cooldown = getCooldownFor(quest);
         if (cooldown > 0) {
-            return 3;
+            return QuestStartResult.QUEST_COOLDOWN;
         }
         if (!hasMetRequirements(quest)) {
-            return 4;
+            return QuestStartResult.QUEST_LOCKED;
         }
         if (questProgress.isStarted()) {
-            return 5;
+            return QuestStartResult.QUEST_ALREADY_STARTED;
         }
         if (quest.isPermissionRequired()) {
             if (playerUUID != null) {
                 if (!p.hasPermission("quests.quest." + quest.getId())) {
-                    return 6;
+                    return QuestStartResult.QUEST_NO_PERMISSION;
                 }
             } else {
-                return 6;
+                return QuestStartResult.QUEST_NO_PERMISSION;
             }
         }
         if (quest.getCategoryId() != null && plugin.getQuestManager().getCategoryById(quest.getCategoryId()) != null && plugin.getQuestManager()
                 .getCategoryById(quest.getCategoryId()).isPermissionRequired()) {
             if (playerUUID != null) {
                 if (!p.hasPermission("quests.category." + quest.getCategoryId())) {
-                    return 7;
+                    return QuestStartResult.NO_PERMISSION_FOR_CATEGORY;
                 }
             } else {
-                return 7;
+                return QuestStartResult.NO_PERMISSION_FOR_CATEGORY;
             }
         }
-        return 0;
+        return QuestStartResult.QUEST_SUCCESS;
     }
 
     /**
@@ -125,42 +126,51 @@ public class QuestProgressFile {
      * Warning: will fail if the player is not online.
      *
      * @param quest the quest to check
-     * @return 0 if successful, 1 if limit reached, 2 if quest is already completed, 3 if quest has cooldown, 4 if still locked, 5 if already started, 6 if
-     * no permission, 7 if no permission for category, 8 if other
+     * @return the quest start result
      */
-    public int startQuest(Quest quest) {
+    // TODO PlaceholderAPI support
+    public QuestStartResult startQuest(Quest quest) {
         Player player = Bukkit.getPlayer(playerUUID);
-        int code = canStartQuest(quest);
+        QuestStartResult code = canStartQuest(quest);
         if (player != null) {
+            String questResultMessage = null;
             switch (code) {
-                case 0:
+                case QUEST_SUCCESS:
+                    // This one is hacky
                     break;
-                case 1:
-                    player.sendMessage(Messages.QUEST_START_LIMIT.getMessage().replace("{limit}", String.valueOf(Options.QUESTS_START_LIMIT.getIntValue())));
+                case QUEST_LIMIT_REACHED:
+                    questResultMessage = Messages.QUEST_START_LIMIT.getMessage().replace("{limit}", String.valueOf(Options.QUESTS_START_LIMIT.getIntValue()));
                     break;
-                case 2:
-                    player.sendMessage(Messages.QUEST_START_DISABLED.getMessage());
+                case QUEST_ALREADY_COMPLETED:
+                    questResultMessage = Messages.QUEST_START_DISABLED.getMessage();
                     break;
-                case 3:
+                case QUEST_COOLDOWN:
                     long cooldown = getCooldownFor(quest);
-                    player.sendMessage(Messages.QUEST_START_COOLDOWN.getMessage().replace("{time}", String.valueOf(plugin.convertToFormat(TimeUnit.MINUTES.convert
-                            (cooldown, TimeUnit.MILLISECONDS)))));
+                    questResultMessage = Messages.QUEST_START_COOLDOWN.getMessage().replace("{time}", String.valueOf(plugin.convertToFormat(TimeUnit.MINUTES.convert
+                            (cooldown, TimeUnit.SECONDS))));
                     break;
-                case 4:
-                    player.sendMessage(Messages.QUEST_START_LOCKED.getMessage());
+                case QUEST_LOCKED:
+                    questResultMessage = Messages.QUEST_START_LOCKED.getMessage();
                     break;
-                case 5:
-                    player.sendMessage(Messages.QUEST_START_STARTED.getMessage());
+                case QUEST_ALREADY_STARTED:
+                    questResultMessage = Messages.QUEST_START_STARTED.getMessage();
                     break;
-                case 6:
-                    player.sendMessage(Messages.QUEST_START_PERMISSION.getMessage());
+                case QUEST_NO_PERMISSION:
+                    questResultMessage = Messages.QUEST_START_PERMISSION.getMessage();
                     break;
-                case 7:
-                    player.sendMessage(Messages.QUEST_CATEGORY_QUEST_PERMISSION.getMessage());
+                case NO_PERMISSION_FOR_CATEGORY:
+                    questResultMessage = Messages.QUEST_CATEGORY_QUEST_PERMISSION.getMessage();
                     break;
             }
+            QPlayer questPlayer = QuestsAPI.getPlayerManager().getPlayer(this.playerUUID);
+            // PreStartQuestEvent -- start
+            PreStartQuestEvent preStartQuestEvent = new PreStartQuestEvent(player, questPlayer, questResultMessage, code);
+            Bukkit.getPluginManager().callEvent(preStartQuestEvent);
+            // PreStartQuestEvent -- end
+            if (preStartQuestEvent.getQuestResultMessage() != null && code != QuestStartResult.QUEST_SUCCESS)
+                player.sendMessage(preStartQuestEvent.getQuestResultMessage());
         }
-        if (code == 0) {
+        if (code == QuestStartResult.QUEST_SUCCESS) {
             QuestProgress questProgress = getQuestProgress(quest);
             questProgress.setStarted(true);
             for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
@@ -170,7 +180,7 @@ public class QuestProgressFile {
             questProgress.setCompleted(false);
             if (player != null) {
                 QPlayer questPlayer = QuestsAPI.getPlayerManager().getPlayer(this.playerUUID);
-                String questStartMessage = Messages.QUEST_START.getMessage().replace("{quest}", quest.getDisplayNameStripped()); //TODO PlaceholderAPI support
+                String questStartMessage = Messages.QUEST_START.getMessage().replace("{quest}", quest.getDisplayNameStripped());
                 // PlayerStartQuestEvent -- start
                 PlayerStartQuestEvent questStartEvent = new PlayerStartQuestEvent(player, questPlayer, questProgress, questStartMessage);
                 Bukkit.getPluginManager().callEvent(questStartEvent);
@@ -238,8 +248,8 @@ public class QuestProgressFile {
         if (!Options.QUEST_AUTOSTART.getBooleanValue()) {
             return hasQuestProgress(quest) && getQuestProgress(quest).isStarted();
         } else {
-            int response = canStartQuest(quest);
-            return response == 0 || response == 5;
+            QuestStartResult response = canStartQuest(quest);
+            return response == QuestStartResult.QUEST_SUCCESS || response == QuestStartResult.QUEST_ALREADY_STARTED;
         }
     }
 

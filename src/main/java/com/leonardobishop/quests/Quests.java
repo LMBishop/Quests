@@ -5,6 +5,7 @@ import com.leonardobishop.quests.commands.CommandQuests;
 import com.leonardobishop.quests.events.EventInventory;
 import com.leonardobishop.quests.events.EventPlayerJoin;
 import com.leonardobishop.quests.events.EventPlayerLeave;
+import com.leonardobishop.quests.obj.Messages;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.QPlayerManager;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
@@ -28,9 +29,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.JavaPluginLoader;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -84,32 +83,16 @@ public class Quests extends JavaPlugin {
         return questsConfigLoader;
     }
 
-    public String convertToFormat(long m) {
+    public String convertToFormat(long m) { //seconds please
         long hours = m / 60;
-        long minutesLeft = m - hours * 60;
+        long minutes = (m % 60) / 60;
+        long seconds = ((m % 60) % 60) % 60;
 
-        String formattedTime = "";
-
-        if (hours < 10)
-            formattedTime = formattedTime + "0";
-        formattedTime = formattedTime + hours + "h";
-
-        formattedTime = formattedTime + " ";
-
-        if (minutesLeft < 10)
-            formattedTime = formattedTime + "0";
-        formattedTime = formattedTime + minutesLeft + "m";
-
-        return formattedTime;
+        return Messages.TIME_FORMAT.getMessage()
+                .replace("{hours}", String.format("%02d", hours))
+                .replace("{minutes}", String.format("%02d", minutes))
+                .replace("{seconds}", String.format("%02d", seconds));
     }
-
-    public Quests() {
-    }
-
-    public Quests(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
-        super(loader, description, dataFolder, file);
-    }
-
 
     @Override
     public void onEnable() {

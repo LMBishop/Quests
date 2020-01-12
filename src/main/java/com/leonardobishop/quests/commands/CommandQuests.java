@@ -2,6 +2,7 @@ package com.leonardobishop.quests.commands;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.QuestsConfigLoader;
+import com.leonardobishop.quests.api.enums.QuestStartResult;
 import com.leonardobishop.quests.obj.Messages;
 import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.player.QPlayer;
@@ -231,26 +232,26 @@ public class CommandQuests implements CommandExecutor {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         } else if (args[2].equalsIgnoreCase("start")) {
-                            int response = questProgressFile.startQuest(quest);
-                            if (response == 1) {
+                            QuestStartResult response = questProgressFile.startQuest(quest);
+                            if (response == QuestStartResult.QUEST_LIMIT_REACHED) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILLIMIT.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                                 return true;
-                            } else if (response == 2) {
+                            } else if (response == QuestStartResult.QUEST_ALREADY_COMPLETED) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCOMPLETE.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                                 return true;
-                            } else if (response == 3) {
+                            } else if (response == QuestStartResult.QUEST_COOLDOWN) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCOOLDOWN.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                                 return true;
-                            } else if (response == 4) {
+                            } else if (response == QuestStartResult.QUEST_LOCKED) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILLOCKED.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                                 return true;
-                            } else if (response == 5) {
+                            } else if (response == QuestStartResult.QUEST_ALREADY_STARTED) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILSTARTED.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                                 return true;
-                            } else if (response == 6) {
+                            } else if (response == QuestStartResult.QUEST_NO_PERMISSION) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILPERMISSION.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                                 return true;
-                            } else if (response == 7) {
+                            } else if (response == QuestStartResult.NO_PERMISSION_FOR_CATEGORY) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCATEGORYPERMISSION.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                                 return true;
                             }

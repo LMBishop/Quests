@@ -19,10 +19,6 @@ public class QPlayerManager {
 
     private final Map<UUID, QPlayer> qPlayers = new HashMap<>();
 
-    public void addPlayer(QPlayer qPlayer) {
-        qPlayers.put(qPlayer.getUuid(), qPlayer);
-    }
-
     public QPlayer getPlayer(UUID uuid) {
         return qPlayers.get(uuid);
     }
@@ -80,8 +76,7 @@ public class QPlayerManager {
 
             QPlayer qPlayer = new QPlayer(uuid, questProgressFile, onlyData, plugin);
 
-            addPlayer(qPlayer);
+            this.qPlayers.put(uuid, qPlayer);
         }
     }
-
 }

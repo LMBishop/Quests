@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.events;
 
+import com.leonardobishop.quests.api.enums.QuestStartResult;
 import com.leonardobishop.quests.obj.Messages;
 import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.Quests;
@@ -84,7 +85,7 @@ public class EventInventory implements Listener {
                     String questid = qMenuQuest.getSlotsToMenu().get(event.getSlot() + (((qMenuQuest.getCurrentPage()) - 1) * qMenuQuest.getPageSize()));
                     Quest quest = plugin.getQuestManager().getQuestById(questid);
                     if (event.getClick() == ClickType.LEFT) {
-                        if (qMenuQuest.getOwner().getQuestProgressFile().startQuest(quest) == 0) {
+                        if (qMenuQuest.getOwner().getQuestProgressFile().startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
                             event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
                         }
                     } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()) {

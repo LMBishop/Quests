@@ -128,7 +128,7 @@ public class QMenuQuest implements QMenu {
                     inventory.setItem(invSlot, is);
                 } else if (cooldown > 0) {
                     Map<String, String> placeholders = new HashMap<>();
-                    placeholders.put("{time}", Quests.get().convertToFormat(TimeUnit.MINUTES.convert(cooldown, TimeUnit.MILLISECONDS)));
+                    placeholders.put("{time}", Quests.get().convertToFormat(TimeUnit.MINUTES.convert(cooldown, TimeUnit.SECONDS)));
                     placeholders.put("{quest}", quest.getDisplayNameStripped());
                     ItemStack is = replaceItemStack(Items.QUEST_COOLDOWN.getItem(), placeholders);
                     inventory.setItem(invSlot, is);

@@ -94,7 +94,7 @@ public final class MiningCertainTaskType extends TaskType {
         Object configData = task.getConfigValue("data");
         Object configSimilarBlocks = task.getConfigValue("use-similar-blocks");
 
-        material = Material.matchMaterial(String.valueOf(configBlock));
+        material = Material.getMaterial(String.valueOf(configBlock));
 
         Material blockType = block.getType();
         short blockData = block.getData();

@@ -76,7 +76,7 @@ public final class InventoryTaskType extends TaskType {
                     Object configData = task.getConfigValue("data");
                     Object remove = task.getConfigValue("remove-items-when-complete");
 
-                    material = Material.matchMaterial(String.valueOf(configBlock));
+                    material = Material.getMaterial(String.valueOf(configBlock));
 
 
                     if (material == null) {

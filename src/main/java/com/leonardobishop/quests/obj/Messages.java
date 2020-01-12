@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 
 public enum Messages {
 
+    TIME_FORMAT("messages.time-format"),
     QUEST_START("messages.quest-start"),
     QUEST_COMPLETE("messages.quest-complete"),
     QUEST_CANCEL("messages.quest-cancel"),
@@ -49,7 +50,7 @@ public enum Messages {
     COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS("messages.command-quest-admin-complete-success"),
     COMMAND_QUEST_ADMIN_RESET_SUCCESS("messages.command-quest-admin-reset-success");
 
-    private String path;
+    private final String path;
 
     Messages(String path) {
         this.path = path;
@@ -64,5 +65,4 @@ public enum Messages {
         }
         return path;
     }
-
 }

@@ -32,7 +32,7 @@ public class QPlayer {
     }
 
     public UUID getUuid() {
-        return uuid;
+        return this.uuid;
     }
 
     /**
@@ -43,7 +43,7 @@ public class QPlayer {
             return 2;
         }
 
-        Player player = Bukkit.getPlayer(uuid);
+        Player player = Bukkit.getPlayer(this.uuid);
         if (player == null) {
             return 3;
         }
@@ -73,7 +73,7 @@ public class QPlayer {
             return 2;
         }
 
-        Player player = Bukkit.getPlayer(uuid);
+        Player player = Bukkit.getPlayer(this.uuid);
         if (player == null) {
             return 3;
         }
@@ -92,10 +92,10 @@ public class QPlayer {
             return;
         }
 
-        if (uuid == null) {
+        if (this.uuid == null) {
             return;
         }
-        Player player = Bukkit.getPlayer(uuid);
+        Player player = Bukkit.getPlayer(this.uuid);
         if (player == null) {
             return;
         }
