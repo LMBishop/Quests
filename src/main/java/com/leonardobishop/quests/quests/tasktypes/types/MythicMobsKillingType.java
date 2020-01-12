@@ -44,7 +44,7 @@ public final class MythicMobsKillingType extends TaskType {
             return;
         }
 
-        if (killer instanceof Projectile) {
+        if (killer instanceof Projectile) { //killer can be a projectile
             ProjectileSource source = ((Projectile) killer).getShooter();
             if (source == null)
                 return;

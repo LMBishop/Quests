@@ -40,20 +40,11 @@ public final class MobkillingCertainTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMobKill(EntityDeathEvent event) {
-        Entity killer = event.getEntity().getKiller();
+        Player killer = event.getEntity().getKiller();
         Entity mob = event.getEntity();
 
         if (mob == null || mob instanceof Player) {
             return;
-        }
-
-        if (killer instanceof Projectile) {
-            ProjectileSource source = ((Projectile) killer).getShooter();
-            if (source == null)
-                return;
-            if (source instanceof Player)
-                killer = (Entity) source;
-            else return;
         }
 
         if (killer == null) {

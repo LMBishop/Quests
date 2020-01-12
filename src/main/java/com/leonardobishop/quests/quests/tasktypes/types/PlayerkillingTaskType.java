@@ -11,11 +11,9 @@ import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,20 +35,11 @@ public final class PlayerkillingTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMobKill(EntityDeathEvent event) {
-        Entity killer = event.getEntity().getKiller();
+        Player killer = event.getEntity().getKiller();
         Entity mob = event.getEntity();
 
         if (!(mob instanceof Player)) {
             return;
-        }
-
-        if (killer instanceof Projectile) {
-            ProjectileSource source = ((Projectile) killer).getShooter();
-            if (source == null)
-                return;
-            if (source instanceof Player)
-                killer = (Entity) source;
-            else return;
         }
 
         if (killer == null) {

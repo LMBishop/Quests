@@ -130,7 +130,7 @@ public class Quests extends JavaPlugin {
             this.getLogger().log(Level.INFO, "Metrics started. This can be disabled at /plugins/bStats/config.yml.");
         }
 
-        questsConfigLoader = new QuestsConfigLoader(Quests.this);
+        questsConfigLoader = new QuestsConfigLoader(this);
 
         Bukkit.getScheduler().runTask(this, () -> {
             taskTypeManager.registerTaskType(new MiningTaskType());
@@ -171,11 +171,11 @@ public class Quests extends JavaPlugin {
 
             reloadQuests();
             if (!questsConfigLoader.getBrokenFiles().isEmpty()) {
-                Quests.this.getLogger().warning("Quests has failed to load the following files:");
+                this.getLogger().warning("Quests has failed to load the following files:");
                 for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : questsConfigLoader.getBrokenFiles().entrySet()) {
-                    Quests.this.getLogger().warning(" - " + entry.getKey() + ": " + entry.getValue().getMessage());
+                    this.getLogger().warning(" - " + entry.getKey() + ": " + entry.getValue().getMessage());
                 }
-                Quests.this.getLogger().warning(ChatColor.GRAY.toString() + ChatColor.ITALIC + "If this is your first time using Quests, please delete the Quests folder and RESTART (not reload!) the server.");
+                this.getLogger().warning(ChatColor.GRAY.toString() + ChatColor.ITALIC + "If this is your first time using Quests, please delete the Quests folder and RESTART (not reload!) the server.");
             }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -196,7 +196,7 @@ public class Quests extends JavaPlugin {
                     continue;
                 }
                 QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-                for (Map.Entry<String, Quest> entry : Quests.this.getQuestManager().getQuests().entrySet()) {
+                for (Map.Entry<String, Quest> entry : this.getQuestManager().getQuests().entrySet()) {
                     Quest quest = entry.getValue();
                     QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
                     if (questProgressFile.hasStartedQuest(quest)) {
@@ -216,7 +216,7 @@ public class Quests extends JavaPlugin {
             }
         }, 10 * 20L, 10 * 20L); //Data is saved every 10 seconds in case of crash; the player data is also saved when the player leaves the server
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            updater = new Updater(Quests.this);
+            updater = new Updater(this);
             updater.check();
         });
     }

@@ -45,9 +45,9 @@ public final class InventoryTaskType extends TaskType {
         Bukkit.getScheduler().runTaskLater(Quests.get(), () -> this.checkInventory(event.getPlayer()), 1L);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR/*, ignoreCancelled = true*/)
     public void onInventoryClick(InventoryInteractEvent event) {
-        Bukkit.getScheduler().runTaskLater(Quests.get(), () -> checkInventory((Player) event.getWhoClicked()), 1L);
+        Bukkit.getScheduler().runTaskLater(Quests.get(), () -> checkInventory((Player) event.getWhoClicked()), 1L); //Still some work to do as it doesn't really work
     }
 
     @SuppressWarnings("deprecation")
