@@ -32,9 +32,10 @@ public class QPlayerManager {
         return qPlayers.values();
     }
 
-    public void loadPlayer(UUID uuid) {
-        loadPlayer(uuid, false);
-    }
+    //Better to use the second method, so we know if we only load the data
+    //public void loadPlayer(UUID uuid) {
+    //   loadPlayer(uuid, false);
+    //}
 
     public void loadPlayer(UUID uuid, boolean onlyData) {
         if (getPlayer(uuid) == null || getPlayer(uuid).isOnlyDataLoaded()) {

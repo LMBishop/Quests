@@ -138,7 +138,7 @@ public class CommandQuests implements CommandExecutor {
                         String name;
                         // Player.class is a superclass for OfflinePlayer.
                         // getofflinePlayer return a player regardless if exists or not
-                         if (ofp != null) {
+                        if (ofp != null) {
                             uuid = ofp.getUniqueId();
                             name = ofp.getName();
                         } else {
@@ -146,15 +146,17 @@ public class CommandQuests implements CommandExecutor {
                             return true;
                         }
                         if (args[2].equalsIgnoreCase("fullreset")) {
-                            if (plugin.getPlayerManager().getPlayer(uuid) == null) {
+                            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
+                            if (qPlayer == null) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", name));
                                 plugin.getPlayerManager().loadPlayer(uuid, true);
+                                qPlayer = plugin.getPlayerManager().getPlayer(uuid); //get again
                             }
-                            if (plugin.getPlayerManager().getPlayer(uuid) == null) {
+                            if (qPlayer == null) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_NODATA.getMessage().replace("{player}", name));
                                 return true;
                             }
-                            QuestProgressFile questProgressFile = plugin.getPlayerManager().getPlayer(uuid).getQuestProgressFile();
+                            QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                             questProgressFile.clear();
                             questProgressFile.saveToDisk(false);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_FULLRESET.getMessage().replace("{player}", name));
@@ -197,29 +199,27 @@ public class CommandQuests implements CommandExecutor {
                         }
                     } else if (args[1].equalsIgnoreCase("moddata")) {
                         boolean success = false;
-                        Player player;
-                        OfflinePlayer ofp;
+                        OfflinePlayer ofp = Bukkit.getOfflinePlayer(args[3]);
                         UUID uuid;
                         String name;
-                        if ((player = Bukkit.getPlayer(args[3])) != null) {
-                            uuid = player.getUniqueId();
-                            name = player.getName();
-                        } else if ((ofp = Bukkit.getOfflinePlayer(args[3])) != null) {
+                        if (ofp != null) {
                             uuid = ofp.getUniqueId();
                             name = ofp.getName();
                         } else {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.getMessage().replace("{player}", args[3]));
                             return true;
                         }
-                        if (plugin.getPlayerManager().getPlayer(uuid) == null) {
+                        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
+                        if (qPlayer == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", name));
                             plugin.getPlayerManager().loadPlayer(uuid, true);
                         }
-                        if (plugin.getPlayerManager().getPlayer(uuid) == null) {
+                        if (qPlayer == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_NODATA.getMessage().replace("{player}", name));
                             success = true;
                         }
-                        QuestProgressFile questProgressFile = plugin.getPlayerManager().getPlayer(uuid).getQuestProgressFile();
+                        qPlayer = plugin.getPlayerManager().getPlayer(uuid); //get again
+                        QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                         Quest quest = plugin.getQuestManager().getQuestById(args[4]);
                         if (quest == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_START_DOESNTEXIST.getMessage().replace("{quest}", args[4]));
@@ -286,7 +286,7 @@ public class CommandQuests implements CommandExecutor {
                         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                         if (qPlayer == null) {
                             // shit + fan
-                            sender.sendMessage(ChatColor.RED + "An error occurred finding your player.");
+                            sender.sendMessage(ChatColor.RED + "An error occurred finding your player."); //lazy? :)
                         } else {
                             qPlayer.getQuestProgressFile().startQuest(quest);
                         }

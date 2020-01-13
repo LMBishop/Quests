@@ -167,7 +167,7 @@ public class Quests extends JavaPlugin {
             }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                qPlayerManager.loadPlayer(player.getUniqueId());
+                qPlayerManager.loadPlayer(player.getUniqueId(), false);
             }
         });
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {

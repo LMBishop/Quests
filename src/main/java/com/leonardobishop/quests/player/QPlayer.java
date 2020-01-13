@@ -52,7 +52,8 @@ public class QPlayer {
             return 1;
         }
 
-        QMenuQuest qMenuQuest = new QMenuQuest(plugin.getPlayerManager().getPlayer(player.getUniqueId()), category.getId(), superMenu);
+        // Using `this` instead of searching again for this QPlayer
+        QMenuQuest qMenuQuest = new QMenuQuest(this, category.getId(), superMenu);
         List<Quest> quests = new ArrayList<>();
         for (String questid : category.getRegisteredQuestIds()) {
             Quest quest = plugin.getQuestManager().getQuestById(questid);
@@ -83,7 +84,7 @@ public class QPlayer {
         }
 
         player.openInventory(qMenuQuest.toInventory(1));
-        EventInventory.track(player.getUniqueId(), qMenuQuest);
+        EventInventory.track(this.uuid, qMenuQuest);
         return 0;
     }
 
