@@ -73,6 +73,31 @@ public class QuestsConfigLoader {
                     continue;
                 }
 
+                // CHECK EVERYTHING WRONG WITH THE QUEST FILE BEFORE ACTUALLY LOADING THE QUEST
+
+                boolean isTheQuestFileOkay = true;
+
+                if (!config.isConfigurationSection("tasks")) {
+                    isTheQuestFileOkay = false;
+                } else { //continue
+                    for (String taskId : config.getConfigurationSection("tasks").getKeys(false)) {
+                        String taskRoot = "tasks." + taskId;
+                        String taskType = config.getString(taskRoot + ".type");
+
+                        if (!config.isConfigurationSection(taskRoot)) {
+                            isTheQuestFileOkay = false;
+                            break; //do not loop if section do not exist, just break directly
+                        }
+                    }
+                }
+
+                if (!isTheQuestFileOkay) { //if the file quest is not okay, do not load the quest
+                    brokenFiles.put(questFile.getName(), ConfigLoadError.MALFORMED_QUEST);
+                    continue; //next quest please!
+                }
+
+                // END OF THE CHECKING
+
                 QItemStack displayItem = getQItemStack("display", config);
                 List<String> rewards = config.getStringList("rewards");
                 List<String> requirements = config.getStringList("options.requires");
@@ -165,7 +190,8 @@ public class QuestsConfigLoader {
     public enum ConfigLoadError {
 
         MALFORMED_YAML("Malformed YAML"),
-        INVALID_QUEST_ID("Invalid quest ID (must be alphanumeric)");
+        INVALID_QUEST_ID("Invalid quest ID (must be alphanumeric)"),
+        MALFORMED_QUEST("Quest file isn't configured properly.");
 
         private String message;
 
