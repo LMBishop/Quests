@@ -28,6 +28,12 @@
             <url>http://dl.bintray.com/tastybento/maven-repo</url>
         </repository>
 
+        <!-- BentoBox -->
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
+        </repository>
+
         <!-- uSkyBlock -->
         <repository>
             <id>uSkyBlock-mvn-repo</id>
@@ -70,6 +76,14 @@
         <dependency>
             <groupId>com.wasteofplastic</groupId>
             <artifactId>askyblock</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- BentoBox (bSkyBlock) -->
+        <dependency>
+            <groupId>world.bentobox</groupId>
+            <artifactId>bentobox</artifactId>
             <version>LATEST</version>
             <scope>provided</scope>
         </dependency>

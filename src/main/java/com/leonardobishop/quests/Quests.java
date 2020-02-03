@@ -146,6 +146,9 @@ public class Quests extends JavaPlugin {
             if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
                 taskTypeManager.registerTaskType(new ASkyBlockLevelType());
             }
+            if (Bukkit.getPluginManager().isPluginEnabled("BentoBox")) {
+                BentoBoxLevelTaskType.register(taskTypeManager);
+            }
             if (Bukkit.getPluginManager().isPluginEnabled("uSkyBlock")) {
                 taskTypeManager.registerTaskType(new uSkyBlockLevelType());
             }
