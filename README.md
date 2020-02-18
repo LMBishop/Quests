@@ -11,6 +11,7 @@ Alternatively, you can build Quests via Maven using ``mvn clean package``.
 - Reinatix
 - ToastedCoconut
 - nicuch
+- RodneyMKay
 
 ## Support
 For support please open a [GitHub issue](https://github.com/LMBishop/Quests/issues) or join our [Discord server](https://discord.gg/8amrJnX). Please provide information of the issue, any errors that may come up and make sure you are using the latest version of the plugin.
