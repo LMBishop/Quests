@@ -79,4 +79,12 @@ public abstract class TaskType implements Listener {
     public List<ConfigValue> getCreatorConfigValues() {
         return Collections.emptyList();
     }
+
+    public void onReady() {
+        // not implemented here
+    }
+
+    public void onDisable() {
+        // not implemented here
+    }
 }

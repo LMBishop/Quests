@@ -4,6 +4,7 @@ import com.leonardobishop.quests.obj.misc.QItemStack;
 import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
+import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -12,10 +13,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 import java.util.logging.Level;
 
 public class QuestsConfigLoader {
@@ -51,26 +53,30 @@ public class QuestsConfigLoader {
             plugin.getQuestManager().registerCategory(category);
         }
 
-        File questDirectory = new File(plugin.getDataFolder() + File.separator + "quests");
-        if (questDirectory.isDirectory()) {
-            File[] fileList = questDirectory.listFiles();
-            for (File questFile : fileList) {
-                if (!questFile.getName().toLowerCase().endsWith(".yml")) continue;
+        FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
+            final URI questsRoot = Paths.get(plugin.getDataFolder() + File.separator + "quests").toUri();
+
+            @Override
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) {
+                File questFile = new File(path.toUri());
+                URI relativeLocation = questsRoot.relativize(path.toUri());
+
+                if (!questFile.getName().toLowerCase().endsWith(".yml")) return FileVisitResult.CONTINUE;
 
                 YamlConfiguration config = new YamlConfiguration();
                 // test QUEST file integrity
                 try {
                     config.load(questFile);
                 } catch (Exception ex) {
-                    brokenFiles.put(questFile.getName(), ConfigLoadError.MALFORMED_YAML);
-                    continue;
+                    brokenFiles.put(relativeLocation.getPath(), ConfigLoadError.MALFORMED_YAML);
+                    return FileVisitResult.CONTINUE;
                 }
 
                 String id = questFile.getName().replace(".yml", "");
 
                 if (!StringUtils.isAlphanumeric(id)) {
-                    brokenFiles.put(questFile.getName(), ConfigLoadError.INVALID_QUEST_ID);
-                    continue;
+                    brokenFiles.put(relativeLocation.getPath(), ConfigLoadError.INVALID_QUEST_ID);
+                    return FileVisitResult.CONTINUE;
                 }
 
                 // CHECK EVERYTHING WRONG WITH THE QUEST FILE BEFORE ACTUALLY LOADING THE QUEST
@@ -92,8 +98,8 @@ public class QuestsConfigLoader {
                 }
 
                 if (!isTheQuestFileOkay) { //if the file quest is not okay, do not load the quest
-                    brokenFiles.put(questFile.getName(), ConfigLoadError.MALFORMED_QUEST);
-                    continue; //next quest please!
+                    brokenFiles.put(relativeLocation.getPath(), ConfigLoadError.MALFORMED_QUEST);
+                    return FileVisitResult.CONTINUE; //next quest please!
                 }
 
                 // END OF THE CHECKING
@@ -141,7 +147,20 @@ public class QuestsConfigLoader {
                 }
                 plugin.getQuestManager().registerQuest(quest);
                 plugin.getTaskTypeManager().registerQuestTasksWithTaskTypes(quest);
+                return FileVisitResult.CONTINUE;
             }
+        };
+
+        try {
+            Files.walkFileTree(Paths.get(plugin.getDataFolder() + File.separator + "quests"), fileVisitor);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (TaskType taskType : plugin.getTaskTypeManager().getTaskTypes()) {
+            try {
+                taskType.onReady();
+            } catch (Exception ignored) { }
         }
     }
 
