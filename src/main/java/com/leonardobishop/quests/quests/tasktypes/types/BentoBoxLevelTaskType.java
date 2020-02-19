@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class BentoBoxLevelTaskType extends TaskType {
+public final class BentoBoxLevelTaskType extends TaskType {
 
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
     private Field levelField = null;
