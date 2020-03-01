@@ -14,7 +14,8 @@ public enum Items {
     PAGE_NEXT("gui.page-next"),
     PAGE_DESCRIPTION("gui.page-desc"),
     QUEST_CANCEL_YES("gui.quest-cancel-yes"),
-    QUEST_CANCEL_NO("gui.quest-cancel-no");
+    QUEST_CANCEL_NO("gui.quest-cancel-no"),
+	QUEST_CANCEL_BORDER("gui.quest-cancel-background");
 
     private final String path;
 
