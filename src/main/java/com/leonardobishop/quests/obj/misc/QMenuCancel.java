@@ -52,7 +52,7 @@ public class QMenuCancel implements QMenu {
         ItemStack yes = Items.QUEST_CANCEL_YES.getItem();
         ItemStack no = Items.QUEST_CANCEL_NO.getItem();
 
-        ItemStack background = Items.QUEST_CANCEL_BORDER.getItem();
+        ItemStack background = Items.QUEST_CANCEL_BACKGROUND.getItem();
         ItemMeta backgroundMeta = background.getItemMeta();
         backgroundMeta.setDisplayName(" ");
         background.setItemMeta(backgroundMeta);
