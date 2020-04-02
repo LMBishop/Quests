@@ -13,10 +13,12 @@ import com.leonardobishop.quests.quests.tasktypes.TaskTypeManager;
 import org.bukkit.event.EventHandler;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.BentoBoxEvent;
+import world.bentobox.bentobox.database.objects.Island;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -43,43 +45,49 @@ public final class BentoBoxLevelTaskType extends TaskType {
 
     @EventHandler
     public void onBentoBoxIslandLevelCalculated(BentoBoxEvent event) {
+        Map<String, Object> keyValues = event.getKeyValues();
+
         if ("IslandLevelCalculatedEvent".equalsIgnoreCase(event.getEventName())) {
-            QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer((UUID) event.getKeyValues().get("targetPlayer"));
-            if (qPlayer == null) {
-                return;
-            }
+            Island island = (Island) keyValues.get("targetPlayer");
 
-            QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+            for (UUID member : island.getMemberSet()) {
+                QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(member);
+                if (qPlayer == null) {
+                    continue;
+                }
 
-            for (Quest quest : super.getRegisteredQuests()) {
-                if (questProgressFile.hasStartedQuest(quest)) {
-                    QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+                QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
-                    for (Task task : quest.getTasksOfType(super.getType())) {
-                        TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                for (Quest quest : super.getRegisteredQuests()) {
+                    if (questProgressFile.hasStartedQuest(quest)) {
+                        QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
 
-                        if (taskProgress.isCompleted()) {
-                            continue;
-                        }
+                        for (Task task : quest.getTasksOfType(super.getType())) {
+                            TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                        long islandLevelNeeded = (long) (int) task.getConfigValue("level");
-
-                        Object results = event.getKeyValues().get("results");
-
-                        try {
-                            if (levelField == null) {
-                                levelField = results.getClass().getDeclaredField("level");
-                                levelField.setAccessible(true);
+                            if (taskProgress.isCompleted()) {
+                                continue;
                             }
 
-                            AtomicLong level = (AtomicLong) levelField.get(results);
-                            taskProgress.setProgress(level.get());
-                        } catch (NoSuchFieldException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
+                            long islandLevelNeeded = (long) (int) task.getConfigValue("level");
 
-                        if (((long) taskProgress.getProgress()) >= islandLevelNeeded) {
-                            taskProgress.setCompleted(true);
+                            Object results = keyValues.get("results");
+
+                            try {
+                                if (levelField == null) {
+                                    levelField = results.getClass().getDeclaredField("level");
+                                    levelField.setAccessible(true);
+                                }
+
+                                AtomicLong level = (AtomicLong) levelField.get(results);
+                                taskProgress.setProgress(level.get());
+                            } catch (NoSuchFieldException | IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (((long) taskProgress.getProgress()) >= islandLevelNeeded) {
+                                taskProgress.setCompleted(true);
+                            }
                         }
                     }
                 }
