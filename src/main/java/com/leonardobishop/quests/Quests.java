@@ -9,12 +9,7 @@ import com.leonardobishop.quests.events.EventPlayerLeave;
 import com.leonardobishop.quests.obj.Messages;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.QPlayerManager;
-import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
-import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
-import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
-import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.QuestManager;
-import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskTypeManager;
 import com.leonardobishop.quests.quests.tasktypes.types.*;
@@ -32,6 +27,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -48,6 +44,8 @@ public class Quests extends JavaPlugin {
     private static Title title;
     private boolean brokenConfig = false;
     private QuestsConfigLoader questsConfigLoader;
+    private BukkitTask questCompleterTask;
+    private BukkitTask questAutosaveTask;
 
     public static Quests get() {
         return (Quests) Bukkit.getPluginManager().getPlugin("Quests");
@@ -121,6 +119,7 @@ public class Quests extends JavaPlugin {
 
         questsConfigLoader = new QuestsConfigLoader(this);
 
+        // register task types after the server has fully started
         Bukkit.getScheduler().runTask(this, () -> {
             taskTypeManager.registerTaskType(new MiningTaskType());
             taskTypeManager.registerTaskType(new MiningCertainTaskType());
@@ -164,6 +163,7 @@ public class Quests extends JavaPlugin {
                 taskTypeManager.registerTaskType(new MythicMobsKillingType());
             }
 
+            taskTypeManager.closeRegistrations();
             reloadQuests();
             if (!questsConfigLoader.getBrokenFiles().isEmpty()) {
                 this.getLogger().warning("Quests has failed to load the following files:");
@@ -177,39 +177,6 @@ public class Quests extends JavaPlugin {
                 qPlayerManager.loadPlayer(player.getUniqueId(), false);
             }
         });
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-            for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
-                if (qPlayer.isOnlyDataLoaded()) {
-                    continue;
-                }
-                qPlayer.getQuestProgressFile().saveToDisk(false);
-            }
-        }, 12000L, 12000L);
-        Bukkit.getScheduler().runTaskTimer(this, () -> {
-            for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
-                if (qPlayer.isOnlyDataLoaded()) {
-                    continue;
-                }
-                QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-                for (Map.Entry<String, Quest> entry : this.getQuestManager().getQuests().entrySet()) {
-                    Quest quest = entry.getValue();
-                    QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
-                    if (questProgressFile.hasStartedQuest(quest)) {
-                        boolean complete = true;
-                        for (Task task : quest.getTasks()) {
-                            TaskProgress taskProgress;
-                            if ((taskProgress = questProgress.getTaskProgress(task.getId())) == null || !taskProgress.isCompleted()) {
-                                complete = false;
-                                break;
-                            }
-                        }
-                        if (complete) {
-                            questProgressFile.completeQuest(quest);
-                        }
-                    }
-                }
-            }
-        }, 10 * 20L, 10 * 20L); //Data is saved every 10 seconds in case of crash; the player data is also saved when the player leaves the server
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             updater = new Updater(this);
             updater.check();
@@ -232,6 +199,23 @@ public class Quests extends JavaPlugin {
     }
 
     public void reloadQuests() {
+        if (questAutosaveTask != null && !questAutosaveTask.isCancelled()) {
+            questAutosaveTask.cancel();
+        }
+        questAutosaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+            for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
+                if (qPlayer.isOnlyDataLoaded()) {
+                    continue;
+                }
+                qPlayer.getQuestProgressFile().saveToDisk(false);
+            }
+        }, this.getConfig().getLong("options.performance-tweaking.quest-autocomplete-interval"), this.getConfig().getLong("options.performance-tweaking.quest-autocomplete-interval"));
+        if (questCompleterTask != null && !questCompleterTask.isCancelled()) {
+            questCompleterTask.cancel();
+        }
+        questCompleterTask = Bukkit.getScheduler().runTaskTimer(this, new QuestCompleter(this), 20,
+                this.getConfig().getLong("options.performance-tweaking.quest-completer-poll-interval"));
+
         questManager.getQuests().clear();
         questManager.getCategories().clear();
         taskTypeManager.resetTaskTypes();
