@@ -1,10 +1,8 @@
 package com.leonardobishop.quests.obj.misc;
 
-import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Quest;
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -20,15 +18,13 @@ public class QItemStack {
     private String name;
     private List<String> loreNormal;
     private List<String> loreStarted;
-    private Material type;
-    private int data;
+    private ItemStack startingItemStack;
 
-    public QItemStack(String name, List<String> loreNormal, List<String> loreStarted, Material type, int data) {
+    public QItemStack(String name, List<String> loreNormal, List<String> loreStarted, ItemStack startingItemStack) {
         this.name = name;
         this.loreNormal = loreNormal;
         this.loreStarted = loreStarted;
-        this.type = type;
-        this.data = data;
+        this.startingItemStack = startingItemStack;
     }
 
     public String getName() {
@@ -55,25 +51,17 @@ public class QItemStack {
         this.loreStarted = loreStarted;
     }
 
-    public Material getType() {
-        return type;
+    public ItemStack getStartingItemStack() {
+        return startingItemStack;
     }
 
-    public void setType(Material type) {
-        this.type = type;
-    }
-
-    public int getData() {
-        return data;
-    }
-
-    public void setData(int data) {
-        this.data = data;
+    public void setStartingItemStack(ItemStack startingItemStack) {
+        this.startingItemStack = startingItemStack;
     }
 
     @SuppressWarnings("deprecation")
     public ItemStack toItemStack(Quest quest, QuestProgressFile questProgressFile, QuestProgress questProgress) {
-        ItemStack is = new ItemStack(type, 1, (short) data);
+        ItemStack is = new ItemStack(startingItemStack);
         ItemMeta ism = is.getItemMeta();
         ism.setDisplayName(name);
         List<String> formattedLore = new ArrayList<>();
