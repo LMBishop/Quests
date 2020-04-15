@@ -52,7 +52,7 @@ public final class InventoryTaskType extends TaskType {
 
     @SuppressWarnings("deprecation")
     private void checkInventory(Player player) {
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
         if (qPlayer == null) {
             return;
         }

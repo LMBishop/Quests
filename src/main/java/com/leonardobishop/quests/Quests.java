@@ -6,6 +6,10 @@ import com.leonardobishop.quests.commands.CommandQuests;
 import com.leonardobishop.quests.events.EventInventory;
 import com.leonardobishop.quests.events.EventPlayerJoin;
 import com.leonardobishop.quests.events.EventPlayerLeave;
+import com.leonardobishop.quests.itemgetter.ItemGetter;
+import com.leonardobishop.quests.itemgetter.ItemGetterLatest;
+import com.leonardobishop.quests.itemgetter.ItemGetter_1_13;
+import com.leonardobishop.quests.itemgetter.ItemGetter_Late_1_8;
 import com.leonardobishop.quests.obj.Messages;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.QPlayerManager;
@@ -19,31 +23,29 @@ import com.leonardobishop.quests.title.Title_BukkitNoTimings;
 import com.leonardobishop.quests.title.Title_Other;
 import com.leonardobishop.quests.updater.Updater;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 public class Quests extends JavaPlugin {
 
     private static QuestManager questManager;
     private static QPlayerManager qPlayerManager;
     private static TaskTypeManager taskTypeManager;
+
     private static Updater updater;
     private static Title title;
-    private boolean brokenConfig = false;
+    private ItemGetter itemGetter;
     private QuestsConfigLoader questsConfigLoader;
+    private QuestsLogger questsLogger;
+
+    private boolean brokenConfig = false;
     private BukkitTask questCompleterTask;
     private BukkitTask questAutosaveTask;
 
@@ -96,12 +98,14 @@ public class Quests extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        questsLogger = new QuestsLogger(this, LoggingLevel.INFO);
+
         taskTypeManager = new TaskTypeManager(this);
         questManager = new QuestManager(this);
         qPlayerManager = new QPlayerManager(this);
 
         dataGenerator();
-        setupTitle();
+        setupVersionSpecific();
 
         Bukkit.getPluginCommand("quests").setExecutor(new CommandQuests(this));
         Bukkit.getPluginManager().registerEvents(new EventPlayerJoin(this), this);
@@ -114,7 +118,7 @@ public class Quests extends JavaPlugin {
 
         Metrics metrics = new Metrics(this);
         if (metrics.isEnabled()) {
-            this.getLogger().log(Level.INFO, "Metrics started. This can be disabled at /plugins/bStats/config.yml.");
+            this.getQuestsLogger().info("Metrics started. This can be disabled at /plugins/bStats/config.yml.");
         }
 
         questsConfigLoader = new QuestsConfigLoader(this);
@@ -166,11 +170,10 @@ public class Quests extends JavaPlugin {
             taskTypeManager.closeRegistrations();
             reloadQuests();
             if (!questsConfigLoader.getBrokenFiles().isEmpty()) {
-                this.getLogger().warning("Quests has failed to load the following files:");
+                this.getQuestsLogger().severe("Quests has failed to load the following files:");
                 for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : questsConfigLoader.getBrokenFiles().entrySet()) {
-                    this.getLogger().warning(" - " + entry.getKey() + ": " + entry.getValue().getMessage());
+                    this.getQuestsLogger().severe(" - " + entry.getKey() + ": " + entry.getValue().getMessage());
                 }
-                this.getLogger().warning(ChatColor.GRAY.toString() + ChatColor.ITALIC + "If this is your first time using Quests, please delete the Quests folder and RESTART (not reload!) the server.");
             }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -199,8 +202,22 @@ public class Quests extends JavaPlugin {
     }
 
     public void reloadQuests() {
-        if (questAutosaveTask != null && !questAutosaveTask.isCancelled()) {
-            questAutosaveTask.cancel();
+        questManager.getQuests().clear();
+        questManager.getCategories().clear();
+        taskTypeManager.resetTaskTypes();
+
+        questsConfigLoader.loadConfig();
+
+        long autocompleteInterval = 12000;
+        long completerPollInterval = 100;
+        if (!isBrokenConfig()) {
+            autocompleteInterval = this.getConfig().getLong("options.performance-tweaking.quest-autocomplete-interval", 12000);
+            completerPollInterval = this.getConfig().getLong("options.performance-tweaking.quest-completer-poll-interval", 100);
+        }
+        if (questAutosaveTask != null) {
+            try {
+                questAutosaveTask.cancel();
+            } catch (Exception ignored) { }
         }
         questAutosaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
             for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
@@ -209,69 +226,32 @@ public class Quests extends JavaPlugin {
                 }
                 qPlayer.getQuestProgressFile().saveToDisk(false);
             }
-        }, this.getConfig().getLong("options.performance-tweaking.quest-autocomplete-interval"), this.getConfig().getLong("options.performance-tweaking.quest-autocomplete-interval"));
-        if (questCompleterTask != null && !questCompleterTask.isCancelled()) {
-            questCompleterTask.cancel();
+        }, autocompleteInterval, autocompleteInterval);
+        if (questCompleterTask != null) {
+            try {
+                questCompleterTask.cancel();
+            } catch (Exception ignored) { }
         }
-        questCompleterTask = Bukkit.getScheduler().runTaskTimer(this, new QuestCompleter(this), 20,
-                this.getConfig().getLong("options.performance-tweaking.quest-completer-poll-interval"));
-
-        questManager.getQuests().clear();
-        questManager.getCategories().clear();
-        taskTypeManager.resetTaskTypes();
-
-        questsConfigLoader.loadConfig();
+        questCompleterTask = Bukkit.getScheduler().runTaskTimer(this, new QuestCompleter(this), 20, completerPollInterval);
     }
 
-    public ItemStack getItemStack(String path, FileConfiguration config) {
-        return getItemStack(config.getConfigurationSection(path));
+    public ItemStack getItemStack(String path, ConfigurationSection config, ItemGetter.Filter... excludes) {
+        return itemGetter.getItem(path, config, this, excludes);
     }
 
-    @SuppressWarnings("deprecation")
-    public ItemStack getItemStack(ConfigurationSection config) {
-        String cName = config.getString("name", "name");
-        String cType = config.getString("type", "type");
-        List<String> cLore = config.getStringList("lore");
-
-        String name;
-        Material type;
-        int data = 0;
-        List<String> lore = new ArrayList<>();
-        if (cLore != null) {
-            for (String s : cLore) {
-                lore.add(ChatColor.translateAlternateColorCodes('&', s));
-            }
-        }
-        name = ChatColor.translateAlternateColorCodes('&', cName);
-        type = Material.matchMaterial(cType);
-
-
-        if (type == null) {
-            type = Material.STONE;
-        }
-
-        ItemStack is;
-        if (data == 0)
-            is = new ItemStack(type, 1);
-        else
-            is = new ItemStack(type, 1, (short) data);
-        ItemMeta ism = is.getItemMeta();
-        ism.setLore(lore);
-        ism.setDisplayName(name);
-        is.setItemMeta(ism);
-
-        return is;
-    }
-
-    private boolean setupTitle() {
+    private void setupVersionSpecific() {
         String version;
         try {
             version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
         } catch (ArrayIndexOutOfBoundsException e) {
-            return false;
+            getQuestsLogger().warning("Failed to resolve server version - some features will not work!");
+            title = new Title_Other();
+            itemGetter = new ItemGetter_Late_1_8();
+            return;
         }
-        boolean success = false;
-        getLogger().info("Your server is running version " + version + ".");
+
+        getQuestsLogger().info("Your server is running version " + version + ".");
+
         if (version.startsWith("v1_7")) {
             title = new Title_Other();
         } else if (version.startsWith("v1_8") || version.startsWith("v1_9") || version.startsWith("v1_10")) {
@@ -279,14 +259,23 @@ public class Quests extends JavaPlugin {
         } else {
             title = new Title_Bukkit();
         }
-        if (title instanceof Title_Bukkit) {
-            getLogger().info("Titles have been enabled.");
-        } else if (title instanceof Title_BukkitNoTimings) {
-            getLogger().info("Titles have been enabled, although they have limited timings.");
+
+        if (version.startsWith("v1_7") || version.startsWith("v1_8") || version.startsWith("v1_9")
+                || version.startsWith("v1_10") || version.startsWith("v1_11") || version.startsWith("v1_12")) {
+            itemGetter = new ItemGetter_Late_1_8();
+        } else if (version.startsWith("v1_13")) {
+            itemGetter = new ItemGetter_1_13();
         } else {
-            getLogger().info("Titles are not supported for this version.");
+            itemGetter = new ItemGetterLatest();
         }
-        return success;
+
+        if (title instanceof Title_Bukkit) {
+            getQuestsLogger().info("Titles have been enabled.");
+        } else if (title instanceof Title_BukkitNoTimings) {
+            getQuestsLogger().info("Titles have been enabled, although they have limited timings.");
+        } else {
+            getQuestsLogger().info("Titles are not supported for this version.");
+        }
     }
 
     private void dataGenerator() {
@@ -352,5 +341,9 @@ public class Quests extends JavaPlugin {
                 }
             }
         }
+    }
+
+    public QuestsLogger getQuestsLogger() {
+        return questsLogger;
     }
 }

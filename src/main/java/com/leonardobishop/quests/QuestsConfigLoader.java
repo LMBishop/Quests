@@ -1,5 +1,6 @@
 package com.leonardobishop.quests;
 
+import com.leonardobishop.quests.itemgetter.ItemGetter;
 import com.leonardobishop.quests.obj.misc.QItemStack;
 import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.quests.Quest;
@@ -7,7 +8,6 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -17,8 +17,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
-import java.util.logging.Level;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class QuestsConfigLoader {
 
@@ -33,7 +35,9 @@ public class QuestsConfigLoader {
      * Loads and parses config into memory including the quests folder.
      */
     public void loadConfig() {
+        plugin.reloadConfig();
         brokenFiles.clear();
+        plugin.setBrokenConfig(false);
 
         // test CONFIG file integrity
         try {
@@ -52,6 +56,7 @@ public class QuestsConfigLoader {
             Category category = new Category(id, displayItem, permissionRequired);
             plugin.getQuestManager().registerCategory(category);
         }
+        plugin.getQuestsLogger().setServerLoggingLevel(LoggingLevel.fromNumber(plugin.getConfig().getInt("options.verbose-logging-level", 2)));
 
         FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
             final URI questsRoot = Paths.get(plugin.getDataFolder() + File.separator + "quests").toUri();
@@ -143,7 +148,7 @@ public class QuestsConfigLoader {
                 }
 
                 if (plugin.getConfig().getBoolean("options.show-quest-registrations")) {
-                    plugin.getLogger().log(Level.INFO, "Registering quest " + quest.getId() + " with " + quest.getTasks().size() + " tasks.");
+                    plugin.getQuestsLogger().info("Registering quest " + quest.getId() + " with " + quest.getTasks().size() + " tasks.");
                 }
                 plugin.getQuestManager().registerQuest(quest);
                 plugin.getTaskTypeManager().registerQuestTasksWithTaskTypes(quest);
@@ -175,13 +180,10 @@ public class QuestsConfigLoader {
 
     private QItemStack getQItemStack(String path, FileConfiguration config) {
         String cName = config.getString(path + ".name", path + ".name");
-        String cType = config.getString(path + ".type", path + ".type");
         List<String> cLoreNormal = config.getStringList(path + ".lore-normal");
         List<String> cLoreStarted = config.getStringList(path + ".lore-started");
 
         String name;
-        Material type;
-        int data = 0;
         List<String> loreNormal = new ArrayList<>();
         if (cLoreNormal != null) {
             for (String s : cLoreNormal) {
@@ -196,21 +198,17 @@ public class QuestsConfigLoader {
         }
         name = ChatColor.translateAlternateColorCodes('&', cName);
 
-        type = Material.matchMaterial(cType);
+        ItemStack is = plugin.getItemStack(path, config,
+                ItemGetter.Filter.DISPLAY_NAME, ItemGetter.Filter.LORE, ItemGetter.Filter.ENCHANTMENTS, ItemGetter.Filter.ITEM_FLAGS);
 
-
-        if (type == null) {
-            type = Material.STONE;
-        }
-
-        return new QItemStack(name, loreNormal, loreStarted, type, data);
+        return new QItemStack(name, loreNormal, loreStarted, is);
     }
 
     public enum ConfigLoadError {
 
         MALFORMED_YAML("Malformed YAML"),
         INVALID_QUEST_ID("Invalid quest ID (must be alphanumeric)"),
-        MALFORMED_QUEST("Quest file isn't configured properly.");
+        MALFORMED_QUEST("Quest file is not configured properly");
 
         private String message;
 

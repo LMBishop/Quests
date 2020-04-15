@@ -50,7 +50,7 @@ public final class BreedingTaskType extends TaskType {
 			
 			if (current instanceof Player) {
 				Player player = (Player) current;
-				QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
+				QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
 				QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 				
 				for (Quest quest : super.getRegisteredQuests()) {

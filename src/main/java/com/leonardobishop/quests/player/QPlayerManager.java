@@ -1,13 +1,16 @@
 package com.leonardobishop.quests.player;
 
+import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
-import com.leonardobishop.quests.Quests;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class QPlayerManager {
 
@@ -19,7 +22,31 @@ public class QPlayerManager {
 
     private final Map<UUID, QPlayer> qPlayers = new HashMap<>();
 
+    /**
+     * Gets the QPlayer from a given UUID.
+     * Calls {@link QPlayerManager#getPlayer(UUID, boolean)} with the 2nd argument as false.
+     *
+     * @param uuid the uuid
+     * @return {@link QPlayer} if they are loaded
+     */
     public QPlayer getPlayer(UUID uuid) {
+        return getPlayer(uuid, false);
+    }
+
+    /**
+     * Gets the QPlayer from a given UUID.
+     *
+     * @param uuid the uuid
+     * @param loadIfNull load the QPlayer if the result is null and return the QPlayer if successfully loaded
+     * @return {@link QPlayer} if they are loaded
+     */
+    public QPlayer getPlayer(UUID uuid, boolean loadIfNull) {
+        QPlayer qPlayer = qPlayers.get(uuid);
+        if (qPlayer == null && loadIfNull) {
+            plugin.getQuestsLogger().debug("QPlayer of " + uuid + " is null, but was requested! Attempting to load it.");
+            loadPlayer(uuid, false);
+            return getPlayer(uuid, false);
+        }
         return qPlayers.get(uuid);
     }
 
@@ -37,6 +64,7 @@ public class QPlayerManager {
     //   loadPlayer(uuid, false);
     //}
 
+    // TODO redo "onlyData" and use a less confusing way
     public void loadPlayer(UUID uuid, boolean onlyData) {
         if (getPlayer(uuid) == null || getPlayer(uuid).isOnlyDataLoaded()) {
             QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
@@ -70,7 +98,7 @@ public class QPlayerManager {
                     }
                 }
             } catch (Exception ex) {
-                plugin.getLogger().severe("Failed to load player: " + uuid + "! This WILL cause errors.");
+                plugin.getQuestsLogger().severe("Failed to load player: " + uuid + "! This WILL cause errors.");
                 ex.printStackTrace();
                 // fuck
             }

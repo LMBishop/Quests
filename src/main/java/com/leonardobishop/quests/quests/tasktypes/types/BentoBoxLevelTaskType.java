@@ -51,7 +51,7 @@ public final class BentoBoxLevelTaskType extends TaskType {
             Island island = (Island) keyValues.get("island");
 
             for (UUID member : island.getMemberSet()) {
-                QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(member);
+                QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(member, true);
                 if (qPlayer == null) {
                     continue;
                 }

@@ -35,7 +35,7 @@ public final class EnchantingTaskType extends TaskType {
 	public void onEnchant(EnchantItemEvent e) {
 		Player player = e.getEnchanter();
 		
-		QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
+		QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
 		QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 		
 		for (Quest quest : super.getRegisteredQuests()) {

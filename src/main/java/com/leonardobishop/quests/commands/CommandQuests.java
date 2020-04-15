@@ -32,12 +32,14 @@ public class CommandQuests implements CommandExecutor {
     @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (plugin.isBrokenConfig()) {
+        if (plugin.isBrokenConfig() &&
+                !(args.length >= 2 &&
+                        (args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin")) &&
+                        args[1].equalsIgnoreCase("reload"))) {
             sender.sendMessage(ChatColor.RED + "The main config must be in tact before quests can be used. Quests has failed to load the following files:");
             for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : plugin.getQuestsConfigLoader().getBrokenFiles().entrySet()) {
                 sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + entry.getKey() + ": " + ChatColor.GRAY + entry.getValue().getMessage());
             }
-            sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.ITALIC + "If this is your first time using Quests, please delete the Quests folder and RESTART (not reload!) the server.");
             return true;
         }
 
@@ -68,7 +70,6 @@ public class CommandQuests implements CommandExecutor {
                             for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : plugin.getQuestsConfigLoader().getBrokenFiles().entrySet()) {
                                 sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + entry.getKey() + ": " + ChatColor.GRAY + entry.getValue().getMessage());
                             }
-                            sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.ITALIC + "If this is your first time using Quests, please delete the Quests folder and RESTART (not reload!) the server.");
                         } else {
                             sender.sendMessage(ChatColor.GRAY + "Quests was reloaded.");
                         }

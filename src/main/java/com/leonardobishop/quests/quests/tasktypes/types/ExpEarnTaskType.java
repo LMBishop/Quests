@@ -32,7 +32,7 @@ public final class ExpEarnTaskType extends TaskType {
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onExpEarn(PlayerExpChangeEvent e) {
-		QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(e.getPlayer().getUniqueId());
+		QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(e.getPlayer().getUniqueId(), true);
 		QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 		
 		for (Quest quest : super.getRegisteredQuests()) {

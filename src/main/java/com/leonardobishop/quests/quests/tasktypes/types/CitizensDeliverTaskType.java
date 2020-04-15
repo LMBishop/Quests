@@ -47,7 +47,7 @@ public final class CitizensDeliverTaskType extends TaskType {
 
     @SuppressWarnings("deprecation")
     private void checkInventory(Player player, String citizenName) {
-        QPlayer qPlayer = Quests.get().getPlayerManager().getPlayer(player.getUniqueId());
+        QPlayer qPlayer = Quests.get().getPlayerManager().getPlayer(player.getUniqueId(), true);
         if (qPlayer == null) {
             return;
         }
@@ -77,7 +77,7 @@ public final class CitizensDeliverTaskType extends TaskType {
 
                     ItemStack is;
                     if (configBlock instanceof ConfigurationSection) {
-                        is = Quests.get().getItemStack((org.bukkit.configuration.ConfigurationSection) configBlock);
+                        is = Quests.get().getItemStack(null, (org.bukkit.configuration.ConfigurationSection) configBlock);
                     } else {
                         material = Material.getMaterial(String.valueOf(configBlock));
 

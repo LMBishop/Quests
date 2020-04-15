@@ -6,14 +6,19 @@ import com.leonardobishop.quests.quests.Task;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 public class TaskTypeManager {
 
     private Quests plugin;
+    private boolean allowRegistrations;
 
     public TaskTypeManager(Quests plugin) {
         this.plugin = plugin;
+        allowRegistrations = true;
+    }
+
+    public void closeRegistrations() {
+        allowRegistrations = false;
     }
 
     private ArrayList<TaskType> taskTypes = new ArrayList<>();
@@ -29,8 +34,11 @@ public class TaskTypeManager {
     }
 
     public void registerTaskType(TaskType taskType) {
+        if (!allowRegistrations) {
+            throw new IllegalStateException("No longer accepting new task types (must be done before quests are loaded)");
+        }
         Bukkit.getPluginManager().registerEvents(taskType, plugin);
-        plugin.getLogger().log(Level.INFO, "Task type " + taskType.getType() + " has been registered.");
+        plugin.getQuestsLogger().info("Task type " + taskType.getType() + " has been registered.");
         taskTypes.add(taskType);
     }
 
