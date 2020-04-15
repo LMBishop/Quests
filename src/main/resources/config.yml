@@ -135,7 +135,7 @@ options:
     quests-menu: "Quests"
     daily-quests: "Daily Quests"
     quest-cancel: "Cancel Quest"
-  # Show when quests register in console. Disable if you want less console spam at startup.
+  # Show when quests register in console - will only show if verbose-logging-level=2. Disable if you want less console spam at startup.
   show-quest-registrations: true
   # Hide quests which a player cannot start due to permissions.
   gui-hide-quests-nopermission: false
@@ -143,6 +143,8 @@ options:
   gui-hide-categories-nopermission: false
   # Make it so players do not have to start quest themselves
   quest-autostart: false
+  # How much quests should log, 0 = errors only, 1 = warnings, 2 = info, 3 = debug
+  verbose-logging-level: 2
   performance-tweaking: # The following are measured in server ticks, multiply SECONDS by 20 to get the number of ticks.
     quest-completer-poll-interval: 100    # how frequently Quests should check if quests have been completed (def=100 - 5 seconds) - increase this value if you are struggling with performance
     quest-autosave-interval: 12000        # how frequently online players data will be autosaved (def=12000 - 10 minutes)
