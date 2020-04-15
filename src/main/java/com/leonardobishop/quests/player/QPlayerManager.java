@@ -52,6 +52,7 @@ public class QPlayerManager {
 
     public void removePlayer(UUID uuid) {
         this.getPlayer(uuid).getQuestProgressFile().saveToDisk(false);
+        plugin.getQuestsLogger().debug("Unloading player " + uuid + ".");
         qPlayers.remove(uuid);
     }
 
@@ -66,6 +67,7 @@ public class QPlayerManager {
 
     // TODO redo "onlyData" and use a less confusing way
     public void loadPlayer(UUID uuid, boolean onlyData) {
+        plugin.getQuestsLogger().debug("Loading player " + uuid + " from disk.");
         if (getPlayer(uuid) == null || getPlayer(uuid).isOnlyDataLoaded()) {
             QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
 

@@ -33,8 +33,6 @@ public class QuestProgressFile {
         this.plugin = plugin;
     }
 
-    //TODO change back to quest id to save performance
-
     public boolean completeQuest(Quest quest) {
         QuestProgress questProgress = getQuestProgress(quest);
         questProgress.setStarted(false);
@@ -240,16 +238,24 @@ public class QuestProgressFile {
         return startedQuests;
     }
 
+    /**
+     * Gets all the quest progress that it has ever encountered.
+     * @return {@code Collection<QuestProgress>} all quest progresses
+     */
+    public Collection<QuestProgress> getAllQuestProgress() {
+        return questProgress.values();
+    }
+
     public boolean hasQuestProgress(Quest quest) {
         return questProgress.containsKey(quest.getId());
     }
 
     public boolean hasStartedQuest(Quest quest) {
-        if (!Options.QUEST_AUTOSTART.getBooleanValue()) {
-            return hasQuestProgress(quest) && getQuestProgress(quest).isStarted();
-        } else {
+        if (Options.QUEST_AUTOSTART.getBooleanValue()) {
             QuestStartResult response = canStartQuest(quest);
             return response == QuestStartResult.QUEST_SUCCESS || response == QuestStartResult.QUEST_ALREADY_STARTED;
+        } else {
+            return hasQuestProgress(quest) && getQuestProgress(quest).isStarted();
         }
     }
 
@@ -308,6 +314,7 @@ public class QuestProgressFile {
     }
 
     public void saveToDisk(boolean disable) {
+        plugin.getQuestsLogger().debug("Saving player " + playerUUID + " to disk.");
         File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
         if (!directory.exists() && !directory.isDirectory()) {
             directory.mkdirs();
@@ -348,11 +355,9 @@ public class QuestProgressFile {
                     }
                 }
             else
-                Bukkit.getScheduler().runTask(this.plugin, () -> {
-                    for (QuestProgress questProgress : questProgress.values()) {
-                        questProgress.resetModified();
-                    }
-                });
+                for (QuestProgress questProgress : questProgress.values()) {
+                    questProgress.resetModified();
+                }
         } catch (IOException e) {
             e.printStackTrace();
         }

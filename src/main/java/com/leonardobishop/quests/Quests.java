@@ -219,7 +219,7 @@ public class Quests extends JavaPlugin {
                 questAutosaveTask.cancel();
             } catch (Exception ignored) { }
         }
-        questAutosaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+        questAutosaveTask = Bukkit.getScheduler().runTaskTimer(this, () -> {
             for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
                 if (qPlayer.isOnlyDataLoaded()) {
                     continue;

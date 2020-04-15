@@ -19,26 +19,26 @@ public class QuestCompleter implements Runnable {
 
     @Override
     public void run() {
+        //TODO if it still runs like shit then maybe only process a few players per X ticks rather than the whole server in one go
         for (QPlayer qPlayer : plugin.getPlayerManager().getQPlayers()) {
             if (qPlayer.isOnlyDataLoaded()) {
                 continue;
             }
             QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-            for (Map.Entry<String, Quest> entry : plugin.getQuestManager().getQuests().entrySet()) {
-                Quest quest = entry.getValue();
-                QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
-                if (questProgressFile.hasStartedQuest(quest)) {
-                    boolean complete = true;
-                    for (Task task : quest.getTasks()) {
-                        TaskProgress taskProgress;
-                        if ((taskProgress = questProgress.getTaskProgress(task.getId())) == null || !taskProgress.isCompleted()) {
-                            complete = false;
-                            break;
-                        }
+            for (QuestProgress questProgress : questProgressFile.getAllQuestProgress()) {
+                Quest quest = plugin.getQuestManager().getQuestById(questProgress.getQuestId());
+                if (!questProgressFile.hasStartedQuest(quest)) continue;
+
+                boolean complete = true;
+                for (Task task : quest.getTasks()) {
+                    TaskProgress taskProgress;
+                    if ((taskProgress = questProgress.getTaskProgress(task.getId())) == null || !taskProgress.isCompleted()) {
+                        complete = false;
+                        break;
                     }
-                    if (complete) {
-                        questProgressFile.completeQuest(quest);
-                    }
+                }
+                if (complete) {
+                    questProgressFile.completeQuest(quest);
                 }
             }
         }

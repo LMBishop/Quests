@@ -19,7 +19,7 @@ public class EventPlayerLeave implements Listener {
     @EventHandler
     public void onEvent(PlayerQuitEvent event) {
         UUID playerUuid = event.getPlayer().getUniqueId();
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> plugin.getPlayerManager().removePlayer(playerUuid));
+        plugin.getPlayerManager().removePlayer(playerUuid);
     }
 
 }
