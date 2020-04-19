@@ -27,6 +27,7 @@ public class QuestCompleter implements Runnable {
             QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
             for (QuestProgress questProgress : questProgressFile.getAllQuestProgress()) {
                 Quest quest = plugin.getQuestManager().getQuestById(questProgress.getQuestId());
+                if (quest == null) continue;
                 if (!questProgressFile.hasStartedQuest(quest)) continue;
 
                 boolean complete = true;
