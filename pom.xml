@@ -100,6 +100,7 @@
             <groupId>com.github.IridiumLLC</groupId>
             <artifactId>IridiumSkyblock</artifactId>
             <version>master</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- uSkyBlock -->
