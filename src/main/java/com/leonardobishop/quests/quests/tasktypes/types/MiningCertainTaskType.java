@@ -61,6 +61,7 @@ public final class MiningCertainTaskType extends TaskType {
         }
     }
 
+    // subtract if enabled
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId(), true);

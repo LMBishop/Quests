@@ -61,6 +61,7 @@ public final class BuildingCertainTaskType extends TaskType {
         }
     }
 
+    // subtract if enabled
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId(), true);
@@ -77,8 +78,10 @@ public final class BuildingCertainTaskType extends TaskType {
                         continue;
                     }
 
-                    if (matchBlock(task, event.getBlock())) {
-                        increment(task, taskProgress, -1);
+                    if (task.getConfigValue("reverse-if-placed") != null && ((boolean) task.getConfigValue("reverse-if-placed"))) {
+                        if (matchBlock(task, event.getBlock())) {
+                            increment(task, taskProgress, -1);
+                        }
                     }
                 }
             }
