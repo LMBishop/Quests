@@ -180,10 +180,19 @@ public class Quests extends JavaPlugin {
                 qPlayerManager.loadPlayer(player.getUniqueId(), false);
             }
         });
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            updater = new Updater(this);
-            updater.check();
-        });
+
+        // this intentionally should not be documented
+        boolean ignoreUpdates = false;
+        try {
+            ignoreUpdates = new File(this.getDataFolder() + File.separator + "stfuQuestsUpdate").exists();
+        } catch (Throwable ignored) { }
+
+        updater = new Updater(this);
+        if (!ignoreUpdates) {
+            Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+                updater.check();
+            });
+        }
     }
 
     @Override
