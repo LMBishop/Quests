@@ -11,13 +11,13 @@ Alternatively, you can build Quests via Maven using ``mvn clean package``.
 Creating new Task Types within Quests is supported, [see the wiki](https://github.com/LMBishop/Quests/wiki/New-Task-Type) for help.
 
 You can include quests in your Maven project using [JitPack](https://jitpack.io/#LMBishop/Quests):
-```$xslt
+```xml
 <repository>
     <id>jitpack.io</id>
     <url>https://jitpack.io</url>
 </repository>
 ```
-```
+```xml
 <dependency>
     <groupId>com.github.LMBishop</groupId>
     <artifactId>Quests</artifactId>
