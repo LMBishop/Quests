@@ -87,7 +87,8 @@ public class EventInventory implements Listener {
                         if (qMenuQuest.getOwner().getQuestProgressFile().startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
                             event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
                         }
-                    } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()) {
+                    } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()
+                            && qMenuQuest.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
                         QMenuCancel qMenuCancel = new QMenuCancel(qMenuQuest.getOwner(), qMenuQuest, quest);
                         buffer.add(event.getWhoClicked().getUniqueId());
                         event.getWhoClicked().openInventory(qMenuCancel.toInventory());

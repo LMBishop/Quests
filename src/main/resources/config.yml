@@ -53,6 +53,7 @@ categories:
     permission-required: true
 
 # The items listed below are placeholder items for quests which the player cannot start.
+# You should change these for 1.8
 gui:
   back-button:
     name: "&cReturn"
