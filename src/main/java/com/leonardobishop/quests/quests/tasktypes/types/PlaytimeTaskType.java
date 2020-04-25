@@ -8,18 +8,24 @@ import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
+import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class PlaytimeTaskType extends TaskType {
 
     private BukkitTask poll;
+    private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public PlaytimeTaskType() {
         super("playtime", "Reinatix", "Track the amount of playing time a user has been on");
+        this.creatorConfigValues.add(new ConfigValue("minutes", true, "Time in minutes."));
     }
 
     @Override
@@ -60,5 +66,10 @@ public final class PlaytimeTaskType extends TaskType {
         if (this.poll != null) {
             this.poll.cancel();
         }
+    }
+
+    @Override
+    public List<ConfigValue> getCreatorConfigValues() {
+        return creatorConfigValues;
     }
 }

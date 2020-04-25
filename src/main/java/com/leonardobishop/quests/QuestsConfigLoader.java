@@ -5,6 +5,7 @@ import com.leonardobishop.quests.obj.misc.QItemStack;
 import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
+import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -44,7 +45,7 @@ public class QuestsConfigLoader {
             YamlConfiguration config = new YamlConfiguration();
             config.load(new File(plugin.getDataFolder() + File.separator + "config.yml"));
         } catch (Exception ex) {
-            brokenFiles.put("<MAIN CONFIG> config.yml", ConfigLoadError.MALFORMED_YAML);
+            brokenFiles.put("<MAIN CONFIG> config.yml", new ConfigLoadError(ConfigLoadErrorType.MALFORMED_YAML));
             plugin.setBrokenConfig(true);
             return;
         }
@@ -73,38 +74,54 @@ public class QuestsConfigLoader {
                 try {
                     config.load(questFile);
                 } catch (Exception ex) {
-                    brokenFiles.put(relativeLocation.getPath(), ConfigLoadError.MALFORMED_YAML);
+                    brokenFiles.put(relativeLocation.getPath(), new ConfigLoadError(ConfigLoadErrorType.MALFORMED_YAML));
                     return FileVisitResult.CONTINUE;
                 }
 
                 String id = questFile.getName().replace(".yml", "");
 
                 if (!StringUtils.isAlphanumeric(id)) {
-                    brokenFiles.put(relativeLocation.getPath(), ConfigLoadError.INVALID_QUEST_ID);
+                    brokenFiles.put(relativeLocation.getPath(), new ConfigLoadError(ConfigLoadErrorType.INVALID_QUEST_ID));
                     return FileVisitResult.CONTINUE;
                 }
 
                 // CHECK EVERYTHING WRONG WITH THE QUEST FILE BEFORE ACTUALLY LOADING THE QUEST
 
-                boolean isTheQuestFileOkay = true;
+                List<String> questErrors = new ArrayList<>();
+                List<String> taskErrors = new ArrayList<>();
 
                 if (!config.isConfigurationSection("tasks")) {
-                    isTheQuestFileOkay = false;
+                    questErrors.add("'tasks' section not defined");
                 } else { //continue
                     for (String taskId : config.getConfigurationSection("tasks").getKeys(false)) {
                         String taskRoot = "tasks." + taskId;
                         String taskType = config.getString(taskRoot + ".type");
 
                         if (!config.isConfigurationSection(taskRoot)) {
-                            isTheQuestFileOkay = false;
-                            break; //do not loop if section do not exist, just break directly
+                            questErrors.add("task '" + taskId + "' cannot be read (has no children)");
+                            continue;
+                        }
+
+                        // check the tasks
+                        TaskType t = plugin.getTaskTypeManager().getTaskType(taskType);
+                        if (t != null) {
+                            List<String> missingFields = new ArrayList<>();
+                            for (ConfigValue cv : t.getCreatorConfigValues()) {
+                                if (cv.isRequired() && config.get(taskRoot + "." + cv.getKey()) == null)
+                                    missingFields.add(cv.getKey());
+                            }
+                            if (!missingFields.isEmpty())
+                                taskErrors.add("task '" + taskId + "': '" + t.getType() + "' missing required field(s) '" + String.join(", ", missingFields) + "'");
                         }
                     }
                 }
 
-                if (!isTheQuestFileOkay) { //if the file quest is not okay, do not load the quest
-                    brokenFiles.put(relativeLocation.getPath(), ConfigLoadError.MALFORMED_QUEST);
+                if (!questErrors.isEmpty()) { //if the file quest is not okay, do not load the quest
+                    brokenFiles.put(relativeLocation.getPath(), new ConfigLoadError(ConfigLoadErrorType.MALFORMED_QUEST, String.join("; ", questErrors)));
                     return FileVisitResult.CONTINUE; //next quest please!
+                } else if (!taskErrors.isEmpty()) { // likewise with tasks
+                    brokenFiles.put(relativeLocation.getPath(), new ConfigLoadError(ConfigLoadErrorType.MALFORMED_TASK, String.join("; ", taskErrors)));
+                    return FileVisitResult.CONTINUE;
                 }
 
                 // END OF THE CHECKING
@@ -204,20 +221,35 @@ public class QuestsConfigLoader {
         return new QItemStack(name, loreNormal, loreStarted, is);
     }
 
-    public enum ConfigLoadError {
+    public enum ConfigLoadErrorType {
 
         MALFORMED_YAML("Malformed YAML"),
         INVALID_QUEST_ID("Invalid quest ID (must be alphanumeric)"),
-        MALFORMED_QUEST("Quest file is not configured properly");
+        MALFORMED_QUEST("Quest file is not configured properly: %s"),
+        MALFORMED_TASK("Tasks are not configured properly: %s");
 
         private String message;
 
-        ConfigLoadError(String message) {
+        ConfigLoadErrorType(String message) {
             this.message = message;
         }
 
         public String getMessage() {
             return message;
+        }
+    }
+    public class ConfigLoadError {
+
+        private ConfigLoadErrorType type;
+        private String[] extraInfo;
+
+        public ConfigLoadError(ConfigLoadErrorType type, String... extraInfo) {
+            this.type = type;
+            this.extraInfo = extraInfo;
+        }
+
+        public String getMessage() {
+            return String.format(type.getMessage(), (Object[]) extraInfo);
         }
     }
 }

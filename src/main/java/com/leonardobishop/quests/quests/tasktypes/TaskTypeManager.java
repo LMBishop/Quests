@@ -43,12 +43,23 @@ public class TaskTypeManager {
     }
 
     public void registerQuestTasksWithTaskTypes(Quest quest) {
+        if (allowRegistrations) {
+            throw new IllegalStateException("Still accepting new task types (type registrations must be closed before registering quests)");
+        }
         for (Task task : quest.getTasks()) {
-            for (TaskType taskType : taskTypes) {
-                if (taskType.getType().equalsIgnoreCase(task.getType())) {
-                    taskType.registerQuest(quest);
-                }
+            TaskType t;
+            if ((t = getTaskType(task.getType())) != null) {
+                t.registerQuest(quest);
             }
         }
+    }
+
+    public TaskType getTaskType(String string) {
+        for (TaskType taskType : taskTypes) {
+            if (taskType.getType().equalsIgnoreCase(string)) {
+                return taskType;
+            }
+        }
+        return null;
     }
 }
