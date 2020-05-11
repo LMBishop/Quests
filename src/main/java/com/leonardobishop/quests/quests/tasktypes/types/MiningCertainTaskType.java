@@ -9,6 +9,7 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -26,8 +27,9 @@ public final class MiningCertainTaskType extends TaskType {
     public MiningCertainTaskType() {
         super("blockbreakcertain", "LMBishop", "Break a set amount of a specific block.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of blocks to be broken."));
-        this.creatorConfigValues.add(new ConfigValue("block", true, "Name or ID of block."));
-        this.creatorConfigValues.add(new ConfigValue("data", false, "Data code for block."));
+        this.creatorConfigValues.add(new ConfigValue("block", false, "Name or ID of block.")); // Can use name:datacode
+        this.creatorConfigValues.add(new ConfigValue("blocks", false, "List of blocks (alias for block for config readability)."));
+        this.creatorConfigValues.add(new ConfigValue("data", false, "Data code for block.")); // only used if no datacode provided in block or blocks
         this.creatorConfigValues.add(new ConfigValue("reverse-if-placed", false, "Will reverse progression if block of same type is placed."));
         this.creatorConfigValues.add(new ConfigValue("use-similar-blocks", false, "(Deprecated) If true, this will ignore orientation of doors, logs etc."));
     }
@@ -91,17 +93,35 @@ public final class MiningCertainTaskType extends TaskType {
     @SuppressWarnings("deprecation")
     private boolean matchBlock(Task task, Block block) {
         Material material;
-        Object configBlock = task.getConfigValue("block");
+
+
+        Object configBlock = task.getConfigValues().containsKey("block") ? task.getConfigValue("block") : task.getConfigValue("blocks");
         Object configData = task.getConfigValue("data");
         Object configSimilarBlocks = task.getConfigValue("use-similar-blocks");
 
-        material = Material.getMaterial(String.valueOf(configBlock));
+        List<String> checkBlocks = new ArrayList<>();
+        if (configBlock instanceof List) {
+            checkBlocks.addAll((List) configBlock);
+        } else {
+            checkBlocks.add(String.valueOf(configBlock));
+        }
 
-        Material blockType = block.getType();
-        short blockData = block.getData();
+        for (String materialName : checkBlocks) {
+            // LOG:1 LOG:2 LOG should all be supported with this
+            String[] split = materialName.split(":");
+            int comparableData = (int) configData;
+            if (split.length > 1) {
+                comparableData = Integer.parseInt(split[1]);
+            }
 
-        if (blockType.equals(material)) {
-            return configData == null || (((int) blockData) == ((int) configData));
+            material = Material.getMaterial(String.valueOf(split[0]));
+            Material blockType = block.getType();
+
+            short blockData = block.getData();
+
+            if (blockType.equals(material)) {
+                return configData == null || ((int) blockData) == comparableData;
+            }
         }
         return false;
     }
