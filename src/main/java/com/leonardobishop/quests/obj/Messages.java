@@ -19,6 +19,7 @@ public enum Messages {
     QUEST_CATEGORY_PERMISSION("messages.quest-category-permission"),
     QUEST_CANCEL_NOTSTARTED("messages.quest-cancel-notstarted"),
     QUEST_UPDATER("messages.quest-updater"),
+    COMMAND_SUB_DOESNTEXIST("messages.command-sub-doesntexist"),
     COMMAND_QUEST_START_DOESNTEXIST("messages.command-quest-start-doesntexist"),
     COMMAND_QUEST_OPENCATEGORY_ADMIN_SUCCESS("messages.command-quest-opencategory-admin-success"),
     COMMAND_QUEST_OPENQUESTS_ADMIN_SUCCESS("messages.command-quest-openquests-admin-success"),

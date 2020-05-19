@@ -277,20 +277,31 @@ public class CommandQuests implements CommandExecutor {
                 showAdminHelp(sender, null);
                 return true;
             }
-            if (sender instanceof Player && (args[0].equalsIgnoreCase("q") || args[0].equalsIgnoreCase("quests"))) {
+            if (sender instanceof Player && (args[0].equalsIgnoreCase("q") || args[0].equalsIgnoreCase("quests") || args[0].equalsIgnoreCase("quest"))) {
                 Player player = (Player) sender;
-                if (args.length >= 2) {
+                if (args.length >= 3) {
                     Quest quest = plugin.getQuestManager().getQuestById(args[1]);
-                    if (quest == null) {
-                        sender.sendMessage(Messages.COMMAND_QUEST_START_DOESNTEXIST.getMessage().replace("{quest}", args[1]));
-                    } else {
-                        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
-                        if (qPlayer == null) {
-                            // shit + fan
-                            sender.sendMessage(ChatColor.RED + "An error occurred finding your player."); //lazy? :)
+                    QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+
+                    if (args[2].equalsIgnoreCase("s") || args[2].equalsIgnoreCase("start")) {
+                        if (quest == null) {
+                            sender.sendMessage(Messages.COMMAND_QUEST_START_DOESNTEXIST.getMessage().replace("{quest}", args[1]));
                         } else {
-                            qPlayer.getQuestProgressFile().startQuest(quest);
+                            if (qPlayer == null) {
+                                // shit + fan
+                                sender.sendMessage(ChatColor.RED + "An error occurred finding your player."); //lazy? :)
+                            } else {
+                                qPlayer.getQuestProgressFile().startQuest(quest);
+                            }
                         }
+                    } else if (args[2].equalsIgnoreCase("c") || args[2].equalsIgnoreCase("cancel")) {
+                        if (qPlayer == null) {
+                            sender.sendMessage(ChatColor.RED + "An error occurred finding your player."); //lazy x2? ;)
+                        } else {
+                            qPlayer.getQuestProgressFile().cancelQuest(quest);
+                        }
+                    } else {
+                        sender.sendMessage(Messages.COMMAND_SUB_DOESNTEXIST.getMessage().replace("{sub}", args[2]));
                     }
                     return true;
                 }
@@ -326,7 +337,7 @@ public class CommandQuests implements CommandExecutor {
         sender.sendMessage(ChatColor.GRAY + "The following commands are available: ");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests " + ChatColor.DARK_GRAY + ": show quests");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests c/category <categoryid> " + ChatColor.DARK_GRAY + ": open category by ID");
-        sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests q/quest <questid> " + ChatColor.DARK_GRAY + ": start quest by ID");
+        sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests q/quest <questid> <start/cancel>" + ChatColor.DARK_GRAY + ": start or cancel quest by ID");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a/admin " + ChatColor.DARK_GRAY + ": view help for admins");
         sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------=[" + ChatColor.RED + " made with <3 by LMBishop " + ChatColor
                 .GRAY.toString() + ChatColor.STRIKETHROUGH + "]=--------");

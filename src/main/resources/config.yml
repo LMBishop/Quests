@@ -190,6 +190,7 @@ messages:
   quest-category-quest-permission: "&7You do not have permission to start this quest since it is in a category you do not have permission to view."
   quest-cancel-notstarted: "&7You have not started this quest."
   quest-updater: "&cQuests > &7A new version &c{newver} &7was found on Spigot (your version: &c{oldver}&7). Please update me! <3 - Link: {link}"
+  command-sub-doesntexist: "&7The specified subcommand '&c{sub}' &7does not exist."
   command-quest-start-doesntexist: "&7The specified quest '&c{quest}&7' does not exist."
   command-category-open-disabled: "&7Categories are disabled."
   command-category-open-doesntexist: "&7The specified category '&c{category}&7' does not exist."
