@@ -145,6 +145,7 @@ public class Quests extends JavaPlugin {
             taskTypeManager.registerTaskType(new BreedingTaskType());
             taskTypeManager.registerTaskType(new EnchantingTaskType());
             taskTypeManager.registerTaskType(new DealDamageTaskType());
+            taskTypeManager.registerTaskType(new PermissionTaskType());
             // TODO: FIX
             // taskTypeManager.registerTaskType(new BrewingCertainTaskType());
             if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
@@ -165,6 +166,9 @@ public class Quests extends JavaPlugin {
             }
             if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
                 taskTypeManager.registerTaskType(new MythicMobsKillingType());
+            }
+            if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                taskTypeManager.registerTaskType(new PlaceholderAPIEvaluateTaskType());
             }
 
             taskTypeManager.closeRegistrations();
