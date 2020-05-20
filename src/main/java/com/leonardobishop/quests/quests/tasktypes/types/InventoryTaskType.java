@@ -15,6 +15,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -32,6 +34,7 @@ public final class InventoryTaskType extends TaskType {
         this.creatorConfigValues.add(new ConfigValue("item", true, "Name or ID of item."));
         this.creatorConfigValues.add(new ConfigValue("remove-items-when-complete", false, "Take the items away from the player on completion (true/false, " +
                 "default = false)."));
+        this.creatorConfigValues.add(new ConfigValue("update-progress", false, "Update the displayed progress (if this causes lag then disable it)."));
     }
 
     @Override
@@ -46,7 +49,7 @@ public final class InventoryTaskType extends TaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR/*, ignoreCancelled = true*/)
-    public void onInventoryClick(InventoryInteractEvent event) {
+    public void onInventoryClick(InventoryClickEvent event) {
         Bukkit.getScheduler().runTaskLater(Quests.get(), () -> checkInventory((Player) event.getWhoClicked()), 1L); //Still some work to do as it doesn't really work
     }
 
@@ -89,6 +92,10 @@ public final class InventoryTaskType extends TaskType {
                         is = new ItemStack(material, 1);
                     }
 
+                    if (task.getConfigValue("update-progress") != null && (Boolean) task.getConfigValue("update-progress")) {
+                        taskProgress.setProgress(getAmount(player, is, amount));
+                    }
+
                     if (player.getInventory().containsAtLeast(is, amount)) {
                         is.setAmount(amount);
                         taskProgress.setCompleted(true);
@@ -100,6 +107,20 @@ public final class InventoryTaskType extends TaskType {
                 }
             }
         }
+    }
+
+    private int getAmount(Player player, ItemStack is, int max) {
+        if (is == null) {
+            return 0;
+        }
+        int amount = 0;
+        for (int i = 0; i < 36; i++) {
+            ItemStack slot = player.getInventory().getItem(i);
+            if (slot == null || !slot.isSimilar(is))
+                continue;
+            amount += slot.getAmount();
+        }
+        return Math.min(amount, max);
     }
 
 }
