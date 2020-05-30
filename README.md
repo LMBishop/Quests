@@ -33,7 +33,7 @@ See https://github.com/LMBishop/Quests/graphs/contributors
 For support please open a [GitHub issue](https://github.com/LMBishop/Quests/issues) or join our [Discord server](https://discord.gg/8amrJnX). Please provide information of the issue, any errors that may come up and make sure you are using the latest version of the plugin.
 
 ### Issue Tracker
-**This is the preferred method of bug reporting & feature requests**. Please use one of the two templates which are provided. If it is neither a bug report or a feature request and is a question, Discord would be a better place to asked this instead. **Follow the template in the issue tracker**. There is nothing more frustrating than people not reporting a bug correctly by missing out vital steps to reproduce the bug or an incomplete description. If the issue is not correctly formated, it will be closed and ignored.
+**This is the preferred method of bug reporting & feature requests**. Please use one of the two templates which are provided. If it is neither a bug report or a feature request and is a question, Discord would be a better place to asked this instead. **Follow the template in the issue tracker**. There is nothing more frustrating than people not reporting a bug correctly by missing out vital steps to reproduce the bug or an incomplete description. If the issue is not correctly formatted, it will be closed and ignored.
 
 ### Discord
 **This is the preferred method for general questions about Quests or the development of the project**. Join the Discord server and go to the relative support channel (in this case: #quests-support). Please provide steps to reproduce and a good enough description of the bug and include any errors you may see in console.
@@ -47,7 +47,7 @@ The configuration documentation can be found at the [wiki](https://github.com/LM
 ## Contributing To Quests
 Fork and make a pull request. Please be consistent with the formatting of the file, please state what you have changed, please test what you have changed before submitting a pull request to make sure it works. Include your DiscordTag if you want a 'contributors' role in our [Discord server](https://discord.gg/8amrJnX).
 
-### Contribution Guildlines
+### Contribution Guidelines
 Make sure to format your file using *spaces* not *tabs*. This is how the rest of the project is, and it will remain that way. When committing, please follow normal convention which is to have a ~50 character summary on the first line, a blank line then (if applicable) a more detailed description either in bullet points (using a dash as the bullet) or as paragraphs.
 
 Example commit message:
