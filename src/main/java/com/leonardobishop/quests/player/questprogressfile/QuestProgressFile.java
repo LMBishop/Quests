@@ -237,6 +237,32 @@ public class QuestProgressFile {
         }
         return startedQuests;
     }
+    
+    public List<Quest> getQuestsProgress(String type) {
+        List<Quest> QuestsProgress = new ArrayList<>();
+        if (type.equals("completed")) {
+            for (QuestProgress qProgress : questProgress.values()) {
+                if (qProgress.isCompleted()) {
+                    QuestsProgress.add(plugin.getQuestManager().getQuestById(qProgress.getQuestId()));
+                }
+            }
+        }
+        if (type.equals("completedBefore")) {
+            for (QuestProgress qProgress : questProgress.values()) {
+                if (qProgress.isCompletedBefore()) {
+                    QuestsProgress.add(plugin.getQuestManager().getQuestById(qProgress.getQuestId()));
+                }
+            }
+        }
+        if (type.equals("started")) {
+            for (QuestProgress qProgress : questProgress.values()) {
+                if (qProgress.isStarted()) {
+                    QuestsProgress.add(plugin.getQuestManager().getQuestById(qProgress.getQuestId()));
+                }
+            }
+        }
+        return QuestsProgress;
+    }
 
     /**
      * Gets all the quest progress that it has ever encountered.
@@ -368,4 +394,3 @@ public class QuestProgressFile {
     }
 
 }
-
