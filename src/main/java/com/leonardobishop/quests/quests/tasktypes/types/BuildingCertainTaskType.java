@@ -95,17 +95,37 @@ public final class BuildingCertainTaskType extends TaskType {
     @SuppressWarnings("deprecation")
     private boolean matchBlock(Task task, Block block) {
         Material material;
-        Object configBlock = task.getConfigValue("block");
+
+        Object configBlock = task.getConfigValues().containsKey("block") ? task.getConfigValue("block") : task.getConfigValue("blocks");
         Object configData = task.getConfigValue("data");
         Object configSimilarBlocks = task.getConfigValue("use-similar-blocks");
 
-        material = Material.getMaterial(String.valueOf(configBlock));
+        List<String> checkBlocks = new ArrayList<>();
+        if (configBlock instanceof List) {
+            checkBlocks.addAll((List) configBlock);
+        } else {
+            checkBlocks.add(String.valueOf(configBlock));
+        }
 
-        Material blockType = block.getType();
-        short blockData = block.getData();
+        for (String materialName : checkBlocks) {
+            // LOG:1 LOG:2 LOG should all be supported with this
+            String[] split = materialName.split(":");
+            int comparableData = 0;
+            if (configData != null) {
+                comparableData = (int) configData;
+            }
+            if (split.length > 1) {
+                comparableData = Integer.parseInt(split[1]);
+            }
 
-        if (blockType.equals(material)) {
-            return configData == null || (((int) blockData) == ((int) configData));
+            material = Material.getMaterial(String.valueOf(split[0]));
+            Material blockType = block.getType();
+
+            short blockData = block.getData();
+
+            if (blockType.equals(material)) {
+                return configData == null || ((int) blockData) == comparableData;
+            }
         }
         return false;
     }

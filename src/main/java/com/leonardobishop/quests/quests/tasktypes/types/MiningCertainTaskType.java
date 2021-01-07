@@ -113,6 +113,9 @@ public final class MiningCertainTaskType extends TaskType {
             // LOG:1 LOG:2 LOG should all be supported with this
             String[] split = materialName.split(":");
             int comparableData = 0;
+            if (configData != null) {
+                comparableData = (int) configData;
+            }
             if (split.length > 1) {
                 comparableData = Integer.parseInt(split[1]);
             }
