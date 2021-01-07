@@ -30,7 +30,7 @@ You can include quests in your Maven project using [JitPack](https://jitpack.io/
 See https://github.com/LMBishop/Quests/graphs/contributors
 
 ## Support
-For support please open a [GitHub issue](https://github.com/LMBishop/Quests/issues) or join our [Discord server](https://discord.gg/8amrJnX). Please provide information of the issue, any errors that may come up and make sure you are using the latest version of the plugin.
+For support please open a [GitHub issue](https://github.com/LMBishop/Quests/issues) or join our [Discord server](https://discord.gg/mQ2RcJC). Please provide information of the issue, any errors that may come up and make sure you are using the latest version of the plugin.
 
 ### Issue Tracker
 **This is the preferred method of bug reporting & feature requests**. Please use one of the two templates which are provided. If it is neither a bug report or a feature request and is a question, Discord would be a better place to asked this instead. **Follow the template in the issue tracker**. There is nothing more frustrating than people not reporting a bug correctly by missing out vital steps to reproduce the bug or an incomplete description. If the issue is not correctly formatted, it will be closed and ignored.
