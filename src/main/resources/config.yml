@@ -163,7 +163,7 @@ options:
 #
 # Quests BETA: this feature is a work in progress, it does not work yet!
 daily-quests:
-  enabled: false
+  enabled: false # <----- NOT YET IMPLEMENTED (THIS WILL NOT DO ANYTHING)
 
 # Configure titles
 titles:

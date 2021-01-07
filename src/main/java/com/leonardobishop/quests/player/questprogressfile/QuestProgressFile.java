@@ -237,35 +237,75 @@ public class QuestProgressFile {
         }
         return startedQuests;
     }
-    
-    public List<Quest> getQuestsProgress(String type) {
-        List<Quest> QuestsProgress = new ArrayList<>();
-        if (type.equals("completed")) {
-            for (QuestProgress qProgress : questProgress.values()) {
-                if (qProgress.isCompleted()) {
-                    QuestsProgress.add(plugin.getQuestManager().getQuestById(qProgress.getQuestId()));
+
+    /**
+     * @return {@code List<Quest>} all quest
+     * @deprecated use {@code getAllQuestsFromProgress(QuestsProgressFilter)} instead
+     * <p>
+     * Returns all {@code Quest}s a player has encountered
+     * (not to be confused with a collection of quest progress)
+     */
+    @Deprecated
+    public List<Quest> getQuestsProgress(String filter) {
+        return getAllQuestsFromProgress(QuestsProgressFilter.fromLegacy(filter));
+    }
+
+    /**
+     * Returns all {@code Quest}s a player has encountered
+     * (not to be confused with a collection of quest progress)
+     *
+     * @return {@code List<Quest>} all quests
+     */
+    public List<Quest> getAllQuestsFromProgress(QuestsProgressFilter filter) {
+        List<Quest> questsProgress = new ArrayList<>();
+        for (QuestProgress qProgress : questProgress.values()) {
+            boolean condition = false;
+            if (filter == QuestsProgressFilter.STARTED) {
+                condition = qProgress.isStarted();
+            } else if (filter == QuestsProgressFilter.COMPLETED_BEFORE) {
+                condition = qProgress.isCompletedBefore();
+            } else if (filter == QuestsProgressFilter.COMPLETED) {
+                condition = qProgress.isCompleted();
+            } else if (filter == QuestsProgressFilter.ALL) {
+                condition = true;
+            }
+            if (condition) {
+                Quest quest = plugin.getQuestManager().getQuestById(qProgress.getQuestId());
+                if (quest != null) {
+                    questsProgress.add(quest);
                 }
             }
         }
-        if (type.equals("completedBefore")) {
-            for (QuestProgress qProgress : questProgress.values()) {
-                if (qProgress.isCompletedBefore()) {
-                    QuestsProgress.add(plugin.getQuestManager().getQuestById(qProgress.getQuestId()));
-                }
-            }
+        return questsProgress;
+    }
+
+    public enum QuestsProgressFilter {
+        ALL("all"),
+        COMPLETED("completed"),
+        COMPLETED_BEFORE("completedBefore"),
+        STARTED("started");
+
+        private String legacy;
+
+        QuestsProgressFilter(String legacy) {
+            this.legacy = legacy;
         }
-        if (type.equals("started")) {
-            for (QuestProgress qProgress : questProgress.values()) {
-                if (qProgress.isStarted()) {
-                    QuestsProgress.add(plugin.getQuestManager().getQuestById(qProgress.getQuestId()));
-                }
+
+        public static QuestsProgressFilter fromLegacy(String filter) {
+            for (QuestsProgressFilter filterEnum : QuestsProgressFilter.values()) {
+                if (filterEnum.getLegacy().equals(filter)) return filterEnum;
             }
+            return QuestsProgressFilter.ALL;
         }
-        return QuestsProgress;
+
+        public String getLegacy() {
+            return legacy;
+        }
     }
 
     /**
      * Gets all the quest progress that it has ever encountered.
+     *
      * @return {@code Collection<QuestProgress>} all quest progresses
      */
     public Collection<QuestProgress> getAllQuestProgress() {

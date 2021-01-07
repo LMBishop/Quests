@@ -25,7 +25,7 @@ public final class PlaceholderAPIEvaluateTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public PlaceholderAPIEvaluateTaskType() {
-        super("placeholderapi_evaluate", "LMBishop", "Test if a player has a permission");
+        super("placeholderapi_evaluate", "LMBishop", "Evaluate the result of a placeholder");
         this.creatorConfigValues.add(new ConfigValue("placeholder", true, "The placeholder string (including %%)."));
         this.creatorConfigValues.add(new ConfigValue("evaluates", true, "What it should evaluate to be marked as complete."));
     }
