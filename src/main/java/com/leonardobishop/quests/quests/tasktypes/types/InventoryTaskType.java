@@ -10,6 +10,7 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -35,6 +36,7 @@ public final class InventoryTaskType extends TaskType {
         this.creatorConfigValues.add(new ConfigValue("remove-items-when-complete", false, "Take the items away from the player on completion (true/false, " +
                 "default = false)."));
         this.creatorConfigValues.add(new ConfigValue("update-progress", false, "Update the displayed progress (if this causes lag then disable it)."));
+        this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }
 
     @Override
@@ -67,6 +69,8 @@ public final class InventoryTaskType extends TaskType {
                 QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
+                    if (!TaskUtils.validateWorld(player, task)) continue;
+
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
                     if (taskProgress.isCompleted()) {

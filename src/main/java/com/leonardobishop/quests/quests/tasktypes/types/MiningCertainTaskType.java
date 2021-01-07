@@ -9,6 +9,7 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -32,6 +33,7 @@ public final class MiningCertainTaskType extends TaskType {
         this.creatorConfigValues.add(new ConfigValue("data", false, "Data code for block.")); // only used if no datacode provided in block or blocks
         this.creatorConfigValues.add(new ConfigValue("reverse-if-placed", false, "Will reverse progression if block of same type is placed."));
         this.creatorConfigValues.add(new ConfigValue("use-similar-blocks", false, "(Deprecated) If true, this will ignore orientation of doors, logs etc."));
+        this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }
 
     @Override
@@ -74,6 +76,8 @@ public final class MiningCertainTaskType extends TaskType {
                 QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
+                    if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;
+
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
                     if (taskProgress.isCompleted()) {
@@ -94,7 +98,6 @@ public final class MiningCertainTaskType extends TaskType {
     private boolean matchBlock(Task task, Block block) {
         Material material;
 
-
         Object configBlock = task.getConfigValues().containsKey("block") ? task.getConfigValue("block") : task.getConfigValue("blocks");
         Object configData = task.getConfigValue("data");
         Object configSimilarBlocks = task.getConfigValue("use-similar-blocks");
@@ -109,7 +112,7 @@ public final class MiningCertainTaskType extends TaskType {
         for (String materialName : checkBlocks) {
             // LOG:1 LOG:2 LOG should all be supported with this
             String[] split = materialName.split(":");
-            int comparableData = (int) configData;
+            int comparableData = 0;
             if (split.length > 1) {
                 comparableData = Integer.parseInt(split[1]);
             }

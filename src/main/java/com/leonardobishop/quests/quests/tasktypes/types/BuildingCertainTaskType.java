@@ -9,6 +9,7 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -30,6 +31,7 @@ public final class BuildingCertainTaskType extends TaskType {
         this.creatorConfigValues.add(new ConfigValue("data", false, "Data code for block."));
         this.creatorConfigValues.add(new ConfigValue("reverse-if-broken", false, "Will reverse progression if block of same type is broken."));
         this.creatorConfigValues.add(new ConfigValue("use-similar-blocks", false, "(Deprecated) If true, this will ignore orientation of doors, logs etc."));
+        this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }
 
     @Override
@@ -47,6 +49,8 @@ public final class BuildingCertainTaskType extends TaskType {
                 QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
+                    if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;
+
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
                     if (taskProgress.isCompleted()) {

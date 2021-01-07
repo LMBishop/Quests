@@ -9,6 +9,7 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,6 +25,7 @@ public final class FishingTaskType extends TaskType {
     public FishingTaskType() {
         super("fishing", "LMBishop", "Catch a set amount of items from the sea.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of fish to be caught."));
+        this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }
 
     @Override
@@ -52,6 +54,8 @@ public final class FishingTaskType extends TaskType {
                 QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
+                    if (!TaskUtils.validateWorld(player, task)) continue;
+
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
                     if (taskProgress.isCompleted()) {

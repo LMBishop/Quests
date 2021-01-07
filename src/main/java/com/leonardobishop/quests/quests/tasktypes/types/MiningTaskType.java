@@ -9,6 +9,7 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -44,6 +45,8 @@ public final class MiningTaskType extends TaskType {
                 QuestProgress questProgress = questProgressFile.getQuestProgress(quest); // get their progress for the specific quest
 
                 for (Task task : quest.getTasksOfType(super.getType())) { // get all tasks of this type
+                    if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;
+
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId()); // get the task progress and increment progress by 1
 
                     if (taskProgress.isCompleted()) { // dont need to increment a completed task

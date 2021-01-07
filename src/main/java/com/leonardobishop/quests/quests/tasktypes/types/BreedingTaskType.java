@@ -9,6 +9,7 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,6 +27,7 @@ public final class BreedingTaskType extends TaskType {
     public BreedingTaskType() {
         super("breeding", "toasted", "Breed a set amount of animals.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of animals to be bred"));
+        this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }
 
     @Override
@@ -58,6 +60,8 @@ public final class BreedingTaskType extends TaskType {
                         QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
 
                         for (Task task : quest.getTasksOfType(super.getType())) {
+                            if (!TaskUtils.validateWorld(player, task)) continue;
+
                             TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
                             if (taskProgress.isCompleted()) {

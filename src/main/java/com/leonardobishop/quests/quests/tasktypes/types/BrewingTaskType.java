@@ -9,6 +9,7 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,6 +34,7 @@ public final class BrewingTaskType extends TaskType {
     public BrewingTaskType() {
         super("brewing", "LMBishop", "Brew a potion.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of potions to be brewed."));
+        this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }
 
     @Override
@@ -67,6 +69,8 @@ public final class BrewingTaskType extends TaskType {
                     QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
 
                     for (Task task : quest.getTasksOfType(super.getType())) {
+                        if (!TaskUtils.validateWorld(player, task)) continue;
+
                         TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
                         if (taskProgress.isCompleted()) {

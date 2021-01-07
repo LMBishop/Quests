@@ -10,6 +10,7 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -40,6 +41,8 @@ public final class PlaytimeTaskType extends TaskType {
                         if (questProgressFile.hasStartedQuest(quest)) {
                             QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
                             for (Task task : quest.getTasksOfType(PlaytimeTaskType.super.getType())) {
+                                if (!TaskUtils.validateWorld(player, task)) continue;
+
                                 TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
                                 if (taskProgress.isCompleted()) {
                                     continue;

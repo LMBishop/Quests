@@ -9,6 +9,7 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -24,6 +25,7 @@ public final class CitizensInteractTaskType extends TaskType {
     public CitizensInteractTaskType() {
         super("citizens_interact", "LMBishop", "Interact with an NPC to complete the quest.");
         this.creatorConfigValues.add(new ConfigValue("npc-name", true, "Name of the NPC."));
+        this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }
 
     @Override
@@ -45,6 +47,8 @@ public final class CitizensInteractTaskType extends TaskType {
                 QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
+                    if (!TaskUtils.validateWorld(event.getClicker(), task)) continue;
+
                     if (!ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', String.valueOf(task.getConfigValue("npc-name")))).equals(ChatColor
                             .stripColor(ChatColor.translateAlternateColorCodes('&', event.getNPC().getName())))) {
                         return;

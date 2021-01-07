@@ -10,6 +10,7 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -42,6 +43,7 @@ public final class PlaceholderAPIEvaluateTaskType extends TaskType {
                         if (questProgressFile.hasStartedQuest(quest)) {
                             QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
                             for (Task task : quest.getTasksOfType(PlaceholderAPIEvaluateTaskType.super.getType())) {
+                                if (!TaskUtils.validateWorld(player, task)) continue;
                                 TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
                                 if (taskProgress.isCompleted()) {
                                     continue;
