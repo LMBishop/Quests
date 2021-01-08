@@ -1,21 +1,28 @@
 # | =================================================== |
-# | Thank you for downloading and trying out my plugin: |
+# |      Thank you for downloading and trying out       |
 # |                       Quests                        |
 # |      https://www.spigotmc.org/resources/23696/      |
 # |         https://github.com/LMBishop/Quests/         |
 # |                                                     |
 # |                         =x=                         |
 # |                                                     |
-# |              File comments should help              |
-# |               you with the new config               |
-# |              and guide you with making              |
+# |              Trying to add new quests?              |
+# |                                                     |
+# |                 Go to the 'quests'                  |
+# |               subdirectory to edit the              |
 # |                        quests                       |
+# |                                                     |
+# |                 The example quests                  |
+# |              are commented to help you              |
+# |             learn how to use the plugin             |
 # |                                                     |
 # |                         =x=                         |
 # |                                                     |
 # |              Have Discord & need help?              |
-# |           https://www.discord.gg/8amrJnX            |
+# |       Head to the GitHub page and click on the      |
+# |           Discord link, or create an issue          |
 # | =================================================== |
+
 
 # Categories are a way of grouping up quests.
 # When a player uses /quests, a menu of categories will be presented to them.

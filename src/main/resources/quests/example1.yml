@@ -5,7 +5,7 @@ tasks:
   # This is the task ID ("mining"). This can share the same name as the quest ID but MUST be unique with all other task IDs in the same quest.
   mining:
     # This defines what type of task this is. In this instance, it is "blockbreak" (breaking blocks)
-    # NOTE: guides to set up each type of task is on the plugin page!
+    # NOTE: guides to set up each type of task is on the wiki (see README)!
     type: "blockbreak"
     # This defines the amount of blocks which need to be broken
     amount: 30

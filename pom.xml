@@ -6,7 +6,8 @@
 
     <groupId>com.leonardobishop</groupId>
     <artifactId>quests</artifactId>
-    <version>2.10</version>
+    <!-- Note to future self: changing the version to something ending with a 0 will truncate it -->
+    <version>2.10.1</version>
     <name>Quests</name>
 
     <properties>

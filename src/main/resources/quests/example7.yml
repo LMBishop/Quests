@@ -1,0 +1,34 @@
+tasks:
+  building:
+    type: "blockplace"
+    amount: 10
+    worlds:
+      - "world"
+display:
+  name: "&cExample VI (Different category, world restricted)"
+  lore-normal:
+    - "&cThis category is designed to show you the different"
+    - "&cattributes a quest can have. This quest requires"
+    - "&chas a task which requires you to be in a world called 'world'."
+    - ""
+    - "&7This quest requires you to:"
+    - "&7 - Place 10 blocks."
+    - ""
+    - "&7Rewards:"
+    - "&7 - $10 added to your in-game balance."
+  lore-started:
+    - ""
+    - "&7Your current progression:"
+    - "&7 - {building:progress}/10 blocks placed."
+  type: "GRASS_BLOCK"
+rewards:
+  - "eco give {player} 10"
+options:
+  category: "permissionexample"
+  # This quest has no specific permission, however its category does. The permission for the category is "quests.category.permissionexample"
+  repeatable: false
+  cooldown:
+    enabled: true
+    time: 1440
+  # The quest is in a different category so the sort order is 1.
+  sort-order: 1
