@@ -4,7 +4,7 @@ name: Quests
 version: %PLUGIN_VERSION%
 
 main: com.leonardobishop.quests.Quests
-author: LMBishop
+authors: [LMBishop, Auxilor]
 softdepend: [ASkyBlock, uSkyBlock, Citizens, PlaceholderAPI]
 prefix: Quests
 api-version: "1.13" # allows new API features but Quests will still work pre-1.13
