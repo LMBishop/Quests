@@ -65,6 +65,7 @@ public class CommandQuests implements CommandExecutor {
                     } else if (args[1].equalsIgnoreCase("reload")) {
                         plugin.reloadConfig();
                         plugin.reloadQuests();
+                        Options.clearBoolValues();
                         if (!plugin.getQuestsConfigLoader().getBrokenFiles().isEmpty()) {
                             sender.sendMessage(ChatColor.RED + "Quests has failed to load the following files:");
                             for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : plugin.getQuestsConfigLoader().getBrokenFiles().entrySet()) {

@@ -3,11 +3,13 @@ package com.leonardobishop.quests.obj;
 import com.leonardobishop.quests.Quests;
 import org.bukkit.ChatColor;
 
+import java.time.temporal.ValueRange;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public enum Options {
-
     CATEGORIES_ENABLED("options.categories-enabled"),
     TRIM_GUI_SIZE("options.trim-gui-size"),
     QUESTS_START_LIMIT("options.quest-started-limit"),
@@ -21,6 +23,8 @@ public enum Options {
     GUITITLE_QUEST_CANCEL("options.guinames.quest-cancel"),
     ALLOW_QUEST_CANCEL("options.allow-quest-cancel"),
     QUEST_AUTOSTART("options.quest-autostart");
+
+    private static final Map<String, Boolean> cachedBools = new HashMap<>();
 
     private final String path;
 
@@ -37,7 +41,13 @@ public enum Options {
     }
 
     public boolean getBooleanValue() {
-        return Quests.get().getConfig().getBoolean(path);
+        Boolean val = cachedBools.get(path);
+        if (val != null) {
+            return val;
+        } else {
+            cachedBools.put(path, Quests.get().getConfig().getBoolean(path));
+            return getBooleanValue();
+        }
     }
 
     public List<String> getStringListValue() {
@@ -54,5 +64,9 @@ public enum Options {
             colored.add(ChatColor.translateAlternateColorCodes('&', line));
         }
         return colored;
+    }
+
+    public static void clearBoolValues() {
+        cachedBools.clear();
     }
 }
