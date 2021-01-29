@@ -2,7 +2,7 @@
 <img align="center" src="https://leonardobishop.com/artwork/QUESTS%20BANNER%20NO%20BACKGROUND.png"></img><br>
 </div>
 
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/LMBishop/Quests.svg)](http://isitmaintained.com/project/LMBishop/Quests "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/LMBishop/Quests.svg)](http://isitmaintained.com/project/LMBishop/Quests "Percentage of issues still open") ![Downloads](http://badge.henrya.org/spigot/downloads?id=23696)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/LMBishop/Quests.svg)](http://isitmaintained.com/project/LMBishop/Quests "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/LMBishop/Quests.svg)](http://isitmaintained.com/project/LMBishop/Quests "Percentage of issues still open") ![Downloads](https://mc-download-badges.herokuapp.com/services/spigotsongoda/downloads.php?spigot=23696&songoda=quests-quests)
 ## About Quests
 This plugin will allow your players to do quests in-game to earn rewards. This can all be configured.
 
