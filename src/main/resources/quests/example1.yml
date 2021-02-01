@@ -42,9 +42,6 @@ rewards:
 options:
   # This is the category for the quest, it will appear under the "examples" category. Categories can be disabled.
   category: "examples"
-  # Set the quest IDs of required quests here, leave empty if none.
-  requires:
-    - ""
   # Set if the quest can be repeated after being completed for the first time.
   repeatable: false
   # Define the cooldown on quests. The above (repeatable) must be true for this to take effect.
