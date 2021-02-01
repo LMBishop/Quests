@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.quests;
 
 import com.leonardobishop.quests.Quests;
+import org.bukkit.ChatColor;
 
 import java.util.*;
 

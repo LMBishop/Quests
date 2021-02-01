@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.quests;
 
+import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -48,5 +49,10 @@ public class Category {
 
     public List<String> getRegisteredQuestIds() {
         return registeredQuestIds;
+    }
+
+
+    public String getDisplayNameStripped() {
+        return ChatColor.stripColor(this.displayItem.getItemMeta().getDisplayName());
     }
 }

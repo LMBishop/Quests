@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
 import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
@@ -17,6 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public final class PlaytimeTaskType extends TaskType {
@@ -28,6 +30,15 @@ public final class PlaytimeTaskType extends TaskType {
         super("playtime", "Reinatix", "Track the amount of playing time a user has been on");
         this.creatorConfigValues.add(new ConfigValue("minutes", true, "Time in minutes."));
     }
+
+    @Override
+    public List<QuestsConfigLoader.ConfigProblem> detectProblemsInConfig(String root, HashMap<String, Object> config) {
+        ArrayList<QuestsConfigLoader.ConfigProblem> problems = new ArrayList<>();
+        if (TaskUtils.configValidateExists(root + ".minutes", config.get("minutes"), problems, "minutes", super.getType()))
+            TaskUtils.configValidateInt(root + ".minutes", config.get("minutes"), problems, false, true, "minutes");
+        return problems;
+    }
+
 
     @Override
     public void onReady() {

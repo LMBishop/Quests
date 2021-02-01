@@ -142,4 +142,22 @@ public class ItemGetter_Late_1_8 implements ItemGetter {
         }
         return new ItemStack(type, 1, (short) data);
     }
+
+    @Override
+    public boolean isValidMaterial(String material) {
+        Material type = null;
+
+        if (Material.getMaterial(material) != null) {
+            type = Material.getMaterial(material);
+        } else if (material.contains(":")) {
+            String[] parts = material.split(Pattern.quote(":"));
+            if (parts.length > 1) {
+                if (Material.getMaterial(parts[0]) != null) {
+                    type = Material.getMaterial(parts[0]);
+                }
+            }
+        }
+
+        return !(type == null);
+    }
 }

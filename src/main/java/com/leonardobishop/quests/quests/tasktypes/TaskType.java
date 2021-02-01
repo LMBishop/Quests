@@ -1,10 +1,12 @@
 package com.leonardobishop.quests.quests.tasktypes;
 
+import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.quests.Quest;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -77,6 +79,7 @@ public abstract class TaskType implements Listener {
     }
 
     public List<ConfigValue> getCreatorConfigValues() {
+        // not implemented here
         return Collections.emptyList();
     }
 
@@ -86,5 +89,10 @@ public abstract class TaskType implements Listener {
 
     public void onDisable() {
         // not implemented here
+    }
+
+    public List<QuestsConfigLoader.ConfigProblem> detectProblemsInConfig(String root, HashMap<String, Object> config) {
+        // not implemented here
+        return Collections.emptyList();
     }
 }

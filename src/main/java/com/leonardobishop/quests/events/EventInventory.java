@@ -1,20 +1,26 @@
 package com.leonardobishop.quests.events;
 
+import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
 import com.leonardobishop.quests.obj.Messages;
-import com.leonardobishop.quests.quests.Quest;
-import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.obj.misc.QMenu;
 import com.leonardobishop.quests.obj.misc.QMenuCancel;
 import com.leonardobishop.quests.obj.misc.QMenuCategory;
 import com.leonardobishop.quests.obj.misc.QMenuQuest;
+import com.leonardobishop.quests.quests.Quest;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -136,5 +142,4 @@ public class EventInventory implements Listener {
             buffer.remove(event.getPlayer().getUniqueId());
         } else tracker.remove(event.getPlayer().getUniqueId());
     }
-
 }

@@ -173,12 +173,12 @@ public class Quests extends JavaPlugin {
 
             taskTypeManager.closeRegistrations();
             reloadQuests();
-            if (!questsConfigLoader.getBrokenFiles().isEmpty()) {
-                this.getQuestsLogger().severe("Quests has failed to load the following files:");
-                for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : questsConfigLoader.getBrokenFiles().entrySet()) {
-                    this.getQuestsLogger().severe(" - " + entry.getKey() + ": " + entry.getValue().getMessage());
-                }
-            }
+//            if (!questsConfigLoader.getBrokenFiles().isEmpty()) {
+//                this.getQuestsLogger().severe("Quests has failed to load the following files:");
+//                for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : questsConfigLoader.getBrokenFiles().entrySet()) {
+//                    this.getQuestsLogger().severe(" - " + entry.getKey() + ": " + entry.getValue().getMessage());
+//                }
+//            }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
                 qPlayerManager.loadPlayer(player.getUniqueId(), false);
@@ -250,6 +250,10 @@ public class Quests extends JavaPlugin {
 
     public ItemStack getItemStack(String path, ConfigurationSection config, ItemGetter.Filter... excludes) {
         return itemGetter.getItem(path, config, this, excludes);
+    }
+
+    public ItemGetter getItemGetter() {
+        return itemGetter;
     }
 
     private void setupVersionSpecific() {
@@ -330,6 +334,7 @@ public class Quests extends JavaPlugin {
             examples.add("example4.yml");
             examples.add("example5.yml");
             examples.add("example6.yml");
+            examples.add("example7.yml");
             examples.add("README.txt");
 
             for (String name : examples) {

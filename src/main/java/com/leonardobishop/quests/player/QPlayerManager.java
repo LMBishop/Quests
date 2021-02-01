@@ -68,7 +68,7 @@ public class QPlayerManager {
     // TODO redo "onlyData" and use a less confusing way
     public void loadPlayer(UUID uuid, boolean onlyData) {
         plugin.getQuestsLogger().debug("Loading player " + uuid + " from disk.");
-        if (getPlayer(uuid) == null || getPlayer(uuid).isOnlyDataLoaded()) {
+        if (getPlayer(uuid) == null) {
             QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
 
             try {
@@ -105,7 +105,7 @@ public class QPlayerManager {
                 // fuck
             }
 
-            QPlayer qPlayer = new QPlayer(uuid, questProgressFile, onlyData, plugin);
+            QPlayer qPlayer = new QPlayer(uuid, questProgressFile, plugin);
 
             this.qPlayers.put(uuid, qPlayer);
         }

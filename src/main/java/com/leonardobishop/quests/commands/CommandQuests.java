@@ -14,14 +14,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-public class CommandQuests implements CommandExecutor {
+public class CommandQuests implements TabExecutor {
 
     private final Quests plugin;
 
@@ -36,9 +38,11 @@ public class CommandQuests implements CommandExecutor {
                 !(args.length >= 2 &&
                         (args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin")) &&
                         args[1].equalsIgnoreCase("reload"))) {
-            sender.sendMessage(ChatColor.RED + "The main config must be in tact before quests can be used. Quests has failed to load the following files:");
-            for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : plugin.getQuestsConfigLoader().getBrokenFiles().entrySet()) {
-                sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + entry.getKey() + ": " + ChatColor.GRAY + entry.getValue().getMessage());
+            sender.sendMessage(ChatColor.RED + "Quests cannot be used right now. Please speak to an administrator.");
+            if (sender.hasPermission("quests.admin")) {
+                showProblems(sender);
+                sender.sendMessage(ChatColor.RED + "The main config (config.yml) must be in tact before quests can be used. " +
+                        "Please use the above information to help rectify the problem.");
             }
             return true;
         }
@@ -65,14 +69,11 @@ public class CommandQuests implements CommandExecutor {
                     } else if (args[1].equalsIgnoreCase("reload")) {
                         plugin.reloadConfig();
                         plugin.reloadQuests();
-                        if (!plugin.getQuestsConfigLoader().getBrokenFiles().isEmpty()) {
-                            sender.sendMessage(ChatColor.RED + "Quests has failed to load the following files:");
-                            for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : plugin.getQuestsConfigLoader().getBrokenFiles().entrySet()) {
-                                sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + entry.getKey() + ": " + ChatColor.GRAY + entry.getValue().getMessage());
-                            }
-                        } else {
-                            sender.sendMessage(ChatColor.GRAY + "Quests was reloaded.");
-                        }
+                        showProblems(sender);
+                        sender.sendMessage(ChatColor.GRAY + "Quests successfully reloaded.");
+                        return true;
+                    } else if (args[1].equalsIgnoreCase("config")) {
+                        showProblems(sender);
                         return true;
                     } else if (args[1].equalsIgnoreCase("types")) {
                         sender.sendMessage(ChatColor.GRAY + "Registered task types:");
@@ -139,7 +140,7 @@ public class CommandQuests implements CommandExecutor {
                         String name;
                         // Player.class is a superclass for OfflinePlayer.
                         // getofflinePlayer return a player regardless if exists or not
-                        if (ofp != null) {
+                        if (ofp.hasPlayedBefore()) {
                             uuid = ofp.getUniqueId();
                             name = ofp.getName();
                         } else {
@@ -150,7 +151,7 @@ public class CommandQuests implements CommandExecutor {
                             QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
                             if (qPlayer == null) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", name));
-                                plugin.getPlayerManager().loadPlayer(uuid, true);
+                                plugin.getPlayerManager().loadPlayer(uuid, false);
                                 qPlayer = plugin.getPlayerManager().getPlayer(uuid); //get again
                             }
                             if (qPlayer == null) {
@@ -162,9 +163,6 @@ public class CommandQuests implements CommandExecutor {
                             questProgressFile.saveToDisk(false);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_FULLRESET.getMessage().replace("{player}", name));
                             return true;
-                        }
-                        if (plugin.getPlayerManager().getPlayer(uuid).isOnlyDataLoaded()) {
-                            plugin.getPlayerManager().removePlayer(uuid);
                         }
                         showAdminHelp(sender, "moddata");
                         return true;
@@ -203,7 +201,7 @@ public class CommandQuests implements CommandExecutor {
                         OfflinePlayer ofp = Bukkit.getOfflinePlayer(args[3]);
                         UUID uuid;
                         String name;
-                        if (ofp != null) {
+                        if (ofp.hasPlayedBefore()) {
                             uuid = ofp.getUniqueId();
                             name = ofp.getName();
                         } else {
@@ -213,7 +211,7 @@ public class CommandQuests implements CommandExecutor {
                         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
                         if (qPlayer == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", name));
-                            plugin.getPlayerManager().loadPlayer(uuid, true);
+                            plugin.getPlayerManager().loadPlayer(uuid, false);
                         }
                         if (qPlayer == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_NODATA.getMessage().replace("{player}", name));
@@ -264,9 +262,6 @@ public class CommandQuests implements CommandExecutor {
                             questProgressFile.saveToDisk(false);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
-                        }
-                        if (plugin.getPlayerManager().getPlayer(uuid).isOnlyDataLoaded()) {
-                            plugin.getPlayerManager().removePlayer(uuid);
                         }
                         if (!success) {
                             showAdminHelp(sender, "moddata");
@@ -324,11 +319,62 @@ public class CommandQuests implements CommandExecutor {
                 }
             }
             showHelp(sender);
-            return true;
         } else {
             sender.sendMessage(ChatColor.RED + "Only admin commands are available to non-player senders.");
         }
         return true;
+    }
+
+    private void showProblems(CommandSender sender) {
+        if (!plugin.getQuestsConfigLoader().getFilesWithProblems().isEmpty()) {
+//            sender.sendMessage(ChatColor.DARK_GRAY.toString() + "----");
+            sender.sendMessage(ChatColor.GRAY + "Detected problems and potential issues:");
+            Set<QuestsConfigLoader.ConfigProblemType> problemTypes = new HashSet<>();
+            for (Map.Entry<String, List<QuestsConfigLoader.ConfigProblem>> entry : plugin.getQuestsConfigLoader().getFilesWithProblems().entrySet()) {
+                HashMap<QuestsConfigLoader.ConfigProblemType, List<QuestsConfigLoader.ConfigProblem>> sortedProblems = new HashMap<>();
+                for (QuestsConfigLoader.ConfigProblem problem : entry.getValue()) {
+                    if (sortedProblems.containsKey(problem.getType())) {
+                        sortedProblems.get(problem.getType()).add(problem);
+                    } else {
+                        List<QuestsConfigLoader.ConfigProblem> specificProblems = new ArrayList<>();
+                        specificProblems.add(problem);
+                        sortedProblems.put(problem.getType(), specificProblems);
+                    }
+                    problemTypes.add(problem.getType());
+                }
+                QuestsConfigLoader.ConfigProblemType highest = null;
+                for (QuestsConfigLoader.ConfigProblemType type : QuestsConfigLoader.ConfigProblemType.values()) {
+                    if (sortedProblems.containsKey(type)) {
+                        highest = type;
+                        break;
+                    }
+                }
+                ChatColor highestColor = ChatColor.WHITE;
+                if (highest != null) {
+                    highestColor = highest.getColor();
+                }
+                sender.sendMessage(highestColor + entry.getKey() + ChatColor.DARK_GRAY + " ----");
+                for (QuestsConfigLoader.ConfigProblemType type : QuestsConfigLoader.ConfigProblemType.values()) {
+                    if (sortedProblems.containsKey(type)) {
+                        for (QuestsConfigLoader.ConfigProblem problem : sortedProblems.get(type)) {
+                            sender.sendMessage(ChatColor.DARK_GRAY + " | - " + problem.getType().getColor()
+                                    + problem.getType().getShortened() + ChatColor.DARK_GRAY + ": "
+                                    + ChatColor.GRAY + problem.getDescription() + ChatColor.DARK_GRAY + " :" + problem.getLocation());
+                        }
+                    }
+                }
+            }
+//                            sender.sendMessage(ChatColor.DARK_GRAY.toString() + "----");
+            List<String> legend = new ArrayList<>();
+            for (QuestsConfigLoader.ConfigProblemType type : QuestsConfigLoader.ConfigProblemType.values()) {
+                if (problemTypes.contains(type))
+                    legend.add(type.getColor() + type.getShortened() + ChatColor.DARK_GRAY + " = " + type.getColor() + type.getTitle());
+            }
+            sender.sendMessage(ChatColor.DARK_GRAY.toString() + "----");
+            sender.sendMessage(ChatColor.GRAY.toString() + plugin.getQuestsConfigLoader().getProblemsCount() + " problem(s) | " + String.join(ChatColor.DARK_GRAY + ", ", legend));
+        } else {
+            sender.sendMessage(ChatColor.GRAY + "Quests did not detect any problems with your configuration.");
+        }
     }
 
     private void showHelp(CommandSender sender) {
@@ -348,7 +394,7 @@ public class CommandQuests implements CommandExecutor {
             sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "------------=[" + ChatColor.RED + " Quests Admin: opengui " + ChatColor
                     .GRAY.toString() + ChatColor.STRIKETHROUGH + "]=------------");
             sender.sendMessage(ChatColor.GRAY + "The following commands are available: ");
-            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a opengui q/quest <player> " + ChatColor.DARK_GRAY + ": forcefully show" +
+            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a opengui q/quests <player> " + ChatColor.DARK_GRAY + ": forcefully show" +
                     " quests for player");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a opengui c/category <player> <category> " + ChatColor.DARK_GRAY + ": " +
                     "forcefully " +
@@ -375,9 +421,99 @@ public class CommandQuests implements CommandExecutor {
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata " + ChatColor.DARK_GRAY + ": view help for quest progression");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a types [type]" + ChatColor.DARK_GRAY + ": view registered task types");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a reload " + ChatColor.DARK_GRAY + ": reload Quests configuration");
+            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a config " + ChatColor.DARK_GRAY + ": see detected problems in config");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a update " + ChatColor.DARK_GRAY + ": check for updates");
         }
         sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----=[" + ChatColor.RED + " requires permission: quests.admin " +
                 ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "]=-----");
+    }
+
+    private List<String> matchTabComplete(String arg, List<String> options) {
+        List<String> completions = new ArrayList<>();
+        StringUtil.copyPartialMatches(arg, options, completions);
+        Collections.sort(completions);
+        return completions;
+    }
+
+    private List<String> tabCompleteCategory(String arg) {
+        List<String> options = new ArrayList<>();
+        for (Category c : plugin.getQuestManager().getCategories()) {
+            options.add(c.getId());
+        }
+        return matchTabComplete(arg, options);
+    }
+
+    private List<String> tabCompleteQuests(String arg) {
+        List<String> options = new ArrayList<>(plugin.getQuestManager().getQuests().keySet());
+        return matchTabComplete(arg, options);
+    }
+
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        if (!Options.TAB_COMPLETE_ENABLED.getBooleanValue(true)) {
+            return null;
+        }
+        if (sender instanceof Player) {
+            if (args.length == 1) {
+                List<String> options = new ArrayList<>(Arrays.asList("quest", "category"));
+                if (sender.hasPermission("quests.admin")) {
+                    options.add("admin");
+                }
+                return matchTabComplete(args[0], options);
+            } else if (args.length == 2) {
+                if (args[0].equalsIgnoreCase("c") || args[0].equalsIgnoreCase("category")) {
+                    return tabCompleteCategory(args[1]);
+                } else if (args[0].equalsIgnoreCase("q") || args[0].equalsIgnoreCase("quest")) {
+                    return tabCompleteQuests(args[1]);
+                } else if (args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin")
+                        && sender.hasPermission("quests.admin")) {
+                    List<String> options = Arrays.asList("opengui", "moddata", "types", "reload", "update", "config");
+                    return matchTabComplete(args[1], options);
+                }
+            } else if (args.length == 3) {
+                if (args[0].equalsIgnoreCase("q") || args[0].equalsIgnoreCase("quest")
+                    && sender.hasPermission("quests.admin")) {
+                    Quest q = plugin.getQuestManager().getQuestById(args[1]);
+                    if (q != null) {
+                        List<String> options = Arrays.asList("start", "cancel");
+                        return matchTabComplete(args[2], options);
+                    }
+                } else if (args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin")
+                        && sender.hasPermission("quests.admin")) {
+                    if (args[1].equalsIgnoreCase("types")) {
+                        List<String> options = new ArrayList<>();
+                        for (TaskType taskType : plugin.getTaskTypeManager().getTaskTypes()) {
+                            options.add(taskType.getType());
+                        }
+                        return matchTabComplete(args[2], options);
+                    } else if (args[1].equalsIgnoreCase("opengui")) {
+                        List<String> options = Arrays.asList("quests", "category");
+                        return matchTabComplete(args[2], options);
+                    } else if (args[1].equalsIgnoreCase("moddata")) {
+                        List<String> options = Arrays.asList("fullreset", "reset", "start", "complete");
+                        return matchTabComplete(args[2], options);
+                    }
+                }
+            } else if (args.length == 4) {
+                if (sender.hasPermission("quests.admin")) return null;
+            } else if (args.length == 5) {
+                if (args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin")
+                        && sender.hasPermission("quests.admin")) {
+                    if (args[1].equalsIgnoreCase("opengui")) {
+                        if (args[2].equalsIgnoreCase("c") || args[2].equalsIgnoreCase("category")) {
+                            return tabCompleteCategory(args[4]);
+                        }
+                    } else if (args[1].equalsIgnoreCase("moddata")) {
+                        if (args[2].equalsIgnoreCase("start")
+                                || args[2].equalsIgnoreCase("complete")
+                                || args[2].equalsIgnoreCase("reset")) {
+                            return tabCompleteQuests(args[4]);
+                        }
+                    }
+                }
+            }
+        }
+        return Collections.emptyList();
     }
 }

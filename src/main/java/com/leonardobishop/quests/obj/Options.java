@@ -20,6 +20,8 @@ public enum Options {
     GUITITLE_DAILY_QUESTS("options.guinames.daily-quests"),
     GUITITLE_QUEST_CANCEL("options.guinames.quest-cancel"),
     ALLOW_QUEST_CANCEL("options.allow-quest-cancel"),
+    TAB_COMPLETE_ENABLED("options.tab-completion.enabled"),
+    ERROR_CHECKING_OVERRIDE("options.error-checking.override-errors"),
     QUEST_AUTOSTART("options.quest-autostart");
 
     private final String path;
@@ -32,12 +34,24 @@ public enum Options {
         return Quests.get().getConfig().getInt(path);
     }
 
+    public int getIntValue(int def) {
+        return Quests.get().getConfig().getInt(path, def);
+    }
+
     public String getStringValue() {
         return Quests.get().getConfig().getString(path);
     }
 
+    public String getStringValue(String def) {
+        return Quests.get().getConfig().getString(path, def);
+    }
+
     public boolean getBooleanValue() {
         return Quests.get().getConfig().getBoolean(path);
+    }
+
+    public boolean getBooleanValue(boolean def) {
+        return Quests.get().getConfig().getBoolean(path, def);
     }
 
     public List<String> getStringListValue() {

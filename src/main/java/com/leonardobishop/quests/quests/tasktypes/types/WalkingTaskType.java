@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
+import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
@@ -16,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public final class WalkingTaskType extends TaskType {
@@ -26,6 +28,15 @@ public final class WalkingTaskType extends TaskType {
         super("walking", "LMBishop", "Walk a set distance.");
         this.creatorConfigValues.add(new ConfigValue("distance", true, "Amount of meters (blocks) to be travelled."));
     }
+
+    @Override
+    public List<QuestsConfigLoader.ConfigProblem> detectProblemsInConfig(String root, HashMap<String, Object> config) {
+        ArrayList<QuestsConfigLoader.ConfigProblem> problems = new ArrayList<>();
+        if (TaskUtils.configValidateExists(root + ".distance", config.get("distance"), problems, "distance", super.getType()))
+            TaskUtils.configValidateInt(root + ".distance", config.get("distance"), problems, false, true, "distance");
+        return problems;
+    }
+
 
     @Override
     public List<ConfigValue> getCreatorConfigValues() {

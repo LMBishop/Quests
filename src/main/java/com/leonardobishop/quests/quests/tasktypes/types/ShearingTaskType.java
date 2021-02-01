@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
+import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
@@ -17,6 +18,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public final class ShearingTaskType extends TaskType {
@@ -27,6 +29,15 @@ public final class ShearingTaskType extends TaskType {
         super("shearing", "LMBishop", "Shear a set amount of sheep.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of cows to be milked."));
     }
+
+    @Override
+    public List<QuestsConfigLoader.ConfigProblem> detectProblemsInConfig(String root, HashMap<String, Object> config) {
+        ArrayList<QuestsConfigLoader.ConfigProblem> problems = new ArrayList<>();
+        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
+            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+        return problems;
+    }
+
 
     @Override
     public List<ConfigValue> getCreatorConfigValues() {

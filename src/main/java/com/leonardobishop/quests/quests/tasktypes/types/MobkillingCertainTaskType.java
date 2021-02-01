@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
+import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
@@ -19,6 +20,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public final class MobkillingCertainTaskType extends TaskType {
@@ -31,6 +33,23 @@ public final class MobkillingCertainTaskType extends TaskType {
         this.creatorConfigValues.add(new ConfigValue("mob", true, "Name of mob."));
         this.creatorConfigValues.add(new ConfigValue("name", false, "Only allow a specific name for mob (unspecified = any name allowed)."));
     }
+
+    @Override
+    public List<QuestsConfigLoader.ConfigProblem> detectProblemsInConfig(String root, HashMap<String, Object> config) {
+        ArrayList<QuestsConfigLoader.ConfigProblem> problems = new ArrayList<>();
+        if (TaskUtils.configValidateExists(root + ".mob", config.get("mob"), problems, "mob", super.getType())) {
+            try {
+                EntityType.valueOf(String.valueOf(config.get("mob")));
+            } catch (IllegalArgumentException ex) {
+                problems.add(new QuestsConfigLoader.ConfigProblem(QuestsConfigLoader.ConfigProblemType.WARNING,
+                        QuestsConfigLoader.ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(String.valueOf(config.get("mob"))), root + ".mob"));
+            }
+        }
+        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
+            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+        return problems;
+    }
+
 
     @Override
     public List<ConfigValue> getCreatorConfigValues() {

@@ -7,13 +7,11 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
@@ -217,5 +215,15 @@ public class ItemGetter_1_13 implements ItemGetter {
             type = Material.STONE;
         }
         return new ItemStack(type, 1);
+    }
+
+    @Override
+    public boolean isValidMaterial(String material) {
+        try {
+            Material.valueOf(material);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
     }
 }

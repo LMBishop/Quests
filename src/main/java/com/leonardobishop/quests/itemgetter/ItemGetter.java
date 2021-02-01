@@ -29,6 +29,15 @@ public interface ItemGetter {
      */
     ItemStack getItemStack(String material, Quests plugin);
 
+    /**
+     * Validates a material from a string.
+     * For pre-1.13 server implementations, the string may use a data code.
+     *
+     * @param material the string
+     * @return true if it a material
+     */
+    boolean isValidMaterial(String material);
+
     enum Filter {
         DISPLAY_NAME,
         LORE,

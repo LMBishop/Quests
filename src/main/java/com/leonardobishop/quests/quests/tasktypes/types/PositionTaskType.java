@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
+import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
@@ -19,6 +20,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public final class PositionTaskType extends TaskType {
@@ -32,6 +34,20 @@ public final class PositionTaskType extends TaskType {
         this.creatorConfigValues.add(new ConfigValue("z", true, "Z position."));
         this.creatorConfigValues.add(new ConfigValue("world", true, "Name of world."));
         this.creatorConfigValues.add(new ConfigValue("distance-padding", false, "Padding zone in meters/blocks (default/unspecified = 0)."));
+    }
+
+    @Override
+    public List<QuestsConfigLoader.ConfigProblem> detectProblemsInConfig(String root, HashMap<String, Object> config) {
+        ArrayList<QuestsConfigLoader.ConfigProblem> problems = new ArrayList<>();
+        TaskUtils.configValidateExists(root + ".world", config.get("world"), problems, "world", super.getType());
+        if (TaskUtils.configValidateExists(root + ".x", config.get("x"), problems, "x", super.getType()))
+            TaskUtils.configValidateInt(root + ".x", config.get("x"), problems, false, false, "x");
+        if (TaskUtils.configValidateExists(root + ".y", config.get("y"), problems, "y", super.getType()))
+            TaskUtils.configValidateInt(root + ".y", config.get("y"), problems, false, false, "y");
+        if (TaskUtils.configValidateExists(root + ".z", config.get("z"), problems, "z", super.getType()))
+            TaskUtils.configValidateInt(root + ".z", config.get("z"), problems, false, false, "z");
+        TaskUtils.configValidateInt(root + ".distance-padding", config.get("distance-padding"), problems, true, true, "distance-padding");
+        return problems;
     }
 
     @Override
