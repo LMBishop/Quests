@@ -77,9 +77,17 @@ public class QuestsPlaceholders extends PlaceholderExpansion {
 
                 switch (key[0]) {
                     case "all":
-                        return String.join(separator, this.plugin.getQuestManager().getQuests().toString());
+                        List<String> listAll = new ArrayList<>();
+                        for (Quest q : this.plugin.getQuestManager().getQuests().values()) {
+                            listAll.add(q.getDisplayNameStripped());
+                        }
+                        return String.join(separator, listAll);
                     case "categories":
-                        return String.join(separator, this.plugin.getQuestManager().getCategories().toString());
+                        List<String> listCategories = new ArrayList<>();
+                        for (Category c : this.plugin.getQuestManager().getCategories()) {
+                            listCategories.add(c.getDisplayNameStripped());
+                        }
+                        return String.join(separator, listCategories);
                     case "completed":
                         List<String> listCompleted = new ArrayList<>();
                         for (Quest qCompleted : questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.COMPLETED)) {
@@ -97,6 +105,45 @@ public class QuestsPlaceholders extends PlaceholderExpansion {
                         List<String> listStarted = new ArrayList<>();
                         for (Quest qStarted : questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.STARTED)) {
                             listStarted.add(qStarted.getDisplayNameStripped());
+                        }
+                        return String.join(separator, listStarted);
+                }
+            } else if (key[1].equals("listid") || key[1].equals("lid")) {
+                String separator = ",";
+                if (!(key.length == 2)) {
+                    separator = key[2];
+                }
+
+                switch (key[0]) {
+                    case "all":
+                        List<String> listAll = new ArrayList<>();
+                        for (Quest q : this.plugin.getQuestManager().getQuests().values()) {
+                            listAll.add(q.getId());
+                        }
+                        return String.join(separator, listAll);
+                    case "categories":
+                        List<String> listCategories = new ArrayList<>();
+                        for (Category c : this.plugin.getQuestManager().getCategories()) {
+                            listCategories.add(c.getId());
+                        }
+                        return String.join(separator, listCategories);
+                    case "completed":
+                        List<String> listCompleted = new ArrayList<>();
+                        for (Quest qCompleted : questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.COMPLETED)) {
+                            listCompleted.add(qCompleted.getId());
+                        }
+                        return String.join(separator, listCompleted);
+                    case "completedbefore":
+                    case "completedBefore":
+                        List<String> listCompletedBefore = new ArrayList<>();
+                        for (Quest qCompletedBefore : questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.COMPLETED_BEFORE)) {
+                            listCompletedBefore.add(qCompletedBefore.getId());
+                        }
+                        return String.join(separator, listCompletedBefore);
+                    case "started":
+                        List<String> listStarted = new ArrayList<>();
+                        for (Quest qStarted : questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.STARTED)) {
+                            listStarted.add(qStarted.getId());
                         }
                         return String.join(separator, listStarted);
                 }
@@ -231,6 +278,43 @@ public class QuestsPlaceholders extends PlaceholderExpansion {
                         List<String> listStarted = new ArrayList<>();
                         for (Quest qStarted : getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.STARTED)) {
                             listStarted.add(qStarted.getDisplayNameStripped());
+                        }
+                        return String.join(separator, listStarted);
+                }
+            } else if (key[2].equals("listid") || key[2].equals("lid")) {
+                String separator = ",";
+                if (!(key.length == 3)) {
+                    separator = key[3];
+                }
+
+                switch (key[1]) {
+                    case "all":
+                    case "a":
+                        List<String> listAll = new ArrayList<>();
+                        for (Quest qCompleted : getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.ALL)) {
+                            listAll.add(qCompleted.getId());
+                        }
+                        return String.join(separator, listAll);
+                    case "completed":
+                    case "c":
+                        List<String> listCompleted = new ArrayList<>();
+                        for (Quest qCompleted : getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.COMPLETED)) {
+                            listCompleted.add(qCompleted.getId());
+                        }
+                        return String.join(separator, listCompleted);
+                    case "completedbefore":
+                    case "completedBefore":
+                    case "cB":
+                        List<String> listCompletedBefore = new ArrayList<>();
+                        for (Quest qCompletedBefore : getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.COMPLETED_BEFORE)) {
+                            listCompletedBefore.add(qCompletedBefore.getId());
+                        }
+                        return String.join(separator, listCompletedBefore);
+                    case "started":
+                    case "s":
+                        List<String> listStarted = new ArrayList<>();
+                        for (Quest qStarted : getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.STARTED)) {
+                            listStarted.add(qStarted.getId());
                         }
                         return String.join(separator, listStarted);
                 }
