@@ -379,7 +379,15 @@ public class QuestProgressFile {
         return false;
     }
 
+    public void saveToDisk() {
+        saveToDisk(false, false);
+    }
+
     public void saveToDisk(boolean disable) {
+        saveToDisk(disable, false);
+    }
+
+    public void saveToDisk(boolean disable, boolean fullWrite) {
         plugin.getQuestsLogger().debug("Saving player " + playerUUID + " to disk.");
         File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
         if (!directory.exists() && !directory.isDirectory()) {
@@ -395,9 +403,11 @@ public class QuestProgressFile {
         }
 
         YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
-        //data.set("quest-progress", null);
+        if (fullWrite) {
+            data.set("quest-progress", null);
+        }
         for (QuestProgress questProgress : questProgress.values()) {
-            if (!questProgress.isWorthSaving()) {
+            if (!questProgress.isWorthSaving() && !fullWrite) {
                 continue;
             }
             data.set("quest-progress." + questProgress.getQuestId() + ".started", questProgress.isStarted());
@@ -431,6 +441,34 @@ public class QuestProgressFile {
 
     public void clear() {
         questProgress.clear();
+    }
+
+    /**
+     * Removes any references to quests or tasks which are no longer defined in the config
+     */
+    public void clean() {
+        if (!plugin.getTaskTypeManager().areRegistrationsAccepted()) {
+            ArrayList<String> invalidQuests = new ArrayList<>();
+            for (String questId : this.questProgress.keySet()) {
+                Quest q;
+                if ((q = plugin.getQuestManager().getQuestById(questId)) == null) {
+                    invalidQuests.add(questId);
+                } else {
+                    ArrayList<String> invalidTasks = new ArrayList<>();
+                    for (String taskId : this.questProgress.get(questId).getTaskProgressMap().keySet()) {
+                        if (q.getTaskById(taskId) == null) {
+                            invalidTasks.add(taskId);
+                        }
+                    }
+                    for (String taskId : invalidTasks) {
+                        this.questProgress.get(questId).getTaskProgressMap().remove(taskId);
+                    }
+                }
+            }
+            for (String questId : invalidQuests) {
+                this.questProgress.remove(questId);
+            }
+        }
     }
 
 }

@@ -21,6 +21,10 @@ public class TaskTypeManager {
         allowRegistrations = false;
     }
 
+    public boolean areRegistrationsAccepted() {
+        return allowRegistrations;
+    }
+
     private ArrayList<TaskType> taskTypes = new ArrayList<>();
 
     public ArrayList<TaskType> getTaskTypes() {

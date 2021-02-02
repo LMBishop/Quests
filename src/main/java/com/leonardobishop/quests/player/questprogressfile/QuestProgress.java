@@ -82,6 +82,10 @@ public class QuestProgress {
         return taskProgress.values();
     }
 
+    public Map<String, TaskProgress> getTaskProgressMap() {
+        return taskProgress;
+    }
+
     public TaskProgress getTaskProgress(String taskId) {
         TaskProgress tP = taskProgress.getOrDefault(taskId, null);
         if (tP == null) {

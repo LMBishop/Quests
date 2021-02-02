@@ -2,6 +2,7 @@ package com.leonardobishop.quests.events;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.obj.Messages;
+import com.leonardobishop.quests.obj.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,7 +21,13 @@ public class EventPlayerJoin implements Listener {
     @EventHandler
     public void onEvent(PlayerJoinEvent event) {
         UUID playerUuid = event.getPlayer().getUniqueId();
-        plugin.getPlayerManager().loadPlayer(playerUuid, false);
+        plugin.getPlayerManager().loadPlayer(playerUuid);
+        if (Options.SOFT_CLEAN_QUESTSPROGRESSFILE_ON_JOIN.getBooleanValue()) {
+            plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile().clean();
+            if (Options.PUSH_SOFT_CLEAN_TO_DISK.getBooleanValue()) {
+                plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile().saveToDisk(false, true);
+            }
+        }
         if (plugin.getDescription().getVersion().contains("beta") && event.getPlayer().hasPermission("quests.admin")) {
             event.getPlayer().sendMessage(Messages.BETA_REMINDER.getMessage());
         }
