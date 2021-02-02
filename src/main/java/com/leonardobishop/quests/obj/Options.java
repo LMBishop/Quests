@@ -20,6 +20,8 @@ public enum Options {
     GUITITLE_DAILY_QUESTS("options.guinames.daily-quests"),
     GUITITLE_QUEST_CANCEL("options.guinames.quest-cancel"),
     ALLOW_QUEST_CANCEL("options.allow-quest-cancel"),
+    SOFT_CLEAN_QUESTSPROGRESSFILE_ON_JOIN("options.soft-clean-questsprogressfile-on-join"),
+    PUSH_SOFT_CLEAN_TO_DISK("options.tab-completion.push-soft-clean-to-disk"),
     TAB_COMPLETE_ENABLED("options.tab-completion.enabled"),
     ERROR_CHECKING_OVERRIDE("options.error-checking.override-errors"),
     QUEST_AUTOSTART("options.quest-autostart");
