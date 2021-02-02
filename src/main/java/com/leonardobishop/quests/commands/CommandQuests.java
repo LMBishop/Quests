@@ -21,6 +21,11 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 public class CommandQuests implements TabExecutor {
@@ -99,6 +104,41 @@ public class CommandQuests implements TabExecutor {
                         showAdminHelp(sender, "opengui");
                         return true;
                     } else if (args[1].equalsIgnoreCase("moddata")) {
+                        if (args[2].equalsIgnoreCase("clean")) {
+                            FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
+                                @Override
+                                public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) {
+                                    File playerDataFile = new File(path.toUri());
+                                    if (!playerDataFile.getName().toLowerCase().endsWith(".yml")) return FileVisitResult.CONTINUE;
+                                    String uuidStr = playerDataFile.getName().replace(".yml", "");
+                                    UUID uuid;
+                                    try {
+                                        uuid = UUID.fromString(uuidStr);
+                                    } catch (IllegalArgumentException ex) {
+                                        return FileVisitResult.CONTINUE;
+                                    }
+
+                                    plugin.getPlayerManager().loadPlayer(uuid);
+                                    QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
+                                    qPlayer.getQuestProgressFile().clean();
+                                    qPlayer.getQuestProgressFile().saveToDisk(false, true);
+                                    if (Bukkit.getPlayer(uuid) == null) {
+                                        plugin.getPlayerManager().dropPlayer(uuid);
+                                    }
+                                    return FileVisitResult.CONTINUE;
+                                }
+                            };
+                            //TODO command to clean specific player
+                            try {
+                                Files.walkFileTree(Paths.get(plugin.getDataFolder() + File.separator + "playerdata"), fileVisitor);
+                            } catch (IOException e) {
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_CLEAN_FAIL.getMessage());
+                                e.printStackTrace();
+                                return true;
+                            }
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_CLEAN_SUCCESS.getMessage());
+                            return true;
+                        }
                         showAdminHelp(sender, "moddata");
                         return true;
                     } else if (args[1].equalsIgnoreCase("types")) {
@@ -151,7 +191,7 @@ public class CommandQuests implements TabExecutor {
                             QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
                             if (qPlayer == null) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", name));
-                                plugin.getPlayerManager().loadPlayer(uuid, false);
+                                plugin.getPlayerManager().loadPlayer(uuid);
                                 qPlayer = plugin.getPlayerManager().getPlayer(uuid); //get again
                             }
                             if (qPlayer == null) {
@@ -161,6 +201,9 @@ public class CommandQuests implements TabExecutor {
                             QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                             questProgressFile.clear();
                             questProgressFile.saveToDisk(false);
+                            if (Bukkit.getPlayer(uuid) == null) {
+                                plugin.getPlayerManager().dropPlayer(uuid);
+                            }
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_FULLRESET.getMessage().replace("{player}", name));
                             return true;
                         }
@@ -211,7 +254,7 @@ public class CommandQuests implements TabExecutor {
                         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
                         if (qPlayer == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", name));
-                            plugin.getPlayerManager().loadPlayer(uuid, false);
+                            plugin.getPlayerManager().loadPlayer(uuid);
                         }
                         if (qPlayer == null) {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_NODATA.getMessage().replace("{player}", name));
@@ -265,6 +308,9 @@ public class CommandQuests implements TabExecutor {
                         }
                         if (!success) {
                             showAdminHelp(sender, "moddata");
+                        }
+                        if (Bukkit.getPlayer(uuid) == null) {
+                            plugin.getPlayerManager().dropPlayer(uuid);
                         }
                         return true;
                     }
@@ -406,12 +452,14 @@ public class CommandQuests implements TabExecutor {
             sender.sendMessage(ChatColor.GRAY + "The following commands are available: ");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata fullreset <player> " + ChatColor.DARK_GRAY + ": clear a " +
                     "players quest data file");
-            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata reset <player> <questid>" + ChatColor.DARK_GRAY + ": clear a " +
+            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata reset <player> <questid> " + ChatColor.DARK_GRAY + ": clear a " +
                     "players data for specifc quest");
-            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata start <player> <questid>" + ChatColor.DARK_GRAY + ": start a " +
+            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata start <player> <questid> " + ChatColor.DARK_GRAY + ": start a " +
                     "quest for a player");
-            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata complete <player> <questid>" + ChatColor.DARK_GRAY + ": " +
+            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata complete <player> <questid> " + ChatColor.DARK_GRAY + ": " +
                     "complete a quest for a player");
+            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata clean " + ChatColor.DARK_GRAY + ": " +
+                    "clean quest data files for quests which are no longer defined");
             sender.sendMessage(ChatColor.GRAY + "These commands modify quest progress for players. Use them cautiously. Changes are irreversible.");
         } else {
             sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "------------=[" + ChatColor.RED + " Quests Admin " + ChatColor.GRAY
@@ -491,7 +539,7 @@ public class CommandQuests implements TabExecutor {
                         List<String> options = Arrays.asList("quests", "category");
                         return matchTabComplete(args[2], options);
                     } else if (args[1].equalsIgnoreCase("moddata")) {
-                        List<String> options = Arrays.asList("fullreset", "reset", "start", "complete");
+                        List<String> options = Arrays.asList("fullreset", "reset", "start", "complete", "clean");
                         return matchTabComplete(args[2], options);
                     }
                 }

@@ -155,6 +155,12 @@ options:
   quest-autostart: false
   # How much quests should log, 0 = errors only, 1 = warnings, 2 = info, 3 = debug
   verbose-logging-level: 2
+  # Automatically clean player's quest progress files when they join.
+  # These changes will not be reflected to disk.
+  # Useful if you frequently add and remove quests on a production server. Equivalent of executing /q a moddata clean, without overwriting the file.
+  soft-clean-questsprogressfile-on-join: false
+  # The above, but overwriting the file on disk with the cleaned version, so it does not soft clean on every join.
+  push-soft-clean-to-disk: false
   performance-tweaking: # The following are measured in server ticks, multiply SECONDS by 20 to get the number of ticks.
     quest-completer-poll-interval: 100    # how frequently Quests should check if quests have been completed (def=100 - 5 seconds) - increase this value if you are struggling with performance
     quest-autosave-interval: 12000        # how frequently online players data will be autosaved (def=12000 - 10 minutes)
@@ -215,6 +221,8 @@ messages:
   command-quest-admin-loaddata: "&7Quest data for '&c{player}&7' is being loaded."
   command-quest-admin-nodata: "&7No data could be found for player &c{player}&7."
   command-quest-admin-fullreset: "&7Data for player &c{player}&7 has been fully reset."
+  command-quest-admin-clean-success: "&7All quest progress files have been cleaned."
+  command-quest-admin-clean-fail: "&cFailed to clean quest progress files. Please report the error in the console."
   command-quest-admin-start-faillocked: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They have not yet unlocked it."
   command-quest-admin-start-failcooldown: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. It is still on cooldown for them."
   command-quest-admin-start-failcomplete: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They have already completed it."

@@ -36,6 +36,8 @@ public enum Messages {
     BETA_REMINDER("messages.beta-reminder"),
     COMMAND_QUEST_ADMIN_LOADDATA("messages.command-quest-admin-loaddata"),
     COMMAND_QUEST_ADMIN_NODATA("messages.command-quest-admin-nodata"),
+    COMMAND_QUEST_ADMIN_CLEAN_SUCCESS("messages.command-quest-admin-clean-success"),
+    COMMAND_QUEST_ADMIN_CLEAN_FAIL("messages.command-quest-admin-clean-fail"),
     COMMAND_QUEST_ADMIN_FULLRESET("messages.command-quest-admin-fullreset"),
     COMMAND_QUEST_ADMIN_START_FAILLOCKED("messages.command-quest-admin-start-faillocked"),
     COMMAND_QUEST_ADMIN_START_FAILCOOLDOWN("messages.command-quest-admin-start-failcooldown"),

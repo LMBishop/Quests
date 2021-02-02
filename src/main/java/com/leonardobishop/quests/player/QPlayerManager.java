@@ -44,7 +44,7 @@ public class QPlayerManager {
         QPlayer qPlayer = qPlayers.get(uuid);
         if (qPlayer == null && loadIfNull) {
             plugin.getQuestsLogger().debug("QPlayer of " + uuid + " is null, but was requested! Attempting to load it.");
-            loadPlayer(uuid, false);
+            loadPlayer(uuid);
             return getPlayer(uuid, false);
         }
         return qPlayers.get(uuid);
@@ -52,7 +52,12 @@ public class QPlayerManager {
 
     public void removePlayer(UUID uuid) {
         this.getPlayer(uuid).getQuestProgressFile().saveToDisk(false);
-        plugin.getQuestsLogger().debug("Unloading player " + uuid + ".");
+        plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + ".");
+        qPlayers.remove(uuid);
+    }
+
+    public void dropPlayer(UUID uuid) {
+        plugin.getQuestsLogger().debug("Dropping player " + uuid + ".");
         qPlayers.remove(uuid);
     }
 
@@ -65,8 +70,7 @@ public class QPlayerManager {
     //   loadPlayer(uuid, false);
     //}
 
-    // TODO redo "onlyData" and use a less confusing way
-    public void loadPlayer(UUID uuid, boolean onlyData) {
+    public void loadPlayer(UUID uuid) {
         plugin.getQuestsLogger().debug("Loading player " + uuid + " from disk.");
         if (getPlayer(uuid) == null) {
             QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
@@ -86,12 +90,14 @@ public class QPlayerManager {
 
                                 QuestProgress questProgress = new QuestProgress(id, completed, completedBefore, completionDate, uuid, started, true);
 
-                                for (String taskid : data.getConfigurationSection("quest-progress." + id + ".task-progress").getKeys(false)) {
-                                    boolean taskCompleted = data.getBoolean("quest-progress." + id + ".task-progress." + taskid + ".completed");
-                                    Object taskProgression = data.get("quest-progress." + id + ".task-progress." + taskid + ".progress");
+                                if (data.isConfigurationSection("quest.progress." + id + ".task-progress")) {
+                                    for (String taskid : data.getConfigurationSection("quest-progress." + id + ".task-progress").getKeys(false)) {
+                                        boolean taskCompleted = data.getBoolean("quest-progress." + id + ".task-progress." + taskid + ".completed");
+                                        Object taskProgression = data.get("quest-progress." + id + ".task-progress." + taskid + ".progress");
 
-                                    TaskProgress taskProgress = new TaskProgress(taskid, taskProgression, uuid, taskCompleted, false);
-                                    questProgress.addTaskProgress(taskProgress);
+                                        TaskProgress taskProgress = new TaskProgress(taskid, taskProgression, uuid, taskCompleted, false);
+                                        questProgress.addTaskProgress(taskProgress);
+                                    }
                                 }
 
                                 questProgressFile.addQuestProgress(questProgress);

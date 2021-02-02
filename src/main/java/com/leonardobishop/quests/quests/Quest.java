@@ -8,7 +8,7 @@ import java.util.*;
 public class Quest implements Comparable<Quest> {
 
     private Map<String, Task> tasks = new HashMap<>();
-    //TODO: maybe store by <tasktypename (string), list<task>> since we never get task by id, but always get tasks by type.
+    //TODO: maybe ALSO store by <tasktypename (string), list<task>>
     private final String id;
     private final QItemStack displayItem;
     private final List<String> rewards;
@@ -48,6 +48,10 @@ public class Quest implements Comparable<Quest> {
 
     public Collection<Task> getTasks() {
         return tasks.values();
+    }
+
+    public Task getTaskById(String id) {
+        return tasks.get(id);
     }
 
     public List<Task> getTasksOfType(String type) {

@@ -31,7 +31,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class Quests extends JavaPlugin {
 
@@ -181,7 +180,7 @@ public class Quests extends JavaPlugin {
 //            }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                qPlayerManager.loadPlayer(player.getUniqueId(), false);
+                qPlayerManager.loadPlayer(player.getUniqueId());
             }
         });
 
