@@ -85,6 +85,7 @@ public final class PositionTaskType extends TaskType {
                     if (task.getConfigValue("distance-padding") != null) {
                         padding = (int) task.getConfigValue("distance-padding");
                     }
+                    int paddingSquared = padding * padding;
                     World world = Bukkit.getWorld(worldString);
                     if (world == null) {
                         return;
@@ -93,7 +94,7 @@ public final class PositionTaskType extends TaskType {
                     Location location = new Location(world, x, y, z);
                     if (player.getWorld().equals(world) && player.getLocation().getBlockX() == location.getBlockX() && player.getLocation().getBlockY() == location.getBlockY() && player.getLocation().getBlockZ() == location.getBlockZ()) {
                         taskProgress.setCompleted(true);
-                    } else if (player.getWorld().equals(world) && player.getLocation().distance(location) < padding) {
+                    } else if (padding != 0 && player.getWorld().equals(world) && player.getLocation().distanceSquared(location) < paddingSquared) {
                         taskProgress.setCompleted(true);
                     }
                 }

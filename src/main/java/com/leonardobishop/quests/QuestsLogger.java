@@ -53,29 +53,31 @@ public class QuestsLogger {
     public void severe(String str) {
         log(str, LoggingLevel.ERROR);
     }
-}
-enum LoggingLevel {
-    ERROR(0),
-    WARNING(1),
-    INFO(2),
-    DEBUG(3);
 
-    private int numericVerbosity;
+    public enum LoggingLevel {
+        ERROR(0),
+        WARNING(1),
+        INFO(2),
+        DEBUG(3);
 
-    LoggingLevel(int number) {
-        numericVerbosity = number;
-    }
+        private int numericVerbosity;
 
-    public int getNumericVerbosity() {
-        return numericVerbosity;
-    }
-
-    static LoggingLevel fromNumber(int number) {
-        for (LoggingLevel level : LoggingLevel.values()) {
-            if (level.getNumericVerbosity() == number) {
-                return level;
-            }
+        LoggingLevel(int number) {
+            numericVerbosity = number;
         }
-        return LoggingLevel.INFO;
+
+        public int getNumericVerbosity() {
+            return numericVerbosity;
+        }
+
+        static LoggingLevel fromNumber(int number) {
+            for (LoggingLevel level : LoggingLevel.values()) {
+                if (level.getNumericVerbosity() == number) {
+                    return level;
+                }
+            }
+            return LoggingLevel.INFO;
+        }
     }
+
 }

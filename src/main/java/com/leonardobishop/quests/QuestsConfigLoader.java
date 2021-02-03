@@ -57,7 +57,7 @@ public class QuestsConfigLoader {
                 Category category = new Category(id, displayItem, permissionRequired);
                 plugin.getQuestManager().registerCategory(category);
             }
-            plugin.getQuestsLogger().setServerLoggingLevel(LoggingLevel.fromNumber(plugin.getConfig().getInt("options.verbose-logging-level", 2)));
+            plugin.getQuestsLogger().setServerLoggingLevel(QuestsLogger.LoggingLevel.fromNumber(plugin.getConfig().getInt("options.verbose-logging-level", 2)));
 
             HashMap<String, Quest> pathToQuest = new HashMap<>();
 

@@ -55,6 +55,21 @@ public final class DistancefromTaskType extends TaskType {
         return creatorConfigValues;
     }
 
+//    private HashMap<String, HashMap<String, Integer>> distanceSquaredCache = new HashMap<>();
+//
+//    @Override
+//    public void onReady() {
+//        distanceSquaredCache.clear();
+//        for (Quest quest : super.getRegisteredQuests()) {
+//            HashMap<String, Integer> squaredDistances = new HashMap<>();
+//            for (Task task : quest.getTasksOfType(super.getType())) {
+//                int distance = (int) task.getConfigValue("distance");
+//                squaredDistances.put(task.getId(), distance);
+//            }
+//            distanceSquaredCache.put(quest.getId(), squaredDistances);
+//        }
+//    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent event) {
         if (event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
@@ -82,6 +97,7 @@ public final class DistancefromTaskType extends TaskType {
                     int z = (int) task.getConfigValue("z");
                     String worldString = (String) task.getConfigValue("world");
                     int distance = (int) task.getConfigValue("distance");
+                    int distanceSquared = distance * distance;
 
                     World world = Bukkit.getWorld(worldString);
                     if (world == null) {
@@ -89,7 +105,7 @@ public final class DistancefromTaskType extends TaskType {
                     }
 
                     Location location = new Location(world, x, y, z);
-                    if (player.getWorld().equals(world) && player.getLocation().distance(location) > distance) {
+                    if (player.getWorld().equals(world) && player.getLocation().distanceSquared(location) > distanceSquared) {
                         taskProgress.setCompleted(true);
                     }
                 }

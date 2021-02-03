@@ -39,6 +39,10 @@ public class CommandQuests implements TabExecutor {
     @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (plugin.getTaskTypeManager().areRegistrationsAccepted()) {
+            sender.sendMessage(ChatColor.RED + "Quests is not ready yet.");
+            return true;
+        }
         if (plugin.isBrokenConfig() &&
                 !(args.length >= 2 &&
                         (args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin")) &&
@@ -270,7 +274,7 @@ public class CommandQuests implements TabExecutor {
                         }
                         if (args[2].equalsIgnoreCase("reset")) {
                             questProgressFile.generateBlankQuestProgress(quest.getId());
-                            questProgressFile.saveToDisk(false);
+                            questProgressFile.saveToDisk(false, true);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         } else if (args[2].equalsIgnoreCase("start")) {

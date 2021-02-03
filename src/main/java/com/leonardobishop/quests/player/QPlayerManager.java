@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.player;
 
 import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.QuestsLogger;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
@@ -37,22 +38,23 @@ public class QPlayerManager {
      * Gets the QPlayer from a given UUID.
      *
      * @param uuid the uuid
-     * @param loadIfNull load the QPlayer if the result is null and return the QPlayer if successfully loaded
+     * @param loadIfNull do not use
      * @return {@link QPlayer} if they are loaded
      */
     public QPlayer getPlayer(UUID uuid, boolean loadIfNull) {
         QPlayer qPlayer = qPlayers.get(uuid);
-        if (qPlayer == null && loadIfNull) {
-            plugin.getQuestsLogger().debug("QPlayer of " + uuid + " is null, but was requested! Attempting to load it.");
-            loadPlayer(uuid);
-            return getPlayer(uuid, false);
+        if (qPlayer == null) {
+            plugin.getQuestsLogger().debug("QPlayer of " + uuid + " is null, but was requested:");
+            if (plugin.getQuestsLogger().getServerLoggingLevel() == QuestsLogger.LoggingLevel.DEBUG) {
+                Thread.dumpStack();
+            }
         }
-        return qPlayers.get(uuid);
+        return qPlayer;
     }
 
     public void removePlayer(UUID uuid) {
-        this.getPlayer(uuid).getQuestProgressFile().saveToDisk(false);
         plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + ".");
+        this.getPlayer(uuid).getQuestProgressFile().saveToDisk(false);
         qPlayers.remove(uuid);
     }
 
@@ -72,7 +74,7 @@ public class QPlayerManager {
 
     public void loadPlayer(UUID uuid) {
         plugin.getQuestsLogger().debug("Loading player " + uuid + " from disk.");
-        if (getPlayer(uuid) == null) {
+        if (qPlayers.get(uuid) == null) {
             QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
 
             try {
@@ -90,7 +92,7 @@ public class QPlayerManager {
 
                                 QuestProgress questProgress = new QuestProgress(id, completed, completedBefore, completionDate, uuid, started, true);
 
-                                if (data.isConfigurationSection("quest.progress." + id + ".task-progress")) {
+                                if (data.isConfigurationSection("quest-progress." + id + ".task-progress")) {
                                     for (String taskid : data.getConfigurationSection("quest-progress." + id + ".task-progress").getKeys(false)) {
                                         boolean taskCompleted = data.getBoolean("quest-progress." + id + ".task-progress." + taskid + ".completed");
                                         Object taskProgression = data.get("quest-progress." + id + ".task-progress." + taskid + ".progress");
@@ -103,6 +105,8 @@ public class QPlayerManager {
                                 questProgressFile.addQuestProgress(questProgress);
                             }
                         }
+                    } else {
+                        plugin.getQuestsLogger().debug("Player " + uuid + " does not have a quest progress file.");
                     }
                 }
             } catch (Exception ex) {
@@ -114,6 +118,8 @@ public class QPlayerManager {
             QPlayer qPlayer = new QPlayer(uuid, questProgressFile, plugin);
 
             this.qPlayers.put(uuid, qPlayer);
+        } else {
+            plugin.getQuestsLogger().debug("Player " + uuid + " is already loaded.");
         }
     }
 }

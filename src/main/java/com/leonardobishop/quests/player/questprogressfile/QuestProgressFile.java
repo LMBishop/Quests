@@ -447,6 +447,7 @@ public class QuestProgressFile {
      * Removes any references to quests or tasks which are no longer defined in the config
      */
     public void clean() {
+        plugin.getQuestsLogger().debug("Cleaning file " + playerUUID + ".");
         if (!plugin.getTaskTypeManager().areRegistrationsAccepted()) {
             ArrayList<String> invalidQuests = new ArrayList<>();
             for (String questId : this.questProgress.keySet()) {

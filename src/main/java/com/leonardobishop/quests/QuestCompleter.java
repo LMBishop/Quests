@@ -21,9 +21,6 @@ public class QuestCompleter implements Runnable {
     public void run() {
         //TODO if it still runs like shit then maybe only process a few players per X ticks rather than the whole server in one go
         for (QPlayer qPlayer : plugin.getPlayerManager().getQPlayers()) {
-            if (qPlayer.isOnlyDataLoaded()) {
-                continue;
-            }
             QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
             for (QuestProgress questProgress : questProgressFile.getAllQuestProgress()) {
                 Quest quest = plugin.getQuestManager().getQuestById(questProgress.getQuestId());

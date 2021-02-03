@@ -27,6 +27,10 @@ public class Task {
         return configValues.getOrDefault(key, null); //??? this will return null without the need of `OrDefault(key, null)`
     }
 
+    public Object getConfigValue(String key, boolean def) {
+        return configValues.getOrDefault(key, def);
+    }
+
     public Map<String, Object> getConfigValues() {
         return configValues;
     }

@@ -17,17 +17,11 @@ public class QPlayer {
 
     private final UUID uuid;
     private final QuestProgressFile questProgressFile;
-    private boolean onlyDataLoaded;
     private final Quests plugin;
 
-    public QPlayer(UUID uuid, QuestProgressFile questProgressFile, Quests plugin) {
-        this(uuid, questProgressFile, false, plugin);
-    }
-
-    public QPlayer(UUID uuid, QuestProgressFile questProgressFile, boolean onlyDataLoaded, Quests plugin) {
+    public QPlayer(UUID uuid, QuestProgressFile questProgressFile,  Quests plugin) {
         this.uuid = uuid;
         this.questProgressFile = questProgressFile;
-        this.onlyDataLoaded = onlyDataLoaded;
         this.plugin = plugin;
     }
 
@@ -39,10 +33,6 @@ public class QPlayer {
      * @return 0 if success, 1 if no permission, 2 is only data loaded, 3 if player not found
      */
     public int openCategory(Category category, QMenuCategory superMenu, boolean backButton) {
-        if (onlyDataLoaded) {
-            return 2;
-        }
-
         Player player = Bukkit.getPlayer(this.uuid);
         if (player == null) {
             return 3;
@@ -70,10 +60,6 @@ public class QPlayer {
      * @return 0 if success, 1 if no permission, 2 is only data loaded, 3 if player not found
      */
     public int openCategory(Category category, QMenuQuest qMenuQuest) {
-        if (onlyDataLoaded) {
-            return 2;
-        }
-
         Player player = Bukkit.getPlayer(this.uuid);
         if (player == null) {
             return 3;
@@ -89,10 +75,6 @@ public class QPlayer {
     }
 
     public void openQuests() {
-        if (onlyDataLoaded) {
-            return;
-        }
-
         if (this.uuid == null) {
             return;
         }
@@ -132,14 +114,6 @@ public class QPlayer {
             player.openInventory(qMenuQuest.toInventory(1));
             EventInventory.track(player.getUniqueId(), qMenuQuest);
         }
-    }
-
-    public boolean isOnlyDataLoaded() {
-        return onlyDataLoaded;
-    }
-
-    public void setOnlyDataLoaded(boolean onlyDataLoaded) {
-        this.onlyDataLoaded = onlyDataLoaded;
     }
 
     public QuestProgressFile getQuestProgressFile() {

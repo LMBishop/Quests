@@ -85,6 +85,9 @@ public final class CitizensDeliverTaskType extends TaskType {
 
     @SuppressWarnings("deprecation")
     private void checkInventory(Player player, String citizenName) {
+        if (player == null || !player.isOnline()) {
+            return;
+        }
         QPlayer qPlayer = Quests.get().getPlayerManager().getPlayer(player.getUniqueId(), true);
         if (qPlayer == null) {
             return;

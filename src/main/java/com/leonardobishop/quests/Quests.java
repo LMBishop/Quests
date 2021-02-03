@@ -97,7 +97,7 @@ public class Quests extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        questsLogger = new QuestsLogger(this, LoggingLevel.INFO);
+        questsLogger = new QuestsLogger(this, QuestsLogger.LoggingLevel.INFO);
 
         taskTypeManager = new TaskTypeManager(this);
         questManager = new QuestManager(this);
@@ -145,6 +145,8 @@ public class Quests extends JavaPlugin {
             taskTypeManager.registerTaskType(new EnchantingTaskType());
             taskTypeManager.registerTaskType(new DealDamageTaskType());
             taskTypeManager.registerTaskType(new PermissionTaskType());
+            taskTypeManager.registerTaskType(new DistancefromTaskType());
+            taskTypeManager.registerTaskType(new CommandTaskType());
             // TODO: FIX
             // taskTypeManager.registerTaskType(new BrewingCertainTaskType());
             if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
@@ -206,9 +208,6 @@ public class Quests extends JavaPlugin {
             } catch (Exception ignored) { }
         }
         for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
-            if (qPlayer.isOnlyDataLoaded()) {
-                continue;
-            }
             qPlayer.getQuestProgressFile().saveToDisk(true);
         }
     }
@@ -229,20 +228,21 @@ public class Quests extends JavaPlugin {
         if (questAutosaveTask != null) {
             try {
                 questAutosaveTask.cancel();
-            } catch (Exception ignored) { }
+            } catch (Exception ex) {
+                questsLogger.debug("Cannot cancel quest autosave task");
+            }
         }
         questAutosaveTask = Bukkit.getScheduler().runTaskTimer(this, () -> {
             for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
-                if (qPlayer.isOnlyDataLoaded()) {
-                    continue;
-                }
                 qPlayer.getQuestProgressFile().saveToDisk(false);
             }
         }, autocompleteInterval, autocompleteInterval);
         if (questCompleterTask != null) {
             try {
                 questCompleterTask.cancel();
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) {
+                questsLogger.debug("Cannot cancel quest completer task");
+            }
         }
         questCompleterTask = Bukkit.getScheduler().runTaskTimer(this, new QuestCompleter(this), 20, completerPollInterval);
     }
