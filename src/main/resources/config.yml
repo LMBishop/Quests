@@ -170,6 +170,8 @@ options:
     # Allow quests to be loaded if they contain errors
     # This may lead to errors in the console!
     override-errors: false
+  # How many time (in seconds) plugin save placeholders
+  placeholder-cache-time: 10
 
 # This switches up the entire quest system.
 # By enabling daily-quests, players will no longer be presented with the standard Quest GUI.

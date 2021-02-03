@@ -4,23 +4,32 @@ import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
 import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.player.QPlayer;
-import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.quests.Quest;
+import me.clip.placeholderapi.expansion.Cacheable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class QuestsPlaceholders extends PlaceholderExpansion {
+public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheable {
+
     private final Quests plugin;
+    private final Map<Player, Map<String, String>> cache = new HashMap<>();
+    private final Map<String, SimpleDateFormat> formats = new HashMap<>();
 
     public QuestsPlaceholders(Quests plugin) {
         this.plugin = plugin;
+    }
+
+    @Override
+    public void clear() {
+        cache.clear();
+        formats.clear();
     }
 
     @Override
@@ -30,12 +39,12 @@ public class QuestsPlaceholders extends PlaceholderExpansion {
 
     @Override
     public String getAuthor() {
-        return this.plugin.getDescription().getAuthors().toString();
+        return plugin.getDescription().getAuthors().toString();
     }
 
     @Override
     public String getVersion() {
-        return this.plugin.getDescription().getVersion();
+        return plugin.getDescription().getVersion();
     }
 
     @Override
@@ -43,308 +52,245 @@ public class QuestsPlaceholders extends PlaceholderExpansion {
         return true;
     }
 
-    //TODO maybe cache these results for a bit? all these calls could be heavy
-
     @Override
     public String onPlaceholderRequest(Player p, String params) {
-        if (p == null || !p.isOnline())
-            return null;
+        if (p == null || !p.isOnline()) return null;
+        if (cache.containsKey(p) && cache.get(p).containsKey(params)) return cache.get(p).get(params);
 
-        String[] key = params.split("_", 5);
-        QPlayer questP = this.plugin.getPlayerManager().getPlayer(p.getUniqueId());
+        String[] args = params.split("_", 4);
+        if (args.length < 1) return "Invalid Placeholder";
 
-        if (key[0].equals("all") || key[0].equals("completed") || key[0].equals("completedBefore")
-                || key[0].equals("completedbefore") || key[0].equals("started") || key[0].equals("categories")) {
-            if (key.length == 1) {
-                switch (key[0]) {
-                    case "all":
-                        return String.valueOf(this.plugin.getQuestManager().getQuests().size());
-                    case "completed":
-                        return String.valueOf(questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.COMPLETED).size());
-                    case "completedbefore":
-                    case "completedBefore":
-                        return String.valueOf(questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.COMPLETED_BEFORE).size());
-                    case "started":
-                        return String.valueOf(questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.STARTED).size());
-                    case "categories":
-                        return String.valueOf(this.plugin.getQuestManager().getCategories().size());
-                }
-            } else if (key[1].equals("list") || key[1].equals("l")) {
-                String separator = ",";
-                if (!(key.length == 2)) {
-                    separator = key[2];
-                }
+        final boolean save = args[args.length-1].toLowerCase().equals("cache");
+        if (save) args = Arrays.copyOf(args, args.length - 1);
 
-                switch (key[0]) {
-                    case "all":
-                        List<String> listAll = new ArrayList<>();
-                        for (Quest q : this.plugin.getQuestManager().getQuests().values()) {
-                            listAll.add(q.getDisplayNameStripped());
-                        }
-                        return String.join(separator, listAll);
-                    case "categories":
-                        List<String> listCategories = new ArrayList<>();
-                        for (Category c : this.plugin.getQuestManager().getCategories()) {
-                            listCategories.add(c.getDisplayNameStripped());
-                        }
-                        return String.join(separator, listCategories);
-                    case "completed":
-                        List<String> listCompleted = new ArrayList<>();
-                        for (Quest qCompleted : questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.COMPLETED)) {
-                            listCompleted.add(qCompleted.getDisplayNameStripped());
-                        }
-                        return String.join(separator, listCompleted);
-                    case "completedbefore":
-                    case "completedBefore":
-                        List<String> listCompletedBefore = new ArrayList<>();
-                        for (Quest qCompletedBefore : questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.COMPLETED_BEFORE)) {
-                            listCompletedBefore.add(qCompletedBefore.getDisplayNameStripped());
-                        }
-                        return String.join(separator, listCompletedBefore);
-                    case "started":
-                        List<String> listStarted = new ArrayList<>();
-                        for (Quest qStarted : questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.STARTED)) {
-                            listStarted.add(qStarted.getDisplayNameStripped());
-                        }
-                        return String.join(separator, listStarted);
-                }
-            } else if (key[1].equals("listid") || key[1].equals("lid")) {
-                String separator = ",";
-                if (!(key.length == 2)) {
-                    separator = key[2];
-                }
+        final QPlayer qPlayer = plugin.getPlayerManager().getPlayer(p.getUniqueId());
+        String split = args[args.length-1];
 
-                switch (key[0]) {
-                    case "all":
-                        List<String> listAll = new ArrayList<>();
-                        for (Quest q : this.plugin.getQuestManager().getQuests().values()) {
-                            listAll.add(q.getId());
-                        }
-                        return String.join(separator, listAll);
-                    case "categories":
-                        List<String> listCategories = new ArrayList<>();
-                        for (Category c : this.plugin.getQuestManager().getCategories()) {
-                            listCategories.add(c.getId());
-                        }
-                        return String.join(separator, listCategories);
-                    case "completed":
-                        List<String> listCompleted = new ArrayList<>();
-                        for (Quest qCompleted : questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.COMPLETED)) {
-                            listCompleted.add(qCompleted.getId());
-                        }
-                        return String.join(separator, listCompleted);
-                    case "completedbefore":
-                    case "completedBefore":
-                        List<String> listCompletedBefore = new ArrayList<>();
-                        for (Quest qCompletedBefore : questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.COMPLETED_BEFORE)) {
-                            listCompletedBefore.add(qCompletedBefore.getId());
-                        }
-                        return String.join(separator, listCompletedBefore);
-                    case "started":
-                        List<String> listStarted = new ArrayList<>();
-                        for (Quest qStarted : questP.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.STARTED)) {
-                            listStarted.add(qStarted.getId());
-                        }
-                        return String.join(separator, listStarted);
-                }
-            }
-            return "null";
-        }
+        String result = "null";
+        if (!args[0].contains(":")) {
+            if (args.length > 1 && split.equals(args[1])) split = ",";
 
-        if (key[0].startsWith("quest:") || key[0].startsWith("q:")) {
-            Quest quest = this.plugin.getQuestManager().getQuestById(key[0].substring(key[0].lastIndexOf(":") + 1));
-            if (key.length < 2) {
-                if (quest != null) {
-                    return quest.getId();
-                } else {
-                    return "null";
-                }
-            } else if (key[1].equals("started") || key[1].equals("s")) {
-                if (quest != null && questP.getQuestProgressFile().getQuestProgress(quest).isStarted()) {
-                    return "true";
-                }
-                return "false";
-            } else if (key[1].equals("completed") || key[1].equals("c")) {
-                if (quest != null && questP.getQuestProgressFile().getQuestProgress(quest).isCompleted()) {
-                    return "true";
-                }
-                return "false";
-            } else if (key[1].equals("completedbefore") || key[1].equals("completedBefore") || key[1].equals("cB")) {
-                if (quest != null && questP.getQuestProgressFile().getQuestProgress(quest).isCompletedBefore()) {
-                    return "true";
-                }
-                return "false";
-            } else if (key[1].equals("completiondate") || key[1].equals("completionDate")) {
-                if (quest != null && questP.getQuestProgressFile().getQuestProgress(quest).isCompleted()) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); //TODO make configurable for all our american friends
-                    return sdf.format(questP.getQuestProgressFile().getQuestProgress(quest).getCompletionDate());
-                }
-                return "Never";
-            } else if (key[1].equals("cooldown")) {
-                if (quest != null && questP.getQuestProgressFile().getQuestProgress(quest).isCompleted()) {
-                    String time = this.plugin.convertToFormat(TimeUnit.SECONDS.convert(questP.getQuestProgressFile().getCooldownFor(quest), TimeUnit.MILLISECONDS));
-                    if (time.startsWith("-")) {
-                        return "0";
+            switch (args[0].toLowerCase()) {
+                case "all":
+                case "a":
+                    final Collection<Quest> listAll = plugin.getQuestManager().getQuests().values();
+                    result = (args.length == 1 ? String.valueOf(listAll.size()) : parseList((List<Quest>) listAll, args[1], split));
+                    break;
+                case "completed":
+                case "c":
+                    final List<Quest> listCompleted = qPlayer.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.COMPLETED);
+                    result = (args.length == 1 ? String.valueOf(listCompleted.size()) : parseList(listCompleted, args[1], split));
+                    break;
+                case "completedbefore":
+                case "cb":
+                    final List<Quest> listCompletedB = qPlayer.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.COMPLETED_BEFORE);
+                    result = (args.length == 1 ? String.valueOf(listCompletedB.size()) : parseList(listCompletedB, args[1], split));
+                    break;
+                case "started":
+                case "s":
+                    final List<Quest> listStarted = qPlayer.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.STARTED);
+                    result = (args.length == 1 ? String.valueOf(listStarted.size()) : parseList(listStarted, args[1], split));
+                    break;
+                case "categories":
+                    if (args.length == 1) {
+                        result = String.valueOf(plugin.getQuestManager().getCategories().size());
+                    } else {
+                        final List<String> listCategories = new ArrayList<>();
+                        switch (args[1].toLowerCase()) {
+                            case "list":
+                            case "l":
+                                plugin.getQuestManager().getCategories().forEach(c -> listCategories.add(c.getDisplayNameStripped()));
+                                break;
+                            case "listid":
+                            case "lid":
+                                plugin.getQuestManager().getCategories().forEach(c -> listCategories.add(c.getId()));
+                                break;
+                            default:
+                                return args[0] + "_" + args[1] + "is not a valid placeholder";
+                        }
+                        result = String.join(split, listCategories);
                     }
-                    return time;
-                }
-                return "0";
-            } else if (key[1].equals("canaccept") || key[1].equals("canAccept")) {
-                if (quest != null && questP.getQuestProgressFile().canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
-                    return "true";
-                }
-                return "false";
-            } else if (key[1].equals("meetsrequirements") || key[1].equals("meetsRequirements")) {
-                if (quest != null && questP.getQuestProgressFile().hasMetRequirements(quest)) {
-                    return "true";
-                }
-                return "false";
-            } else if (key[1].startsWith("task") || key[1].startsWith("t")) {
-                String[] t = key[1].split(":");
-                if (key[2].equals("progress") || key[2].equals("p")) {
-                    if (quest == null || questP.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).getProgress() == null) {
-                        return "0";
+                    break;
+                default:
+                    return args[0] + "is not a valid placeholder";
+            }
+        } else {
+            final String[] key = args[0].split(":");
+            switch (key[0].toLowerCase()) {
+                case "quest":
+                case "q":
+                    if (key.length == 1) return "Please specify quest name";
+
+                    final Quest quest = plugin.getQuestManager().getQuestById(key[1]);
+                    if (quest == null) return key[1] + "is not a quest";
+
+                    if (args.length == 1) {
+                        result = quest.getId();
+                    } else {
+                        switch (args[1].toLowerCase()) {
+                            case "started":
+                            case "s":
+                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted() ? "true" : "false");
+                                break;
+                            case "completed":
+                            case "c":
+                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompleted() ? "true" : "false");
+                                break;
+                            case "completedbefore":
+                            case "cb":
+                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompletedBefore() ? "true" : "false");
+                                break;
+                            case "completiondate":
+                            case "cd":
+                                if (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompleted()) {
+                                    result = parseDate(args, qPlayer.getQuestProgressFile().getQuestProgress(quest).getCompletionDate());
+                                } else {
+                                    result = "Never";
+                                }
+                                break;
+                            case "cooldown":
+                                if (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompleted()) {
+                                    final String time = plugin.convertToFormat(TimeUnit.SECONDS.convert(qPlayer.getQuestProgressFile().getCooldownFor(quest), TimeUnit.MILLISECONDS));
+                                    if (!time.startsWith("-")) result = time;
+                                } else {
+                                    result = "0";
+                                }
+                                break;
+                            case "canaccept":
+                                result = (qPlayer.getQuestProgressFile().canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS ? "true" : "false");
+                                break;
+                            case "meetsrequirements":
+                                result = (qPlayer.getQuestProgressFile().hasMetRequirements(quest) ? "true" : "false");
+                                break;
+                            default:
+                                if (!args[1].contains(":")) return args[0] + "_" + args[1] + "is not a valid placeholder";
+
+                                final String[] t = args[1].split(":");
+                                if (!t[0].toLowerCase().equals("task") && !t[0].toLowerCase().equals("t")) return args[0] + "_" + args[1] + "is not a valid placeholder";
+                                if (t.length == 1) return "Please specify task name";
+
+                                if (args.length == 2) {
+                                    result = qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).getTaskId();
+                                } else {
+                                    switch (args[2].toLowerCase()) {
+                                        case "progress":
+                                        case "p":
+                                            final Object progress = qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).getProgress();
+                                            result = (progress == null ? "0" : String.valueOf(progress));
+                                            break;
+                                        case "completed":
+                                        case "c":
+                                            result = String.valueOf(qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).isCompleted());
+                                            break;
+                                        default:
+                                            return args[0] + "_" + args[1] + "_" + args[2] + "is not a valid placeholder";
+                                    }
+                                }
+                        }
                     }
-                    return String.valueOf(questP.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).getProgress());
-                } else if (key[2].equals("completed") || key[2].equals("c")) {
-                    if (quest == null || questP.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).isCompleted()) {
-                        return "true";
+                    break;
+                case "category":
+                case "c":
+                    if (!Options.CATEGORIES_ENABLED.getBooleanValue()) return "Categories Disabled";
+                    if (key.length == 1) return "Please specify category name";
+
+                    final Category category = plugin.getQuestManager().getCategoryById(key[1]);
+                    if (category == null) return key[1] + "is not a category";
+
+                    if (args.length == 1) {
+                        result = category.getId();
+                    } else {
+                        if (args.length > 2 && split.equals(args[2])) split = ",";
+                        switch (args[1].toLowerCase()) {
+                            case "all":
+                            case "a":
+                                final List<Quest> listAll = getCategoryQuests(qPlayer, category, QuestProgressFile.QuestsProgressFilter.ALL);
+                                result = (key.length == 2 ? String.valueOf(listAll.size()) : parseList(listAll, args[2], split));
+                                break;
+                            case "completed":
+                            case "c":
+                                final List<Quest> listCompleted = getCategoryQuests(qPlayer, category, QuestProgressFile.QuestsProgressFilter.COMPLETED);
+                                result = (key.length == 2 ? String.valueOf(listCompleted.size()) : parseList(listCompleted, args[2], split));
+                                break;
+                            case "completedbefore":
+                            case "cb":
+                                final List<Quest> listCompletedB = getCategoryQuests(qPlayer, category, QuestProgressFile.QuestsProgressFilter.COMPLETED_BEFORE);
+                                result = (key.length == 2 ? String.valueOf(listCompletedB.size()) : parseList(listCompletedB, args[2], split));
+                                break;
+                            case "started":
+                            case "s":
+                                final List<Quest> listStarted = getCategoryQuests(qPlayer, category, QuestProgressFile.QuestsProgressFilter.STARTED);
+                                result = (key.length == 2 ? String.valueOf(listStarted.size()) : parseList(listStarted, args[2], split));
+                                break;
+                            default:
+                                return args[0] + "_" + args[1] + "is not a valid placeholder";
+                        }
                     }
-                    return "false";
-                }
+                    break;
+                default:
+                    return args[0] + "is not a valid placeholder";
             }
-
-            return "null";
         }
+        return (save ? cache(p, params, result) : result);
+    }
 
-        if (key[0].startsWith("category:") || key[0].startsWith("c:")) {
-            if (!Options.CATEGORIES_ENABLED.getBooleanValue()) {
-                return "Categories Disabled";
-            }
-            Category category = this.plugin.getQuestManager().getCategoryById(key[0].substring(key[0].lastIndexOf(":") + 1));
-            if (key.length < 2) {
-                if (category != null) {
-                    return category.getId();
-                } else {
-                    return "null";
-                }
-            } else if (key.length == 2) {
-                switch (key[1]) {
-                    case "all":
-                    case "a":
-                        return String.valueOf(category.getRegisteredQuestIds().size());
-                    case "completed":
-                    case "c":
-                        return String.valueOf(getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.COMPLETED).size());
-                    case "completedbefore":
-                    case "completedBefore":
-                    case "cB":
-                        return String.valueOf(getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.COMPLETED_BEFORE).size());
-                    case "started":
-                    case "s":
-                        return String.valueOf(getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.STARTED).size());
-                }
-            } else if (key[2].equals("list") || key[2].equals("l")) {
-                String separator = ",";
-                if (!(key.length == 3)) {
-                    separator = key[3];
-                }
+    private String cache(Player player, String params, String result) {
+        final Map<String, String> map = new HashMap<>();
+        map.put(String.join("_", params), result);
+        cache.put(player, map);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> cache.remove(player), plugin.getConfig().getInt("options.placeholder-cache-time", 10) * 20);
+        return result;
+    }
 
-                switch (key[1]) {
-                    case "all":
-                    case "a":
-                        List<String> listAll = new ArrayList<>();
-                        for (Quest qCompleted : getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.ALL)) {
-                            listAll.add(qCompleted.getDisplayNameStripped());
-                        }
-                        return String.join(separator, listAll);
-                    case "completed":
-                    case "c":
-                        List<String> listCompleted = new ArrayList<>();
-                        for (Quest qCompleted : getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.COMPLETED)) {
-                            listCompleted.add(qCompleted.getDisplayNameStripped());
-                        }
-                        return String.join(separator, listCompleted);
-                    case "completedbefore":
-                    case "completedBefore":
-                    case "cB":
-                        List<String> listCompletedBefore = new ArrayList<>();
-                        for (Quest qCompletedBefore : getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.COMPLETED_BEFORE)) {
-                            listCompletedBefore.add(qCompletedBefore.getDisplayNameStripped());
-                        }
-                        return String.join(separator, listCompletedBefore);
-                    case "started":
-                    case "s":
-                        List<String> listStarted = new ArrayList<>();
-                        for (Quest qStarted : getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.STARTED)) {
-                            listStarted.add(qStarted.getDisplayNameStripped());
-                        }
-                        return String.join(separator, listStarted);
-                }
-            } else if (key[2].equals("listid") || key[2].equals("lid")) {
-                String separator = ",";
-                if (!(key.length == 3)) {
-                    separator = key[3];
-                }
-
-                switch (key[1]) {
-                    case "all":
-                    case "a":
-                        List<String> listAll = new ArrayList<>();
-                        for (Quest qCompleted : getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.ALL)) {
-                            listAll.add(qCompleted.getId());
-                        }
-                        return String.join(separator, listAll);
-                    case "completed":
-                    case "c":
-                        List<String> listCompleted = new ArrayList<>();
-                        for (Quest qCompleted : getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.COMPLETED)) {
-                            listCompleted.add(qCompleted.getId());
-                        }
-                        return String.join(separator, listCompleted);
-                    case "completedbefore":
-                    case "completedBefore":
-                    case "cB":
-                        List<String> listCompletedBefore = new ArrayList<>();
-                        for (Quest qCompletedBefore : getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.COMPLETED_BEFORE)) {
-                            listCompletedBefore.add(qCompletedBefore.getId());
-                        }
-                        return String.join(separator, listCompletedBefore);
-                    case "started":
-                    case "s":
-                        List<String> listStarted = new ArrayList<>();
-                        for (Quest qStarted : getCategoryQuests(questP, category, QuestProgressFile.QuestsProgressFilter.STARTED)) {
-                            listStarted.add(qStarted.getId());
-                        }
-                        return String.join(separator, listStarted);
-                }
-            }
-            return "null";
+    private String parseDate(String[] args, Long date) {
+        final String format = (args[args.length-1].equals(args[1]) ? "dd/MM/yyyy" : args[args.length-1]);
+        SimpleDateFormat sdf;
+        if (formats.containsKey(format)) {
+            sdf = formats.get(format);
+        } else {
+            sdf = new SimpleDateFormat(format);
+            formats.put(format, sdf);
         }
-        return null;
+        return sdf.format(date);
+    }
+
+    private String parseList(List<Quest> list, String type, String separator) {
+        final List<String> quests = new ArrayList<>();
+        switch (type.toLowerCase()) {
+            case "list":
+            case "l":
+                list.forEach(q -> quests.add(q.getDisplayNameStripped()));
+                break;
+            case "listid":
+            case "lid":
+                list.forEach(q -> quests.add(q.getId()));
+                break;
+            default:
+                return type + "is not a valid placeholder";
+        }
+        return String.join(separator, quests);
     }
 
     private List<Quest> getCategoryQuests(QPlayer questP, Category category, QuestProgressFile.QuestsProgressFilter filter) {
-        List<Quest> categoryQuests = new ArrayList<>();
-        for (String cQuests : category.getRegisteredQuestIds()) {
-            Quest quest = plugin.getQuestManager().getQuestById(cQuests);
-            if (quest == null) continue;
-
-            boolean condition = false;
-            if (filter == QuestProgressFile.QuestsProgressFilter.STARTED) {
-                condition = questP.getQuestProgressFile().getQuestProgress(quest).isStarted();
-            } else if (filter == QuestProgressFile.QuestsProgressFilter.COMPLETED_BEFORE) {
-                condition = questP.getQuestProgressFile().getQuestProgress(quest).isCompletedBefore();
-            } else if (filter == QuestProgressFile.QuestsProgressFilter.COMPLETED) {
-                condition = questP.getQuestProgressFile().getQuestProgress(quest).isCompleted();
-            } else if (filter == QuestProgressFile.QuestsProgressFilter.ALL) {
-                condition = true;
+        final List<Quest> categoryQuests = new ArrayList<>();
+        category.getRegisteredQuestIds().forEach(q -> {
+            Quest quest = plugin.getQuestManager().getQuestById(q);
+            if (quest != null) {
+                switch (filter) {
+                    case STARTED:
+                        if (questP.getQuestProgressFile().getQuestProgress(quest).isStarted()) categoryQuests.add(quest);
+                        break;
+                    case COMPLETED:
+                        if (questP.getQuestProgressFile().getQuestProgress(quest).isCompleted()) categoryQuests.add(quest);
+                        break;
+                    case COMPLETED_BEFORE:
+                        if (questP.getQuestProgressFile().getQuestProgress(quest).isCompletedBefore()) categoryQuests.add(quest);
+                        break;
+                    default:
+                        categoryQuests.add(quest);
+                }
             }
-
-            if (condition) {
-                categoryQuests.add(quest);
-            }
-        }
+        });
         return categoryQuests;
     }
 }

@@ -22,6 +22,7 @@ import com.leonardobishop.quests.title.Title_Bukkit;
 import com.leonardobishop.quests.title.Title_BukkitNoTimings;
 import com.leonardobishop.quests.title.Title_Other;
 import com.leonardobishop.quests.updater.Updater;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -43,6 +44,7 @@ public class Quests extends JavaPlugin {
     private ItemGetter itemGetter;
     private QuestsConfigLoader questsConfigLoader;
     private QuestsLogger questsLogger;
+    private PlaceholderExpansion placeholder;
 
     private boolean brokenConfig = false;
     private BukkitTask questCompleterTask;
@@ -112,7 +114,8 @@ public class Quests extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EventPlayerLeave(this), this);
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            new QuestsPlaceholders(this).register();
+            placeholder = new QuestsPlaceholders(this);
+            placeholder.register();
         }
 
         Metrics metrics = new Metrics(this);
@@ -200,6 +203,7 @@ public class Quests extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (placeholder != null) placeholder.unregister();
         for (TaskType taskType : getTaskTypeManager().getTaskTypes()) {
             try {
                 taskType.onDisable();

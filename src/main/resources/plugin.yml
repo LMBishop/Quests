@@ -1,11 +1,15 @@
-name: Quests
+# This will be replaced with the property "rootProject.name" in settings.gradle
+name: ${name}
 
-# This will be replaced with the property "release.version" in pom.xml upon build.
-version: %PLUGIN_VERSION%
+# This will be replaced with the property "version" in build.gradle
+version: ${version}
 
-main: com.leonardobishop.quests.Quests
+# This will be replaced with the property "group" in build.gradle + plugin name
+# See "processResources" in build.gradle for more info
+main: ${main}
+
 author: LMBishop
-softdepend: [ASkyBlock, uSkyBlock, Citizens, PlaceholderAPI]
+softdepend: [ASkyBlock, BentoBox, IridiumSkyblock, uSkyBlock, Citizens, MythicMobs, PlaceholderAPI]
 prefix: Quests
 api-version: "1.13" # allows new API features but Quests will still work pre-1.13
 
