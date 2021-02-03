@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheable {
 
     private final Quests plugin;
-    private final Map<Player, Map<String, String>> cache = new HashMap<>();
+    private final Map<String, Map<String, String>> cache = new HashMap<>();
     private final Map<String, SimpleDateFormat> formats = new HashMap<>();
 
     public QuestsPlaceholders(Quests plugin) {
@@ -55,7 +55,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
     @Override
     public String onPlaceholderRequest(Player p, String params) {
         if (p == null || !p.isOnline()) return null;
-        if (cache.containsKey(p) && cache.get(p).containsKey(params)) return cache.get(p).get(params);
+        if (cache.containsKey(p.getName()) && cache.get(p.getName()).containsKey(params)) return cache.get(p.getName()).get(params);
 
         String[] args = params.split("_", 4);
         if (args.length < 1) return "Invalid Placeholder";
@@ -73,7 +73,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
             switch (args[0].toLowerCase()) {
                 case "all":
                 case "a":
-                    final Collection<Quest> listAll = plugin.getQuestManager().getQuests().values();
+                    final List<Quest> listAll = new ArrayList<>(plugin.getQuestManager().getQuests().values());
                     result = (args.length == 1 ? String.valueOf(listAll.size()) : parseList((List<Quest>) listAll, args[1], split));
                     break;
                 case "completed":
@@ -125,7 +125,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                     if (quest == null) return key[1] + "is not a quest";
 
                     if (args.length == 1) {
-                        result = quest.getId();
+                        result = quest.getDisplayNameStripped();
                     } else {
                         switch (args[1].toLowerCase()) {
                             case "started":
@@ -198,29 +198,29 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                     if (category == null) return key[1] + "is not a category";
 
                     if (args.length == 1) {
-                        result = category.getId();
+                        result = category.getDisplayNameStripped();
                     } else {
                         if (args.length > 2 && split.equals(args[2])) split = ",";
                         switch (args[1].toLowerCase()) {
                             case "all":
                             case "a":
                                 final List<Quest> listAll = getCategoryQuests(qPlayer, category, QuestProgressFile.QuestsProgressFilter.ALL);
-                                result = (key.length == 2 ? String.valueOf(listAll.size()) : parseList(listAll, args[2], split));
+                                result = (args.length == 2 ? String.valueOf(listAll.size()) : parseList(listAll, args[2], split));
                                 break;
                             case "completed":
                             case "c":
                                 final List<Quest> listCompleted = getCategoryQuests(qPlayer, category, QuestProgressFile.QuestsProgressFilter.COMPLETED);
-                                result = (key.length == 2 ? String.valueOf(listCompleted.size()) : parseList(listCompleted, args[2], split));
+                                result = (args.length == 2 ? String.valueOf(listCompleted.size()) : parseList(listCompleted, args[2], split));
                                 break;
                             case "completedbefore":
                             case "cb":
                                 final List<Quest> listCompletedB = getCategoryQuests(qPlayer, category, QuestProgressFile.QuestsProgressFilter.COMPLETED_BEFORE);
-                                result = (key.length == 2 ? String.valueOf(listCompletedB.size()) : parseList(listCompletedB, args[2], split));
+                                result = (args.length == 2 ? String.valueOf(listCompletedB.size()) : parseList(listCompletedB, args[2], split));
                                 break;
                             case "started":
                             case "s":
                                 final List<Quest> listStarted = getCategoryQuests(qPlayer, category, QuestProgressFile.QuestsProgressFilter.STARTED);
-                                result = (key.length == 2 ? String.valueOf(listStarted.size()) : parseList(listStarted, args[2], split));
+                                result = (args.length == 2 ? String.valueOf(listStarted.size()) : parseList(listStarted, args[2], split));
                                 break;
                             default:
                                 return args[0] + "_" + args[1] + "is not a valid placeholder";
@@ -231,14 +231,16 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                     return args[0] + "is not a valid placeholder";
             }
         }
-        return (save ? cache(p, params, result) : result);
+        return (save ? cache(p.getName(), params, result) : result);
     }
 
-    private String cache(Player player, String params, String result) {
-        final Map<String, String> map = new HashMap<>();
-        map.put(String.join("_", params), result);
-        cache.put(player, map);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> cache.remove(player), plugin.getConfig().getInt("options.placeholder-cache-time", 10) * 20);
+    private String cache(String player, String params, String result) {
+        if (!cache.containsKey(player) || !cache.get(player).containsKey(params)) {
+            final Map<String, String> map = new HashMap<>();
+            map.put(params, result);
+            cache.put(player, map);
+            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> cache.get(player).remove(params), plugin.getConfig().getInt("options.placeholder-cache-time", 10) * 20);
+        }
         return result;
     }
 
