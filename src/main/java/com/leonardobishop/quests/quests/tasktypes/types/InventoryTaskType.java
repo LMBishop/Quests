@@ -18,6 +18,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -70,13 +72,17 @@ public final class InventoryTaskType extends TaskType {
         Bukkit.getScheduler().runTaskLater(Quests.get(), () -> this.checkInventory(event.getPlayer()), 1L);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR/*, ignoreCancelled = true*/)
-    public void onInventoryClick(InventoryClickEvent event) {
-        Bukkit.getScheduler().runTaskLater(Quests.get(), () -> checkInventory((Player) event.getWhoClicked()), 1L); //Still some work to do as it doesn't really work
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onInventoryClick(InventoryCloseEvent event) {
+        Bukkit.getScheduler().runTaskLater(Quests.get(), () -> checkInventory((Player) event.getPlayer()), 1L); //Still some work to do as it doesn't really work
     }
 
     @SuppressWarnings("deprecation")
     private void checkInventory(Player player) {
+        if (player == null || !player.isOnline()) {
+            return;
+        }
+
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
         if (qPlayer == null) {
             return;
@@ -116,8 +122,12 @@ public final class InventoryTaskType extends TaskType {
                         is = new ItemStack(material, 1);
                     }
 
-                    if (task.getConfigValue("update-progress") != null && (Boolean) task.getConfigValue("update-progress")) {
-                        taskProgress.setProgress(getAmount(player, is, amount));
+                    if (task.getConfigValue("update-progress") != null
+                            && (Boolean) task.getConfigValue("update-progress")) {
+                        int inInv = getAmount(player, is, amount);
+                        if (taskProgress.getProgress() != null && (int) taskProgress.getProgress() != inInv) {
+                            taskProgress.setProgress(inInv);
+                        }
                     }
 
                     if (player.getInventory().containsAtLeast(is, amount)) {
