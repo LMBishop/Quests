@@ -8,13 +8,16 @@ This plugin will allow your players to do quests in-game to earn rewards. This c
 
 ## Downloads/Building
 The latest release version of Quests can be found on [Spigot](https://www.spigotmc.org/resources/▶-quests-◀-set-up-goals-for-players.23696/).
+The latest build of Quests can be found on [Github](https://github.com/LMBishop/Quests/actions).
 
-Alternatively, you can build Quests via Maven using ``mvn clean package``.
+Alternatively, you can build Quests via Gradle using ``gradlew build``.
 
-### Maven
+### Custom Task
 Creating new Task Types within Quests is supported, [see the wiki](https://github.com/LMBishop/Quests/wiki/New-Task-Type) for help.
 
-You can include quests in your Maven project using [JitPack](https://jitpack.io/#LMBishop/Quests):
+You can include quests in your project using [JitPack](https://jitpack.io/#LMBishop/Quests) repository.
+
+### Maven
 ```xml
 <repository>
     <id>jitpack.io</id>
@@ -28,6 +31,16 @@ You can include quests in your Maven project using [JitPack](https://jitpack.io/
     <version>master-SNAPSHOT</version>
     <scope>provided</scope>
 </dependency>
+```
+
+### Gradle
+```groovy
+repositories {
+    maven { url = 'https://jitpack.io' }
+}  
+dependencies {
+    compileOnly 'com.github.LMBishop:Quests:master-SNAPSHOT'
+}
 ```
 
 ## Contributors
