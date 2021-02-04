@@ -194,6 +194,13 @@ public class QuestProgressFile {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
                 }
             }
+            for (Task task : quest.getTasks()) {
+                try {
+                    plugin.getTaskTypeManager().getTaskType(task.getType()).onStart(quest, task, playerUUID);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return code;
     }

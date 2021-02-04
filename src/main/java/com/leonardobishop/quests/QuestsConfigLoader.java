@@ -258,7 +258,8 @@ public class QuestsConfigLoader {
             for (TaskType taskType : plugin.getTaskTypeManager().getTaskTypes()) {
                 try {
                     taskType.onReady();
-                } catch (Exception ignored) {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
