@@ -35,6 +35,8 @@ public class EventPlayerJoin implements Listener {
             // delay for a bit so they actually see the message
             Bukkit.getScheduler().runTaskLater(this.plugin, () -> event.getPlayer().sendMessage(plugin.getUpdater().getMessage()), 50L);
         }
+        // run a full check to check for any missed quest completions
+        plugin.getQuestCompleter().queueFullCheck(plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile());
     }
 
 }

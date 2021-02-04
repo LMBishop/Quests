@@ -1,11 +1,15 @@
 package com.leonardobishop.quests.player.questprogressfile;
 
+import com.leonardobishop.quests.Quests;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class QuestProgress {
+
+    private final Quests plugin;
 
     private Map<String, TaskProgress> taskProgress = new HashMap<>();
     private String questid;
@@ -16,7 +20,8 @@ public class QuestProgress {
     private UUID player;
     private boolean modified;
 
-    public QuestProgress(String questid, boolean completed, boolean completedBefore, long completionDate, UUID player, boolean started) {
+    public QuestProgress(Quests plugin, String questid, boolean completed, boolean completedBefore, long completionDate, UUID player, boolean started) {
+        this.plugin = plugin;
         this.questid = questid;
         this.completed = completed;
         this.completedBefore = completedBefore;
@@ -25,8 +30,8 @@ public class QuestProgress {
         this.started = started;
     }
 
-    public QuestProgress(String questid, boolean completed, boolean completedBefore, long completionDate, UUID player, boolean started, boolean modified) {
-        this(questid, completed, completedBefore, completionDate, player, started);
+    public QuestProgress(Quests plugin, String questid, boolean completed, boolean completedBefore, long completionDate, UUID player, boolean started, boolean modified) {
+        this(plugin, questid, completed, completedBefore, completionDate, player, started);
         this.modified = modified;
     }
 
@@ -96,10 +101,11 @@ public class QuestProgress {
     }
 
     public void repairTaskProgress(String taskid) {
-        TaskProgress taskProgress = new TaskProgress(taskid, null, player, false, false);
+        TaskProgress taskProgress = new TaskProgress(this, taskid, null, player, false, false);
         this.addTaskProgress(taskProgress);
     }
 
+    @Deprecated // this shit is annoying to maintain
     public boolean isWorthSaving() {
         if (modified) return true;
         else {
@@ -108,6 +114,10 @@ public class QuestProgress {
             }
             return false;
         }
+    }
+
+    public void queueForCompletionTest() {
+        plugin.getQuestCompleter().queueSingular(this);
     }
 
     public void resetModified() {

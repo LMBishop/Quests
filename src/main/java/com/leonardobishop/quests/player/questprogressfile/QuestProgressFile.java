@@ -374,9 +374,9 @@ public class QuestProgressFile {
     public boolean generateBlankQuestProgress(String questid) {
         if (plugin.getQuestManager().getQuestById(questid) != null) {
             Quest quest = plugin.getQuestManager().getQuestById(questid);
-            QuestProgress questProgress = new QuestProgress(quest.getId(), false, false, 0, playerUUID, false, false);
+            QuestProgress questProgress = new QuestProgress(plugin, quest.getId(), false, false, 0, playerUUID, false, false);
             for (Task task : quest.getTasks()) {
-                TaskProgress taskProgress = new TaskProgress(task.getId(), null, playerUUID, false, false);
+                TaskProgress taskProgress = new TaskProgress(questProgress, task.getId(), null, playerUUID, false, false);
                 questProgress.addTaskProgress(taskProgress);
             }
 
@@ -410,13 +410,8 @@ public class QuestProgressFile {
         }
 
         YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
-        if (fullWrite) {
-            data.set("quest-progress", null);
-        }
+        data.set("quest-progress", null);
         for (QuestProgress questProgress : questProgress.values()) {
-            if (!questProgress.isWorthSaving() && !fullWrite) {
-                continue;
-            }
             data.set("quest-progress." + questProgress.getQuestId() + ".started", questProgress.isStarted());
             data.set("quest-progress." + questProgress.getQuestId() + ".completed", questProgress.isCompleted());
             data.set("quest-progress." + questProgress.getQuestId() + ".completed-before", questProgress.isCompletedBefore());

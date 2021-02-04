@@ -43,6 +43,7 @@ public class Quests extends JavaPlugin {
     private static Updater updater;
     private static Title title;
     private ItemGetter itemGetter;
+    private QuestCompleter questCompleter;
     private QuestsConfigLoader questsConfigLoader;
     private QuestsLogger questsLogger;
     private PlaceholderExpansion placeholder;
@@ -101,6 +102,7 @@ public class Quests extends JavaPlugin {
     @Override
     public void onEnable() {
         questsLogger = new QuestsLogger(this, QuestsLogger.LoggingLevel.INFO);
+        questCompleter = new QuestCompleter(this);
 
         taskTypeManager = new TaskTypeManager(this);
         questManager = new QuestManager(this);
@@ -200,6 +202,8 @@ public class Quests extends JavaPlugin {
             ignoreUpdates = new File(this.getDataFolder() + File.separator + "stfuQuestsUpdate").exists();
         } catch (Throwable ignored) { }
 
+        Bukkit.getScheduler().runTaskTimer(this, questCompleter, 1L, 1L);
+
         updater = new Updater(this);
         if (!ignoreUpdates) {
             Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
@@ -246,14 +250,6 @@ public class Quests extends JavaPlugin {
                 qPlayer.getQuestProgressFile().saveToDisk(false);
             }
         }, autocompleteInterval, autocompleteInterval);
-        if (questCompleterTask != null) {
-            try {
-                questCompleterTask.cancel();
-            } catch (Exception ignored) {
-                questsLogger.debug("Cannot cancel quest completer task");
-            }
-        }
-        questCompleterTask = Bukkit.getScheduler().runTaskTimer(this, new QuestCompleter(this), 20, completerPollInterval);
     }
 
     public ItemStack getItemStack(String path, ConfigurationSection config, ItemGetter.Filter... excludes) {
@@ -367,6 +363,10 @@ public class Quests extends JavaPlugin {
                 }
             }
         }
+    }
+
+    public QuestCompleter getQuestCompleter() {
+        return questCompleter;
     }
 
     public QuestsLogger getQuestsLogger() {

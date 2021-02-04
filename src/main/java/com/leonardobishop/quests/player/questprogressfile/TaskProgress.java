@@ -4,20 +4,23 @@ import java.util.UUID;
 
 public class TaskProgress {
 
+    private final QuestProgress questProgress;
+
     private boolean modified;
     private String taskid;
     private Object progress;
     private UUID player;
     private boolean completed;
 
-    public TaskProgress(String taskid, Object progress, UUID player, boolean completed) {
+    public TaskProgress(QuestProgress questProgress, String taskid, Object progress, UUID player, boolean completed) {
+        this.questProgress = questProgress;
         this.taskid = taskid;
         this.progress = progress;
         this.completed = completed;
     }
 
-    public TaskProgress(String taskid, Object progress, UUID player, boolean completed, boolean modified) {
-        this(taskid, progress, player, completed);
+    public TaskProgress(QuestProgress questProgress, String taskid, Object progress, UUID player, boolean completed, boolean modified) {
+        this(questProgress, taskid, progress, player, completed);
         this.modified = modified;
     }
 
@@ -45,6 +48,10 @@ public class TaskProgress {
     public void setCompleted(boolean complete) {
         this.completed = complete;
         this.modified = true;
+
+        if (complete) {
+            questProgress.queueForCompletionTest();
+        }
     }
 
     public boolean isModified() {

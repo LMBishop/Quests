@@ -90,14 +90,14 @@ public class QPlayerManager {
                                 boolean completedBefore = data.getBoolean("quest-progress." + id + ".completed-before");
                                 long completionDate = data.getLong("quest-progress." + id + ".completion-date");
 
-                                QuestProgress questProgress = new QuestProgress(id, completed, completedBefore, completionDate, uuid, started, true);
+                                QuestProgress questProgress = new QuestProgress(plugin, id, completed, completedBefore, completionDate, uuid, started, true);
 
                                 if (data.isConfigurationSection("quest-progress." + id + ".task-progress")) {
                                     for (String taskid : data.getConfigurationSection("quest-progress." + id + ".task-progress").getKeys(false)) {
                                         boolean taskCompleted = data.getBoolean("quest-progress." + id + ".task-progress." + taskid + ".completed");
                                         Object taskProgression = data.get("quest-progress." + id + ".task-progress." + taskid + ".progress");
 
-                                        TaskProgress taskProgress = new TaskProgress(taskid, taskProgression, uuid, taskCompleted, false);
+                                        TaskProgress taskProgress = new TaskProgress(questProgress, taskid, taskProgression, uuid, taskCompleted, false);
                                         questProgress.addTaskProgress(taskProgress);
                                     }
                                 }
