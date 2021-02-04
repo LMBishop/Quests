@@ -1,5 +1,6 @@
-package com.leonardobishop.quests.quests.tasktypes.types;
+package com.leonardobishop.quests.quests.tasktypes.types.dependent;
 
+import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
@@ -11,7 +12,10 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
-import com.wasteofplastic.askyblock.events.IslandPostLevelEvent;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
@@ -19,22 +23,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class ASkyBlockLevelType extends TaskType {
+public final class CitizensInteractTaskType extends TaskType {
 
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
-    public ASkyBlockLevelType() {
-        super("askyblock_level", "LMBishop", "Reach a certain island level for ASkyBlock.");
-        this.creatorConfigValues.add(new ConfigValue("level", true, "Minimum island level needed."));
+    public CitizensInteractTaskType() {
+        super("citizens_interact", "LMBishop", "Interact with an NPC to complete the quest.");
+        this.creatorConfigValues.add(new ConfigValue("npc-name", true, "Name of the NPC."));
+        this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }
 
     @Override
     public List<QuestsConfigLoader.ConfigProblem> detectProblemsInConfig(String root, HashMap<String, Object> config) {
         ArrayList<QuestsConfigLoader.ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".level", config.get("level"), problems, "level", super.getType()))
-            TaskUtils.configValidateInt(root + ".level", config.get("level"), problems, false, false, "level");
+        TaskUtils.configValidateExists(root + ".npc-name", config.get("npc-name"), problems, "npc-name", super.getType());
+        TaskUtils.configValidateBoolean(root + ".remove-items-when-complete", config.get("remove-items-when-complete"), problems, true, "remove-items-when-complete", super.getType());
         return problems;
     }
+
 
     @Override
     public List<ConfigValue> getCreatorConfigValues() {
@@ -42,8 +48,8 @@ public final class ASkyBlockLevelType extends TaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onIslandLevel(IslandPostLevelEvent event) {
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer(), true);
+    public void onNPCClick(NPCRightClickEvent event) {
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getClicker().getUniqueId(), true);
         if (qPlayer == null) {
             return;
         }
@@ -55,21 +61,22 @@ public final class ASkyBlockLevelType extends TaskType {
                 QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
+                    if (!TaskUtils.validateWorld(event.getClicker(), task)) continue;
+
+                    if (!ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', String.valueOf(task.getConfigValue("npc-name")))).equals(ChatColor
+                            .stripColor(ChatColor.translateAlternateColorCodes('&', event.getNPC().getName())))) {
+                        return;
+                    }
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
                     if (taskProgress.isCompleted()) {
                         continue;
                     }
 
-                    long islandLevelNeeded = (long) (int) task.getConfigValue("level");
-
-                    taskProgress.setProgress(event.getLongLevel());
-
-                    if (((long) taskProgress.getProgress()) >= islandLevelNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
+                    taskProgress.setCompleted(true);
                 }
             }
         }
     }
+
 }

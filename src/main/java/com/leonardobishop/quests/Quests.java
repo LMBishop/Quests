@@ -17,6 +17,7 @@ import com.leonardobishop.quests.quests.QuestManager;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskTypeManager;
 import com.leonardobishop.quests.quests.tasktypes.types.*;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.*;
 import com.leonardobishop.quests.title.Title;
 import com.leonardobishop.quests.title.Title_Bukkit;
 import com.leonardobishop.quests.title.Title_BukkitNoTimings;

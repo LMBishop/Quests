@@ -1,4 +1,4 @@
-package com.leonardobishop.quests.quests.tasktypes.types;
+package com.leonardobishop.quests.quests.tasktypes.types.dependent;
 
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.User;
