@@ -14,6 +14,8 @@ import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -47,9 +49,27 @@ public final class InventoryTaskType extends TaskType {
         ArrayList<QuestsConfigLoader.ConfigProblem> problems = new ArrayList<>();
         if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType())) {
             Object configBlock = config.get("item");
-            if (Material.getMaterial(String.valueOf(configBlock)) == null) {
-                problems.add(new QuestsConfigLoader.ConfigProblem(QuestsConfigLoader.ConfigProblemType.WARNING,
-                        QuestsConfigLoader.ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(configBlock)), root + ".item"));
+            if (configBlock instanceof ConfigurationSection) {
+                ConfigurationSection section = (ConfigurationSection) configBlock;
+                String itemloc = "item";
+                if (!section.contains("item")) {
+                    itemloc = "type";
+                }
+                if (!section.contains(itemloc)) {
+                    problems.add(new QuestsConfigLoader.ConfigProblem(QuestsConfigLoader.ConfigProblemType.WARNING,
+                            QuestsConfigLoader.ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(""), root + ".item.type"));
+                } else {
+                    String type = String.valueOf(section.get(itemloc));
+                    if (!Quests.get().getItemGetter().isValidMaterial(type)) {
+                        problems.add(new QuestsConfigLoader.ConfigProblem(QuestsConfigLoader.ConfigProblemType.WARNING,
+                                QuestsConfigLoader.ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(type), root + ".item." + itemloc));
+                    }
+                }
+            } else {
+                if (Material.getMaterial(String.valueOf(configBlock)) == null) {
+                    problems.add(new QuestsConfigLoader.ConfigProblem(QuestsConfigLoader.ConfigProblemType.WARNING,
+                            QuestsConfigLoader.ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(configBlock)), root + ".item.item"));
+                }
             }
         }
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
@@ -109,17 +129,20 @@ public final class InventoryTaskType extends TaskType {
                     Object configData = task.getConfigValue("data");
                     Object remove = task.getConfigValue("remove-items-when-complete");
 
-                    material = Material.getMaterial(String.valueOf(configBlock));
-
-
-                    if (material == null) {
-                        continue;
-                    }
                     ItemStack is;
-                    if (configData != null) {
-                        is = new ItemStack(material, 1, ((Integer) configData).shortValue());
+                    if (configBlock instanceof ConfigurationSection) {
+                        is = Quests.get().getItemStack("", (org.bukkit.configuration.ConfigurationSection) configBlock);
                     } else {
-                        is = new ItemStack(material, 1);
+                        material = Material.getMaterial(String.valueOf(configBlock));
+
+                        if (material == null) {
+                            continue;
+                        }
+                        if (configData != null) {
+                            is = new ItemStack(material, 1, ((Integer) configData).shortValue());
+                        } else {
+                            is = new ItemStack(material, 1);
+                        }
                     }
 
                     if (task.getConfigValue("update-progress") != null

@@ -45,24 +45,25 @@ public final class CitizensDeliverTaskType extends TaskType {
         if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType())) {
             Object configBlock = config.get("item");
             if (configBlock instanceof ConfigurationSection) {
-                String itemloc = "item.type";
-                if (!config.containsKey("item.type")) {
-                    itemloc = "item.item";
+                ConfigurationSection section = (ConfigurationSection) configBlock;
+                String itemloc = "item";
+                if (!section.contains("item")) {
+                    itemloc = "type";
                 }
-                if (!config.containsKey(itemloc)) {
+                if (!section.contains(itemloc)) {
                     problems.add(new QuestsConfigLoader.ConfigProblem(QuestsConfigLoader.ConfigProblemType.WARNING,
-                            QuestsConfigLoader.ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(""), root + ".item"));
+                            QuestsConfigLoader.ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(""), root + ".item.type"));
                 } else {
-                    String type = String.valueOf(config.get(itemloc));
+                    String type = String.valueOf(section.get(itemloc));
                     if (!Quests.get().getItemGetter().isValidMaterial(type)) {
                         problems.add(new QuestsConfigLoader.ConfigProblem(QuestsConfigLoader.ConfigProblemType.WARNING,
-                                QuestsConfigLoader.ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(type), root + "." + itemloc));
+                                QuestsConfigLoader.ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(type), root + ".item." + itemloc));
                     }
                 }
             } else {
                 if (Material.getMaterial(String.valueOf(configBlock)) == null) {
                     problems.add(new QuestsConfigLoader.ConfigProblem(QuestsConfigLoader.ConfigProblemType.WARNING,
-                            QuestsConfigLoader.ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(configBlock)), root + ".item"));
+                            QuestsConfigLoader.ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(configBlock)), root + ".item.item"));
                 }
             }
         }
