@@ -36,6 +36,8 @@ repositories {
     maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
     // PlaceholderAPI
     maven { url = 'http://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    // EssentialsX
+    maven { url = 'https://repo.essentialsx.net/releases/' }
     // JitPack
     maven { url = 'https://jitpack.io' }
     mavenCentral()
@@ -75,6 +77,8 @@ dependencies {
     }
     // PlaceholderAPI
     compileOnly 'me.clip:placeholderapi:2.10.9'
+    // EssentialsX
+    compileOnly "net.ess3:EssentialsX:2.18.2"
 
     compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
 }

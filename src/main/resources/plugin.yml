@@ -9,7 +9,7 @@ version: ${version}
 main: ${main}
 
 author: LMBishop
-softdepend: [ASkyBlock, BentoBox, IridiumSkyblock, uSkyBlock, Citizens, MythicMobs, PlaceholderAPI]
+softdepend: [ASkyBlock, BentoBox, IridiumSkyblock, uSkyBlock, Citizens, MythicMobs, PlaceholderAPI, Essentials]
 prefix: Quests
 api-version: "1.13" # allows new API features but Quests will still work pre-1.13
 

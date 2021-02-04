@@ -175,6 +175,10 @@ public class Quests extends JavaPlugin {
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 taskTypeManager.registerTaskType(new PlaceholderAPIEvaluateTaskType());
             }
+            if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
+                taskTypeManager.registerTaskType(new EssentialsMoneyEarnTaskType());
+                taskTypeManager.registerTaskType(new EssentialsBalanceTaskType());
+            }
 
             taskTypeManager.closeRegistrations();
             reloadQuests();
@@ -206,7 +210,6 @@ public class Quests extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (placeholder != null) placeholder.unregister();
         for (TaskType taskType : getTaskTypeManager().getTaskTypes()) {
             try {
                 taskType.onDisable();
@@ -215,6 +218,7 @@ public class Quests extends JavaPlugin {
         for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
             qPlayer.getQuestProgressFile().saveToDisk(true);
         }
+        if (placeholder != null) placeholder.unregister();
     }
 
     public void reloadQuests() {
