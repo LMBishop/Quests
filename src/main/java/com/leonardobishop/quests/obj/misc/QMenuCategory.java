@@ -6,9 +6,12 @@ import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.quests.Category;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,11 +20,13 @@ import java.util.List;
  */
 public class QMenuCategory implements QMenu {
 
+    private final Quests plugin;
     private final int pageSize = 45;
     private final HashMap<Integer, QMenuQuest> slotsToMenuQuest = new HashMap<>();
     private final QPlayer owner;
 
-    public QMenuCategory(QPlayer owner) {
+    public QMenuCategory(Quests plugin, QPlayer owner) {
+        this.plugin = plugin;
         this.owner = owner;
     }
 
@@ -61,12 +66,12 @@ public class QMenuCategory implements QMenu {
             if (slotsToMenuQuest.containsKey(pointer)) {
                 Category category = Quests.get().getQuestManager().getCategoryById(slotsToMenuQuest.get(pointer).getCategoryName());
                 if (category != null) {
-                    inventory.setItem(pointer, category.getDisplayItem());
+                    inventory.setItem(pointer, replaceItemStack(category.getDisplayItem()));
                 }
             }
         }
 
-        inventory.setItem(49, pageIs);
+        inventory.setItem(49, replaceItemStack(pageIs));
 
         if (Options.TRIM_GUI_SIZE.getBooleanValue() && page == 1) {
             int slotsUsed = 0;
@@ -85,7 +90,7 @@ public class QMenuCategory implements QMenu {
             Inventory trimmedInventory = Bukkit.createInventory(null, inventorySize, title);
 
             for (int slot = 0; slot < pageMax; slot++) {
-                if (slot >= trimmedInventory.getSize()){
+                if (slot >= trimmedInventory.getSize()) {
                     break;
                 }
                 trimmedInventory.setItem(slot, inventory.getItem(slot));
@@ -95,6 +100,27 @@ public class QMenuCategory implements QMenu {
             return inventory;
         }
 
+    }
+
+    public ItemStack replaceItemStack(ItemStack is) {
+        if (plugin.getPlaceholderAPIHook() != null && Options.GUI_USE_PLACEHOLDERAPI.getBooleanValue()) {
+            ItemStack newItemStack = is.clone();
+            List<String> lore = newItemStack.getItemMeta().getLore();
+            List<String> newLore = new ArrayList<>();
+            ItemMeta ism = newItemStack.getItemMeta();
+            Player player = Bukkit.getPlayer(owner.getUuid());
+            ism.setDisplayName(plugin.getPlaceholderAPIHook().replacePlaceholders(player, ism.getDisplayName()));
+            if (lore != null) {
+                for (String s : lore) {
+                    s = plugin.getPlaceholderAPIHook().replacePlaceholders(player, s);
+                    newLore.add(s);
+                }
+            }
+            ism.setLore(newLore);
+            newItemStack.setItemMeta(ism);
+            return newItemStack;
+        }
+        return is;
     }
 
 }

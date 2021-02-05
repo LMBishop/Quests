@@ -1,4 +1,4 @@
-package com.leonardobishop.quests.title;
+package com.leonardobishop.quests.hooks.title;
 
 import org.bukkit.entity.Player;
 

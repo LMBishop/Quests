@@ -1,6 +1,6 @@
 package com.leonardobishop.quests;
 
-import com.leonardobishop.quests.itemgetter.ItemGetter;
+import com.leonardobishop.quests.hooks.itemgetter.ItemGetter;
 import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.obj.misc.QItemStack;
 import com.leonardobishop.quests.quests.Category;
@@ -301,7 +301,7 @@ public class QuestsConfigLoader {
         ItemStack is = plugin.getItemStack(path, config,
                 ItemGetter.Filter.DISPLAY_NAME, ItemGetter.Filter.LORE, ItemGetter.Filter.ENCHANTMENTS, ItemGetter.Filter.ITEM_FLAGS);
 
-        return new QItemStack(name, loreNormal, loreStarted, is);
+        return new QItemStack(plugin, name, loreNormal, loreStarted, is);
     }
 
     public enum ConfigProblemDescriptions {

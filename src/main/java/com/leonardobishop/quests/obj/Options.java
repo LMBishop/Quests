@@ -15,6 +15,7 @@ public enum Options {
     GUI_HIDE_LOCKED("options.gui-hide-locked"),
     GUI_HIDE_QUESTS_NOPERMISSION("options.gui-hide-quests-nopermission"),
     GUI_HIDE_CATEGORIES_NOPERMISSION("options.gui-hide-categories-nopermission"),
+    GUI_USE_PLACEHOLDERAPI("options.gui-use-placeholderapi"),
     GUITITLE_QUESTS_CATEGORY("options.guinames.quests-category"),
     GUITITLE_QUESTS("options.guinames.quests-menu"),
     GUITITLE_DAILY_QUESTS("options.guinames.daily-quests"),

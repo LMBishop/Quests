@@ -99,22 +99,6 @@ public class QMenuDaily implements QMenu {
         return Bukkit.createInventory(null, 27, title);
     }
 
-    public ItemStack replaceItemStack(ItemStack is, Map<String, String> placeholders) {
-        ItemStack newItemStack = is.clone();
-        List<String> lore = newItemStack.getItemMeta().getLore();
-        List<String> newLore = new ArrayList<>();
-        for (String s : lore) {
-            for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-                s = s.replace(entry.getKey(), entry.getValue());
-            }
-            newLore.add(s);
-        }
-        ItemMeta ism = newItemStack.getItemMeta();
-        ism.setLore(newLore);
-        newItemStack.setItemMeta(ism);
-        return newItemStack;
-    }
-
     //Implement too
     public QMenuCategory getSuperMenu() {
         return this.superMenu;

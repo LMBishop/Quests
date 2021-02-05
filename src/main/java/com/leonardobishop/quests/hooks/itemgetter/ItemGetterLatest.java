@@ -1,4 +1,4 @@
-package com.leonardobishop.quests.itemgetter;
+package com.leonardobishop.quests.hooks.itemgetter;
 
 import com.leonardobishop.quests.Quests;
 import org.bukkit.ChatColor;

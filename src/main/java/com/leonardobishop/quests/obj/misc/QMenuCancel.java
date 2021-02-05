@@ -77,22 +77,4 @@ public class QMenuCancel implements QMenu {
         return superMenu;
     }
 
-    public ItemStack replaceItemStack(ItemStack is, Map<String, String> placeholders) {
-        ItemStack newItemStack = is.clone();
-        List<String> lore = newItemStack.getItemMeta().getLore();
-        List<String> newLore = new ArrayList<>();
-        ItemMeta ism = newItemStack.getItemMeta();
-        if (lore != null) {
-            for (String s : lore) {
-                for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-                    s = s.replace(entry.getKey(), entry.getValue());
-                    ism.setDisplayName(ism.getDisplayName().replace(entry.getKey(), entry.getValue()));
-                }
-                newLore.add(s);
-            }
-        }
-        ism.setLore(newLore);
-        newItemStack.setItemMeta(ism);
-        return newItemStack;
-    }
 }

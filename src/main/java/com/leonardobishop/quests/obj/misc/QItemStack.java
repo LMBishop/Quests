@@ -1,9 +1,13 @@
 package com.leonardobishop.quests.obj.misc;
 
+import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Quest;
+import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -15,12 +19,15 @@ import java.util.regex.Pattern;
 
 public class QItemStack {
 
+    private final Quests plugin;
+
     private String name;
     private List<String> loreNormal;
     private List<String> loreStarted;
     private ItemStack startingItemStack;
 
-    public QItemStack(String name, List<String> loreNormal, List<String> loreStarted, ItemStack startingItemStack) {
+    public QItemStack(Quests plugin, String name, List<String> loreNormal, List<String> loreStarted, ItemStack startingItemStack) {
+        this.plugin = plugin;
         this.name = name;
         this.loreNormal = loreNormal;
         this.loreStarted = loreStarted;
@@ -66,6 +73,8 @@ public class QItemStack {
         ism.setDisplayName(name);
         List<String> formattedLore = new ArrayList<>();
         List<String> tempLore = new ArrayList<>(loreNormal);
+
+        Player player = Bukkit.getPlayer(questProgressFile.getPlayerUUID());
         if (questProgressFile.hasStartedQuest(quest)) {
             tempLore.addAll(loreStarted);
             ism.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
@@ -75,6 +84,9 @@ public class QItemStack {
             } catch (Exception ignored) {
 
             }
+        }
+        if (plugin.getPlaceholderAPIHook() != null && Options.GUI_USE_PLACEHOLDERAPI.getBooleanValue()) {
+            ism.setDisplayName(plugin.getPlaceholderAPIHook().replacePlaceholders(player, ism.getDisplayName()));
         }
         if (questProgress != null) {
             for (String s : tempLore) {
@@ -94,6 +106,9 @@ public class QItemStack {
                             s = s.replace("{" + m.group(1) + "}", str);
                         }
                     }
+                }
+                if (plugin.getPlaceholderAPIHook() != null && Options.GUI_USE_PLACEHOLDERAPI.getBooleanValue()) {
+                    s = plugin.getPlaceholderAPIHook().replacePlaceholders(player, s);
                 }
                 formattedLore.add(s);
             }
