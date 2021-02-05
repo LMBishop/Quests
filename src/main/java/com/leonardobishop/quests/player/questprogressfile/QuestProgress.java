@@ -11,13 +11,14 @@ public class QuestProgress {
 
     private final Quests plugin;
 
-    private Map<String, TaskProgress> taskProgress = new HashMap<>();
-    private String questid;
+    private final Map<String, TaskProgress> taskProgress = new HashMap<>();
+    private final String questid;
+    private final UUID player;
+
     private boolean started;
     private boolean completed;
     private boolean completedBefore;
     private long completionDate;
-    private UUID player;
     private boolean modified;
 
     public QuestProgress(Quests plugin, String questid, boolean completed, boolean completedBefore, long completionDate, UUID player, boolean started) {

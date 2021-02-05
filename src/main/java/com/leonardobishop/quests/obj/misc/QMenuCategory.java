@@ -1,9 +1,9 @@
 package com.leonardobishop.quests.obj.misc;
 
-import com.leonardobishop.quests.player.QPlayer;
-import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.obj.Options;
+import com.leonardobishop.quests.player.QPlayer;
+import com.leonardobishop.quests.quests.Category;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;

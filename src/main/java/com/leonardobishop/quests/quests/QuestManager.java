@@ -1,9 +1,11 @@
 package com.leonardobishop.quests.quests;
 
 import com.leonardobishop.quests.Quests;
-import org.bukkit.ChatColor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class QuestManager {
 

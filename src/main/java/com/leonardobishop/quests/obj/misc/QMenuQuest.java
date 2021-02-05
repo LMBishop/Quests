@@ -1,11 +1,11 @@
 package com.leonardobishop.quests.obj.misc;
 
-import com.leonardobishop.quests.player.QPlayer;
-import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
-import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.obj.Items;
 import com.leonardobishop.quests.obj.Options;
+import com.leonardobishop.quests.player.QPlayer;
+import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
+import com.leonardobishop.quests.quests.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -20,15 +20,16 @@ import java.util.concurrent.TimeUnit;
 public class QMenuQuest implements QMenu {
 
     private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
+    private final QMenuCategory superMenu;
+    private final String categoryName;
+    private final int pageSize = 45;
+    private final QPlayer owner;
+
     private int backButtonLocation = -1;
     private int pagePrevLocation = -1;
     private int pageNextLocation = -1;
     private int currentPage = -1;
     private boolean backButtonEnabled = true;
-    private final QMenuCategory superMenu;
-    private final String categoryName;
-    private final int pageSize = 45;
-    private final QPlayer owner;
 
     public QMenuQuest(QPlayer owner, String categoryName, QMenuCategory superMenu) {
         this.owner = owner;

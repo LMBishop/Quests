@@ -1,8 +1,8 @@
 package com.leonardobishop.quests.obj.misc;
 
+import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.quests.Quest;
-import com.leonardobishop.quests.obj.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;

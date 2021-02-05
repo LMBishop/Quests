@@ -8,9 +8,9 @@ import java.util.List;
 
 public class Category {
 
-    private String id;
-    private ItemStack displayItem;
-    private boolean permissionRequired;
+    private final String id;
+    private final ItemStack displayItem;
+    private final boolean permissionRequired;
     private final List<String> registeredQuestIds = new ArrayList<>();
 
     public Category(String id, ItemStack displayItem, boolean permissionRequired) {
@@ -23,24 +23,12 @@ public class Category {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public boolean isPermissionRequired() {
         return permissionRequired;
     }
 
-    public void setPermissionRequired(boolean permissionRequired) {
-        this.permissionRequired = permissionRequired;
-    }
-
     public ItemStack getDisplayItem() {
         return displayItem;
-    }
-
-    public void setDisplayItem(ItemStack displayItem) {
-        this.displayItem = displayItem;
     }
 
     public void registerQuestId(String questid) {

@@ -14,10 +14,12 @@ import java.util.concurrent.TimeUnit;
 public class Updater {
  
     private static final int PROJECT_ID = 23696;
-    private String installedVersion;
+
+    private final String installedVersion;
+    private final Quests plugin;
+
     private String returnedVersion;
     private URL api;
-    private Quests plugin;
     private boolean updateReady;
     private long lastCheck;
 

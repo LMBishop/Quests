@@ -49,7 +49,6 @@ public class Quests extends JavaPlugin {
     private PlaceholderExpansion placeholder;
 
     private boolean brokenConfig = false;
-    private BukkitTask questCompleterTask;
     private BukkitTask questAutosaveTask;
 
     public static Quests get() {
@@ -233,10 +232,8 @@ public class Quests extends JavaPlugin {
         questsConfigLoader.loadConfig();
 
         long autocompleteInterval = 12000;
-        long completerPollInterval = 100;
         if (!isBrokenConfig()) {
             autocompleteInterval = this.getConfig().getLong("options.performance-tweaking.quest-autocomplete-interval", 12000);
-            completerPollInterval = this.getConfig().getLong("options.performance-tweaking.quest-completer-poll-interval", 100);
         }
         if (questAutosaveTask != null) {
             try {

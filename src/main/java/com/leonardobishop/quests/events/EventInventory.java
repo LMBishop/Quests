@@ -9,18 +9,12 @@ import com.leonardobishop.quests.obj.misc.QMenuCancel;
 import com.leonardobishop.quests.obj.misc.QMenuCategory;
 import com.leonardobishop.quests.obj.misc.QMenuQuest;
 import com.leonardobishop.quests.quests.Quest;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,12 +22,12 @@ import java.util.UUID;
 
 public class EventInventory implements Listener {
 
-    private static HashMap<UUID, QMenu> tracker = new HashMap<>();
-    private Quests plugin;
+    private static final HashMap<UUID, QMenu> tracker = new HashMap<>();
+    private final Quests plugin;
 
     // ADD PLAYERS TO THE BUFFER BEFORE AN ANTICIPATED MENU CHANGE SO THAT
     // THEY ARE NOT LOST FROM THE TRACKER WHEN CHANGING MENUS
-    private ArrayList<UUID> buffer = new ArrayList<>();
+    private final ArrayList<UUID> buffer = new ArrayList<>();
 
     public EventInventory(Quests plugin) {
         this.plugin = plugin;

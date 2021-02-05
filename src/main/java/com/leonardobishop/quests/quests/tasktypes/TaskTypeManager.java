@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class TaskTypeManager {
 
-    private Quests plugin;
+    private final Quests plugin;
     private boolean allowRegistrations;
 
     public TaskTypeManager(Quests plugin) {

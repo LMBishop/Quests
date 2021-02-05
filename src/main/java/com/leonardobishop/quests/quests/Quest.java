@@ -19,7 +19,7 @@ public class Quest implements Comparable<Quest> {
     private final boolean cooldownEnabled;
     private final int cooldown;
     private final int sortOrder;
-    private boolean permissionRequired;
+    private final boolean permissionRequired;
     private String categoryid;
 
 
@@ -67,10 +67,6 @@ public class Quest implements Comparable<Quest> {
 
     public boolean isPermissionRequired() {
         return permissionRequired;
-    }
-
-    public void setPermissionRequired(boolean permissionRequired) {
-        this.permissionRequired = permissionRequired;
     }
 
     public List<String> getRewardString() {

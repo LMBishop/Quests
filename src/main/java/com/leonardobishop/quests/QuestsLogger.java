@@ -2,7 +2,7 @@ package com.leonardobishop.quests;
 
 public class QuestsLogger {
 
-    private Quests plugin;
+    private final Quests plugin;
     private LoggingLevel serverLoggingLevel;
 
     public QuestsLogger(Quests plugin, LoggingLevel serverLoggingLevel) {

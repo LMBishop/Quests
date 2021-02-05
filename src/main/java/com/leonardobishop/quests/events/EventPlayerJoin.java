@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class EventPlayerJoin implements Listener {
 
-    private Quests plugin;
+    private final Quests plugin;
 
     public EventPlayerJoin(Quests plugin) {
         this.plugin = plugin;

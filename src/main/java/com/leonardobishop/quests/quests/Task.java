@@ -6,9 +6,8 @@ import java.util.Map;
 public class Task {
 
     private final Map<String, Object> configValues = new HashMap<>();
-
-    private String id;
-    private String type;
+    private final String id;
+    private final String type;
 
     public Task(String id, String type) {
         this.id = id;

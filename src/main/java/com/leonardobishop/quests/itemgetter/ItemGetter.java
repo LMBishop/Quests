@@ -2,9 +2,7 @@ package com.leonardobishop.quests.itemgetter;
 
 import com.leonardobishop.quests.Quests;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public interface ItemGetter {
 
