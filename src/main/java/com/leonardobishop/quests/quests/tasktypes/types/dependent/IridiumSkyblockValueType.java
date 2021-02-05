@@ -1,7 +1,7 @@
 package com.leonardobishop.quests.quests.tasktypes.types.dependent;
 
 import com.iridium.iridiumskyblock.Island;
-import com.iridium.iridiumskyblock.User;
+import com.iridium.iridiumskyblock.api.IslandWorthCalculatedEvent;
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
@@ -14,14 +14,14 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public final class IridiumSkyblockValueType extends TaskType {
 
@@ -41,56 +41,47 @@ public final class IridiumSkyblockValueType extends TaskType {
         return problems;
     }
 
-    @Override
-    public void onReady() {
-        this.poll = new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    Island island = null;
-                    if ((island = User.getUser(player).getIsland()) == null) {
-                        return;
-                    }
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onIslandLevel(IslandWorthCalculatedEvent event) {
+        Island island = event.getIsland();
+        for (String player : island.members) {
+            UUID uuid;
+            try {
+                 uuid = UUID.fromString(player);
+            } catch (Exception e) {
+                Quests.get().getQuestsLogger().debug("Cannot convert from String to UUID for IridiumSkyblock");
+                continue;
+            }
+            QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(uuid, true);
+            if (qPlayer == null) {
+                continue;
+            }
 
-                    QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
-                    if (qPlayer == null) {
-                        return;
-                    }
+            QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
-                    QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+            for (Quest quest : IridiumSkyblockValueType.super.getRegisteredQuests()) {
+                if (questProgressFile.hasStartedQuest(quest)) {
+                    QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
 
-                    for (Quest quest : IridiumSkyblockValueType.super.getRegisteredQuests()) {
-                        if (questProgressFile.hasStartedQuest(quest)) {
-                            QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+                    for (Task task : quest.getTasksOfType(IridiumSkyblockValueType.super.getType())) {
+                        TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                            for (Task task : quest.getTasksOfType(IridiumSkyblockValueType.super.getType())) {
-                                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                        if (taskProgress.isCompleted()) {
+                            continue;
+                        }
 
-                                if (taskProgress.isCompleted()
-                                        || (taskProgress.getProgress() != null && (int) taskProgress.getProgress() == island.getValue())) {
-                                    continue;
-                                }
+                        int islandValueNeeded = (int) task.getConfigValue("value");
 
-                                int islandValueNeeded = (int) task.getConfigValue("value");
+                        taskProgress.setProgress(event.getIslandWorth());
 
-                                taskProgress.setProgress(island.getValue());
-
-                                if (((int) taskProgress.getProgress()) >= islandValueNeeded) {
-                                    taskProgress.setCompleted(true);
-                                }
-                            }
+                        if (((double) taskProgress.getProgress()) >= islandValueNeeded) {
+                            taskProgress.setCompleted(true);
                         }
                     }
                 }
             }
-        }.runTaskTimer(Quests.get(), 50L, 50L);
-    }
-
-    @Override
-    public void onDisable() {
-        if (this.poll != null) {
-            this.poll.cancel();
         }
+
     }
 
     @Override

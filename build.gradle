@@ -38,6 +38,8 @@ repositories {
     maven { url = 'http://repo.extendedclip.com/content/repositories/placeholderapi/' }
     // EssentialsX
     maven { url = 'https://repo.essentialsx.net/releases/' }
+    //IridiumSkyblock
+    maven { url = 'https://nexus.savagelabs.net/repository/maven-releases/' }
     // JitPack
     maven { url = 'https://jitpack.io' }
     mavenCentral()
@@ -60,7 +62,7 @@ dependencies {
         exclude group: 'org.mongodb', module: 'mongodb-driver'
     }
     // IridiumSkyblock
-    compileOnly 'com.github.IridiumLLC:IridiumSkyblock:master'
+    compileOnly 'com.github.IridiumLLC:IridiumSkyblock:master-SNAPSHOT'
     // uSkyBlock
     compileOnly 'com.github.rlf:uSkyBlock-API:2.6.4'
     // MythicMobs

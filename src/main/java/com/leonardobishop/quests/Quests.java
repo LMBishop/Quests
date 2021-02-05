@@ -52,6 +52,7 @@ public class Quests extends JavaPlugin {
 
     private boolean brokenConfig = false;
     private BukkitTask questAutosaveTask;
+    private BukkitTask questQueuePollTask;
 
     public static Quests get() {
         return (Quests) Bukkit.getPluginManager().getPlugin("Quests");
@@ -207,7 +208,6 @@ public class Quests extends JavaPlugin {
             ignoreUpdates = new File(this.getDataFolder() + File.separator + "stfuQuestsUpdate").exists();
         } catch (Throwable ignored) { }
 
-        Bukkit.getScheduler().runTaskTimer(this, questCompleter, 1L, 1L);
 
         updater = new Updater(this);
         if (!ignoreUpdates) {
@@ -245,18 +245,39 @@ public class Quests extends JavaPlugin {
         if (!isBrokenConfig()) {
             autocompleteInterval = this.getConfig().getLong("options.performance-tweaking.quest-autocomplete-interval", 12000);
         }
+        boolean autosaveTaskCancelled = true;
         if (questAutosaveTask != null) {
             try {
                 questAutosaveTask.cancel();
             } catch (Exception ex) {
-                questsLogger.debug("Cannot cancel quest autosave task");
+                questsLogger.debug("Cannot cancel and restart quest autosave task");
+                autosaveTaskCancelled = false;
             }
         }
-        questAutosaveTask = Bukkit.getScheduler().runTaskTimer(this, () -> {
-            for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
-                qPlayer.getQuestProgressFile().saveToDisk(false);
+        if (autosaveTaskCancelled) {
+            questAutosaveTask = Bukkit.getScheduler().runTaskTimer(this, () -> {
+                for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
+                    qPlayer.getQuestProgressFile().saveToDisk(false);
+                }
+            }, autocompleteInterval, autocompleteInterval);
+        }
+
+        boolean queuePollTaskCancelled = true;
+        long queueExecuteInterval = 1;
+        if (!isBrokenConfig()) {
+            queueExecuteInterval = this.getConfig().getLong("options.performance-tweaking.quest-queue-executor-interval", 1);
+        }
+        if (questQueuePollTask != null) {
+            try {
+                questQueuePollTask.cancel();
+            } catch (Exception ex) {
+                questsLogger.debug("Cannot cancel and restart quest autosave task");
+                queuePollTaskCancelled = false;
             }
-        }, autocompleteInterval, autocompleteInterval);
+        }
+        if (queuePollTaskCancelled) {
+            questQueuePollTask = Bukkit.getScheduler().runTaskTimer(this, questCompleter, queueExecuteInterval, queueExecuteInterval);
+        }
     }
 
     public ItemStack getItemStack(String path, ConfigurationSection config, ItemGetter.Filter... excludes) {

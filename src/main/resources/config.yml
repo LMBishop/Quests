@@ -164,7 +164,7 @@ options:
   # The above, but overwriting the file on disk with the cleaned version, so it does not soft clean on every join.
   push-soft-clean-to-disk: false
   performance-tweaking: # The following are measured in server ticks, multiply SECONDS by 20 to get the number of ticks.
-    quest-completer-poll-interval: 100    # how frequently Quests should check if quests have been completed (def=100 - 5 seconds) - increase this value if you are struggling with performance
+    quest-queue-executor-interval: 1    # how frequently Quests should execute the next check in the completion queue (def=1 - 0.05s) - increase this value if you are struggling with performance
     quest-autosave-interval: 12000        # how frequently online players data will be autosaved (def=12000 - 10 minutes)
   tab-completion:
     enabled: true
