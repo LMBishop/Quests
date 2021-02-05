@@ -38,8 +38,6 @@ repositories {
     maven { url = 'http://repo.extendedclip.com/content/repositories/placeholderapi/' }
     // EssentialsX
     maven { url = 'https://repo.essentialsx.net/releases/' }
-    //IridiumSkyblock
-    maven { url = 'https://nexus.savagelabs.net/repository/maven-releases/' }
     // JitPack
     maven { url = 'https://jitpack.io' }
     mavenCentral()

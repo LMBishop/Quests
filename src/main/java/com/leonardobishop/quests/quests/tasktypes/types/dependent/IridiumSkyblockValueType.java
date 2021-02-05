@@ -26,7 +26,6 @@ import java.util.UUID;
 public final class IridiumSkyblockValueType extends TaskType {
 
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
-    private BukkitTask poll;
 
     public IridiumSkyblockValueType() {
         super("iridiumskyblock_value", "LMBishop", "Reach a certain island value for Iridium Skyblock.");
