@@ -163,9 +163,10 @@ public final class MiningCertainTaskType extends TaskType {
 
             short blockData = block.getData();
 
-            if (blockType == material) {
-                return ((split.length == 1 && configData == null) || ((int) blockData) == comparableData);
-            }
+			if (blockType == material) {
+				if (((split.length == 1 && configData == null) || ((int) blockData) == comparableData))
+					return true;
+			}
         }
         return false;
     }
