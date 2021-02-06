@@ -1,6 +1,5 @@
 package com.leonardobishop.quests;
 
-import com.leonardobishop.quests.api.QuestsPlaceholders;
 import com.leonardobishop.quests.bstats.Metrics;
 import com.leonardobishop.quests.commands.CommandQuests;
 import com.leonardobishop.quests.events.EventInventory;
@@ -10,7 +9,12 @@ import com.leonardobishop.quests.hooks.itemgetter.ItemGetter;
 import com.leonardobishop.quests.hooks.itemgetter.ItemGetterLatest;
 import com.leonardobishop.quests.hooks.itemgetter.ItemGetter_1_13;
 import com.leonardobishop.quests.hooks.itemgetter.ItemGetter_Late_1_8;
+import com.leonardobishop.quests.hooks.papi.IPlaceholderAPIHook;
 import com.leonardobishop.quests.hooks.papi.PlaceholderAPIHook;
+import com.leonardobishop.quests.hooks.title.Title;
+import com.leonardobishop.quests.hooks.title.Title_Bukkit;
+import com.leonardobishop.quests.hooks.title.Title_BukkitNoTimings;
+import com.leonardobishop.quests.hooks.title.Title_Other;
 import com.leonardobishop.quests.obj.Messages;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.QPlayerManager;
@@ -19,12 +23,7 @@ import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskTypeManager;
 import com.leonardobishop.quests.quests.tasktypes.types.*;
 import com.leonardobishop.quests.quests.tasktypes.types.dependent.*;
-import com.leonardobishop.quests.hooks.title.Title;
-import com.leonardobishop.quests.hooks.title.Title_Bukkit;
-import com.leonardobishop.quests.hooks.title.Title_BukkitNoTimings;
-import com.leonardobishop.quests.hooks.title.Title_Other;
 import com.leonardobishop.quests.updater.Updater;
-import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -47,8 +46,7 @@ public class Quests extends JavaPlugin {
     private QuestCompleter questCompleter;
     private QuestsConfigLoader questsConfigLoader;
     private QuestsLogger questsLogger;
-    private PlaceholderExpansion placeholder;
-    private PlaceholderAPIHook placeholderAPIHook;
+    private IPlaceholderAPIHook placeholderAPIHook;
 
     private boolean brokenConfig = false;
     private BukkitTask questAutosaveTask;
@@ -117,11 +115,6 @@ public class Quests extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EventPlayerJoin(this), this);
         Bukkit.getPluginManager().registerEvents(new EventInventory(this), this);
         Bukkit.getPluginManager().registerEvents(new EventPlayerLeave(this), this);
-
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            placeholder = new QuestsPlaceholders(this);
-            placeholder.register();
-        }
 
         Metrics metrics = new Metrics(this);
         if (metrics.isEnabled()) {
@@ -200,6 +193,7 @@ public class Quests extends JavaPlugin {
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             this.placeholderAPIHook = new PlaceholderAPIHook();
+            this.placeholderAPIHook.registerExpansion(this);
         }
 
         // this intentionally should not be documented
@@ -217,7 +211,7 @@ public class Quests extends JavaPlugin {
         }
     }
 
-    public PlaceholderAPIHook getPlaceholderAPIHook() {
+    public IPlaceholderAPIHook getPlaceholderAPIHook() {
         return placeholderAPIHook;
     }
 
@@ -231,7 +225,7 @@ public class Quests extends JavaPlugin {
         for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
             qPlayer.getQuestProgressFile().saveToDisk(true);
         }
-        if (placeholder != null) placeholder.unregister();
+        if (placeholderAPIHook != null) placeholderAPIHook.unregisterExpansion();
     }
 
     public void reloadQuests() {
