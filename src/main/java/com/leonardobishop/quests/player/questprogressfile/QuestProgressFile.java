@@ -36,6 +36,10 @@ public class QuestProgressFile {
     public boolean completeQuest(Quest quest) {
         QuestProgress questProgress = getQuestProgress(quest);
         questProgress.setStarted(false);
+        for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
+            taskProgress.setCompleted(false);
+            taskProgress.setProgress(null);
+        }
         questProgress.setCompleted(true);
         questProgress.setCompletedBefore(true);
         questProgress.setCompletionDate(System.currentTimeMillis());
