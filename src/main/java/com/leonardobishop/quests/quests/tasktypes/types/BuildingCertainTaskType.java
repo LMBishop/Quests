@@ -163,7 +163,8 @@ public final class BuildingCertainTaskType extends TaskType {
             short blockData = block.getData();
 
             if (blockType == material) {
-                return configData == null || ((int) blockData) == comparableData;
+                if (((split.length == 1 && configData == null) || ((int) blockData) == comparableData))
+                    return true;
             }
         }
         return false;
