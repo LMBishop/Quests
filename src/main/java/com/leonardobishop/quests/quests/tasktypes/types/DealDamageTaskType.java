@@ -81,6 +81,7 @@ public final class DealDamageTaskType extends TaskType {
                     taskProgress.setProgress(progressDamage + damage);
 
                     if (((double) taskProgress.getProgress()) >= (double) damageNeeded) {
+                        taskProgress.setProgress(damageNeeded);
                         taskProgress.setCompleted(true);
                     }
                 }
