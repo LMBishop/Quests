@@ -80,7 +80,7 @@ public class QuestProgressFile {
      */
     public QuestStartResult canStartQuest(Quest quest) {
         Player p = Bukkit.getPlayer(playerUUID);
-        if (getStartedQuests().size() >= Options.QUESTS_START_LIMIT.getIntValue()) {
+        if (getStartedQuests().size() >= Options.QUESTS_START_LIMIT.getIntValue() && !Options.QUEST_AUTOSTART.getBooleanValue()) {
             return QuestStartResult.QUEST_LIMIT_REACHED;
         }
         QuestProgress questProgress = getQuestProgress(quest);

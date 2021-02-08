@@ -101,7 +101,7 @@ public final class DistancefromTaskType extends TaskType {
 
                     World world = Bukkit.getWorld(worldString);
                     if (world == null) {
-                        return;
+                        continue;
                     }
 
                     Location location = new Location(world, x, y, z);

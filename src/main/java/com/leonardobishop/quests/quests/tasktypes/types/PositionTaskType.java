@@ -88,7 +88,7 @@ public final class PositionTaskType extends TaskType {
                     int paddingSquared = padding * padding;
                     World world = Bukkit.getWorld(worldString);
                     if (world == null) {
-                        return;
+                        continue;
                     }
 
                     Location location = new Location(world, x, y, z);

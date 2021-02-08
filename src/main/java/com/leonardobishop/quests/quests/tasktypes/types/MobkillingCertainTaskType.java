@@ -98,7 +98,7 @@ public final class MobkillingCertainTaskType extends TaskType {
                     if (configName != null) {
                         configName = ChatColor.translateAlternateColorCodes('&', configName);
                         if (mob.getCustomName() == null || !mob.getCustomName().equals(configName)) {
-                            return;
+                            continue;
                         }
                     }
 
