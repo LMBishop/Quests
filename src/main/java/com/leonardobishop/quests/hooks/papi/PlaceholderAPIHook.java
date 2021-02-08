@@ -16,6 +16,7 @@ public class PlaceholderAPIHook implements IPlaceholderAPIHook {
     @Override
     public void registerExpansion(Quests plugin) {
         placeholder = new QuestsPlaceholders(plugin);
+        placeholder.register();
     }
 
 
