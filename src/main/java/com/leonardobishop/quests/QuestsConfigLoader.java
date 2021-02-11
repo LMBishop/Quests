@@ -37,6 +37,7 @@ public class QuestsConfigLoader {
      */
     public void loadConfig() {
         plugin.reloadConfig();
+        Options.invalidateCaches();
         filesWithProblems.clear();
         plugin.setBrokenConfig(false);
 

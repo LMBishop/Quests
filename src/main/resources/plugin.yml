@@ -8,7 +8,8 @@ version: ${version}
 # See "processResources" in build.gradle for more info
 main: ${main}
 
-author: LMBishop
+website: https://github.com/LMBishop/Quests
+authors: [LMBishop, NicoNekoDev, nivcoo, Rubenicos, RodneyMKay, Auxilor, BavoVanMeel, SuSeu1414, Reinatix]
 softdepend: [ASkyBlock, BentoBox, IridiumSkyblock, uSkyBlock, Citizens, MythicMobs, PlaceholderAPI, Essentials]
 prefix: Quests
 api-version: "1.13" # allows new API features but Quests will still work pre-1.13

@@ -3,7 +3,6 @@ package com.leonardobishop.quests.obj;
 import com.leonardobishop.quests.Quests;
 import org.bukkit.ChatColor;
 
-import java.time.temporal.ValueRange;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +28,7 @@ public enum Options {
     ERROR_CHECKING_OVERRIDE("options.error-checking.override-errors"),
     QUEST_AUTOSTART("options.quest-autostart");
 
-    private static final Map<String, Boolean> cachedBools = new HashMap<>();
+    private static final Map<String, Boolean> cachedBooleans = new HashMap<>();
 
     private final String path;
 
@@ -54,11 +53,11 @@ public enum Options {
     }
 
     public boolean getBooleanValue() {
-        Boolean val = cachedBools.get(path);
+        Boolean val = cachedBooleans.get(path);
         if (val != null) {
             return val;
         } else {
-            cachedBools.put(path, Quests.get().getConfig().getBoolean(path));
+            cachedBooleans.put(path, Quests.get().getConfig().getBoolean(path));
             return getBooleanValue();
         }
     }
@@ -83,7 +82,7 @@ public enum Options {
         return colored;
     }
 
-    public static void clearBoolValues() {
-        cachedBools.clear();
+    public static void invalidateCaches() {
+        cachedBooleans.clear();
     }
 }
