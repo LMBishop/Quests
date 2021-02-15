@@ -147,6 +147,8 @@ public final class InventoryTaskType extends TaskType {
                         int inInv = getAmount(player, is, amount);
                         if (taskProgress.getProgress() != null && (int) taskProgress.getProgress() != inInv) {
                             taskProgress.setProgress(inInv);
+                        } else if (taskProgress.getProgress() == null) {
+                            taskProgress.setProgress(inInv);
                         }
                     }
 

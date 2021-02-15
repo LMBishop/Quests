@@ -26,7 +26,8 @@ public enum Options {
     PUSH_SOFT_CLEAN_TO_DISK("options.tab-completion.push-soft-clean-to-disk"),
     TAB_COMPLETE_ENABLED("options.tab-completion.enabled"),
     ERROR_CHECKING_OVERRIDE("options.error-checking.override-errors"),
-    QUEST_AUTOSTART("options.quest-autostart");
+    QUEST_AUTOSTART("options.quest-autostart"),
+    GLOBAL_TASK_CONFIGURATION_OVERRIDE("options.global-task-configuration-override");
 
     private static final Map<String, Boolean> cachedBooleans = new HashMap<>();
 

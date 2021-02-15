@@ -9,6 +9,7 @@ import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.quests.Quest;
+import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -90,6 +91,13 @@ public class CommandQuests implements TabExecutor {
                         }
                         sender.sendMessage(ChatColor.DARK_GRAY + "View info using /q a types [type].");
                         return true;
+                    } else if (args[1].equalsIgnoreCase("info")) {
+                        sender.sendMessage(ChatColor.GRAY + "Loaded quests:");
+                        for (Quest quest : plugin.getQuestManager().getQuests().values()) {
+                            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + quest.getId() + ChatColor.GRAY + " [" + quest.getTasks().size() + " tasks]");
+                        }
+                        sender.sendMessage(ChatColor.DARK_GRAY + "View info using /q a info [quest].");
+                        return true;
                     } else if (args[1].equalsIgnoreCase("update")) {
                         sender.sendMessage(ChatColor.GRAY + "Checking for updates...");
                         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
@@ -157,6 +165,39 @@ public class CommandQuests implements TabExecutor {
                             sender.sendMessage(ChatColor.RED + "Task type: " + ChatColor.GRAY + taskType.getType());
                             sender.sendMessage(ChatColor.RED + "Author: " + ChatColor.GRAY + taskType.getAuthor());
                             sender.sendMessage(ChatColor.RED + "Description: " + ChatColor.GRAY + taskType.getDescription());
+                        }
+                        return true;
+                    } else if (args[1].equalsIgnoreCase("info")) {
+                        Quest quest = plugin.getQuestManager().getQuestById(args[2]);
+                        if (quest == null) {
+                            sender.sendMessage(Messages.COMMAND_QUEST_GENERAL_DOESNTEXIST.getMessage().replace("{quest}", args[2]));
+                        } else {
+                            sender.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "Information for quest '" + quest.getId() + "'");
+                            sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE + "Task configurations (" + quest.getTasks().size() + ")");
+                            for (Task task : quest.getTasks()) {
+                                sender.sendMessage(ChatColor.RED + "Task '" + task.getId() + "':");
+                                for (Map.Entry<String, Object> config : task.getConfigValues().entrySet()) {
+                                    sender.sendMessage(ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + config.getKey() + ": " + ChatColor.GRAY + ChatColor.ITALIC + config.getValue());
+                                }
+                            }
+                            sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE +  "Start string");
+                            for (String s : quest.getStartString()) {
+                                sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.GRAY + s);
+                            }
+                            sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE +  "Reward string");
+                            for (String s : quest.getRewardString()) {
+                                sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.GRAY + s);
+                            }
+                            sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE +  "Rewards");
+                            for (String s : quest.getRewards()) {
+                                sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.GRAY + s);
+                            }
+                            sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE +  "Quest options");
+                            sender.sendMessage(ChatColor.RED + "Category: " + ChatColor.GRAY + quest.getCategoryId());
+                            sender.sendMessage(ChatColor.RED + "Repeatable: " + ChatColor.GRAY + quest.isRepeatable());
+                            sender.sendMessage(ChatColor.RED + "Requirements: " + ChatColor.GRAY + String.join(", ", quest.getRequirements()));
+                            sender.sendMessage(ChatColor.RED + "Cooldown enabled: " + ChatColor.GRAY + quest.isCooldownEnabled());
+                            sender.sendMessage(ChatColor.RED + "Cooldown time: " + ChatColor.GRAY + quest.getCooldown());
                         }
                         return true;
                     }
@@ -471,6 +512,7 @@ public class CommandQuests implements TabExecutor {
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a opengui " + ChatColor.DARK_GRAY + ": view help for opengui");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata " + ChatColor.DARK_GRAY + ": view help for quest progression");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a types [type]" + ChatColor.DARK_GRAY + ": view registered task types");
+            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a info [quest]" + ChatColor.DARK_GRAY + ": see information about loaded quests");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a reload " + ChatColor.DARK_GRAY + ": reload Quests configuration");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a config " + ChatColor.DARK_GRAY + ": see detected problems in config");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a update " + ChatColor.DARK_GRAY + ": check for updates");
@@ -519,7 +561,7 @@ public class CommandQuests implements TabExecutor {
                     return tabCompleteQuests(args[1]);
                 } else if (args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin")
                         && sender.hasPermission("quests.admin")) {
-                    List<String> options = Arrays.asList("opengui", "moddata", "types", "reload", "update", "config");
+                    List<String> options = Arrays.asList("opengui", "moddata", "types", "reload", "update", "config", "info");
                     return matchTabComplete(args[1], options);
                 }
             } else if (args.length == 3) {
@@ -544,6 +586,8 @@ public class CommandQuests implements TabExecutor {
                     } else if (args[1].equalsIgnoreCase("moddata")) {
                         List<String> options = Arrays.asList("fullreset", "reset", "start", "complete", "clean");
                         return matchTabComplete(args[2], options);
+                    } else if (args[1].equalsIgnoreCase("info")) {
+                        return tabCompleteQuests(args[2]);
                     }
                 }
             } else if (args.length == 4) {

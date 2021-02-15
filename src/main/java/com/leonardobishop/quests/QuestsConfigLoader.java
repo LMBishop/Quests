@@ -50,7 +50,9 @@ public class QuestsConfigLoader {
             plugin.setBrokenConfig(true);
         }
 
+
         if (!plugin.isBrokenConfig()) {
+            HashMap<String, Map<String, Object>> globalTaskConfig = new HashMap<>();
             for (String id : plugin.getConfig().getConfigurationSection("categories").getKeys(false)) {
                 ItemStack displayItem = plugin.getItemStack("categories." + id + ".display", plugin.getConfig());
                 boolean permissionRequired = plugin.getConfig().getBoolean("categories." + id + ".permission-required", false);
@@ -61,6 +63,18 @@ public class QuestsConfigLoader {
             plugin.getQuestsLogger().setServerLoggingLevel(QuestsLogger.LoggingLevel.fromNumber(plugin.getConfig().getInt("options.verbose-logging-level", 2)));
 
             HashMap<String, Quest> pathToQuest = new HashMap<>();
+
+            if (plugin.getConfig().isConfigurationSection("global-task-configuration.types")) {
+                for (String type : plugin.getConfig().getConfigurationSection("global-task-configuration.types").getKeys(false)) {
+                    HashMap<String, Object> configValues = new HashMap<>();
+                    for (String key : plugin.getConfig().getConfigurationSection("global-task-configuration.types." + type).getKeys(false)) {
+                        configValues.put(key, plugin.getConfig().get("global-task-configuration.types." + type + "." + key));
+                    }
+                    globalTaskConfig.putIfAbsent(type, configValues);
+                }
+            }
+
+            System.out.println(globalTaskConfig);
 
             FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
                 final URI questsRoot = Paths.get(plugin.getDataFolder() + File.separator + "quests").toUri();
@@ -137,6 +151,7 @@ public class QuestsConfigLoader {
                     for (ConfigProblem problem : configProblems) {
                         if (problem.getType() == ConfigProblemType.ERROR) {
                             error = true;
+                            break;
                         }
                     }
 
@@ -177,6 +192,13 @@ public class QuestsConfigLoader {
 
                         for (String key : config.getConfigurationSection(taskRoot).getKeys(false)) {
                             task.addConfigValue(key, config.get(taskRoot + "." + key));
+                        }
+
+                        if (globalTaskConfig.containsKey(taskType)) {
+                            for (Map.Entry<String, Object> entry : globalTaskConfig.get(taskType).entrySet()) {
+                                if (Options.GLOBAL_TASK_CONFIGURATION_OVERRIDE.getBooleanValue() && task.getConfigValue(entry.getKey()) != null) continue;
+                                task.addConfigValue(entry.getKey(), entry.getValue());
+                            }
                         }
 
                         quest.registerTask(task);
