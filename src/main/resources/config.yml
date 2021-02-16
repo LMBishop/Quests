@@ -139,6 +139,8 @@ options:
   gui-hide-locked: false
   # Allow players to cancel a quest (you may want to remove the cancel instructions in the global item lore)
   allow-quest-cancel: true
+  # Allow players to track a quest
+  allow-quest-track: true
   # Titles for the GUIs
   guinames:
     quests-category: "Quests Categories"

@@ -89,7 +89,7 @@ public class EventInventory implements Listener {
                         if (qMenuQuest.getOwner().getQuestProgressFile().startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
                             event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
                         }
-                    } else if (event.getClick() == ClickType.MIDDLE) {
+                    } else if (event.getClick() == ClickType.MIDDLE && Options.ALLOW_QUEST_TRACK.getBooleanValue()) {
                         if (qMenuQuest.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
                             Player player = Bukkit.getPlayer(qMenuQuest.getOwner().getUuid());
                             String tracked = qMenuQuest.getOwner().getQuestProgressFile().getPlayerPreferences().getTrackedQuestId();

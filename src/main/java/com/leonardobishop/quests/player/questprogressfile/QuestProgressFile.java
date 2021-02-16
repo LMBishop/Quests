@@ -42,7 +42,7 @@ public class QuestProgressFile {
         questProgress.setCompleted(true);
         questProgress.setCompletedBefore(true);
         questProgress.setCompletionDate(System.currentTimeMillis());
-        if (Options.QUEST_AUTOTRACK.getBooleanValue() && !(quest.isRepeatable() && !quest.isCooldownEnabled())) {
+        if (Options.ALLOW_QUEST_TRACK.getBooleanValue() && Options.QUEST_AUTOTRACK.getBooleanValue() && !(quest.isRepeatable() && !quest.isCooldownEnabled())) {
             trackQuest(null);
         }
         Player player = Bukkit.getPlayer(this.playerUUID);
@@ -196,7 +196,7 @@ public class QuestProgressFile {
                 taskProgress.setCompleted(false);
                 taskProgress.setProgress(null);
             }
-            if (Options.QUEST_AUTOTRACK.getBooleanValue()) {
+            if (Options.ALLOW_QUEST_TRACK.getBooleanValue() && Options.QUEST_AUTOTRACK.getBooleanValue()) {
                 trackQuest(quest);
             }
             questProgress.setCompleted(false);
