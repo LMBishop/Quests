@@ -170,12 +170,6 @@ public class QuestsConfigLoader {
                     String category = config.getString("options.category");
                     Map<String, String> placeholders = new HashMap<>();
 
-                    if (config.isConfigurationSection("placeholders")) {
-                        for (String p : config.getConfigurationSection("placeholders").getKeys(false)) {
-                            placeholders.put(p, config.getString("placeholders." + p));
-                        }
-                    }
-
                     if (category == null) category = "";
 
                     Quest quest;
@@ -211,41 +205,20 @@ public class QuestsConfigLoader {
                         quest.registerTask(task);
                     }
 
-                    Pattern pattern = Pattern.compile("\\{([^}]+)}");
 
                     for (String line : displayItem.getLoreNormal()) {
-                        Matcher matcher = pattern.matcher(line);
-                        while (matcher.find()) {
-                            String[] parts = matcher.group(1).split(":");
-                            boolean match = false;
-                            for (Task t : quest.getTasks()) {
-                                if (t.getId().equals(parts[0])) {
-                                    match = true;
-                                    break;
-                                }
-                            }
-                            if (!match)
-                                configProblems.add(new ConfigProblem(ConfigProblemType.WARNING,
-                                        ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getDescription(parts[0]), "display.lore-normal"));
-                        }
+                        findInvalidTaskReferences(quest, line, configProblems, "display.lore-normal");
                     }
                     for (String line : displayItem.getLoreStarted()) {
-                        Matcher matcher = pattern.matcher(line);
-                        while (matcher.find()) {
-                            String[] parts = matcher.group(1).split(":");
-                            boolean match = false;
-                            for (Task t : quest.getTasks()) {
-                                if (t.getId().equals(parts[0])) {
-                                    match = true;
-                                    break;
-                                }
-                            }
-                            if (!match)
-                                configProblems.add(new ConfigProblem(ConfigProblemType.WARNING,
-                                        ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getDescription(parts[0]), "display.lore-started"));
-                        }
+                        findInvalidTaskReferences(quest, line, configProblems, "display.lore-started");
                     }
 
+                    if (config.isConfigurationSection("placeholders")) {
+                        for (String p : config.getConfigurationSection("placeholders").getKeys(false)) {
+                            placeholders.put(p, config.getString("placeholders." + p));
+                            findInvalidTaskReferences(quest, config.getString("placeholders." + p), configProblems, "placeholders." + p);
+                        }
+                    }
                     pathToQuest.put(relativeLocation.getPath(), quest);
                     if (!configProblems.isEmpty()) {
                         filesWithProblems.put(relativeLocation.getPath(), configProblems);
@@ -306,6 +279,25 @@ public class QuestsConfigLoader {
 
     public int getProblemsCount() {
         return problemsCount;
+    }
+
+    private void findInvalidTaskReferences(Quest quest, String s, List<ConfigProblem> configProblems, String location) {
+        Pattern pattern = Pattern.compile("\\{([^}]+)}");
+
+        Matcher matcher = pattern.matcher(s);
+        while (matcher.find()) {
+            String[] parts = matcher.group(1).split(":");
+            boolean match = false;
+            for (Task t : quest.getTasks()) {
+                if (t.getId().equals(parts[0])) {
+                    match = true;
+                    break;
+                }
+            }
+            if (!match)
+                configProblems.add(new ConfigProblem(ConfigProblemType.WARNING,
+                        ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getDescription(parts[0]), location));
+        }
     }
 
     private QItemStack getQItemStack(String path, FileConfiguration config) {
