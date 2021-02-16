@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.leonardobishop.quests'
-version = '2.13'
+version = '2.14'
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {
