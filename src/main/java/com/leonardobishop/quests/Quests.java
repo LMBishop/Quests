@@ -235,9 +235,9 @@ public class Quests extends JavaPlugin {
 
         questsConfigLoader.loadConfig();
 
-        long autocompleteInterval = 12000;
+        long autosaveInterval = 12000;
         if (!isBrokenConfig()) {
-            autocompleteInterval = this.getConfig().getLong("options.performance-tweaking.quest-autocomplete-interval", 12000);
+            autosaveInterval = this.getConfig().getLong("options.performance-tweaking.quest-autosave-interval", 12000);
         }
         boolean autosaveTaskCancelled = true;
         if (questAutosaveTask != null) {
@@ -253,7 +253,7 @@ public class Quests extends JavaPlugin {
                 for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
                     qPlayer.getQuestProgressFile().saveToDisk(false);
                 }
-            }, autocompleteInterval, autocompleteInterval);
+            }, autosaveInterval, autosaveInterval);
         }
 
         boolean queuePollTaskCancelled = true;

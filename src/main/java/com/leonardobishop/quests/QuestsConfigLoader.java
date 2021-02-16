@@ -305,10 +305,10 @@ public class QuestsConfigLoader {
         List<String> cLoreNormal = config.getStringList(path + ".lore-normal");
         List<String> cLoreStarted = config.getStringList(path + ".lore-started");
 
-        String name;
         List<String> loreNormal = translateColoursInList(cLoreNormal);
         List<String> loreStarted = translateColoursInList(cLoreStarted);
 
+        String name;
         name = ChatColor.translateAlternateColorCodes('&', cName);
 
         ItemStack is = plugin.getItemStack(path, config,

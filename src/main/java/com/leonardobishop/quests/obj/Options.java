@@ -30,6 +30,8 @@ public enum Options {
     QUEST_AUTOSTART("options.quest-autostart"),
     QUEST_AUTOTRACK("options.quest-autotrack"),
     GLOBAL_TASK_CONFIGURATION_OVERRIDE("options.global-task-configuration-override"),
+    GLOBAL_QUEST_DISPLAY_CONFIGURATION_OVERRIDE("options.global-quest-display-configuration-override"),
+    GLOBAL_QUEST_DISPLAY_LORE_APPEND_NORMAL("global-quest-display.lore.append-normal"),
     GLOBAL_QUEST_DISPLAY_LORE_APPEND_NOT_STARTED("global-quest-display.lore.append-not-started"),
     GLOBAL_QUEST_DISPLAY_LORE_APPEND_STARTED("global-quest-display.lore.append-started"),
     GLOBAL_QUEST_DISPLAY_LORE_APPEND_TRACKED("global-quest-display.lore.append-tracked");

@@ -139,7 +139,7 @@ options:
   gui-hide-locked: false
   # Allow players to cancel a quest (you may want to remove the cancel instructions in the global item lore)
   allow-quest-cancel: true
-  # Allow players to track a quest
+  # Allow players to track a quest (you may want to remove the tracking instructions in the global item lore)
   allow-quest-track: true
   # Titles for the GUIs
   guinames:
@@ -168,7 +168,7 @@ options:
   # The above, but overwriting the file on disk with the cleaned version, so it does not soft clean on every join.
   push-soft-clean-to-disk: false
   performance-tweaking: # The following are measured in server ticks, multiply SECONDS by 20 to get the number of ticks.
-    quest-queue-executor-interval: 1    # how frequently Quests should execute the next check in the completion queue (def=1 - 0.05s) - increase this value if you are struggling with performance
+    quest-queue-executor-interval: 1      # how frequently Quests should execute the next check in the completion queue (def=1 - 0.05s) - increase this value if you are struggling with performance
     quest-autosave-interval: 12000        # how frequently online players data will be autosaved (def=12000 - 10 minutes)
   tab-completion:
     enabled: true
@@ -176,10 +176,12 @@ options:
     # Allow quests to be loaded if they contain errors
     # This may lead to errors in the console!
     override-errors: false
-  # How many time (in seconds) plugin save placeholders
+  # How much time (in seconds) that plugin will cache placeholders
   placeholder-cache-time: 10
   # Whether or not the global task configuration will override per-task configuration settings
   global-task-configuration-override: false
+  # Whether or not the global display configuration will override per-quest display settins
+  global-quest-display-configuration-override: false
 
 # This switches up the entire quest system.
 # By enabling daily-quests, players will no longer be presented with the standard Quest GUI.
@@ -208,6 +210,8 @@ daily-quests:
 
 global-quest-display:
   lore:
+#    append-normal:
+#      - "..."
     append-not-started:
       - ""
       - "&eLeft Click &7to start this quest."

@@ -24,9 +24,10 @@ public class QItemStack {
     private String name;
     private List<String> loreNormal;
     private List<String> loreStarted;
-    private List<String> globalLoreAppendNotStarted;
-    private List<String> globalLoreAppendStarted;
-    private List<String> globalLoreAppendTracked;
+    private final List<String> globalLoreAppendNormal;
+    private final List<String> globalLoreAppendNotStarted;
+    private final List<String> globalLoreAppendStarted;
+    private final List<String> globalLoreAppendTracked;
     private ItemStack startingItemStack;
 
     public QItemStack(Quests plugin, String name, List<String> loreNormal, List<String> loreStarted, ItemStack startingItemStack) {
@@ -36,6 +37,7 @@ public class QItemStack {
         this.loreStarted = loreStarted;
         this.startingItemStack = startingItemStack;
 
+        this.globalLoreAppendNormal = Options.color(Options.GLOBAL_QUEST_DISPLAY_LORE_APPEND_NORMAL.getStringListValue());
         this.globalLoreAppendNotStarted = Options.color(Options.GLOBAL_QUEST_DISPLAY_LORE_APPEND_NOT_STARTED.getStringListValue());
         this.globalLoreAppendStarted = Options.color(Options.GLOBAL_QUEST_DISPLAY_LORE_APPEND_STARTED.getStringListValue());
         this.globalLoreAppendTracked = Options.color(Options.GLOBAL_QUEST_DISPLAY_LORE_APPEND_TRACKED.getStringListValue());
@@ -79,11 +81,32 @@ public class QItemStack {
         ItemMeta ism = is.getItemMeta();
         ism.setDisplayName(name);
         List<String> formattedLore = new ArrayList<>();
-        List<String> tempLore = new ArrayList<>(loreNormal);
+        List<String> tempLore = new ArrayList<>();
+
+        if (Options.GLOBAL_QUEST_DISPLAY_CONFIGURATION_OVERRIDE.getBooleanValue() && !globalLoreAppendNormal.isEmpty()) {
+            tempLore.addAll(globalLoreAppendNormal);
+        } else {
+            tempLore.addAll(loreNormal);
+            tempLore.addAll(globalLoreAppendNormal);
+        }
 
         Player player = Bukkit.getPlayer(questProgressFile.getPlayerUUID());
         if (questProgressFile.hasStartedQuest(quest)) {
-            tempLore.addAll(loreStarted);
+            boolean tracked = quest.getId().equals(questProgressFile.getPlayerPreferences().getTrackedQuestId());
+            if (Options.GLOBAL_QUEST_DISPLAY_CONFIGURATION_OVERRIDE.getBooleanValue() && !globalLoreAppendStarted.isEmpty()) {
+                if (tracked) {
+                    tempLore.addAll(globalLoreAppendTracked);
+                } else {
+                    tempLore.addAll(globalLoreAppendStarted);
+                }
+            } else {
+                tempLore.addAll(loreStarted);
+                if (tracked) {
+                    tempLore.addAll(globalLoreAppendTracked);
+                } else {
+                    tempLore.addAll(globalLoreAppendStarted);
+                }
+            }
             ism.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
             try {
                 ism.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -91,13 +114,8 @@ public class QItemStack {
             } catch (Exception ignored) {
 
             }
-            if (quest.getId().equals(questProgressFile.getPlayerPreferences().getTrackedQuestId())) {
-                if (globalLoreAppendTracked != null) tempLore.addAll(globalLoreAppendTracked);
-            } else {
-                if (globalLoreAppendStarted != null) tempLore.addAll(globalLoreAppendStarted);
-            }
         } else {
-            if (globalLoreAppendNotStarted != null) tempLore.addAll(globalLoreAppendNotStarted);
+            tempLore.addAll(globalLoreAppendNotStarted);
         }
         if (plugin.getPlaceholderAPIHook() != null && Options.GUI_USE_PLACEHOLDERAPI.getBooleanValue()) {
             ism.setDisplayName(plugin.getPlaceholderAPIHook().replacePlaceholders(player, ism.getDisplayName()));
