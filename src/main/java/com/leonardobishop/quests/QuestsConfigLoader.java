@@ -74,8 +74,6 @@ public class QuestsConfigLoader {
                 }
             }
 
-            System.out.println(globalTaskConfig);
-
             FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
                 final URI questsRoot = Paths.get(plugin.getDataFolder() + File.separator + "quests").toUri();
 

@@ -53,7 +53,7 @@ public final class DealDamageTaskType extends TaskType {
         Player player = (Player) e.getDamager();
         double damage = e.getDamage();
 
-        if (Bukkit.getOnlinePlayers().contains(player)) return;
+        if (player.hasMetadata("NPC")) return;
 
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();

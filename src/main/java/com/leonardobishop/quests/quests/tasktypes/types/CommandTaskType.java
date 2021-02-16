@@ -47,7 +47,7 @@ public final class CommandTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCommand(PlayerCommandPreprocessEvent e) {
-        if (Bukkit.getOnlinePlayers().contains(e.getPlayer())) return;
+        if (e.getPlayer().hasMetadata("NPC")) return;
 
         Player player = e.getPlayer();
 

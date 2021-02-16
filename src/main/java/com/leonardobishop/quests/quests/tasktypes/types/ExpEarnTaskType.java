@@ -45,7 +45,7 @@ public final class ExpEarnTaskType extends TaskType {
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onExpEarn(PlayerExpChangeEvent e) {
-        if (Bukkit.getOnlinePlayers().contains(e.getPlayer())) return;
+        if (e.getPlayer().hasMetadata("NPC")) return;
 
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(e.getPlayer().getUniqueId(), true);
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();

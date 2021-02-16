@@ -82,7 +82,7 @@ public final class MiningCertainTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (Bukkit.getOnlinePlayers().contains(event.getPlayer())) return;
+        if (event.getPlayer().hasMetadata("NPC")) return;
 
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId(), true);
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
@@ -109,7 +109,7 @@ public final class MiningCertainTaskType extends TaskType {
     // subtract if enabled
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (Bukkit.getOnlinePlayers().contains(event.getPlayer())) return;
+        if (event.getPlayer().hasMetadata("NPC")) return;
 
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId(), true);
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();

@@ -46,7 +46,7 @@ public final class FishingTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFishCaught(PlayerFishEvent event) {
-        if (Bukkit.getOnlinePlayers().contains(event.getPlayer())) return;
+        if (event.getPlayer().hasMetadata("NPC")) return;
 
         if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) {
             return;

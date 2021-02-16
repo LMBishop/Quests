@@ -76,7 +76,7 @@ public final class DistancefromTaskType extends TaskType {
             return;
         }
 
-        if (Bukkit.getOnlinePlayers().contains(event.getPlayer())) return;
+        if (event.getPlayer().hasMetadata("NPC")) return;
         Player player = event.getPlayer();
 
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);

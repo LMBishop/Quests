@@ -46,7 +46,7 @@ public final class EnchantingTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEnchant(EnchantItemEvent e) {
-        if (Bukkit.getOnlinePlayers().contains(e.getEnchanter())) return;
+        if (e.getEnchanter().hasMetadata("NPC")) return;
 
         Player player = e.getEnchanter();
 

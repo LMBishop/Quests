@@ -48,7 +48,7 @@ public final class MiningTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (Bukkit.getOnlinePlayers().contains(event.getPlayer())) return;  // citizens also causes these events to fire
+        if (event.getPlayer().hasMetadata("NPC")) return;  // citizens also causes these events to fire
 
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId(), true); // get the qplayer so you can get their progress
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile(); // the quest progress file stores progress about all quests and tasks

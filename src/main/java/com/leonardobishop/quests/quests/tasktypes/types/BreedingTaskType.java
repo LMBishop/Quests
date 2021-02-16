@@ -61,7 +61,7 @@ public final class BreedingTaskType extends TaskType {
         // Check if there is a player in the list, otherwise: return.
         for (Entity current : entList) {
 
-            if (current instanceof Player && Bukkit.getOnlinePlayers().contains(current)) {
+            if (current instanceof Player && !current.hasMetadata("NPC")) {
                 Player player = (Player) current;
                 QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
                 QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();

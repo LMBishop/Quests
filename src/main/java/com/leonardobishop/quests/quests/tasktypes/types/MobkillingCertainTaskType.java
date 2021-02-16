@@ -70,7 +70,7 @@ public final class MobkillingCertainTaskType extends TaskType {
             return;
         }
 
-        if (Bukkit.getOnlinePlayers().contains(killer)) return;
+        if (killer.hasMetadata("NPC")) return;
 
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(killer.getUniqueId(), true);
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();

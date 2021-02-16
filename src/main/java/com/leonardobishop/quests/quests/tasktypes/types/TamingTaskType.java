@@ -52,7 +52,7 @@ public final class TamingTaskType extends TaskType {
 
         Player player = (Player) event.getOwner();
 
-        if (Bukkit.getOnlinePlayers().contains(player)) return;
+        if (player.hasMetadata("NPC")) return;
 
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
