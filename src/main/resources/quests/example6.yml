@@ -10,17 +10,20 @@ display:
     - "&ccertain permissions."
     - ""
     - "&7This quest requires you to:"
-    - "&7 - Place 10 blocks."
+    - "&7 - Place &f10 &7blocks."
     - ""
     - "&7Rewards:"
-    - "&7 - $10 added to your in-game balance."
+    - "&7 - &f$10 &7added to your in-game balance."
   lore-started:
     - ""
     - "&7Your current progression:"
-    - "&7 - {building:progress}/10 blocks placed."
+    - "&7 - &f{building:progress}&7/10 blocks placed."
   type: "GRASS_BLOCK"
 rewards:
   - "eco give {player} 10"
+placeholders:
+  description: "&7Place &f10 &7blocks of any type."
+  progress: " &8- &f{building:progress}&7/10 blocks"
 options:
   category: "permissionexample"
   # This quest has no specific permission, however its category does. The permission for the category is "quests.category.permissionexample"

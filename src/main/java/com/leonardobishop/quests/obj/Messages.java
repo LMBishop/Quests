@@ -9,6 +9,8 @@ public enum Messages {
     QUEST_START("messages.quest-start"),
     QUEST_COMPLETE("messages.quest-complete"),
     QUEST_CANCEL("messages.quest-cancel"),
+    QUEST_TRACK("messages.quest-track"),
+    QUEST_TRACK_STOP("messages.quest-track-stop"),
     QUEST_START_LIMIT("messages.quest-start-limit"),
     QUEST_START_DISABLED("messages.quest-start-disabled"),
     QUEST_START_LOCKED("messages.quest-start-locked"),

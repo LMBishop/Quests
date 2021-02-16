@@ -27,7 +27,11 @@ public enum Options {
     TAB_COMPLETE_ENABLED("options.tab-completion.enabled"),
     ERROR_CHECKING_OVERRIDE("options.error-checking.override-errors"),
     QUEST_AUTOSTART("options.quest-autostart"),
-    GLOBAL_TASK_CONFIGURATION_OVERRIDE("options.global-task-configuration-override");
+    QUEST_AUTOTRACK("options.quest-autotrack"),
+    GLOBAL_TASK_CONFIGURATION_OVERRIDE("options.global-task-configuration-override"),
+    GLOBAL_QUEST_DISPLAY_LORE_APPEND_NOT_STARTED("global-quest-display.lore.append-not-started"),
+    GLOBAL_QUEST_DISPLAY_LORE_APPEND_STARTED("global-quest-display.lore.append-started"),
+    GLOBAL_QUEST_DISPLAY_LORE_APPEND_TRACKED("global-quest-display.lore.append-tracked");
 
     private static final Map<String, Boolean> cachedBooleans = new HashMap<>();
 
@@ -76,6 +80,8 @@ public enum Options {
     }
 
     public static List<String> color(List<String> s) {
+        if (s == null || s.size() == 0) return s;
+
         List<String> colored = new ArrayList<>();
         for (String line : s) {
             colored.add(ChatColor.translateAlternateColorCodes('&', line));

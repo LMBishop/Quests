@@ -168,14 +168,21 @@ public class QuestsConfigLoader {
                     int cooldownTime = config.getInt("options.cooldown.time", 10);
                     int sortOrder = config.getInt("options.sort-order", 1);
                     String category = config.getString("options.category");
+                    Map<String, String> placeholders = new HashMap<>();
+
+                    if (config.isConfigurationSection("placeholders")) {
+                        for (String p : config.getConfigurationSection("placeholders").getKeys(false)) {
+                            placeholders.put(p, config.getString("placeholders." + p));
+                        }
+                    }
 
                     if (category == null) category = "";
 
                     Quest quest;
                     if (category.equals("")) {
-                        quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, startString, sortOrder);
+                        quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, startString, placeholders, sortOrder);
                     } else {
-                        quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, startString, category, sortOrder);
+                        quest = new Quest(id, displayItem, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, startString, placeholders, category, sortOrder);
                         Category c = plugin.getQuestManager().getCategoryById(category);
                         if (c != null) {
                             c.registerQuestId(id);
@@ -307,24 +314,23 @@ public class QuestsConfigLoader {
         List<String> cLoreStarted = config.getStringList(path + ".lore-started");
 
         String name;
-        List<String> loreNormal = new ArrayList<>();
-        if (cLoreNormal != null) {
-            for (String s : cLoreNormal) {
-                loreNormal.add(ChatColor.translateAlternateColorCodes('&', s));
-            }
-        }
-        List<String> loreStarted = new ArrayList<>();
-        if (cLoreStarted != null) {
-            for (String s : cLoreStarted) {
-                loreStarted.add(ChatColor.translateAlternateColorCodes('&', s));
-            }
-        }
+        List<String> loreNormal = translateColoursInList(cLoreNormal);
+        List<String> loreStarted = translateColoursInList(cLoreStarted);
+
         name = ChatColor.translateAlternateColorCodes('&', cName);
 
         ItemStack is = plugin.getItemStack(path, config,
                 ItemGetter.Filter.DISPLAY_NAME, ItemGetter.Filter.LORE, ItemGetter.Filter.ENCHANTMENTS, ItemGetter.Filter.ITEM_FLAGS);
 
         return new QItemStack(plugin, name, loreNormal, loreStarted, is);
+    }
+
+    private List<String> translateColoursInList(List<String> list) {
+        List<String> coloured = new ArrayList<>();
+        for (String s : list) {
+            coloured.add(ChatColor.translateAlternateColorCodes('&', s));
+        }
+        return coloured;
     }
 
     public enum ConfigProblemDescriptions {

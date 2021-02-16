@@ -3,10 +3,7 @@ package com.leonardobishop.quests.player.questprogressfile;
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
-import com.leonardobishop.quests.api.events.PlayerCancelQuestEvent;
-import com.leonardobishop.quests.api.events.PlayerFinishQuestEvent;
-import com.leonardobishop.quests.api.events.PlayerStartQuestEvent;
-import com.leonardobishop.quests.api.events.PreStartQuestEvent;
+import com.leonardobishop.quests.api.events.*;
 import com.leonardobishop.quests.obj.Messages;
 import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.player.QPlayer;
@@ -25,11 +22,13 @@ import java.util.concurrent.TimeUnit;
 public class QuestProgressFile {
 
     private final Map<String, QuestProgress> questProgress = new HashMap<>();
+    private final QPlayerPreferences playerPreferences;
     private final UUID playerUUID;
     private final Quests plugin;
 
-    public QuestProgressFile(UUID player, Quests plugin) {
-        this.playerUUID = player;
+    public QuestProgressFile(UUID playerUUID, QPlayerPreferences playerPreferences, Quests plugin) {
+        this.playerUUID = playerUUID;
+        this.playerPreferences = playerPreferences;
         this.plugin = plugin;
     }
 
@@ -43,6 +42,9 @@ public class QuestProgressFile {
         questProgress.setCompleted(true);
         questProgress.setCompletedBefore(true);
         questProgress.setCompletionDate(System.currentTimeMillis());
+        if (Options.QUEST_AUTOTRACK.getBooleanValue() && !(quest.isRepeatable() && !quest.isCooldownEnabled())) {
+            trackQuest(null);
+        }
         Player player = Bukkit.getPlayer(this.playerUUID);
         if (player != null) {
             QPlayer questPlayer = QuestsAPI.getPlayerManager().getPlayer(this.playerUUID);
@@ -68,6 +70,21 @@ public class QuestProgressFile {
             }
         }
         return true;
+    }
+
+    public void trackQuest(Quest quest) {
+        Player player = Bukkit.getPlayer(playerUUID);
+        if (quest == null) {
+            playerPreferences.setTrackedQuestId(null);
+            if (player != null) {
+                Bukkit.getPluginManager().callEvent(new PlayerStopTrackQuestEvent(player, this));
+            }
+        } else if (hasStartedQuest(quest)) {
+            playerPreferences.setTrackedQuestId(quest.getId());
+            if (player != null) {
+                Bukkit.getPluginManager().callEvent(new PlayerStartTrackQuestEvent(player, this));
+            }
+        }
     }
 
     /**
@@ -178,6 +195,9 @@ public class QuestProgressFile {
             for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
                 taskProgress.setCompleted(false);
                 taskProgress.setProgress(null);
+            }
+            if (Options.QUEST_AUTOTRACK.getBooleanValue()) {
+                trackQuest(quest);
             }
             questProgress.setCompleted(false);
             if (player != null) {
@@ -388,6 +408,10 @@ public class QuestProgressFile {
             return true;
         }
         return false;
+    }
+
+    public QPlayerPreferences getPlayerPreferences() {
+        return playerPreferences;
     }
 
     public void saveToDisk() {

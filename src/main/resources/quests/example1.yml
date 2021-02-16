@@ -21,22 +21,29 @@ display:
     - "&cattributes a quest can have."
     - ""
     - "&7This quest requires you to:"
-    - "&7 - Break 30 blocks."
+    - "&7 - Break &f30 blocks&7."
     - ""
     - "&7Rewards:"
-    - "&7 - 10 diamonds."
+    - "&7 - &f10 &7diamonds."
   # This lore will be appended to the bottom of the above lore when the player starts their quest.
   # To get the players progress through a task, use {TASKID:progress}  and replace TASKID with the ID of the task.
   lore-started:
     - ""
     - "&7Your current progression:"
-    - "&7 - {mining:progress}/30 blocks broken."
+    - "&7 - &f{mining:progress}&7/30 blocks broken."
   # This is the material of the item. It is recommended to stick to bukkit names.
   type: "WOODEN_PICKAXE"
 
 # List all commands to be executed by the server when the player completes the quest. Use {player} to get the players name.
 rewards:
   - "give {player} diamond 10"
+
+# These placeholders are accessible using PlaceholderAPI, for example %quests_tracked_p:description%
+# They are useful for putting information about the players tracked quest on a scoreboard
+# You may want to keep the names of them the same for ALL quests for this use-case
+placeholders:
+  description: "&7Break &f30 blocks &7of any type."
+  progress: " &8- &f{mining:progress}&7/30 broken"
 
 # Everything inside this section define quest-specific options
 options:

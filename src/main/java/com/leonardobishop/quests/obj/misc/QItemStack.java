@@ -24,6 +24,9 @@ public class QItemStack {
     private String name;
     private List<String> loreNormal;
     private List<String> loreStarted;
+    private List<String> globalLoreAppendNotStarted;
+    private List<String> globalLoreAppendStarted;
+    private List<String> globalLoreAppendTracked;
     private ItemStack startingItemStack;
 
     public QItemStack(Quests plugin, String name, List<String> loreNormal, List<String> loreStarted, ItemStack startingItemStack) {
@@ -32,6 +35,10 @@ public class QItemStack {
         this.loreNormal = loreNormal;
         this.loreStarted = loreStarted;
         this.startingItemStack = startingItemStack;
+
+        this.globalLoreAppendNotStarted = Options.color(Options.GLOBAL_QUEST_DISPLAY_LORE_APPEND_NOT_STARTED.getStringListValue());
+        this.globalLoreAppendStarted = Options.color(Options.GLOBAL_QUEST_DISPLAY_LORE_APPEND_STARTED.getStringListValue());
+        this.globalLoreAppendTracked = Options.color(Options.GLOBAL_QUEST_DISPLAY_LORE_APPEND_TRACKED.getStringListValue());
     }
 
     public String getName() {
@@ -84,29 +91,20 @@ public class QItemStack {
             } catch (Exception ignored) {
 
             }
+            if (quest.getId().equals(questProgressFile.getPlayerPreferences().getTrackedQuestId())) {
+                if (globalLoreAppendTracked != null) tempLore.addAll(globalLoreAppendTracked);
+            } else {
+                if (globalLoreAppendStarted != null) tempLore.addAll(globalLoreAppendStarted);
+            }
+        } else {
+            if (globalLoreAppendNotStarted != null) tempLore.addAll(globalLoreAppendNotStarted);
         }
         if (plugin.getPlaceholderAPIHook() != null && Options.GUI_USE_PLACEHOLDERAPI.getBooleanValue()) {
             ism.setDisplayName(plugin.getPlaceholderAPIHook().replacePlaceholders(player, ism.getDisplayName()));
         }
         if (questProgress != null) {
             for (String s : tempLore) {
-                Matcher m = Pattern.compile("\\{([^}]+)}").matcher(s);
-                while (m.find()) {
-                    String[] parts = m.group(1).split(":");
-                    if (parts.length > 1) {
-                        if (questProgress.getTaskProgress(parts[0]) == null) {
-                            continue;
-                        }
-                        if (parts[1].equals("progress")) {
-                            String str = String.valueOf(questProgress.getTaskProgress(parts[0]).getProgress());
-                            s = s.replace("{" + m.group(1) + "}", (str.equals("null") ? String.valueOf(0) : str));
-                        }
-                        if (parts[1].equals("complete")) {
-                            String str = String.valueOf(questProgress.getTaskProgress(parts[0]).isCompleted());
-                            s = s.replace("{" + m.group(1) + "}", str);
-                        }
-                    }
-                }
+                s = processPlaceholders(s, questProgress);
                 if (plugin.getPlaceholderAPIHook() != null && Options.GUI_USE_PLACEHOLDERAPI.getBooleanValue()) {
                     s = plugin.getPlaceholderAPIHook().replacePlaceholders(player, s);
                 }
@@ -116,5 +114,26 @@ public class QItemStack {
         ism.setLore(formattedLore);
         is.setItemMeta(ism);
         return is;
+    }
+
+    public static String processPlaceholders(String s, QuestProgress questProgress) {
+        Matcher m = Pattern.compile("\\{([^}]+)}").matcher(s);
+        while (m.find()) {
+            String[] parts = m.group(1).split(":");
+            if (parts.length > 1) {
+                if (questProgress.getTaskProgress(parts[0]) == null) {
+                    continue;
+                }
+                if (parts[1].equals("progress")) {
+                    String str = String.valueOf(questProgress.getTaskProgress(parts[0]).getProgress());
+                    s = s.replace("{" + m.group(1) + "}", (str.equals("null") ? String.valueOf(0) : str));
+                }
+                if (parts[1].equals("complete")) {
+                    String str = String.valueOf(questProgress.getTaskProgress(parts[0]).isCompleted());
+                    s = s.replace("{" + m.group(1) + "}", str);
+                }
+            }
+        }
+        return s;
     }
 }

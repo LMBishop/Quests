@@ -137,7 +137,7 @@ options:
   quest-started-limit: 2
   # Hide locked quests, quests on cooldown and completed (but not repeatable) quests
   gui-hide-locked: false
-  # Allow players to cancel a quest
+  # Allow players to cancel a quest (you may want to remove the cancel instructions in the global item lore)
   allow-quest-cancel: true
   # Titles for the GUIs
   guinames:
@@ -155,6 +155,8 @@ options:
   gui-use-placeholderapi: false
   # Make it so players do not have to start quest themselves
   quest-autostart: false
+  # Automatically track quests on start, and stop tracking on completion
+  quest-autotrack: true
   # How much quests should log, 0 = errors only, 1 = warnings, 2 = info, 3 = debug
   verbose-logging-level: 2
   # Automatically clean player's quest progress files when they join.
@@ -202,6 +204,23 @@ daily-quests:
 #    inventory:
 #      update-progress: true
 
+global-quest-display:
+  lore:
+    append-not-started:
+      - ""
+      - "&eLeft Click &7to start this quest."
+    append-started:
+      - ""
+      - "&aYou have started this quest."
+      - "&eMiddle Click &7to track this quest."
+      - "&eRight Click &7to cancel this quest."
+    append-tracked:
+      - ""
+      - "&aYou are &etracking &athis quest."
+      - "&eMiddle Click &7to stop tracking this quest."
+      - "&eRight Click &7to cancel this quest."
+
+
 # Configure titles
 titles:
   quest-start:
@@ -217,6 +236,8 @@ messages:
   quest-start: "&7Quest &c{quest} &7started!"
   quest-complete: "&7Quest &c{quest} &7completed!"
   quest-cancel: "&7Quest &c{quest} &7cancelled!"
+  quest-track: "&7Tracking quest &c{quest}&7."
+  quest-track-stop: "&7No longer tracking quest &c{quest}&7."
   quest-start-limit: "&7Players are limited to &c{limit} &7started quests at a time."
   quest-start-disabled: "&7You cannot repeat this quest."
   quest-start-locked: "&7You have not unlocked this quest yet."

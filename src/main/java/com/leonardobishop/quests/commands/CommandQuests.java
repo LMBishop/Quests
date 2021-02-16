@@ -109,6 +109,9 @@ public class CommandQuests implements TabExecutor {
                             }
                         });
                         return true;
+                    } else if (args[1].equalsIgnoreCase("wiki")) {
+                        sender.sendMessage(ChatColor.RED + "Link to Quests wiki: " + ChatColor.GRAY + "https://github.com/LMBishop/Quests/wiki");
+                        return true;
                     }
                 } else if (args.length == 3) {
                     if (args[1].equalsIgnoreCase("opengui")) {
@@ -516,6 +519,7 @@ public class CommandQuests implements TabExecutor {
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a reload " + ChatColor.DARK_GRAY + ": reload Quests configuration");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a config " + ChatColor.DARK_GRAY + ": see detected problems in config");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a update " + ChatColor.DARK_GRAY + ": check for updates");
+            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a wiki " + ChatColor.DARK_GRAY + ": get a link to the Quests wiki");
         }
         sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----=[" + ChatColor.RED + " requires permission: quests.admin " +
                 ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "]=-----");
@@ -561,7 +565,7 @@ public class CommandQuests implements TabExecutor {
                     return tabCompleteQuests(args[1]);
                 } else if (args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin")
                         && sender.hasPermission("quests.admin")) {
-                    List<String> options = Arrays.asList("opengui", "moddata", "types", "reload", "update", "config", "info");
+                    List<String> options = Arrays.asList("opengui", "moddata", "types", "reload", "update", "config", "info", "wiki");
                     return matchTabComplete(args[1], options);
                 }
             } else if (args.length == 3) {

@@ -2,6 +2,7 @@ package com.leonardobishop.quests.player;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.QuestsLogger;
+import com.leonardobishop.quests.player.questprogressfile.QPlayerPreferences;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
@@ -75,7 +76,7 @@ public class QPlayerManager {
     public void loadPlayer(UUID uuid) {
         plugin.getQuestsLogger().debug("Loading player " + uuid + " from disk.");
         if (qPlayers.get(uuid) == null) {
-            QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
+            QuestProgressFile questProgressFile = new QuestProgressFile(uuid, new QPlayerPreferences(null), plugin);
 
             try {
                 File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");

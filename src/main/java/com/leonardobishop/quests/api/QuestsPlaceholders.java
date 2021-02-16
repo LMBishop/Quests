@@ -3,6 +3,7 @@ package com.leonardobishop.quests.api;
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
 import com.leonardobishop.quests.obj.Options;
+import com.leonardobishop.quests.obj.misc.QItemStack;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Category;
@@ -55,19 +56,20 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
     @Override
     public String onPlaceholderRequest(Player p, String params) {
         if (p == null || !p.isOnline()) return null;
-        if (cache.containsKey(p.getName()) && cache.get(p.getName()).containsKey(params)) return cache.get(p.getName()).get(params);
+        if (cache.containsKey(p.getName()) && cache.get(p.getName()).containsKey(params))
+            return cache.get(p.getName()).get(params);
 
         String[] args = params.split("_", 4);
         if (args.length < 1) return "Invalid Placeholder";
 
-        final boolean save = args[args.length-1].toLowerCase().equals("cache");
+        final boolean save = args[args.length - 1].toLowerCase().equals("cache");
         if (save) args = Arrays.copyOf(args, args.length - 1);
 
         final QPlayer qPlayer = plugin.getPlayerManager().getPlayer(p.getUniqueId());
-        String split = args[args.length-1];
+        String split = args[args.length - 1];
 
         String result = "null";
-        if (!args[0].contains(":")) {
+        if (!args[0].contains(":") && !args[0].equalsIgnoreCase("tracked")) {
             if (args.length > 1 && split.equals(args[1])) split = ",";
 
             switch (args[0].toLowerCase()) {
@@ -106,23 +108,36 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                 plugin.getQuestManager().getCategories().forEach(c -> listCategories.add(c.getId()));
                                 break;
                             default:
-                                return args[0] + "_" + args[1] + "is not a valid placeholder";
+                                return args[0] + "_" + args[1] + " is not a valid placeholder";
                         }
                         result = String.join(split, listCategories);
                     }
                     break;
                 default:
-                    return args[0] + "is not a valid placeholder";
+                    return args[0] + " is not a valid placeholder";
             }
         } else {
             final String[] key = args[0].split(":");
             switch (key[0].toLowerCase()) {
                 case "quest":
                 case "q":
-                    if (key.length == 1) return "Please specify quest name";
+                case "tracked":
+                    if (!key[0].equalsIgnoreCase("tracked") && key.length == 1) return "Please specify quest name";
 
-                    final Quest quest = plugin.getQuestManager().getQuestById(key[1]);
-                    if (quest == null) return key[1] + "is not a quest";
+                    final Quest quest;
+                    if (!key[0].equalsIgnoreCase("tracked")) {
+                        quest = plugin.getQuestManager().getQuestById(key[1]);
+                        if (quest == null) return key[1] + " is not a quest";
+                    } else {
+                        quest = plugin.getQuestManager().getQuestById(qPlayer.getQuestProgressFile().getPlayerPreferences().getTrackedQuestId());
+                        if (quest == null) {
+                            if (args.length == 1) {
+                                return "No tracked quest";
+                            } else {
+                                return "";
+                            }
+                        }
+                    }
 
                     if (args.length == 1) {
                         result = quest.getDisplayNameStripped();
@@ -163,28 +178,41 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                 result = (qPlayer.getQuestProgressFile().hasMetRequirements(quest) ? "true" : "false");
                                 break;
                             default:
-                                if (!args[1].contains(":")) return args[0] + "_" + args[1] + "is not a valid placeholder";
+                                if (!args[1].contains(":"))
+                                    return args[0] + "_" + args[1] + " is not a valid placeholder";
 
                                 final String[] t = args[1].split(":");
-                                if (!t[0].toLowerCase().equals("task") && !t[0].toLowerCase().equals("t")) return args[0] + "_" + args[1] + "is not a valid placeholder";
-                                if (t.length == 1) return "Please specify task name";
+                                if (t[0].equalsIgnoreCase("task") || t[0].equalsIgnoreCase("t")) {
+                                    if (t.length == 1) return "Please specify task name";
 
-                                if (args.length == 2) {
-                                    result = qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).getTaskId();
-                                } else {
-                                    switch (args[2].toLowerCase()) {
-                                        case "progress":
-                                        case "p":
-                                            final Object progress = qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).getProgress();
-                                            result = (progress == null ? "0" : String.valueOf(progress));
-                                            break;
-                                        case "completed":
-                                        case "c":
-                                            result = String.valueOf(qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).isCompleted());
-                                            break;
-                                        default:
-                                            return args[0] + "_" + args[1] + "_" + args[2] + "is not a valid placeholder";
+                                    if (args.length == 2) {
+                                        result = qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).getTaskId();
+                                    } else {
+                                        switch (args[2].toLowerCase()) {
+                                            case "progress":
+                                            case "p":
+                                                final Object progress = qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).getProgress();
+                                                result = (progress == null ? "0" : String.valueOf(progress));
+                                                break;
+                                            case "completed":
+                                            case "c":
+                                                result = String.valueOf(qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).isCompleted());
+                                                break;
+                                            default:
+                                                return args[0] + "_" + args[1] + "_" + args[2] + " is not a valid placeholder";
+                                        }
                                     }
+                                } else if (t[0].equalsIgnoreCase("placeholder") || t[0].equalsIgnoreCase("p")) {
+                                    if (t.length == 1) return "Please specify placeholder name";
+
+                                    String placeholder = quest.getPlaceholders().get(t[1]);
+                                    if (placeholder == null) {
+                                        return t[1] + " is not a valid placeholder within quest " + quest.getId();
+                                    }
+                                    placeholder = QItemStack.processPlaceholders(Options.color(placeholder), qPlayer.getQuestProgressFile().getQuestProgress(quest));
+                                    return placeholder;
+                                } else {
+                                    return args[0] + "_" + args[1] + " is not a valid placeholder";
                                 }
                         }
                     }
@@ -195,7 +223,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                     if (key.length == 1) return "Please specify category name";
 
                     final Category category = plugin.getQuestManager().getCategoryById(key[1]);
-                    if (category == null) return key[1] + "is not a category";
+                    if (category == null) return key[1] + " is not a category";
 
                     if (args.length == 1) {
                         result = category.getDisplayNameStripped();
@@ -223,12 +251,12 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                 result = (args.length == 2 ? String.valueOf(listStarted.size()) : parseList(listStarted, args[2], split));
                                 break;
                             default:
-                                return args[0] + "_" + args[1] + "is not a valid placeholder";
+                                return args[0] + "_" + args[1] + " is not a valid placeholder";
                         }
                     }
                     break;
                 default:
-                    return args[0] + "is not a valid placeholder";
+                    return args[0] + " is not a valid placeholder";
             }
         }
         return (save ? cache(p.getName(), params, result) : result);
@@ -245,7 +273,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
     }
 
     private String parseDate(String[] args, Long date) {
-        final String format = (args[args.length-1].equals(args[1]) ? "dd/MM/yyyy" : args[args.length-1]);
+        final String format = (args[args.length - 1].equals(args[1]) ? "dd/MM/yyyy" : args[args.length - 1]);
         SimpleDateFormat sdf;
         if (formats.containsKey(format)) {
             sdf = formats.get(format);
@@ -280,13 +308,16 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
             if (quest != null) {
                 switch (filter) {
                     case STARTED:
-                        if (questP.getQuestProgressFile().getQuestProgress(quest).isStarted()) categoryQuests.add(quest);
+                        if (questP.getQuestProgressFile().getQuestProgress(quest).isStarted())
+                            categoryQuests.add(quest);
                         break;
                     case COMPLETED:
-                        if (questP.getQuestProgressFile().getQuestProgress(quest).isCompleted()) categoryQuests.add(quest);
+                        if (questP.getQuestProgressFile().getQuestProgress(quest).isCompleted())
+                            categoryQuests.add(quest);
                         break;
                     case COMPLETED_BEFORE:
-                        if (questP.getQuestProgressFile().getQuestProgress(quest).isCompletedBefore()) categoryQuests.add(quest);
+                        if (questP.getQuestProgressFile().getQuestProgress(quest).isCompletedBefore())
+                            categoryQuests.add(quest);
                         break;
                     default:
                         categoryQuests.add(quest);

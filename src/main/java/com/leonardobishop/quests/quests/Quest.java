@@ -8,7 +8,6 @@ import java.util.*;
 public class Quest implements Comparable<Quest> {
 
     private Map<String, Task> tasks = new HashMap<>();
-    //TODO: maybe ALSO store by <tasktypename (string), list<task>>
     private final String id;
     private final QItemStack displayItem;
     private final List<String> rewards;
@@ -20,15 +19,16 @@ public class Quest implements Comparable<Quest> {
     private final int cooldown;
     private final int sortOrder;
     private final boolean permissionRequired;
+    private final Map<String, String> placeholders;
     private String categoryid;
 
 
-    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString, List<String> startString, String categoryid, int sortOrder) {
-        this(id, displayItem, rewards, requirements, repeatable, cooldownEnabled, cooldown, permissionRequired, rewardString, startString, sortOrder);
+    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString, List<String> startString, Map<String, String> placeholders, String categoryid, int sortOrder) {
+        this(id, displayItem, rewards, requirements, repeatable, cooldownEnabled, cooldown, permissionRequired, rewardString, startString, placeholders, sortOrder);
         this.categoryid = categoryid;
     }
 
-    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString, List<String> startString, int sortOrder) {
+    public Quest(String id, QItemStack displayItem, List<String> rewards, List<String> requirements, boolean repeatable, boolean cooldownEnabled, int cooldown, boolean permissionRequired, List<String> rewardString, List<String> startString, Map<String, String> placeholders, int sortOrder) {
         this.id = id;
         this.displayItem = displayItem;
         this.rewards = rewards;
@@ -39,6 +39,7 @@ public class Quest implements Comparable<Quest> {
         this.permissionRequired = permissionRequired;
         this.rewardString = rewardString;
         this.startString = startString;
+        this.placeholders = placeholders;
         this.sortOrder = sortOrder;
     }
 
@@ -111,6 +112,10 @@ public class Quest implements Comparable<Quest> {
 
     public String getDisplayNameStripped() {
         return ChatColor.stripColor(this.displayItem.getName());
+    }
+
+    public Map<String, String> getPlaceholders() {
+        return placeholders;
     }
 
     @Override

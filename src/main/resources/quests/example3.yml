@@ -19,21 +19,24 @@ display:
     - "&cafter a cooldown, unlike the previous one."
     - ""
     - "&7This quest requires you to:"
-    - "&7 - Break 81 gold ore."
-    - "&7 - Place 9 gold blocks."
+    - "&7 - Break &f81 gold ore&7."
+    - "&7 - Place &f9 gold blocks&7."
     - ""
     - "&7Rewards:"
-    - "&7 - 30 diamonds."
-    - "&7 - $10 added to your in-game balance."
+    - "&7 - &f30 diamonds&7."
+    - "&7 - &f$10&7 added to your in-game balance."
   lore-started:
     - ""
     - "&7Your current progression:"
-    - "&7 - {mining:progress}/81 gold ore broken."
-    - "&7 - {building:progress}/9 gold blocks placed."
+    - "&7 - &f{mining:progress}&7/81 gold ore broken."
+    - "&7 - &f{building:progress}&7/9 gold blocks placed."
   type: "GOLD_ORE"
 rewards:
   - "give {player} diamond 30"
   - "eco give {player} 10"
+placeholders:
+  description: "&7Break &f81 gold ore &7and place &f9 gold blocks."
+  progress: " &8- &f{mining:progress}&7/81 gold ore, &f{building:progress}&7/9 gold blocks"
 options:
   category: "examples"
   requires:

@@ -16,21 +16,24 @@ display:
     - "&cmultiple things to be done, unlike the previous one."
     - ""
     - "&7This quest requires you to:"
-    - "&7 - Break 100 blocks."
-    - "&7 - Place 100 blocks."
+    - "&7 - Break &f100 &7blocks."
+    - "&7 - Place &f100 &7blocks."
     - ""
     - "&7Rewards:"
-    - "&7 - 15 diamonds."
-    - "&7 - $50 added to your in-game balance."
+    - "&7 - &f15 diamonds&7."
+    - "&7 - &f$50&7 added to your in-game balance."
   lore-started:
     - ""
     - "&7Your current progression:"
-    - "&7 - {mining:progress}/100 blocks broken."
-    - "&7 - {building:progress}/100 blocks placed."
+    - "&7 - &f{mining:progress}&7/100 blocks broken."
+    - "&7 - &f{building:progress}&7/100 blocks placed."
   type: "GRASS_BLOCK"
 rewards:
   - "give {player} diamond 15"
   - "eco give {player} 50"
+placeholders:
+  description: "&7Break and place &f100 blocks &7of any type."
+  progress: " &8- &f{mining:progress}&7/100 broken, &f{building:progress}&7/100 placed"
 options:
   category: "examples"
   # Unlike the previous quest, this quest has "example1" as a required quest. You cannot start this quest without "example1" quest complete.
