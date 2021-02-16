@@ -135,7 +135,7 @@ public class CommandQuests implements TabExecutor {
                                     plugin.getPlayerManager().loadPlayer(uuid);
                                     QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
                                     qPlayer.getQuestProgressFile().clean();
-                                    qPlayer.getQuestProgressFile().saveToDisk(false, true);
+                                    qPlayer.getQuestProgressFile().saveToDisk(false);
                                     if (Bukkit.getPlayer(uuid) == null) {
                                         plugin.getPlayerManager().dropPlayer(uuid);
                                     }
@@ -317,7 +317,7 @@ public class CommandQuests implements TabExecutor {
                         }
                         if (args[2].equalsIgnoreCase("reset")) {
                             questProgressFile.generateBlankQuestProgress(quest.getId());
-                            questProgressFile.saveToDisk(false, true);
+                            questProgressFile.saveToDisk(false);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         } else if (args[2].equalsIgnoreCase("start")) {

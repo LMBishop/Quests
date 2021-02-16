@@ -223,7 +223,7 @@ public class Quests extends JavaPlugin {
             } catch (Exception ignored) { }
         }
         for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
-            qPlayer.getQuestProgressFile().saveToDisk(true);
+            qPlayer.getQuestProgressFile().saveToDisk(false);
         }
         if (placeholderAPIHook != null) placeholderAPIHook.unregisterExpansion();
     }
@@ -250,9 +250,7 @@ public class Quests extends JavaPlugin {
         }
         if (autosaveTaskCancelled) {
             questAutosaveTask = Bukkit.getScheduler().runTaskTimer(this, () -> {
-                for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
-                    qPlayer.getQuestProgressFile().saveToDisk(false);
-                }
+                new QuestsAutosaveRunnable(this);
             }, autosaveInterval, autosaveInterval);
         }
 

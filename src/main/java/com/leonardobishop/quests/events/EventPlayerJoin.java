@@ -6,6 +6,7 @@ import com.leonardobishop.quests.obj.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.UUID;
@@ -25,7 +26,7 @@ public class EventPlayerJoin implements Listener {
         if (Options.SOFT_CLEAN_QUESTSPROGRESSFILE_ON_JOIN.getBooleanValue()) {
             plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile().clean();
             if (Options.PUSH_SOFT_CLEAN_TO_DISK.getBooleanValue()) {
-                plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile().saveToDisk(false, true);
+                plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile().saveToDisk(false);
             }
         }
         if (plugin.getDescription().getVersion().contains("beta") && event.getPlayer().hasPermission("quests.admin")) {
@@ -35,6 +36,7 @@ public class EventPlayerJoin implements Listener {
             // delay for a bit so they actually see the message
             Bukkit.getScheduler().runTaskLater(this.plugin, () -> event.getPlayer().sendMessage(plugin.getUpdater().getMessage()), 50L);
         }
+
         // run a full check to check for any missed quest completions
         plugin.getQuestCompleter().queueFullCheck(plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile());
     }

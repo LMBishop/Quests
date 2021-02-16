@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -414,15 +415,7 @@ public class QuestProgressFile {
         return playerPreferences;
     }
 
-    public void saveToDisk() {
-        saveToDisk(false, false);
-    }
-
-    public void saveToDisk(boolean disable) {
-        saveToDisk(disable, false);
-    }
-
-    public void saveToDisk(boolean disable, boolean fullWrite) {
+    public void saveToDisk(boolean async) {
         plugin.getQuestsLogger().debug("Saving player " + playerUUID + " to disk.");
         File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
         if (!directory.exists() && !directory.isDirectory()) {
@@ -451,21 +444,25 @@ public class QuestProgressFile {
                         .getProgress());
             }
         }
+//
+        synchronized (this) {
 
-        try {
-            data.save(file);
-            if (disable)
-                synchronized (this.questProgress) {
-                    for (QuestProgress questProgress : questProgress.values()) {
-                        questProgress.resetModified();
+            // TODO
+            if (async && Options.QUEST_AUTOSAVE_ASYNC.getBooleanValue()) {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                    try {
+                        data.save(file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+                });
+            } else {
+                try {
+                    data.save(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            else
-                for (QuestProgress questProgress : questProgress.values()) {
-                    questProgress.resetModified();
-                }
-        } catch (IOException e) {
-            e.printStackTrace();
+            }
         }
     }
 

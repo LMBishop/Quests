@@ -23,6 +23,7 @@ public enum Options {
     GUITITLE_QUEST_CANCEL("options.guinames.quest-cancel"),
     ALLOW_QUEST_CANCEL("options.allow-quest-cancel"),
     ALLOW_QUEST_TRACK("options.allow-quest-track"),
+    QUEST_AUTOSAVE_ASYNC("options.performance-tweaking.quests-autosave-async"),
     SOFT_CLEAN_QUESTSPROGRESSFILE_ON_JOIN("options.soft-clean-questsprogressfile-on-join"),
     PUSH_SOFT_CLEAN_TO_DISK("options.tab-completion.push-soft-clean-to-disk"),
     TAB_COMPLETE_ENABLED("options.tab-completion.enabled"),
