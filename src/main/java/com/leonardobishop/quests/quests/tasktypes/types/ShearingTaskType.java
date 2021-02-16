@@ -11,6 +11,7 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
@@ -49,6 +50,8 @@ public final class ShearingTaskType extends TaskType {
         if (!(event.getEntity() instanceof Sheep)) {
             return;
         }
+
+        if (Bukkit.getOnlinePlayers().contains(event.getPlayer())) return;
 
         Player player = event.getPlayer();
 

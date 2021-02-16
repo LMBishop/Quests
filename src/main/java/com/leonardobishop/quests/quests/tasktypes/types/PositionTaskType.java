@@ -61,6 +61,8 @@ public final class PositionTaskType extends TaskType {
             return;
         }
 
+        if (Bukkit.getOnlinePlayers().contains(event.getPlayer())) return;
+
         Player player = event.getPlayer();
 
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);

@@ -66,7 +66,7 @@ public final class BrewingTaskType extends TaskType {
         if ((uuid = brewingStands.get(event.getBlock().getLocation())) != null) {
             Player player = Bukkit.getPlayer(uuid);
 
-            if (player == null) {
+            if (player == null || !Bukkit.getOnlinePlayers().contains(player)) {
                 return;
             }
 

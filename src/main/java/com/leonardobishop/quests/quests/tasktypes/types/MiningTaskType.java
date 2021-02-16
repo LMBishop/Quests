@@ -11,6 +11,7 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -47,6 +48,8 @@ public final class MiningTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
+        if (Bukkit.getOnlinePlayers().contains(event.getPlayer())) return;  // citizens also causes these events to fire
+
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId(), true); // get the qplayer so you can get their progress
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile(); // the quest progress file stores progress about all quests and tasks
 

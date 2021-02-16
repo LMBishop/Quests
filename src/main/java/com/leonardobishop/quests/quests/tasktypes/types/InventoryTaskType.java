@@ -86,6 +86,8 @@ public final class InventoryTaskType extends TaskType {
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onItemPickup(PlayerPickupItemEvent event) {
+        if (Bukkit.getOnlinePlayers().contains(event.getPlayer())) return;
+
         Bukkit.getScheduler().runTaskLater(Quests.get(), () -> this.checkInventory(event.getPlayer()), 1L);
     }
 

@@ -11,6 +11,7 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerExpChangeEvent;
@@ -44,6 +45,8 @@ public final class ExpEarnTaskType extends TaskType {
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onExpEarn(PlayerExpChangeEvent e) {
+        if (Bukkit.getOnlinePlayers().contains(e.getPlayer())) return;
+
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(e.getPlayer().getUniqueId(), true);
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
         

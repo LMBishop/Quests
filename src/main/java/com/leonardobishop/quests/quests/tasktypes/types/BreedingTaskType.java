@@ -11,6 +11,7 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -60,7 +61,7 @@ public final class BreedingTaskType extends TaskType {
         // Check if there is a player in the list, otherwise: return.
         for (Entity current : entList) {
 
-            if (current instanceof Player) {
+            if (current instanceof Player && Bukkit.getOnlinePlayers().contains(current)) {
                 Player player = (Player) current;
                 QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
                 QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();

@@ -11,6 +11,7 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -80,6 +81,8 @@ public final class BuildingCertainTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
+        if (Bukkit.getOnlinePlayers().contains(event.getPlayer())) return;
+
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId(), true);
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
@@ -107,6 +110,8 @@ public final class BuildingCertainTaskType extends TaskType {
     // subtract if enabled
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
+        if (Bukkit.getOnlinePlayers().contains(event.getPlayer())) return;
+
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId(), true);
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
