@@ -118,6 +118,10 @@ public class Quest implements Comparable<Quest> {
         return placeholders;
     }
 
+    public int getSortOrder() {
+        return sortOrder;
+    }
+
     @Override
     public int compareTo(Quest quest) {
         return (sortOrder - quest.sortOrder);

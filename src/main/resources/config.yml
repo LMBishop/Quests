@@ -111,6 +111,11 @@ gui:
     - "&7(&a{quest}&7) and cannot."
     - "&7repeat it."
     type: "GREEN_STAINED_GLASS_PANE"
+  no-started-quests:
+    name: "&c&lNo Started Quests"
+    lore:
+    - "&7You have not started any quests."
+    type: "FEATHER"
   quest-cancel-yes:
     name: "&a&lConfirm Cancel"
     lore:
@@ -145,6 +150,7 @@ options:
   guinames:
     quests-category: "Quests Categories"
     quests-menu: "Quests"
+    quests-started-menu: "Started Quests"
     daily-quests: "Daily Quests"
     quest-cancel: "Cancel Quest"
   # Show when quests register in console - will only show if verbose-logging-level=2. Disable if you want less console spam at startup.

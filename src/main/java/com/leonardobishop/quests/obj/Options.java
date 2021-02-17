@@ -19,6 +19,7 @@ public enum Options {
     GUI_USE_PLACEHOLDERAPI("options.gui-use-placeholderapi"),
     GUITITLE_QUESTS_CATEGORY("options.guinames.quests-category"),
     GUITITLE_QUESTS("options.guinames.quests-menu"),
+    GUITITLE_QUESTS_STARTED("options.guinames.quests-started-menu"),
     GUITITLE_DAILY_QUESTS("options.guinames.daily-quests"),
     GUITITLE_QUEST_CANCEL("options.guinames.quest-cancel"),
     ALLOW_QUEST_CANCEL("options.allow-quest-cancel"),

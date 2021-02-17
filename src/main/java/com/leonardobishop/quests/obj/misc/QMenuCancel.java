@@ -17,11 +17,11 @@ import java.util.Map;
 public class QMenuCancel implements QMenu {
 
     private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
-    private final QMenuQuest superMenu;
+    private final QMenu superMenu;
     private final QPlayer owner;
     private final Quest quest;
 
-    public QMenuCancel(QPlayer owner, QMenuQuest superMenu, Quest quest) {
+    public QMenuCancel(QPlayer owner, QMenu superMenu, Quest quest) {
         this.owner = owner;
         this.superMenu = superMenu;
         this.quest = quest;
@@ -45,7 +45,7 @@ public class QMenuCancel implements QMenu {
         return owner;
     }
 
-    public Inventory toInventory() {
+    public Inventory toInventory(int page) {
         String title = Options.color(Options.GUITITLE_QUEST_CANCEL.getStringValue());
 
         ItemStack yes = Items.QUEST_CANCEL_YES.getItem();
@@ -73,7 +73,7 @@ public class QMenuCancel implements QMenu {
         return inventory;
     }
 
-    public QMenuQuest getSuperMenu() {
+    public QMenu getSuperMenu() {
         return superMenu;
     }
 

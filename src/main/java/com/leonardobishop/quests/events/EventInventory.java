@@ -4,10 +4,7 @@ import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
 import com.leonardobishop.quests.obj.Messages;
 import com.leonardobishop.quests.obj.Options;
-import com.leonardobishop.quests.obj.misc.QMenu;
-import com.leonardobishop.quests.obj.misc.QMenuCancel;
-import com.leonardobishop.quests.obj.misc.QMenuCategory;
-import com.leonardobishop.quests.obj.misc.QMenuQuest;
+import com.leonardobishop.quests.obj.misc.*;
 import com.leonardobishop.quests.quests.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -90,26 +87,36 @@ public class EventInventory implements Listener {
                             event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
                         }
                     } else if (event.getClick() == ClickType.MIDDLE && Options.ALLOW_QUEST_TRACK.getBooleanValue()) {
-                        if (qMenuQuest.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
-                            Player player = Bukkit.getPlayer(qMenuQuest.getOwner().getUuid());
-                            String tracked = qMenuQuest.getOwner().getQuestProgressFile().getPlayerPreferences().getTrackedQuestId();
-
-                            if (questid.equals(tracked)) {
-                                player.sendMessage(Messages.QUEST_TRACK_STOP.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
-                                qMenuQuest.getOwner().getQuestProgressFile().trackQuest(null);
-                            } else {
-                                player.sendMessage(Messages.QUEST_TRACK.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
-                                qMenuQuest.getOwner().getQuestProgressFile().trackQuest(quest);
-                            }
-                            event.getWhoClicked().closeInventory();
-                        }
+                        middleClickQuest(qMenuQuest, quest, Bukkit.getPlayer(qMenuQuest.getOwner().getUuid()));
                     } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()
                             && qMenuQuest.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
-                        if (Options.QUEST_AUTOSTART.getBooleanValue()) return;
-                        QMenuCancel qMenuCancel = new QMenuCancel(qMenuQuest.getOwner(), qMenuQuest, quest);
-                        buffer.add(event.getWhoClicked().getUniqueId());
-                        event.getWhoClicked().openInventory(qMenuCancel.toInventory());
-                        tracker.put(event.getWhoClicked().getUniqueId(), qMenuCancel);
+                        rightClickQuest(qMenuQuest, quest, Bukkit.getPlayer(qMenuQuest.getOwner().getUuid()));
+                    }
+                }
+
+                // **** MENU TYPE: STARTED QUESTS ****
+            } else if (qMenu instanceof QMenuStarted) {
+                QMenuStarted qMenuQuest = (QMenuStarted) qMenu;
+
+                if (qMenuQuest.getPagePrevLocation() == event.getSlot()) {
+                    buffer.add(event.getWhoClicked().getUniqueId());
+                    event.getWhoClicked().openInventory(qMenuQuest.toInventory(qMenuQuest.getCurrentPage() - 1));
+
+                } else if (qMenuQuest.getPageNextLocation() == event.getSlot()) {
+                    buffer.add(event.getWhoClicked().getUniqueId());
+                    event.getWhoClicked().openInventory(qMenuQuest.toInventory(qMenuQuest.getCurrentPage() + 1));
+
+                } else if (event.getSlot() < qMenuQuest.getPageSize() && qMenuQuest.getSlotsToMenu().containsKey(event.getSlot() + (((qMenuQuest
+                        .getCurrentPage()) - 1) * qMenuQuest.getPageSize()))) {
+
+                    // repeat from above
+                    String questid = qMenuQuest.getSlotsToMenu().get(event.getSlot() + (((qMenuQuest.getCurrentPage()) - 1) * qMenuQuest.getPageSize()));
+                    Quest quest = plugin.getQuestManager().getQuestById(questid);
+                    if (event.getClick() == ClickType.MIDDLE && Options.ALLOW_QUEST_TRACK.getBooleanValue()) {
+                        middleClickQuest(qMenuQuest, quest, Bukkit.getPlayer(qMenuQuest.getOwner().getUuid()));
+                    } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()
+                            && qMenuQuest.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
+                        rightClickQuest(qMenuQuest, quest, Bukkit.getPlayer(qMenuQuest.getOwner().getUuid()));
                     }
                 }
 
@@ -132,16 +139,41 @@ public class EventInventory implements Listener {
 
                 event.setCancelled(true);
                 if (event.getSlot() == 10 || event.getSlot() == 11 || event.getSlot() == 12) {
-                    QMenuQuest qMenuQuest = qMenuCancel.getSuperMenu();
+                    QMenu qSuperMenu = qMenuCancel.getSuperMenu();
                     buffer.add(event.getWhoClicked().getUniqueId());
-                    event.getWhoClicked().openInventory(qMenuQuest.toInventory(1));
-                    tracker.put(event.getWhoClicked().getUniqueId(), qMenuQuest);
+                    event.getWhoClicked().openInventory(qSuperMenu.toInventory(1));
+                    tracker.put(event.getWhoClicked().getUniqueId(), qSuperMenu);
                 } else if (event.getSlot() == 14 || event.getSlot() == 15 || event.getSlot() == 16) {
                     if (qMenuCancel.getOwner().getQuestProgressFile().cancelQuest(qMenuCancel.getQuest())) {
                         event.getWhoClicked().closeInventory();
                     }
                 }
             }
+        }
+    }
+
+    private void middleClickQuest(QMenu menu, Quest quest, Player player) {
+        if (menu.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
+            String tracked = menu.getOwner().getQuestProgressFile().getPlayerPreferences().getTrackedQuestId();
+
+            if (quest.getId().equals(tracked)) {
+                player.sendMessage(Messages.QUEST_TRACK_STOP.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
+                menu.getOwner().getQuestProgressFile().trackQuest(null);
+            } else {
+                player.sendMessage(Messages.QUEST_TRACK.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
+                menu.getOwner().getQuestProgressFile().trackQuest(quest);
+            }
+            player.closeInventory();
+        }
+    }
+
+    private void rightClickQuest(QMenu menu, Quest quest, Player player) {
+        if (menu.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
+            if (Options.QUEST_AUTOSTART.getBooleanValue()) return;
+            QMenuCancel qMenuCancel = new QMenuCancel(menu.getOwner(), menu, quest);
+            buffer.add(player.getUniqueId());
+            player.openInventory(qMenuCancel.toInventory(1));
+            tracker.put(player.getUniqueId(), qMenuCancel);
         }
     }
 

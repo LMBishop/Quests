@@ -410,6 +410,11 @@ public class CommandQuests implements TabExecutor {
                     }
                     return true;
                 }
+            } else if (sender instanceof Player && (args[0].equalsIgnoreCase("started"))) {
+                Player player = (Player) sender;
+                QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+                qPlayer.openStartedQuests();
+                return true;
             }
             showHelp(sender);
         } else {
@@ -553,7 +558,7 @@ public class CommandQuests implements TabExecutor {
         }
         if (sender instanceof Player) {
             if (args.length == 1) {
-                List<String> options = new ArrayList<>(Arrays.asList("quest", "category"));
+                List<String> options = new ArrayList<>(Arrays.asList("quest", "category", "started"));
                 if (sender.hasPermission("quests.admin")) {
                     options.add("admin");
                 }
