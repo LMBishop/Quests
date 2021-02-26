@@ -60,7 +60,9 @@ dependencies {
         exclude group: 'org.mongodb', module: 'mongodb-driver'
     }
     // IridiumSkyblock
-    compileOnly 'com.github.IridiumLLC:IridiumSkyblock:master-SNAPSHOT'
+    // TODO fix whenever repo is up
+//    compileOnly 'com.github.Iridium-Development:IridiumSkyblock:master-SNAPSHOT'
+    compileOnly files('libs/IridiumSkyblock-2.6.7.jar') // (<-- download this from spigot and add yourself)
     // uSkyBlock
     compileOnly 'com.github.rlf:uSkyBlock-API:2.6.4'
     // MythicMobs
