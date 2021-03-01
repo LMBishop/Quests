@@ -179,7 +179,7 @@ public class Quests extends JavaPlugin {
             if (Bukkit.getPluginManager().isPluginEnabled("ShopGUIPlus")) {
                 // not tested
                 taskTypeManager.registerTaskType(new ShopGUIPlusBuyTaskType());
-                taskTypeManager.registerTaskType(new ShopGUIPlusBuyTaskType());
+                taskTypeManager.registerTaskType(new ShopGUIPlusSellTaskType());
             }
 
             taskTypeManager.closeRegistrations();
