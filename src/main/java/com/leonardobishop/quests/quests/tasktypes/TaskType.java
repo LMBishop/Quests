@@ -76,6 +76,8 @@ public abstract class TaskType implements Listener {
         return description;
     }
 
+    //TODO rework this
+    @Deprecated
     public List<ConfigValue> getCreatorConfigValues() {
         // not implemented here
         return Collections.emptyList();

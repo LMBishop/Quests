@@ -176,6 +176,11 @@ public class Quests extends JavaPlugin {
                 taskTypeManager.registerTaskType(new EssentialsMoneyEarnTaskType());
                 taskTypeManager.registerTaskType(new EssentialsBalanceTaskType());
             }
+            if (Bukkit.getPluginManager().isPluginEnabled("ShopGUIPlus")) {
+                // not tested
+                taskTypeManager.registerTaskType(new ShopGUIPlusBuyTaskType());
+                taskTypeManager.registerTaskType(new ShopGUIPlusBuyTaskType());
+            }
 
             taskTypeManager.closeRegistrations();
             reloadQuests();
