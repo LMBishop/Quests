@@ -82,3 +82,8 @@ dependencies {
 
     compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
 }
+
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
