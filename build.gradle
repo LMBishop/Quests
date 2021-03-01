@@ -2,17 +2,13 @@ plugins {
     id 'java'
 }
 
-group = 'com.leonardobishop.quests'
+group = 'com.leonardobishop'
 version = '2.14.1'
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {
         include 'plugin.yml'
-        expand(
-                'name': project.name,
-                'main': project.group + '.' + project.name,
-                'version': project.version
-        )
+        expand('version': project.version)
     }
 }
 
@@ -61,8 +57,8 @@ dependencies {
     }
     // IridiumSkyblock
     // TODO fix whenever repo is up
-//    compileOnly 'com.github.Iridium-Development:IridiumSkyblock:master-SNAPSHOT'
-    compileOnly files('libs/IridiumSkyblock-2.6.7.jar') // (<-- download this from spigot and add yourself)
+    //    compileOnly 'com.github.Iridium-Development:IridiumSkyblock:master-SNAPSHOT'
+    // download  from spigot and add to /libs/ yourself
     // uSkyBlock
     compileOnly 'com.github.rlf:uSkyBlock-API:2.6.4'
     // MythicMobs

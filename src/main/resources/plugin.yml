@@ -1,13 +1,9 @@
-# This will be replaced with the property "rootProject.name" in settings.gradle
-name: ${name}
+name: Quests
 
 # This will be replaced with the property "version" in build.gradle
 version: ${version}
 
-# This will be replaced with the property "group" in build.gradle + plugin name
-# See "processResources" in build.gradle for more info
-main: ${main}
-
+main: com.leonardobishop.quests.Quests
 website: https://github.com/LMBishop/Quests
 authors: [LMBishop, NicoNekoDev, nivcoo, Rubenicos, RodneyMKay, Auxilor, BavoVanMeel, SuSeu1414, Reinatix]
 softdepend: [ASkyBlock, BentoBox, IridiumSkyblock, uSkyBlock, Citizens, MythicMobs, PlaceholderAPI, Essentials]
