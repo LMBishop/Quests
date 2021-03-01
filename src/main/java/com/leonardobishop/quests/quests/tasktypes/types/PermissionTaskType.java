@@ -34,7 +34,10 @@ public final class PermissionTaskType extends TaskType {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
+                    QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
+                    if (qPlayer == null) {
+                        continue;
+                    }
                     QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                     for (Quest quest : PermissionTaskType.super.getRegisteredQuests()) {
                         if (questProgressFile.hasStartedQuest(quest)) {

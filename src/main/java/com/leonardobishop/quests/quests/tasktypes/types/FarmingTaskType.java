@@ -44,7 +44,11 @@ public final class FarmingTaskType extends TaskType {
         }
         Crops crop = (Crops) event.getBlock().getState();
 
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId(), true);
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
+        if (qPlayer == null) {
+            return;
+        }
+
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
         for (Quest quest : super.getRegisteredQuests()) {

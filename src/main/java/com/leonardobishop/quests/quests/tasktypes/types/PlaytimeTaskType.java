@@ -47,7 +47,11 @@ public final class PlaytimeTaskType extends TaskType {
                 @Override
                 public void run() {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
+                        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
+                        if (qPlayer == null) {
+                            continue;
+                        }
+
                         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                         for (Quest quest : PlaytimeTaskType.super.getRegisteredQuests()) {
                             if (questProgressFile.hasStartedQuest(quest)) {

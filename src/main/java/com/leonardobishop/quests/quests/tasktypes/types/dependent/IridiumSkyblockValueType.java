@@ -16,7 +16,6 @@ import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +50,7 @@ public final class IridiumSkyblockValueType extends TaskType {
                 Quests.get().getQuestsLogger().debug("Cannot convert from String to UUID for IridiumSkyblock");
                 continue;
             }
-            QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(uuid, true);
+            QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(uuid);
             if (qPlayer == null) {
                 continue;
             }

@@ -13,7 +13,6 @@ import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.objecthunter.exp4j.operator.Operator;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -69,7 +68,11 @@ public final class PlaceholderAPIEvaluateTaskType extends TaskType {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
+                    QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
+                    if (qPlayer == null) {
+                        continue;
+                    }
+
                     QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                     for (Quest quest : PlaceholderAPIEvaluateTaskType.super.getRegisteredQuests()) {
                         if (questProgressFile.hasStartedQuest(quest)) {

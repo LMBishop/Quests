@@ -43,7 +43,7 @@ public final class ASkyBlockLevelType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onIslandLevel(IslandPostLevelEvent event) {
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer(), true);
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer());
         if (qPlayer == null) {
             return;
         }

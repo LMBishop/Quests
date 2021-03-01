@@ -6,7 +6,6 @@ import com.leonardobishop.quests.player.questprogressfile.QPlayerPreferences;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -27,23 +26,11 @@ public class QPlayerManager {
 
     /**
      * Gets the QPlayer from a given UUID.
-     * Calls {@link QPlayerManager#getPlayer(UUID, boolean)} with the 2nd argument as false.
      *
      * @param uuid the uuid
      * @return {@link QPlayer} if they are loaded
      */
     public QPlayer getPlayer(UUID uuid) {
-        return getPlayer(uuid, false);
-    }
-
-    /**
-     * Gets the QPlayer from a given UUID.
-     *
-     * @param uuid the uuid
-     * @param loadIfNull do not use
-     * @return {@link QPlayer} if they are loaded
-     */
-    public QPlayer getPlayer(UUID uuid, boolean loadIfNull) {
         QPlayer qPlayer = qPlayers.get(uuid);
         if (qPlayer == null) {
             plugin.getQuestsLogger().debug("QPlayer of " + uuid + " is null, but was requested:");
@@ -54,12 +41,22 @@ public class QPlayerManager {
         return qPlayer;
     }
 
+    /**
+     * Unloads and saves the player to disk.
+     *
+     * @param uuid the uuid of the player
+     */
     public void removePlayer(UUID uuid) {
         plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + ".");
         this.getPlayer(uuid).getQuestProgressFile().saveToDisk(false);
         qPlayers.remove(uuid);
     }
 
+    /**
+     * Unloads the player without saving to disk.
+     *
+     * @param uuid the uuid of the player
+     */
     public void dropPlayer(UUID uuid) {
         plugin.getQuestsLogger().debug("Dropping player " + uuid + ".");
         qPlayers.remove(uuid);
@@ -74,6 +71,12 @@ public class QPlayerManager {
     //   loadPlayer(uuid, false);
     //}
 
+    /**
+     * Load the player from disk if they exist, otherwise create a new {@link QuestProgressFile}.
+     * Will have no effect if player is already loaded.
+     *
+     * @param uuid the uuid of the player
+     */
     public void loadPlayer(UUID uuid) {
         plugin.getQuestsLogger().debug("Loading player " + uuid + " from disk.");
         if (qPlayers.get(uuid) == null) {

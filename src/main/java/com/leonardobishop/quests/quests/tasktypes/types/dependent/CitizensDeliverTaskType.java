@@ -89,7 +89,7 @@ public final class CitizensDeliverTaskType extends TaskType {
         if (player == null || !player.isOnline()) {
             return;
         }
-        QPlayer qPlayer = Quests.get().getPlayerManager().getPlayer(player.getUniqueId(), true);
+        QPlayer qPlayer = Quests.get().getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
         }
