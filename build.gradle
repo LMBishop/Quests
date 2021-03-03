@@ -17,7 +17,7 @@ repositories {
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     // ASkyBlock
     maven {
-        url 'http://dl.bintray.com/tastybento/maven-repo'
+        url 'https://dl.bintray.com/tastybento/maven-repo'
         credentials {
             username = 'bintray'
         }
@@ -27,11 +27,11 @@ repositories {
     // uSkyBlock
     maven { url = 'https://raw.github.com/rlf/uSkyBlock/mvn-repo/' }
     // Citizens
-    maven { url = 'http://repo.citizensnpcs.co/' }
+    maven { url = 'https://repo.citizensnpcs.co/' }
     // MythicMobs
     maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
     // PlaceholderAPI
-    maven { url = 'http://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     // EssentialsX
     maven { url = 'https://repo.essentialsx.net/releases/' }
     // JitPack (IridiumSkyblock, ShopGUI+)
