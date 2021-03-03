@@ -2,7 +2,7 @@ package com.leonardobishop.quests;
 
 import com.leonardobishop.quests.bstats.Metrics;
 import com.leonardobishop.quests.commands.CommandQuests;
-import com.leonardobishop.quests.events.EventInventory;
+import com.leonardobishop.quests.events.MenuController;
 import com.leonardobishop.quests.events.EventPlayerJoin;
 import com.leonardobishop.quests.events.EventPlayerLeave;
 import com.leonardobishop.quests.hooks.itemgetter.ItemGetter;
@@ -15,7 +15,7 @@ import com.leonardobishop.quests.hooks.title.Title;
 import com.leonardobishop.quests.hooks.title.Title_Bukkit;
 import com.leonardobishop.quests.hooks.title.Title_BukkitNoTimings;
 import com.leonardobishop.quests.hooks.title.Title_Other;
-import com.leonardobishop.quests.obj.Messages;
+import com.leonardobishop.quests.util.Messages;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.QPlayerManager;
 import com.leonardobishop.quests.quests.QuestManager;
@@ -113,7 +113,7 @@ public class Quests extends JavaPlugin {
 
         Bukkit.getPluginCommand("quests").setExecutor(new CommandQuests(this));
         Bukkit.getPluginManager().registerEvents(new EventPlayerJoin(this), this);
-        Bukkit.getPluginManager().registerEvents(new EventInventory(this), this);
+        Bukkit.getPluginManager().registerEvents(new MenuController(this), this);
         Bukkit.getPluginManager().registerEvents(new EventPlayerLeave(this), this);
 
         Metrics metrics = new Metrics(this);

@@ -1,4 +1,4 @@
-package com.leonardobishop.quests.obj;
+package com.leonardobishop.quests.util;
 
 import com.leonardobishop.quests.Quests;
 import org.bukkit.inventory.ItemStack;

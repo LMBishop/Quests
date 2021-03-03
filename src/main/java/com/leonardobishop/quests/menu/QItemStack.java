@@ -1,7 +1,7 @@
-package com.leonardobishop.quests.obj.misc;
+package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.obj.Options;
+import com.leonardobishop.quests.util.Options;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Quest;

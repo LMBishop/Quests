@@ -1,12 +1,11 @@
 package com.leonardobishop.quests;
 
-import com.leonardobishop.quests.obj.Options;
+import com.leonardobishop.quests.util.Options;
 import com.leonardobishop.quests.player.QPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;

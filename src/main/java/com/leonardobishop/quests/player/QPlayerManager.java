@@ -2,7 +2,7 @@ package com.leonardobishop.quests.player;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.QuestsLogger;
-import com.leonardobishop.quests.obj.Options;
+import com.leonardobishop.quests.util.Options;
 import com.leonardobishop.quests.player.questprogressfile.QPlayerPreferences;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
@@ -12,7 +12,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;

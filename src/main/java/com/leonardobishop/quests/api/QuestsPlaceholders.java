@@ -2,8 +2,8 @@ package com.leonardobishop.quests.api;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
-import com.leonardobishop.quests.obj.Options;
-import com.leonardobishop.quests.obj.misc.QItemStack;
+import com.leonardobishop.quests.util.Options;
+import com.leonardobishop.quests.menu.QItemStack;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Category;

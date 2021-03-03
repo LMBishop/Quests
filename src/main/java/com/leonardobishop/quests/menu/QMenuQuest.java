@@ -1,13 +1,17 @@
-package com.leonardobishop.quests.obj.misc;
+package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.obj.Items;
-import com.leonardobishop.quests.obj.Options;
+import com.leonardobishop.quests.api.enums.QuestStartResult;
+import com.leonardobishop.quests.events.MenuController;
+import com.leonardobishop.quests.util.Items;
+import com.leonardobishop.quests.util.Options;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.quests.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -201,6 +205,41 @@ public class QMenuQuest implements QMenu {
         }
 
         return inventory;
+    }
+
+    @Override
+    public void handleClick(InventoryClickEvent event, MenuController controller) {
+        if (this.getPagePrevLocation() == event.getSlot()) {
+            controller.getBuffer().add(event.getWhoClicked().getUniqueId());
+            event.getWhoClicked().openInventory(this.toInventory(this.getCurrentPage() - 1));
+
+        } else if (this.getPageNextLocation() == event.getSlot()) {
+            controller.getBuffer().add(event.getWhoClicked().getUniqueId());
+            event.getWhoClicked().openInventory(this.toInventory(this.getCurrentPage() + 1));
+
+        } else if (Options.CATEGORIES_ENABLED.getBooleanValue() && this.getBackButtonLocation() == event.getSlot()) {
+            QMenuCategory qMenuCategory = this.getSuperMenu();
+            controller.getBuffer().add(event.getWhoClicked().getUniqueId());
+            event.getWhoClicked().openInventory(qMenuCategory.toInventory(1));
+            controller.getTracker().put(event.getWhoClicked().getUniqueId(), qMenuCategory);
+
+        } else if (event.getSlot() < this.getPageSize() && this.getSlotsToMenu().containsKey(event.getSlot() + (((this
+                .getCurrentPage()) - 1) * this.getPageSize()))) {
+
+            String questid = this.getSlotsToMenu().get(event.getSlot() + (((this.getCurrentPage()) - 1) * this.getPageSize()));
+            Quest quest = plugin.getQuestManager().getQuestById(questid);
+            if (event.getClick() == ClickType.LEFT) {
+                if (Options.QUEST_AUTOSTART.getBooleanValue()) return;
+                if (this.getOwner().getQuestProgressFile().startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
+                    event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
+                }
+            } else if (event.getClick() == ClickType.MIDDLE && Options.ALLOW_QUEST_TRACK.getBooleanValue()) {
+                controller.middleClickQuest(this, quest, Bukkit.getPlayer(this.getOwner().getUuid()));
+            } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()
+                    && this.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
+                controller.rightClickQuest(this, quest, Bukkit.getPlayer(this.getOwner().getUuid()));
+            }
+        }
     }
 
     public boolean isBackButtonEnabled() {

@@ -1,8 +1,8 @@
 package com.leonardobishop.quests;
 
 import com.leonardobishop.quests.hooks.itemgetter.ItemGetter;
-import com.leonardobishop.quests.obj.Options;
-import com.leonardobishop.quests.obj.misc.QItemStack;
+import com.leonardobishop.quests.util.Options;
+import com.leonardobishop.quests.menu.QItemStack;
 import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;

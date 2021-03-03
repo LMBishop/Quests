@@ -1,13 +1,16 @@
-package com.leonardobishop.quests.obj.misc;
+package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.obj.Items;
-import com.leonardobishop.quests.obj.Options;
+import com.leonardobishop.quests.events.MenuController;
+import com.leonardobishop.quests.util.Items;
+import com.leonardobishop.quests.util.Options;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.quests.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -140,6 +143,31 @@ public class QMenuStarted implements QMenu {
         }
 
         return inventory;
+    }
+
+    @Override
+    public void handleClick(InventoryClickEvent event, MenuController controller) {
+        if (this.getPagePrevLocation() == event.getSlot()) {
+            controller.getBuffer().add(event.getWhoClicked().getUniqueId());
+            event.getWhoClicked().openInventory(this.toInventory(this.getCurrentPage() - 1));
+
+        } else if (this.getPageNextLocation() == event.getSlot()) {
+            controller.getBuffer().add(event.getWhoClicked().getUniqueId());
+            event.getWhoClicked().openInventory(this.toInventory(this.getCurrentPage() + 1));
+
+        } else if (event.getSlot() < this.getPageSize() && this.getSlotsToMenu().containsKey(event.getSlot() + (((this
+                .getCurrentPage()) - 1) * this.getPageSize()))) {
+
+            // repeat from above
+            String questid = this.getSlotsToMenu().get(event.getSlot() + (((this.getCurrentPage()) - 1) * this.getPageSize()));
+            Quest quest = plugin.getQuestManager().getQuestById(questid);
+            if (event.getClick() == ClickType.MIDDLE && Options.ALLOW_QUEST_TRACK.getBooleanValue()) {
+                controller.middleClickQuest(this, quest, Bukkit.getPlayer(this.getOwner().getUuid()));
+            } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()
+                    && this.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
+                controller.rightClickQuest(this, quest, Bukkit.getPlayer(this.getOwner().getUuid()));
+            }
+        }
     }
 
     public ItemStack replaceItemStack(ItemStack is) {

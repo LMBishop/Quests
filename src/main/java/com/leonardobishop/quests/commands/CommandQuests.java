@@ -3,8 +3,8 @@ package com.leonardobishop.quests.commands;
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
-import com.leonardobishop.quests.obj.Messages;
-import com.leonardobishop.quests.obj.Options;
+import com.leonardobishop.quests.util.Messages;
+import com.leonardobishop.quests.util.Options;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Category;
@@ -377,16 +377,22 @@ public class CommandQuests implements TabExecutor {
                         } else {
                             if (qPlayer == null) {
                                 // shit + fan
-                                sender.sendMessage(ChatColor.RED + "An error occurred finding your player."); //lazy? :)
+                                sender.sendMessage(ChatColor.RED + "Your quest progress file has not been loaded yet."); //lazy? :)
                             } else {
                                 qPlayer.getQuestProgressFile().startQuest(quest);
                             }
                         }
                     } else if (args[2].equalsIgnoreCase("c") || args[2].equalsIgnoreCase("cancel")) {
                         if (qPlayer == null) {
-                            sender.sendMessage(ChatColor.RED + "An error occurred finding your player."); //lazy x2? ;)
+                            sender.sendMessage(ChatColor.RED + "Your quest progress file has not been loaded yet."); //lazy x2? ;)
                         } else {
                             qPlayer.getQuestProgressFile().cancelQuest(quest);
+                        }
+                    } else if (args[2].equalsIgnoreCase("t") || args[2].equalsIgnoreCase("track")) {
+                        if (qPlayer == null) {
+                            sender.sendMessage(ChatColor.RED + "Your quest progress file has not been loaded yet."); //lazy x2? ;)
+                        } else {
+                            qPlayer.getQuestProgressFile().trackQuest(quest);
                         }
                     } else {
                         sender.sendMessage(Messages.COMMAND_SUB_DOESNTEXIST.getMessage().replace("{sub}", args[2]));
@@ -481,7 +487,7 @@ public class CommandQuests implements TabExecutor {
         sender.sendMessage(ChatColor.GRAY + "The following commands are available: ");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests " + ChatColor.DARK_GRAY + ": show quests");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests c/category <categoryid> " + ChatColor.DARK_GRAY + ": open category by ID");
-        sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests q/quest <questid> <start/cancel>" + ChatColor.DARK_GRAY + ": start or cancel quest by ID");
+        sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests q/quest <questid> <start|cancel|track>" + ChatColor.DARK_GRAY + ": start, cancel or track quest by ID");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a/admin " + ChatColor.DARK_GRAY + ": view help for admins");
         sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------=[" + ChatColor.RED + " made with <3 by LMBishop " + ChatColor
                 .GRAY.toString() + ChatColor.STRIKETHROUGH + "]=--------");
@@ -578,7 +584,7 @@ public class CommandQuests implements TabExecutor {
                     && sender.hasPermission("quests.admin")) {
                     Quest q = plugin.getQuestManager().getQuestById(args[1]);
                     if (q != null) {
-                        List<String> options = Arrays.asList("start", "cancel");
+                        List<String> options = Arrays.asList("start", "cancel", "track");
                         return matchTabComplete(args[2], options);
                     }
                 } else if (args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin")

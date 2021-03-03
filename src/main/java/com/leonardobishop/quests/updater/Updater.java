@@ -1,7 +1,7 @@
 package com.leonardobishop.quests.updater;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.obj.Messages;
+import com.leonardobishop.quests.util.Messages;
 
 import java.io.BufferedReader;
 import java.io.IOException;

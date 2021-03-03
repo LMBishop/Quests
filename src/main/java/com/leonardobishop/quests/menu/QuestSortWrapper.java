@@ -1,4 +1,4 @@
-package com.leonardobishop.quests.obj.misc;
+package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.quests.Category;
