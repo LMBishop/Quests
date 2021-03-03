@@ -87,4 +87,4 @@ If you plan on contributing upstream please note the following:
 * limit the first line of commit messages to ~50 chars and leave a space below that
 * **test your changes** on the latest Spigot version before making a pull request
 
-By contributing to Quests you agree to license your code under the [GNU General Public License v3.0](https://github.com/LMBishop/Quests/blob/master/LICENSE).
+By contributing to Quests you agree to license your code under the [GNU General Public License v3.0](https://github.com/LMBishop/Quests/blob/master/LICENSE.txt).

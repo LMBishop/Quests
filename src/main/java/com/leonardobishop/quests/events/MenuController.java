@@ -73,10 +73,8 @@ public class MenuController implements Listener {
             String tracked = menu.getOwner().getQuestProgressFile().getPlayerPreferences().getTrackedQuestId();
 
             if (quest.getId().equals(tracked)) {
-                player.sendMessage(Messages.QUEST_TRACK_STOP.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
                 menu.getOwner().getQuestProgressFile().trackQuest(null);
             } else {
-                player.sendMessage(Messages.QUEST_TRACK.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
                 menu.getOwner().getQuestProgressFile().trackQuest(quest);
             }
             player.closeInventory();

@@ -102,14 +102,20 @@ public class QuestProgressFile {
     public void trackQuest(Quest quest) {
         Player player = Bukkit.getPlayer(playerUUID);
         if (quest == null) {
+            String currentTrackedQuestId = playerPreferences.getTrackedQuestId();
             playerPreferences.setTrackedQuestId(null);
             if (player != null) {
                 Bukkit.getPluginManager().callEvent(new PlayerStopTrackQuestEvent(player, this));
+                Quest currentTrackedQuest;
+                if (currentTrackedQuestId != null && (currentTrackedQuest = plugin.getQuestManager().getQuestById(currentTrackedQuestId)) != null) {
+                    player.sendMessage(Messages.QUEST_TRACK_STOP.getMessage().replace("{quest}", currentTrackedQuest.getDisplayNameStripped()));
+                }
             }
         } else if (hasStartedQuest(quest)) {
             playerPreferences.setTrackedQuestId(quest.getId());
             if (player != null) {
                 Bukkit.getPluginManager().callEvent(new PlayerStartTrackQuestEvent(player, this));
+                player.sendMessage(Messages.QUEST_TRACK.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
             }
         }
     }
