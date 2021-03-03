@@ -1,20 +1,13 @@
 package com.leonardobishop.quests.events;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.api.enums.QuestStartResult;
 import com.leonardobishop.quests.menu.QMenu;
 import com.leonardobishop.quests.menu.QMenuCancel;
-import com.leonardobishop.quests.menu.QMenuCategory;
-import com.leonardobishop.quests.menu.QMenuQuest;
-import com.leonardobishop.quests.menu.QMenuStarted;
-import com.leonardobishop.quests.util.Messages;
-import com.leonardobishop.quests.util.Options;
 import com.leonardobishop.quests.quests.Quest;
-import org.bukkit.Bukkit;
+import com.leonardobishop.quests.util.Options;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;

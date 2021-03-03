@@ -19,7 +19,6 @@ public class PlaceholderAPIHook implements IPlaceholderAPIHook {
         placeholder.register();
     }
 
-
     @Override
     public void unregisterExpansion() {
         placeholder.unregister();

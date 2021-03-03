@@ -2,11 +2,11 @@ package com.leonardobishop.quests.player;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.QuestsLogger;
-import com.leonardobishop.quests.util.Options;
 import com.leonardobishop.quests.player.questprogressfile.QPlayerPreferences;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
+import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 

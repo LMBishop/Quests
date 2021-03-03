@@ -2,7 +2,6 @@ package com.leonardobishop.quests.player;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.events.MenuController;
-import com.leonardobishop.quests.util.Options;
 import com.leonardobishop.quests.menu.QMenuCategory;
 import com.leonardobishop.quests.menu.QMenuQuest;
 import com.leonardobishop.quests.menu.QMenuStarted;
@@ -10,6 +9,7 @@ import com.leonardobishop.quests.menu.QuestSortWrapper;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.quests.Quest;
+import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

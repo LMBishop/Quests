@@ -2,11 +2,11 @@ package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.events.MenuController;
-import com.leonardobishop.quests.util.Items;
-import com.leonardobishop.quests.util.Options;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.quests.Quest;
+import com.leonardobishop.quests.util.Items;
+import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -15,7 +15,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class QMenuStarted implements QMenu {
 

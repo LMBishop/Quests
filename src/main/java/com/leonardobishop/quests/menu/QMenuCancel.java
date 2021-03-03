@@ -1,10 +1,10 @@
 package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.events.MenuController;
-import com.leonardobishop.quests.util.Items;
-import com.leonardobishop.quests.util.Options;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.quests.Quest;
+import com.leonardobishop.quests.util.Items;
+import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;

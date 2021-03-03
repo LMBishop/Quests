@@ -1,12 +1,12 @@
 package com.leonardobishop.quests;
 
 import com.leonardobishop.quests.hooks.itemgetter.ItemGetter;
-import com.leonardobishop.quests.util.Options;
 import com.leonardobishop.quests.menu.QItemStack;
 import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import com.leonardobishop.quests.util.Options;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;

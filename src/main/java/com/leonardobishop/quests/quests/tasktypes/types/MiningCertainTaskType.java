@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
+import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
@@ -33,6 +34,8 @@ public final class MiningCertainTaskType extends TaskType {
         this.creatorConfigValues.add(new ConfigValue("blocks", true, "List of blocks (alias for block for config readability).", "block"));
         this.creatorConfigValues.add(new ConfigValue("data", false, "Data code for block.")); // only used if no datacode provided in block or blocks
         this.creatorConfigValues.add(new ConfigValue("reverse-if-placed", false, "Will reverse progression if block of same type is placed."));
+        this.creatorConfigValues.add(new ConfigValue("check-coreprotect", false, "Use coreprotect to check for blocks placed by a player"));
+        this.creatorConfigValues.add(new ConfigValue("check-coreprotect-time", false, "Time period for coreprotect check"));
         this.creatorConfigValues.add(new ConfigValue("use-similar-blocks", false, "(Deprecated) If true, this will ignore orientation of doors, logs etc."));
         this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }
@@ -69,6 +72,8 @@ public final class MiningCertainTaskType extends TaskType {
             }
         }
         TaskUtils.configValidateBoolean(root + ".reverse-if-broken", config.get("reverse-if-broken"), problems, true,"reverse-if-broken");
+        TaskUtils.configValidateBoolean(root + ".check-coreprotect", config.get("check-coreprotect"), problems, true,"check-coreprotect");
+        TaskUtils.configValidateInt(root + ".check-coreprotect-time", config.get("check-coreprotect-time"), problems, true,true, "check-coreprotect-time");
         TaskUtils.configValidateBoolean(root + ".use-similar-blocks", config.get("use-similar-blocks"), problems, true,"use-similar-blocks");
         TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true,true, "data");
         return problems;
@@ -102,6 +107,12 @@ public final class MiningCertainTaskType extends TaskType {
                     }
 
                     if (matchBlock(task, event.getBlock())) {
+                        boolean coreProtectEnabled = (boolean) task.getConfigValue("check-coreprotect", false);
+                        int coreProtectTime = (int) task.getConfigValue("check-coreprotect-time", 3600);
+
+                        if (coreProtectEnabled && Quests.get().getCoreProtectHook().checkBlock(event.getBlock(), coreProtectTime)) {
+                            continue;
+                        }
                         increment(task, taskProgress, 1);
                     }
                 }

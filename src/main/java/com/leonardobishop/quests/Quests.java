@@ -2,9 +2,12 @@ package com.leonardobishop.quests;
 
 import com.leonardobishop.quests.bstats.Metrics;
 import com.leonardobishop.quests.commands.CommandQuests;
-import com.leonardobishop.quests.events.MenuController;
 import com.leonardobishop.quests.events.EventPlayerJoin;
 import com.leonardobishop.quests.events.EventPlayerLeave;
+import com.leonardobishop.quests.events.MenuController;
+import com.leonardobishop.quests.hooks.coreprotect.CoreProtectHook;
+import com.leonardobishop.quests.hooks.coreprotect.CoreProtectNoHook;
+import com.leonardobishop.quests.hooks.coreprotect.ICoreProtectHook;
 import com.leonardobishop.quests.hooks.itemgetter.ItemGetter;
 import com.leonardobishop.quests.hooks.itemgetter.ItemGetterLatest;
 import com.leonardobishop.quests.hooks.itemgetter.ItemGetter_1_13;
@@ -15,15 +18,48 @@ import com.leonardobishop.quests.hooks.title.Title;
 import com.leonardobishop.quests.hooks.title.Title_Bukkit;
 import com.leonardobishop.quests.hooks.title.Title_BukkitNoTimings;
 import com.leonardobishop.quests.hooks.title.Title_Other;
-import com.leonardobishop.quests.util.Messages;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.QPlayerManager;
 import com.leonardobishop.quests.quests.QuestManager;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskTypeManager;
-import com.leonardobishop.quests.quests.tasktypes.types.*;
-import com.leonardobishop.quests.quests.tasktypes.types.dependent.*;
+import com.leonardobishop.quests.quests.tasktypes.types.BreedingTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.BrewingTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.BuildingCertainTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.BuildingTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.CommandTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.DealDamageTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.DistancefromTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.EnchantingTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.ExpEarnTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.FishingTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.InventoryTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.MilkingTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.MiningCertainTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.MiningTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.MobkillingCertainTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.MobkillingTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.PermissionTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.PlayerkillingTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.PlaytimeTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.PositionTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.ShearingTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.TamingTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.WalkingTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.ASkyBlockLevelType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.BentoBoxLevelTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.CitizensDeliverTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.CitizensInteractTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.EssentialsBalanceTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.EssentialsMoneyEarnTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.IridiumSkyblockValueType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.MythicMobsKillingType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.PlaceholderAPIEvaluateTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.ShopGUIPlusBuyTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.ShopGUIPlusSellTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.uSkyBlockLevelType;
 import com.leonardobishop.quests.updater.Updater;
+import com.leonardobishop.quests.util.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -31,7 +67,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class Quests extends JavaPlugin {
@@ -40,20 +80,23 @@ public class Quests extends JavaPlugin {
     private static QPlayerManager qPlayerManager;
     private static TaskTypeManager taskTypeManager;
 
+    private static Quests instance;
     private static Updater updater;
     private static Title title;
     private ItemGetter itemGetter;
     private QuestCompleter questCompleter;
     private QuestsConfigLoader questsConfigLoader;
     private QuestsLogger questsLogger;
+
     private IPlaceholderAPIHook placeholderAPIHook;
+    private ICoreProtectHook coreProtectHook;
 
     private boolean brokenConfig = false;
     private BukkitTask questAutosaveTask;
     private BukkitTask questQueuePollTask;
 
     public static Quests get() {
-        return (Quests) Bukkit.getPluginManager().getPlugin("Quests");
+        return instance;
     }
 
     public QuestManager getQuestManager() {
@@ -101,6 +144,8 @@ public class Quests extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
+
         questsLogger = new QuestsLogger(this, QuestsLogger.LoggingLevel.INFO);
         questCompleter = new QuestCompleter(this);
 
@@ -201,6 +246,12 @@ public class Quests extends JavaPlugin {
             this.placeholderAPIHook.registerExpansion(this);
         }
 
+        if (Bukkit.getPluginManager().isPluginEnabled("CoreProtect")) {
+            this.coreProtectHook = new CoreProtectHook();
+        } else {
+            this.coreProtectHook = new CoreProtectNoHook();
+        }
+
         // this intentionally should not be documented
         boolean ignoreUpdates = false;
         try {
@@ -218,6 +269,10 @@ public class Quests extends JavaPlugin {
 
     public IPlaceholderAPIHook getPlaceholderAPIHook() {
         return placeholderAPIHook;
+    }
+
+    public ICoreProtectHook getCoreProtectHook() {
+        return coreProtectHook;
     }
 
     @Override

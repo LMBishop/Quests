@@ -36,6 +36,8 @@ repositories {
     maven { url = 'https://repo.essentialsx.net/releases/' }
     // JitPack (IridiumSkyblock, ShopGUI+)
     maven { url = 'https://jitpack.io' }
+    // CoreProtect
+    maven { url = 'https://maven.playpro.com/' }
     mavenCentral()
 }
 
@@ -79,6 +81,10 @@ dependencies {
     compileOnly "net.ess3:EssentialsX:2.18.2"
     // ShopGUI+
     compileOnly 'com.github.brcdev-minecraft:shopgui-api:master-SNAPSHOT'
+    // CoreProtect
+    compileOnly ('net.coreprotect:coreprotect:2.18.2') {
+        exclude group: 'com.sk89q.worldedit', module: 'worldedit-bukkit'
+    }
 
     compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
 }

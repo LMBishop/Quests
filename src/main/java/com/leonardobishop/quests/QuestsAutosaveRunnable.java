@@ -1,7 +1,7 @@
 package com.leonardobishop.quests;
 
-import com.leonardobishop.quests.util.Options;
 import com.leonardobishop.quests.player.QPlayer;
+import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;

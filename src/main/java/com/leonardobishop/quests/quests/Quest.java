@@ -3,7 +3,11 @@ package com.leonardobishop.quests.quests;
 import com.leonardobishop.quests.menu.QItemStack;
 import org.bukkit.ChatColor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Quest implements Comparable<Quest> {
 
