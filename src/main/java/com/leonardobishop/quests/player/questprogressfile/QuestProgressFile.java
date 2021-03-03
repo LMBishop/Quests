@@ -95,12 +95,11 @@ public class QuestProgressFile {
     /**
      * Attempt to track a quest for the player. This will also play all effects (such as titles, messages etc.)
      *
-     * Warning: will fail if the player is not online.
+     * Warning: {@link PlayerStopTrackQuestEvent} is not fired if the player is not online
      *
      * @param quest the quest to track
      */
     public void trackQuest(Quest quest) {
-        //TODO change how this works
         Player player = Bukkit.getPlayer(playerUUID);
         if (quest == null) {
             playerPreferences.setTrackedQuestId(null);

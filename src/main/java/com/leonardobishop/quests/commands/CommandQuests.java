@@ -370,30 +370,19 @@ public class CommandQuests implements TabExecutor {
                 if (args.length >= 3) {
                     Quest quest = plugin.getQuestManager().getQuestById(args[1]);
                     QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
-
+                    if (qPlayer == null) {
+                        sender.sendMessage(ChatColor.RED + "Your quest progress file has not been loaded yet.");
+                        return true;
+                    }
+                    if (quest == null) {
+                        sender.sendMessage(Messages.COMMAND_QUEST_GENERAL_DOESNTEXIST.getMessage().replace("{quest}", args[1]));
+                    }
                     if (args[2].equalsIgnoreCase("s") || args[2].equalsIgnoreCase("start")) {
-                        if (quest == null) {
-                            sender.sendMessage(Messages.COMMAND_QUEST_START_DOESNTEXIST.getMessage().replace("{quest}", args[1]));
-                        } else {
-                            if (qPlayer == null) {
-                                // shit + fan
-                                sender.sendMessage(ChatColor.RED + "Your quest progress file has not been loaded yet."); //lazy? :)
-                            } else {
-                                qPlayer.getQuestProgressFile().startQuest(quest);
-                            }
-                        }
+                        qPlayer.getQuestProgressFile().startQuest(quest);
                     } else if (args[2].equalsIgnoreCase("c") || args[2].equalsIgnoreCase("cancel")) {
-                        if (qPlayer == null) {
-                            sender.sendMessage(ChatColor.RED + "Your quest progress file has not been loaded yet."); //lazy x2? ;)
-                        } else {
-                            qPlayer.getQuestProgressFile().cancelQuest(quest);
-                        }
+                        qPlayer.getQuestProgressFile().cancelQuest(quest);
                     } else if (args[2].equalsIgnoreCase("t") || args[2].equalsIgnoreCase("track")) {
-                        if (qPlayer == null) {
-                            sender.sendMessage(ChatColor.RED + "Your quest progress file has not been loaded yet."); //lazy x2? ;)
-                        } else {
-                            qPlayer.getQuestProgressFile().trackQuest(quest);
-                        }
+                        qPlayer.getQuestProgressFile().trackQuest(quest);
                     } else {
                         sender.sendMessage(Messages.COMMAND_SUB_DOESNTEXIST.getMessage().replace("{sub}", args[2]));
                     }
