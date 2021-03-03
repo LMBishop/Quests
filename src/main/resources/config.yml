@@ -177,6 +177,8 @@ options:
     quest-queue-executor-interval: 1      # how frequently Quests should execute the next check in the completion queue (def=1 - 0.05s) - increase this value if you are struggling with performance
     quest-autosave-interval: 12000        # how frequently online players data will be autosaved (def=12000 - 10 minutes)
     quests-autosave-async: false          # experimental - save asynchronously on autosave
+    quests-join-async: false              # experimental - load asynchronously on join
+    quests-leave-async: false             # experimental - save asynchronously on leave
   tab-completion:
     enabled: true
   error-checking:

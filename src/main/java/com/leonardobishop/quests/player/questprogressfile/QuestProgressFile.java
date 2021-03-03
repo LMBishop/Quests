@@ -3,7 +3,12 @@ package com.leonardobishop.quests.player.questprogressfile;
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
-import com.leonardobishop.quests.api.events.*;
+import com.leonardobishop.quests.api.events.PlayerCancelQuestEvent;
+import com.leonardobishop.quests.api.events.PlayerFinishQuestEvent;
+import com.leonardobishop.quests.api.events.PlayerStartQuestEvent;
+import com.leonardobishop.quests.api.events.PlayerStartTrackQuestEvent;
+import com.leonardobishop.quests.api.events.PlayerStopTrackQuestEvent;
+import com.leonardobishop.quests.api.events.PreStartQuestEvent;
 import com.leonardobishop.quests.obj.Messages;
 import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.player.QPlayer;
@@ -13,11 +18,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class QuestProgressFile {
@@ -416,11 +425,23 @@ public class QuestProgressFile {
     }
 
     public void saveToDisk(boolean async) {
-        plugin.getQuestsLogger().debug("Saving player " + playerUUID + " to disk.");
+        plugin.getQuestsLogger().debug("Saving player " + playerUUID + " to disk. Main thread: " + async);
+        List<QuestProgress> questProgressValues = new ArrayList<>(questProgress.values());
         File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
         if (!directory.exists() && !directory.isDirectory()) {
             directory.mkdirs();
         }
+
+        if (async) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                save(questProgressValues);
+            });
+        } else {
+            save(questProgressValues);
+        }
+    }
+
+    private void save(List<QuestProgress> questProgressValues) {
         File file = new File(plugin.getDataFolder() + File.separator + "playerdata" + File.separator + playerUUID.toString() + ".yml");
         if (!file.exists()) {
             try {
@@ -432,7 +453,7 @@ public class QuestProgressFile {
 
         YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
         data.set("quest-progress", null);
-        for (QuestProgress questProgress : questProgress.values()) {
+        for (QuestProgress questProgress : questProgressValues) {
             data.set("quest-progress." + questProgress.getQuestId() + ".started", questProgress.isStarted());
             data.set("quest-progress." + questProgress.getQuestId() + ".completed", questProgress.isCompleted());
             data.set("quest-progress." + questProgress.getQuestId() + ".completed-before", questProgress.isCompletedBefore());
@@ -444,25 +465,10 @@ public class QuestProgressFile {
                         .getProgress());
             }
         }
-//
-        synchronized (this) {
-
-            // TODO
-            if (async && Options.QUEST_AUTOSAVE_ASYNC.getBooleanValue()) {
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                    try {
-                        data.save(file);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-            } else {
-                try {
-                    data.save(file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        try {
+            data.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

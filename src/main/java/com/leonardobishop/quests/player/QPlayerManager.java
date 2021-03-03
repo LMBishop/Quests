@@ -2,10 +2,12 @@ package com.leonardobishop.quests.player;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.QuestsLogger;
+import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.player.questprogressfile.QPlayerPreferences;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -13,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class QPlayerManager {
 
@@ -22,7 +25,7 @@ public class QPlayerManager {
         this.plugin = plugin;
     }
 
-    private final Map<UUID, QPlayer> qPlayers = new HashMap<>();
+    private final Map<UUID, QPlayer> qPlayers = new ConcurrentHashMap<>();
 
     /**
      * Gets the QPlayer from a given UUID.
@@ -48,7 +51,7 @@ public class QPlayerManager {
      */
     public void removePlayer(UUID uuid) {
         plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + ".");
-        this.getPlayer(uuid).getQuestProgressFile().saveToDisk(false);
+        this.getPlayer(uuid).getQuestProgressFile().saveToDisk(Options.QUEST_LEAVE_ASYNC.getBooleanValue());
         qPlayers.remove(uuid);
     }
 
@@ -78,8 +81,8 @@ public class QPlayerManager {
      * @param uuid the uuid of the player
      */
     public void loadPlayer(UUID uuid) {
-        plugin.getQuestsLogger().debug("Loading player " + uuid + " from disk.");
-        if (qPlayers.get(uuid) == null) {
+        plugin.getQuestsLogger().debug("Loading player " + uuid + " from disk. Main thread: " + Bukkit.isPrimaryThread());
+        qPlayers.computeIfAbsent(uuid, s -> {
             QuestProgressFile questProgressFile = new QuestProgressFile(uuid, new QPlayerPreferences(null), plugin);
 
             try {
@@ -120,11 +123,10 @@ public class QPlayerManager {
                 // fuck
             }
 
-            QPlayer qPlayer = new QPlayer(uuid, questProgressFile, plugin);
-
-            this.qPlayers.put(uuid, qPlayer);
-        } else {
-            plugin.getQuestsLogger().debug("Player " + uuid + " is already loaded.");
-        }
+            return new QPlayer(uuid, questProgressFile, plugin);
+        });
+//        else {
+//            plugin.getQuestsLogger().debug("Player " + uuid + " is already loaded.");
+//        }
     }
 }

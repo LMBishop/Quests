@@ -1,5 +1,6 @@
 package com.leonardobishop.quests;
 
+import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.player.QPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -37,7 +38,7 @@ public class QuestsAutosaveRunnable extends BukkitRunnable {
 
         if (Bukkit.getPlayer(player) != null) {
             QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player);
-            qPlayer.getQuestProgressFile().saveToDisk(true);
+            qPlayer.getQuestProgressFile().saveToDisk(Options.QUEST_AUTOSAVE_ASYNC.getBooleanValue());
         }
     }
 
