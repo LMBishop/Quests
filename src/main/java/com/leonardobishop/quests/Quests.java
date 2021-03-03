@@ -55,8 +55,8 @@ import com.leonardobishop.quests.quests.tasktypes.types.dependent.EssentialsMone
 import com.leonardobishop.quests.quests.tasktypes.types.dependent.IridiumSkyblockValueType;
 import com.leonardobishop.quests.quests.tasktypes.types.dependent.MythicMobsKillingType;
 import com.leonardobishop.quests.quests.tasktypes.types.dependent.PlaceholderAPIEvaluateTaskType;
-import com.leonardobishop.quests.quests.tasktypes.types.dependent.ShopGUIPlusBuyTaskType;
-import com.leonardobishop.quests.quests.tasktypes.types.dependent.ShopGUIPlusSellTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.ShopGUIPlusBuyCertainTaskType;
+import com.leonardobishop.quests.quests.tasktypes.types.dependent.ShopGUIPlusSellCertainTaskType;
 import com.leonardobishop.quests.quests.tasktypes.types.dependent.uSkyBlockLevelType;
 import com.leonardobishop.quests.updater.Updater;
 import com.leonardobishop.quests.util.Messages;
@@ -223,8 +223,8 @@ public class Quests extends JavaPlugin {
             }
             if (Bukkit.getPluginManager().isPluginEnabled("ShopGUIPlus")) {
                 // not tested
-                taskTypeManager.registerTaskType(new ShopGUIPlusBuyTaskType());
-                taskTypeManager.registerTaskType(new ShopGUIPlusSellTaskType());
+                taskTypeManager.registerTaskType(new ShopGUIPlusBuyCertainTaskType());
+                taskTypeManager.registerTaskType(new ShopGUIPlusSellCertainTaskType());
             }
 
             taskTypeManager.closeRegistrations();

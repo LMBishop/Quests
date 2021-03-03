@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ShopGUIPlusSellTaskType extends TaskType {
+public class ShopGUIPlusBuyCertainTaskType extends TaskType {
 
-    public ShopGUIPlusSellTaskType() {
-        super("shopguiplus_sell", "LMBishop", "Sell a given item from to a ShopGUI+ shop");
+    public ShopGUIPlusBuyCertainTaskType() {
+        super("shopguiplus_buycertain", "LMBishop", "Purchase a given item from a ShopGUI+ shop");
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ShopGUIPlusSellTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMobKill(ShopPreTransactionEvent event) {
-        if (event.getShopAction() != ShopManager.ShopAction.SELL || event.getShopAction() != ShopManager.ShopAction.SELL_ALL) return;
+        if (event.getShopAction() != ShopManager.ShopAction.BUY) return;
 
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
         if (qPlayer == null) {
