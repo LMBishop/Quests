@@ -6,7 +6,7 @@ version: ${version}
 main: com.leonardobishop.quests.Quests
 website: https://github.com/LMBishop/Quests
 authors: [LMBishop, NicoNekoDev, nivcoo, Rubenicos, RodneyMKay, Auxilor, BavoVanMeel, SuSeu1414, Reinatix]
-softdepend: [ASkyBlock, BentoBox, IridiumSkyblock, uSkyBlock, Citizens, MythicMobs, PlaceholderAPI, Essentials, CoreProtect]
+softdepend: [ASkyBlock, BentoBox, IridiumSkyblock, uSkyBlock, Citizens, MythicMobs, PlaceholderAPI, Essentials, ShopGUIPlus, CoreProtect]
 prefix: Quests
 api-version: "1.13" # allows new API features but Quests will still work pre-1.13
 
