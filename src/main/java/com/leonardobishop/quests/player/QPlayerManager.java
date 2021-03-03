@@ -45,7 +45,7 @@ public class QPlayerManager {
     }
 
     /**
-     * Unloads and saves the player to disk.
+     * Unloads and saves the player to disk. Must be invoked from the main thread.
      *
      * @param uuid the uuid of the player
      */
@@ -76,7 +76,7 @@ public class QPlayerManager {
 
     /**
      * Load the player from disk if they exist, otherwise create a new {@link QuestProgressFile}.
-     * Will have no effect if player is already loaded.
+     * This will have no effect if player is already loaded. Can be invoked asynchronously.
      *
      * @param uuid the uuid of the player
      */
@@ -91,6 +91,7 @@ public class QPlayerManager {
                     File file = new File(plugin.getDataFolder() + File.separator + "playerdata" + File.separator + uuid.toString() + ".yml");
                     if (file.exists()) {
                         YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
+                        plugin.getQuestsLogger().debug("Player " + uuid + " has a valid quest progress file.");
                         if (data.isConfigurationSection("quest-progress")) { //Same job as "isSet" + it checks if is CfgSection
                             for (String id : data.getConfigurationSection("quest-progress").getKeys(false)) {
                                 boolean started = data.getBoolean("quest-progress." + id + ".started");

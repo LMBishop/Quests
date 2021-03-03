@@ -114,7 +114,7 @@ gui:
   no-started-quests:
     name: "&c&lNo Started Quests"
     lore:
-    - "&7You have not started any quests."
+    - "&7Go start some!"
     type: "FEATHER"
   quest-cancel-yes:
     name: "&a&lConfirm Cancel"
