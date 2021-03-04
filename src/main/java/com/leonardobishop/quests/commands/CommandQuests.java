@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class CommandQuests implements TabExecutor {
 
@@ -418,6 +419,27 @@ public class CommandQuests implements TabExecutor {
                     }
                     return true;
                 }
+            } else if (sender instanceof Player && (args[0].equalsIgnoreCase("random")) && sender.hasPermission("quests.command.random")) {
+                Player player = (Player) sender;
+                QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+                if (qPlayer == null) {
+                    sender.sendMessage(ChatColor.RED + "Your quest progress file has not been loaded yet.");
+                    return true;
+                }
+                List<Quest> validQuests = new ArrayList<>();
+                for (Quest quest : plugin.getQuestManager().getQuests().values()) {
+                    if (qPlayer.getQuestProgressFile().canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
+                        validQuests.add(quest);
+                    }
+                }
+
+                if (validQuests.isEmpty()) {
+                    player.sendMessage(Messages.QUEST_RANDOM_NONE.getMessage());
+                    return true;
+                }
+                int random = ThreadLocalRandom.current().nextInt(0, validQuests.size());
+                qPlayer.getQuestProgressFile().startQuest(validQuests.get(random));
+                return true;
             } else if (sender instanceof Player && (args[0].equalsIgnoreCase("started"))) {
                 Player player = (Player) sender;
                 QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
@@ -569,6 +591,9 @@ public class CommandQuests implements TabExecutor {
                 List<String> options = new ArrayList<>(Arrays.asList("quest", "category", "started"));
                 if (sender.hasPermission("quests.admin")) {
                     options.add("admin");
+                }
+                if (sender.hasPermission("quests.command.random")) {
+                    options.add("random");
                 }
                 return matchTabComplete(args[0], options);
             } else if (args.length == 2) {

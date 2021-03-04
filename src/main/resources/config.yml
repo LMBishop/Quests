@@ -253,6 +253,7 @@ messages:
   quest-cancel: "&7Quest &c{quest} &7cancelled!"
   quest-track: "&7Tracking quest &c{quest}&7."
   quest-track-stop: "&7No longer tracking quest &c{quest}&7."
+  quest-random-none: "&cYou have no quests which you can start."
   quest-start-limit: "&7Players are limited to &c{limit} &7started quests at a time."
   quest-start-disabled: "&7You cannot repeat this quest."
   quest-start-locked: "&7You have not unlocked this quest yet."
