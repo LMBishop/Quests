@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.leonardobishop'
-version = '2.15'
+version = '2.15.1'
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {

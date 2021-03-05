@@ -10,7 +10,6 @@ import java.util.HashMap;
 public interface QMenu {
 
     QPlayer getOwner();
-    HashMap<?, ?> getSlotsToMenu();
     Inventory toInventory(int page);
     void handleClick(InventoryClickEvent event, MenuController controller);
 

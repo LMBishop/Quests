@@ -131,6 +131,36 @@ gui:
   quest-cancel-background:
     type: "GRAY_STAINED_GLASS_PANE"
 
+# Here you can add custom items to the quest menu
+# Categories & quests will fill empty slots
+#custom-elements:
+#  "categories": # apply to the categories menu (the main menu by default)
+#    0:   # <--- slot 1, note the slots start from 0! so 0 = slot 1 in this case
+#      display:
+#        name: "&cExample Custom Item (slot 1)"
+#        lore:
+#          - "&7This is a custom item which can be added"
+#          - "&7to your menus. This is purely cosmetic."
+#        type: "DIAMOND_BLOCK"
+#    1:
+#      display:
+#        name: "&cExample Custom Item (slots 2 - 5)"
+#        lore:
+#          - "&7This is a custom item which can be added"
+#          - "&7to your menus, but in slot 2 and repeated"
+#          - "&73 times."
+#          - "&7This is purely cosmetic."
+#        type: "NETHERRACK"
+#      repeat: 3 # repeats for 3 more slots
+#  "c:examples": # apply to the category "examples"
+#    0:
+#      display:
+#        name: "&cExample Custom Item (slot 1)"
+#        lore:
+#          - "&7This is a custom item which can be added"
+#          - "&7to your menus. This is purely cosmetic."
+#        type: "EMERALD_BLOCK"
+
 options:
   # If categories are disabled, quests will be put into one big gui.
   categories-enabled: true

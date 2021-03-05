@@ -31,7 +31,6 @@ public class QMenuCancel implements QMenu {
         /* ignored */
     }
 
-    @Override
     public HashMap<Integer, String> getSlotsToMenu() {
         return slotsToQuestIds;
     }

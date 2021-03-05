@@ -48,7 +48,6 @@ public class QMenuStarted implements QMenu {
         }
     }
 
-    @Override
     public HashMap<Integer, String> getSlotsToMenu() {
         return slotsToQuestIds;
     }
@@ -94,7 +93,7 @@ public class QMenuStarted implements QMenu {
                     Quest quest = Quests.get().getQuestManager().getQuestById(slotsToQuestIds.get(pointer));
                     QuestProgress questProgress = owner.getQuestProgressFile().getQuestProgress(quest);
 
-                    inventory.setItem(invSlot, replaceItemStack(Quests.get().getQuestManager().getQuestById(
+                    inventory.setItem(invSlot, MenuUtil.applyPlaceholders(plugin, owner.getUuid(), plugin.getQuestManager().getQuestById(
                             quest.getId()).getDisplayItem().toItemStack(quest, owner.getQuestProgressFile(), questProgress)));
                 }
                 invSlot++;
@@ -110,9 +109,10 @@ public class QMenuStarted implements QMenu {
         pageplaceholders.put("{prevpage}", String.valueOf(page - 1));
         pageplaceholders.put("{nextpage}", String.valueOf(page + 1));
         pageplaceholders.put("{page}", String.valueOf(page));
-        pageIs = replaceItemStack(Items.PAGE_DESCRIPTION.getItem(), pageplaceholders);
-        pagePrevIs = replaceItemStack(Items.PAGE_PREV.getItem(), pageplaceholders);
-        pageNextIs = replaceItemStack(Items.PAGE_NEXT.getItem(), pageplaceholders);
+        pageIs = MenuUtil.applyPlaceholders(plugin, owner.getUuid(), Items.PAGE_DESCRIPTION.getItem(), pageplaceholders);
+        pageIs.setAmount(Math.min(page, 64));
+        pagePrevIs = MenuUtil.applyPlaceholders(plugin, owner.getUuid(), Items.PAGE_PREV.getItem(), pageplaceholders);
+        pageNextIs = MenuUtil.applyPlaceholders(plugin, owner.getUuid(), Items.PAGE_NEXT.getItem(), pageplaceholders);
 
         if (slotsToQuestIds.size() > pageSize) {
             inventory.setItem(49, pageIs);
@@ -172,37 +172,5 @@ public class QMenuStarted implements QMenu {
                 controller.rightClickQuest(this, quest, Bukkit.getPlayer(this.getOwner().getUuid()));
             }
         }
-    }
-
-    public ItemStack replaceItemStack(ItemStack is) {
-        return replaceItemStack(is, Collections.emptyMap());
-    }
-
-    public ItemStack replaceItemStack(ItemStack is, Map<String, String> placeholders) {
-        ItemStack newItemStack = is.clone();
-        List<String> lore = newItemStack.getItemMeta().getLore();
-        List<String> newLore = new ArrayList<>();
-        ItemMeta ism = newItemStack.getItemMeta();
-        Player player = Bukkit.getPlayer(owner.getUuid());
-        if (lore != null) {
-            for (String s : lore) {
-                for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-                    s = s.replace(entry.getKey(), entry.getValue());
-                    if (plugin.getPlaceholderAPIHook() != null && Options.GUI_USE_PLACEHOLDERAPI.getBooleanValue()) {
-                        s = plugin.getPlaceholderAPIHook().replacePlaceholders(player, s);
-                    }
-                }
-                newLore.add(s);
-            }
-        }
-        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-            ism.setDisplayName(ism.getDisplayName().replace(entry.getKey(), entry.getValue()));
-            if (plugin.getPlaceholderAPIHook() != null && Options.GUI_USE_PLACEHOLDERAPI.getBooleanValue()) {
-                ism.setDisplayName(plugin.getPlaceholderAPIHook().replacePlaceholders(player, ism.getDisplayName()));
-            }
-        }
-        ism.setLore(newLore);
-        newItemStack.setItemMeta(ism);
-        return newItemStack;
     }
 }
