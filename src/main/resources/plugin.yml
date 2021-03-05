@@ -17,9 +17,13 @@ commands:
     permission: quests.command
     aliases: [q, quest]
 
+#todo redo perms
 permissions:
   quests.command:
     description: Permission for main command
+    default: true
+  quests.command.random:
+    description: Permission to execute /q random
     default: true
   quests.admin:
     description: Permission for the admin commands 
