@@ -1,4 +1,4 @@
-package com.leonardobishop.quests.menu.object;
+package com.leonardobishop.quests.menu.element;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.player.QPlayer;
@@ -46,7 +46,7 @@ public class QuestMenuElement extends MenuElement {
         if (!owner.getQuestProgressFile().hasMetRequirements(quest)) {
             List<String> quests = new ArrayList<>();
             for (String requirement : quest.getRequirements()) {
-                quests.add(Quests.get().getQuestManager().getQuestById(requirement).getDisplayNameStripped());
+                quests.add(plugin.getQuestManager().getQuestById(requirement).getDisplayNameStripped());
             }
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", quest.getDisplayNameStripped());
@@ -65,7 +65,7 @@ public class QuestMenuElement extends MenuElement {
             return is;
         } else if (cooldown > 0) {
             Map<String, String> placeholders = new HashMap<>();
-            placeholders.put("{time}", Quests.get().convertToFormat(TimeUnit.SECONDS.convert(cooldown, TimeUnit.MILLISECONDS)));
+            placeholders.put("{time}", plugin.convertToFormat(TimeUnit.SECONDS.convert(cooldown, TimeUnit.MILLISECONDS)));
             placeholders.put("{quest}", quest.getDisplayNameStripped());
             ItemStack is = replaceItemStack(Items.QUEST_COOLDOWN.getItem(), placeholders);
             return is;

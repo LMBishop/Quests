@@ -11,28 +11,19 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.HashMap;
-import java.util.List;
+/**
+ * Represents a cancellation confirmation menu for a specific quest.
+ */
+public class CancelQMenu implements QMenu {
 
-public class QMenuCancel implements QMenu {
-
-    private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
     private final QMenu superMenu;
     private final QPlayer owner;
     private final Quest quest;
 
-    public QMenuCancel(QPlayer owner, QMenu superMenu, Quest quest) {
+    public CancelQMenu(QPlayer owner, QMenu superMenu, Quest quest) {
         this.owner = owner;
         this.superMenu = superMenu;
         this.quest = quest;
-    }
-
-    public void populate(List<Quest> quests) {
-        /* ignored */
-    }
-
-    public HashMap<Integer, String> getSlotsToMenu() {
-        return slotsToQuestIds;
     }
 
     public Quest getQuest() {
@@ -75,10 +66,7 @@ public class QMenuCancel implements QMenu {
     @Override
     public void handleClick(InventoryClickEvent event, MenuController controller) {
         if (event.getSlot() == 10 || event.getSlot() == 11 || event.getSlot() == 12) {
-            QMenu qSuperMenu = this.getSuperMenu();
-            controller.getBuffer().add(event.getWhoClicked().getUniqueId());
-            event.getWhoClicked().openInventory(qSuperMenu.toInventory(1));
-            controller.getTracker().put(event.getWhoClicked().getUniqueId(), qSuperMenu);
+            controller.openMenu(event.getWhoClicked(), this.getSuperMenu(), 1);
         } else if (event.getSlot() == 14 || event.getSlot() == 15 || event.getSlot() == 16) {
             if (this.getOwner().getQuestProgressFile().cancelQuest(this.getQuest())) {
                 event.getWhoClicked().closeInventory();

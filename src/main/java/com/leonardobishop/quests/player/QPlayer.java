@@ -1,11 +1,10 @@
 package com.leonardobishop.quests.player;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.events.MenuController;
-import com.leonardobishop.quests.menu.QMenuCategory;
-import com.leonardobishop.quests.menu.QMenuQuest;
-import com.leonardobishop.quests.menu.QMenuStarted;
+import com.leonardobishop.quests.menu.CategoryQMenu;
+import com.leonardobishop.quests.menu.QuestQMenu;
 import com.leonardobishop.quests.menu.QuestSortWrapper;
+import com.leonardobishop.quests.menu.StartedQMenu;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.quests.Quest;
@@ -37,7 +36,7 @@ public class QPlayer {
     /**
      * @return 0 if success, 1 if no permission, 2 is only data loaded, 3 if player not found
      */
-    public int openCategory(Category category, QMenuCategory superMenu, boolean backButton) {
+    public int openCategory(Category category, CategoryQMenu superMenu, boolean backButton) {
         Player player = Bukkit.getPlayer(this.uuid);
         if (player == null) {
             return 3;
@@ -48,7 +47,7 @@ public class QPlayer {
         }
 
         // Using `this` instead of searching again for this QPlayer
-        QMenuQuest qMenuQuest = new QMenuQuest(plugin, this, category.getId(), superMenu);
+        QuestQMenu questQMenu = new QuestQMenu(plugin, this, category.getId(), superMenu);
         List<Quest> quests = new ArrayList<>();
         for (String questid : category.getRegisteredQuestIds()) {
             Quest quest = plugin.getQuestManager().getQuestById(questid);
@@ -56,15 +55,15 @@ public class QPlayer {
                 quests.add(quest);
             }
         }
-        qMenuQuest.populate(quests);
-        qMenuQuest.setBackButtonEnabled(backButton);
-        return openCategory(category, qMenuQuest);
+        questQMenu.populate(quests);
+        questQMenu.setBackButtonEnabled(backButton);
+        return openCategory(category, questQMenu);
     }
 
     /**
      * @return 0 if success, 1 if no permission, 2 is only data loaded, 3 if player not found
      */
-    public int openCategory(Category category, QMenuQuest qMenuQuest) {
+    public int openCategory(Category category, QuestQMenu questQMenu) {
         Player player = Bukkit.getPlayer(this.uuid);
         if (player == null) {
             return 3;
@@ -74,8 +73,7 @@ public class QPlayer {
             return 1;
         }
 
-        player.openInventory(qMenuQuest.toInventory(1));
-        MenuController.track(this.uuid, qMenuQuest);
+        plugin.getMenuController().openMenu(player, questQMenu, 1);
         return 0;
     }
 
@@ -89,10 +87,10 @@ public class QPlayer {
         }
 
         if (Options.CATEGORIES_ENABLED.getBooleanValue()) {
-            QMenuCategory qMenuCategory = new QMenuCategory(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()));
-            List<QMenuQuest> questMenus = new ArrayList<>();
+            CategoryQMenu categoryQMenu = new CategoryQMenu(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()));
+            List<QuestQMenu> questMenus = new ArrayList<>();
             for (Category category : plugin.getQuestManager().getCategories()) {
-                QMenuQuest qMenuQuest = new QMenuQuest(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()), category.getId(), qMenuCategory);
+                QuestQMenu questQMenu = new QuestQMenu(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()), category.getId(), categoryQMenu);
                 List<Quest> quests = new ArrayList<>();
                 for (String questid : category.getRegisteredQuestIds()) {
                     Quest quest = plugin.getQuestManager().getQuestById(questid);
@@ -100,24 +98,22 @@ public class QPlayer {
                         quests.add(quest);
                     }
                 }
-                qMenuQuest.populate(quests);
-                questMenus.add(qMenuQuest);
+                questQMenu.populate(quests);
+                questMenus.add(questQMenu);
             }
-            qMenuCategory.populate(questMenus);
+            categoryQMenu.populate(questMenus);
 
-            player.openInventory(qMenuCategory.toInventory(1));
-            MenuController.track(player.getUniqueId(), qMenuCategory);
+            plugin.getMenuController().openMenu(player, categoryQMenu, 1);
         } else {
-            QMenuQuest qMenuQuest = new QMenuQuest(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()), "", null);
+            QuestQMenu questQMenu = new QuestQMenu(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()), "", null);
             List<Quest> quests = new ArrayList<>();
             for (Map.Entry<String, Quest> entry : plugin.getQuestManager().getQuests().entrySet()) {
                 quests.add(entry.getValue());
             }
-            qMenuQuest.populate(quests);
-            qMenuQuest.setBackButtonEnabled(false);
+            questQMenu.populate(quests);
+            questQMenu.setBackButtonEnabled(false);
 
-            player.openInventory(qMenuQuest.toInventory(1));
-            MenuController.track(player.getUniqueId(), qMenuQuest);
+            plugin.getMenuController().openMenu(player, questQMenu, 1);
         }
     }
 
@@ -130,15 +126,14 @@ public class QPlayer {
             return;
         }
 
-        QMenuStarted qMenuStarted = new QMenuStarted(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()));
+        StartedQMenu startedQMenu = new StartedQMenu(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()));
         List<QuestSortWrapper> quests = new ArrayList<>();
         for (Map.Entry<String, Quest> entry : plugin.getQuestManager().getQuests().entrySet()) {
             quests.add(new QuestSortWrapper(plugin, entry.getValue()));
         }
-        qMenuStarted.populate(quests);
+        startedQMenu.populate(quests);
 
-        player.openInventory(qMenuStarted.toInventory(1));
-        MenuController.track(player.getUniqueId(), qMenuStarted);
+        plugin.getMenuController().openMenu(player, startedQMenu, 1);
     }
 
     public QuestProgressFile getQuestProgressFile() {

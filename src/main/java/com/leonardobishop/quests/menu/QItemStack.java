@@ -93,19 +93,13 @@ public class QItemStack {
         Player player = Bukkit.getPlayer(questProgressFile.getPlayerUUID());
         if (questProgressFile.hasStartedQuest(quest)) {
             boolean tracked = quest.getId().equals(questProgressFile.getPlayerPreferences().getTrackedQuestId());
-            if (Options.GLOBAL_QUEST_DISPLAY_CONFIGURATION_OVERRIDE.getBooleanValue() && !globalLoreAppendStarted.isEmpty()) {
-                if (tracked) {
-                    tempLore.addAll(globalLoreAppendTracked);
-                } else {
-                    tempLore.addAll(globalLoreAppendStarted);
-                }
-            } else {
+            if (!Options.GLOBAL_QUEST_DISPLAY_CONFIGURATION_OVERRIDE.getBooleanValue() || globalLoreAppendStarted.isEmpty()) {
                 tempLore.addAll(loreStarted);
-                if (tracked) {
-                    tempLore.addAll(globalLoreAppendTracked);
-                } else {
-                    tempLore.addAll(globalLoreAppendStarted);
-                }
+            }
+            if (tracked) {
+                tempLore.addAll(globalLoreAppendTracked);
+            } else {
+                tempLore.addAll(globalLoreAppendStarted);
             }
             ism.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
             try {

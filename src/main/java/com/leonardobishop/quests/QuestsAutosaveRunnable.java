@@ -41,5 +41,4 @@ public class QuestsAutosaveRunnable extends BukkitRunnable {
         }
     }
 
-
 }

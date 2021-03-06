@@ -3,9 +3,9 @@ package com.leonardobishop.quests.menu;
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
 import com.leonardobishop.quests.events.MenuController;
-import com.leonardobishop.quests.menu.object.CustomMenuElement;
-import com.leonardobishop.quests.menu.object.MenuElement;
-import com.leonardobishop.quests.menu.object.QuestMenuElement;
+import com.leonardobishop.quests.menu.element.CustomMenuElement;
+import com.leonardobishop.quests.menu.element.MenuElement;
+import com.leonardobishop.quests.menu.element.QuestMenuElement;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.quests.Quest;
@@ -25,17 +25,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
- * Menu for a specific category.
+ * Represents a menu for a specified category (or all if they are disabled),
+ * which contains a listing of different quests.
  */
-public class QMenuQuest implements QMenu {
+public class QuestQMenu implements QMenu {
 
     private final Quests plugin;
     private final HashMap<Integer, MenuElement> menuElements = new HashMap<>();
-    private final QMenuCategory superMenu;
+    private final CategoryQMenu superMenu;
     private final String categoryName;
     private final int pageSize = 45;
     private final QPlayer owner;
@@ -47,7 +46,7 @@ public class QMenuQuest implements QMenu {
     private int currentPage = -1;
     private boolean backButtonEnabled = true;
 
-    public QMenuQuest(Quests plugin, QPlayer owner, String categoryName, QMenuCategory superMenu) {
+    public QuestQMenu(Quests plugin, QPlayer owner, String categoryName, CategoryQMenu superMenu) {
         this.plugin = plugin;
         this.owner = owner;
         this.categoryName = categoryName;
@@ -200,20 +199,15 @@ public class QMenuQuest implements QMenu {
 
     @Override
     public void handleClick(InventoryClickEvent event, MenuController controller) {
-        //TODO make everything a menu element cuz this is jank
+        //TODO maybe redo this maybe
         if (pagePrevLocation == event.getSlot()) {
-            controller.getBuffer().add(event.getWhoClicked().getUniqueId());
-            event.getWhoClicked().openInventory(this.toInventory(currentPage - 1));
+            controller.openMenu(event.getWhoClicked(), this, currentPage - 1);
 
         } else if (pageNextLocation == event.getSlot()) {
-            controller.getBuffer().add(event.getWhoClicked().getUniqueId());
-            event.getWhoClicked().openInventory(this.toInventory(currentPage + 1));
+            controller.openMenu(event.getWhoClicked(), this, currentPage + 1);
 
         } else if (Options.CATEGORIES_ENABLED.getBooleanValue() && backButtonLocation == event.getSlot()) {
-            QMenuCategory qMenuCategory = this.getSuperMenu();
-            controller.getBuffer().add(event.getWhoClicked().getUniqueId());
-            event.getWhoClicked().openInventory(qMenuCategory.toInventory(1));
-            controller.getTracker().put(event.getWhoClicked().getUniqueId(), qMenuCategory);
+            controller.openMenu(event.getWhoClicked(), this.getSuperMenu(), 1);
 
         } else if (event.getSlot() < pageSize && menuElements.containsKey(event.getSlot() + (((currentPage) - 1) * pageSize))) {
             MenuElement menuElement = menuElements.get(event.getSlot() + ((currentPage - 1) * pageSize));
@@ -226,10 +220,10 @@ public class QMenuQuest implements QMenu {
                         event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
                     }
                 } else if (event.getClick() == ClickType.MIDDLE && Options.ALLOW_QUEST_TRACK.getBooleanValue()) {
-                    controller.middleClickQuest(this, quest, Bukkit.getPlayer(this.getOwner().getUuid()));
+                    MenuUtil.handleMiddleClick(this, quest, Bukkit.getPlayer(owner.getUuid()), controller);
                 } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()
                         && this.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
-                    controller.rightClickQuest(this, quest, Bukkit.getPlayer(this.getOwner().getUuid()));
+                    MenuUtil.handleRightClick(this, quest, Bukkit.getPlayer(owner.getUuid()), controller);
                 }
             }
         }
@@ -247,7 +241,7 @@ public class QMenuQuest implements QMenu {
         return backButtonLocation;
     }
 
-    public QMenuCategory getSuperMenu() {
+    public CategoryQMenu getSuperMenu() {
         return superMenu;
     }
 

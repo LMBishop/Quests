@@ -81,7 +81,7 @@ public class QuestProgressFile {
             if (questFinishEvent.getQuestFinishMessage() != null)
                 player.sendMessage(questFinishEvent.getQuestFinishMessage());
             if (Options.TITLES_ENABLED.getBooleanValue()) {
-                plugin.getTitle().sendTitle(player, Messages.TITLE_QUEST_COMPLETE_TITLE.getMessage().replace("{quest}", quest
+                plugin.getTitleHandle().sendTitle(player, Messages.TITLE_QUEST_COMPLETE_TITLE.getMessage().replace("{quest}", quest
                         .getDisplayNameStripped()), Messages.TITLE_QUEST_COMPLETE_SUBTITLE.getMessage().replace("{quest}", quest
                         .getDisplayNameStripped()));
             }
@@ -243,7 +243,7 @@ public class QuestProgressFile {
                 if (questStartEvent.getQuestStartMessage() != null)
                     player.sendMessage(questStartEvent.getQuestStartMessage()); //Don't send a message if the event message is null
                 if (Options.TITLES_ENABLED.getBooleanValue()) {
-                    plugin.getTitle().sendTitle(player, Messages.TITLE_QUEST_START_TITLE.getMessage().replace("{quest}", quest
+                    plugin.getTitleHandle().sendTitle(player, Messages.TITLE_QUEST_START_TITLE.getMessage().replace("{quest}", quest
                             .getDisplayNameStripped()), Messages.TITLE_QUEST_START_SUBTITLE.getMessage().replace("{quest}", quest
                             .getDisplayNameStripped()));
                 }

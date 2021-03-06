@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public enum Options {
+
     CATEGORIES_ENABLED("options.categories-enabled"),
     TRIM_GUI_SIZE("options.trim-gui-size"),
     QUESTS_START_LIMIT("options.quest-started-limit"),

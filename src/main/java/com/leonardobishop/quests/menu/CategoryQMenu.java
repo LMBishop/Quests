@@ -2,34 +2,27 @@ package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.events.MenuController;
-import com.leonardobishop.quests.menu.object.CategoryMenuElement;
-import com.leonardobishop.quests.menu.object.CustomMenuElement;
-import com.leonardobishop.quests.menu.object.MenuElement;
-import com.leonardobishop.quests.menu.object.QuestMenuElement;
+import com.leonardobishop.quests.menu.element.CategoryMenuElement;
+import com.leonardobishop.quests.menu.element.CustomMenuElement;
+import com.leonardobishop.quests.menu.element.MenuElement;
 import com.leonardobishop.quests.player.QPlayer;
-import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.util.Items;
 import com.leonardobishop.quests.util.Messages;
 import com.leonardobishop.quests.util.Options;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Menu list of categories.
+ * Represents a menu which contains a listing of different categories.
  */
-public class QMenuCategory implements QMenu {
+public class CategoryQMenu implements QMenu {
 
     private final Quests plugin;
     private final int pageSize = 45;
@@ -41,12 +34,12 @@ public class QMenuCategory implements QMenu {
     private int pageNextLocation = -1;
     private int currentPage = -1;
 
-    public QMenuCategory(Quests plugin, QPlayer owner) {
+    public CategoryQMenu(Quests plugin, QPlayer owner) {
         this.plugin = plugin;
         this.owner = owner;
     }
 
-    public void populate(List<QMenuQuest> menuQuests) {
+    public void populate(List<QuestQMenu> menuQuests) {
         if (plugin.getConfig().isConfigurationSection("custom-elements.categories")) {
             for (String s : plugin.getConfig().getConfigurationSection("custom-elements.categories").getKeys(false)) {
                 if (!NumberUtils.isNumber(s)) continue;
@@ -60,14 +53,14 @@ public class QMenuCategory implements QMenu {
             }
         }
         int slot = 0;
-        for (QMenuQuest qMenuQuest : menuQuests) {
+        for (QuestQMenu questQMenu : menuQuests) {
             while (menuElements.containsKey(slot)) slot++;
-            if (Options.GUI_HIDE_CATEGORIES_NOPERMISSION.getBooleanValue() && Quests.get().getQuestManager().getCategoryById(qMenuQuest.getCategoryName()).isPermissionRequired()) {
-                if (!Bukkit.getPlayer(owner.getUuid()).hasPermission("quests.category." + qMenuQuest.getCategoryName())) {
+            if (Options.GUI_HIDE_CATEGORIES_NOPERMISSION.getBooleanValue() && plugin.getQuestManager().getCategoryById(questQMenu.getCategoryName()).isPermissionRequired()) {
+                if (!Bukkit.getPlayer(owner.getUuid()).hasPermission("quests.category." + questQMenu.getCategoryName())) {
                     continue;
                 }
             }
-            menuElements.put(slot, new CategoryMenuElement(plugin, owner.getUuid(), qMenuQuest));
+            menuElements.put(slot, new CategoryMenuElement(plugin, owner.getUuid(), questQMenu));
             slot++;
         }
 
@@ -142,21 +135,17 @@ public class QMenuCategory implements QMenu {
     @Override
     public void handleClick(InventoryClickEvent event, MenuController controller) {
         if (pagePrevLocation == event.getSlot()) {
-            controller.getBuffer().add(event.getWhoClicked().getUniqueId());
-            event.getWhoClicked().openInventory(this.toInventory(currentPage - 1));
+            controller.openMenu(event.getWhoClicked(), this, currentPage - 1);
 
         } else if (pageNextLocation == event.getSlot()) {
-            controller.getBuffer().add(event.getWhoClicked().getUniqueId());
-            event.getWhoClicked().openInventory(this.toInventory(currentPage + 1));
+            controller.openMenu(event.getWhoClicked(), this, currentPage + 1);
 
         } else if (event.getSlot() < pageSize && menuElements.containsKey(event.getSlot() + (((currentPage) - 1) * pageSize))) {
             MenuElement element = menuElements.get(event.getSlot() + ((currentPage - 1) * pageSize));
             if (element instanceof CategoryMenuElement) {
                 CategoryMenuElement categoryMenuElement = (CategoryMenuElement) element;
-                QMenuQuest qMenuQuest = categoryMenuElement.getQuestMenu();
-                controller.getBuffer().add(event.getWhoClicked().getUniqueId());
-                if (this.getOwner().openCategory(plugin.getQuestManager().getCategoryById(qMenuQuest.getCategoryName()), qMenuQuest) != 0) {
-                    controller.getBuffer().remove(event.getWhoClicked().getUniqueId());
+                QuestQMenu questQMenu = categoryMenuElement.getQuestMenu();
+                if (owner.openCategory(plugin.getQuestManager().getCategoryById(questQMenu.getCategoryName()), questQMenu) != 0) {
                     event.getWhoClicked().sendMessage(Messages.QUEST_CATEGORY_PERMISSION.getMessage());
                 }
             }

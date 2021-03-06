@@ -23,8 +23,7 @@ public class EventPlayerJoin implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onAsyncJoin(AsyncPlayerPreLoginEvent event) {
         if (!Options.QUEST_JOIN_ASYNC.getBooleanValue()) return;
-        UUID playerUuid = event.getUniqueId();
-        plugin.getPlayerManager().loadPlayer(playerUuid);
+        plugin.getPlayerManager().loadPlayer(event.getUniqueId());
     }
 
     @EventHandler

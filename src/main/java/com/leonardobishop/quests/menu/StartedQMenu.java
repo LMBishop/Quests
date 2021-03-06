@@ -8,20 +8,20 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.util.Items;
 import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class QMenuStarted implements QMenu {
+/**
+ * Represents a menu listing quests the player has started.
+ */
+public class StartedQMenu implements QMenu {
 
     private final Quests plugin;
     private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
@@ -32,7 +32,7 @@ public class QMenuStarted implements QMenu {
     private int pageNextLocation = -1;
     private int currentPage = -1;
 
-    public QMenuStarted(Quests plugin, QPlayer owner) {
+    public StartedQMenu(Quests plugin, QPlayer owner) {
         this.plugin = plugin;
         this.owner = owner;
     }
@@ -90,7 +90,7 @@ public class QMenuStarted implements QMenu {
         if (!slotsToQuestIds.isEmpty()) {
             for (int pointer = pageMin; pointer < pageMax; pointer++) {
                 if (slotsToQuestIds.containsKey(pointer)) {
-                    Quest quest = Quests.get().getQuestManager().getQuestById(slotsToQuestIds.get(pointer));
+                    Quest quest = plugin.getQuestManager().getQuestById(slotsToQuestIds.get(pointer));
                     QuestProgress questProgress = owner.getQuestProgressFile().getQuestProgress(quest);
 
                     inventory.setItem(invSlot, MenuUtil.applyPlaceholders(plugin, owner.getUuid(), plugin.getQuestManager().getQuestById(
@@ -151,25 +151,22 @@ public class QMenuStarted implements QMenu {
 
     @Override
     public void handleClick(InventoryClickEvent event, MenuController controller) {
-        if (this.getPagePrevLocation() == event.getSlot()) {
-            controller.getBuffer().add(event.getWhoClicked().getUniqueId());
-            event.getWhoClicked().openInventory(this.toInventory(this.getCurrentPage() - 1));
+        if (pagePrevLocation == event.getSlot()) {
+            controller.openMenu(event.getWhoClicked(), this, currentPage - 1);
 
-        } else if (this.getPageNextLocation() == event.getSlot()) {
-            controller.getBuffer().add(event.getWhoClicked().getUniqueId());
-            event.getWhoClicked().openInventory(this.toInventory(this.getCurrentPage() + 1));
+        } else if (pageNextLocation == event.getSlot()) {
+            controller.openMenu(event.getWhoClicked(), this, currentPage + 1);
 
-        } else if (event.getSlot() < this.getPageSize() && this.getSlotsToMenu().containsKey(event.getSlot() + (((this
-                .getCurrentPage()) - 1) * this.getPageSize()))) {
+        } else if (event.getSlot() < pageSize && slotsToQuestIds.containsKey(event.getSlot() + ((currentPage) - 1) * pageSize)) {
 
             // repeat from above
-            String questid = this.getSlotsToMenu().get(event.getSlot() + (((this.getCurrentPage()) - 1) * this.getPageSize()));
+            String questid = slotsToQuestIds.get(event.getSlot() + (((currentPage) - 1) * pageSize));
             Quest quest = plugin.getQuestManager().getQuestById(questid);
             if (event.getClick() == ClickType.MIDDLE && Options.ALLOW_QUEST_TRACK.getBooleanValue()) {
-                controller.middleClickQuest(this, quest, Bukkit.getPlayer(this.getOwner().getUuid()));
+                MenuUtil.handleMiddleClick(this, quest, Bukkit.getPlayer(owner.getUuid()), controller);
             } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()
-                    && this.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
-                controller.rightClickQuest(this, quest, Bukkit.getPlayer(this.getOwner().getUuid()));
+                    && owner.getQuestProgressFile().hasStartedQuest(quest)) {
+                MenuUtil.handleRightClick(this, quest, Bukkit.getPlayer(owner.getUuid()), controller);
             }
         }
     }

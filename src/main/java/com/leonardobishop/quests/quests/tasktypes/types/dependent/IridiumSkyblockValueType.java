@@ -2,7 +2,6 @@ package com.leonardobishop.quests.quests.tasktypes.types.dependent;
 
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.api.IslandWorthCalculatedEvent;
-import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
@@ -47,7 +46,6 @@ public final class IridiumSkyblockValueType extends TaskType {
             try {
                  uuid = UUID.fromString(player);
             } catch (Exception e) {
-                Quests.get().getQuestsLogger().debug("Cannot convert from String to UUID for IridiumSkyblock");
                 continue;
             }
             QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(uuid);

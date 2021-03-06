@@ -76,17 +76,19 @@ import java.util.ArrayList;
 
 public class Quests extends JavaPlugin {
 
-    private static QuestManager questManager;
-    private static QPlayerManager qPlayerManager;
-    private static TaskTypeManager taskTypeManager;
-
     private static Quests instance;
     private static Updater updater;
-    private static Title title;
+
+    private QuestManager questManager;
+    private QPlayerManager qPlayerManager;
+    private TaskTypeManager taskTypeManager;
+
+    private Title titleHandle;
     private ItemGetter itemGetter;
     private QuestCompleter questCompleter;
     private QuestsConfigLoader questsConfigLoader;
     private QuestsLogger questsLogger;
+    private MenuController menuController;
 
     private IPlaceholderAPIHook placeholderAPIHook;
     private ICoreProtectHook coreProtectHook;
@@ -119,8 +121,8 @@ public class Quests extends JavaPlugin {
         this.brokenConfig = brokenConfig;
     }
 
-    public Title getTitle() {
-        return title;
+    public Title getTitleHandle() {
+        return titleHandle;
     }
 
     public Updater getUpdater() {
@@ -129,6 +131,10 @@ public class Quests extends JavaPlugin {
 
     public QuestsConfigLoader getQuestsConfigLoader() {
         return questsConfigLoader;
+    }
+
+    public MenuController getMenuController() {
+        return menuController;
     }
 
     public String convertToFormat(long m) { //seconds please
@@ -152,13 +158,14 @@ public class Quests extends JavaPlugin {
         taskTypeManager = new TaskTypeManager(this);
         questManager = new QuestManager(this);
         qPlayerManager = new QPlayerManager(this);
+        menuController = new MenuController(this);
 
         dataGenerator();
         setupVersionSpecific();
 
         Bukkit.getPluginCommand("quests").setExecutor(new CommandQuests(this));
         Bukkit.getPluginManager().registerEvents(new EventPlayerJoin(this), this);
-        Bukkit.getPluginManager().registerEvents(new MenuController(this), this);
+        Bukkit.getPluginManager().registerEvents(menuController, this);
         Bukkit.getPluginManager().registerEvents(new EventPlayerLeave(this), this);
 
         Metrics metrics = new Metrics(this);
@@ -171,26 +178,26 @@ public class Quests extends JavaPlugin {
         // register task types after the server has fully started
         Bukkit.getScheduler().runTask(this, () -> {
             taskTypeManager.registerTaskType(new MiningTaskType());
-            taskTypeManager.registerTaskType(new MiningCertainTaskType());
+            taskTypeManager.registerTaskType(new MiningCertainTaskType(this));
             taskTypeManager.registerTaskType(new BuildingTaskType());
             taskTypeManager.registerTaskType(new BuildingCertainTaskType());
             taskTypeManager.registerTaskType(new MobkillingTaskType());
             taskTypeManager.registerTaskType(new MobkillingCertainTaskType());
             taskTypeManager.registerTaskType(new PlayerkillingTaskType());
             taskTypeManager.registerTaskType(new FishingTaskType());
-            taskTypeManager.registerTaskType(new InventoryTaskType());
+            taskTypeManager.registerTaskType(new InventoryTaskType(this));
             taskTypeManager.registerTaskType(new WalkingTaskType());
             taskTypeManager.registerTaskType(new TamingTaskType());
             taskTypeManager.registerTaskType(new MilkingTaskType());
             taskTypeManager.registerTaskType(new ShearingTaskType());
             taskTypeManager.registerTaskType(new PositionTaskType());
-            taskTypeManager.registerTaskType(new PlaytimeTaskType());
+            taskTypeManager.registerTaskType(new PlaytimeTaskType(this));
             taskTypeManager.registerTaskType(new BrewingTaskType());
             taskTypeManager.registerTaskType(new ExpEarnTaskType());
             taskTypeManager.registerTaskType(new BreedingTaskType());
             taskTypeManager.registerTaskType(new EnchantingTaskType());
             taskTypeManager.registerTaskType(new DealDamageTaskType());
-            taskTypeManager.registerTaskType(new PermissionTaskType());
+            taskTypeManager.registerTaskType(new PermissionTaskType(this));
             taskTypeManager.registerTaskType(new DistancefromTaskType());
             taskTypeManager.registerTaskType(new CommandTaskType());
             // TODO: FIX
@@ -208,14 +215,14 @@ public class Quests extends JavaPlugin {
                 taskTypeManager.registerTaskType(new uSkyBlockLevelType());
             }
             if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
-                taskTypeManager.registerTaskType(new CitizensDeliverTaskType());
+                taskTypeManager.registerTaskType(new CitizensDeliverTaskType(this));
                 taskTypeManager.registerTaskType(new CitizensInteractTaskType());
             }
             if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
                 taskTypeManager.registerTaskType(new MythicMobsKillingType());
             }
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                taskTypeManager.registerTaskType(new PlaceholderAPIEvaluateTaskType());
+                taskTypeManager.registerTaskType(new PlaceholderAPIEvaluateTaskType(this));
             }
             if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
                 taskTypeManager.registerTaskType(new EssentialsMoneyEarnTaskType());
@@ -346,7 +353,7 @@ public class Quests extends JavaPlugin {
             version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
         } catch (ArrayIndexOutOfBoundsException e) {
             getQuestsLogger().warning("Failed to resolve server version - some features will not work!");
-            title = new Title_Other();
+            titleHandle = new Title_Other();
             itemGetter = new ItemGetter_Late_1_8();
             return;
         }
@@ -354,11 +361,11 @@ public class Quests extends JavaPlugin {
         getQuestsLogger().info("Your server is running version " + version + ".");
 
         if (version.startsWith("v1_7")) {
-            title = new Title_Other();
+            titleHandle = new Title_Other();
         } else if (version.startsWith("v1_8") || version.startsWith("v1_9") || version.startsWith("v1_10")) {
-            title = new Title_BukkitNoTimings();
+            titleHandle = new Title_BukkitNoTimings();
         } else {
-            title = new Title_Bukkit();
+            titleHandle = new Title_Bukkit();
         }
 
         if (version.startsWith("v1_7") || version.startsWith("v1_8") || version.startsWith("v1_9")
@@ -370,9 +377,9 @@ public class Quests extends JavaPlugin {
             itemGetter = new ItemGetterLatest();
         }
 
-        if (title instanceof Title_Bukkit) {
+        if (titleHandle instanceof Title_Bukkit) {
             getQuestsLogger().info("Titles have been enabled.");
-        } else if (title instanceof Title_BukkitNoTimings) {
+        } else if (titleHandle instanceof Title_BukkitNoTimings) {
             getQuestsLogger().info("Titles have been enabled, although they have limited timings.");
         } else {
             getQuestsLogger().info("Titles are not supported for this version.");

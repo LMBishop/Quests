@@ -1,7 +1,7 @@
-package com.leonardobishop.quests.menu.object;
+package com.leonardobishop.quests.menu.element;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.menu.QMenuQuest;
+import com.leonardobishop.quests.menu.QuestQMenu;
 import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
@@ -17,9 +17,9 @@ public class CategoryMenuElement extends MenuElement {
 
     private final Quests plugin;
     private final UUID owner;
-    private final QMenuQuest questMenu;
+    private final QuestQMenu questMenu;
 
-    public CategoryMenuElement(Quests plugin, UUID owner, QMenuQuest questMenu) {
+    public CategoryMenuElement(Quests plugin, UUID owner, QuestQMenu questMenu) {
         this.plugin = plugin;
         this.owner = owner;
         this.questMenu = questMenu;
@@ -29,7 +29,7 @@ public class CategoryMenuElement extends MenuElement {
         return owner;
     }
 
-    public QMenuQuest getQuestMenu() {
+    public QuestQMenu getQuestMenu() {
         return questMenu;
     }
 

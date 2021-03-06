@@ -1,6 +1,8 @@
 package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.events.MenuController;
+import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -45,6 +47,27 @@ public class MenuUtil {
         ism.setLore(newLore);
         newItemStack.setItemMeta(ism);
         return newItemStack;
+    }
+
+    public static void handleMiddleClick(QMenu menu, Quest quest, Player player, MenuController controller) {
+        if (menu.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
+            String tracked = menu.getOwner().getQuestProgressFile().getPlayerPreferences().getTrackedQuestId();
+
+            if (quest.getId().equals(tracked)) {
+                menu.getOwner().getQuestProgressFile().trackQuest(null);
+            } else {
+                menu.getOwner().getQuestProgressFile().trackQuest(quest);
+            }
+            player.closeInventory();
+        }
+    }
+
+    public static void handleRightClick(QMenu menu, Quest quest, Player player, MenuController controller) {
+        if (menu.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
+            if (Options.QUEST_AUTOSTART.getBooleanValue()) return;
+            CancelQMenu cancelQMenu = new CancelQMenu(menu.getOwner(), menu, quest);
+            controller.openMenu(player, cancelQMenu, 1);
+        }
     }
 
 }

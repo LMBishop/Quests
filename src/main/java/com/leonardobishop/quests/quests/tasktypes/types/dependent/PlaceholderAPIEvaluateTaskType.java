@@ -24,11 +24,13 @@ import java.util.List;
 
 public final class PlaceholderAPIEvaluateTaskType extends TaskType {
 
+    private final Quests plugin;
     private BukkitTask poll;
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
-    public PlaceholderAPIEvaluateTaskType() {
+    public PlaceholderAPIEvaluateTaskType(Quests plugin) {
         super("placeholderapi_evaluate", "LMBishop", "Evaluate the result of a placeholder");
+        this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("placeholder", true, "The placeholder string (including %%)."));
         this.creatorConfigValues.add(new ConfigValue("evaluates", true, "What it should evaluate to be marked as complete."));
         this.creatorConfigValues.add(new ConfigValue("operator", false, "Comparison method."));
@@ -138,7 +140,7 @@ public final class PlaceholderAPIEvaluateTaskType extends TaskType {
                     }
                 }
             }
-        }.runTaskTimer(Quests.get(), 30L, 30L);
+        }.runTaskTimer(plugin, 30L, 30L);
     }
 
     @Override

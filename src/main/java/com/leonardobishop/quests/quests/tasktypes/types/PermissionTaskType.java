@@ -20,11 +20,13 @@ import java.util.List;
 
 public final class PermissionTaskType extends TaskType {
 
+    private Quests plugin;
     private BukkitTask poll;
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
-    public PermissionTaskType() {
+    public PermissionTaskType(Quests plugin) {
         super("permission", "LMBishop", "Test if a player has a permission");
+        this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("permission", true, "The required permission."));
     }
 
@@ -58,7 +60,7 @@ public final class PermissionTaskType extends TaskType {
                     }
                 }
             }
-        }.runTaskTimer(Quests.get(), 30L, 30L);
+        }.runTaskTimer(plugin, 30L, 30L);
     }
 
     @Override

@@ -25,10 +25,12 @@ import java.util.List;
 
 public final class MiningCertainTaskType extends TaskType {
 
+    private final Quests plugin;
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
-    public MiningCertainTaskType() {
+    public MiningCertainTaskType(Quests plugin) {
         super("blockbreakcertain", "LMBishop", "Break a set amount of a specific block.");
+        this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of blocks to be broken."));
         this.creatorConfigValues.add(new ConfigValue("block", true, "Name or ID of block.", "block")); // Can use name:datacode
         this.creatorConfigValues.add(new ConfigValue("blocks", true, "List of blocks (alias for block for config readability).", "block"));
@@ -110,7 +112,7 @@ public final class MiningCertainTaskType extends TaskType {
                         boolean coreProtectEnabled = (boolean) task.getConfigValue("check-coreprotect", false);
                         int coreProtectTime = (int) task.getConfigValue("check-coreprotect-time", 3600);
 
-                        if (coreProtectEnabled && Quests.get().getCoreProtectHook().checkBlock(event.getBlock(), coreProtectTime)) {
+                        if (coreProtectEnabled && plugin.getCoreProtectHook().checkBlock(event.getBlock(), coreProtectTime)) {
                             continue;
                         }
                         increment(task, taskProgress, 1);

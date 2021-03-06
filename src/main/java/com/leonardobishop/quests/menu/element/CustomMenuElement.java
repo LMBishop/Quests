@@ -1,4 +1,4 @@
-package com.leonardobishop.quests.menu.object;
+package com.leonardobishop.quests.menu.element;
 
 import org.bukkit.inventory.ItemStack;
 

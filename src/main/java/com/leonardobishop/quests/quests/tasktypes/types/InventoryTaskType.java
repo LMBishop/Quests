@@ -29,9 +29,11 @@ import java.util.List;
 public final class InventoryTaskType extends TaskType {
 
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
-
-    public InventoryTaskType() {
+    private final Quests plugin;
+    
+    public InventoryTaskType(Quests plugin) {
         super("inventory", "LMBishop", "Obtain a set of items.");
+        this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of item to retrieve."));
         this.creatorConfigValues.add(new ConfigValue("item", true, "Name or ID of item."));
         this.creatorConfigValues.add(new ConfigValue("data", false, "Data of item."));
@@ -57,7 +59,7 @@ public final class InventoryTaskType extends TaskType {
                             QuestsConfigLoader.ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(""), root + ".item.type"));
                 } else {
                     String type = String.valueOf(section.get(itemloc));
-                    if (!Quests.get().getItemGetter().isValidMaterial(type)) {
+                    if (!plugin.getItemGetter().isValidMaterial(type)) {
                         problems.add(new QuestsConfigLoader.ConfigProblem(QuestsConfigLoader.ConfigProblemType.WARNING,
                                 QuestsConfigLoader.ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(type), root + ".item." + itemloc));
                     }
@@ -88,12 +90,12 @@ public final class InventoryTaskType extends TaskType {
     public void onItemPickup(PlayerPickupItemEvent event) {
         if (event.getPlayer().hasMetadata("NPC")) return;
 
-        Bukkit.getScheduler().runTaskLater(Quests.get(), () -> this.checkInventory(event.getPlayer()), 1L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> this.checkInventory(event.getPlayer()), 1L);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClick(InventoryCloseEvent event) {
-        Bukkit.getScheduler().runTaskLater(Quests.get(), () -> checkInventory((Player) event.getPlayer()), 1L); //Still some work to do as it doesn't really work
+        Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory((Player) event.getPlayer()), 1L); //Still some work to do as it doesn't really work
     }
 
     @SuppressWarnings("deprecation")
@@ -130,7 +132,7 @@ public final class InventoryTaskType extends TaskType {
 
                     ItemStack is;
                     if (configBlock instanceof ConfigurationSection) {
-                        is = Quests.get().getItemStack("", (org.bukkit.configuration.ConfigurationSection) configBlock);
+                        is = plugin.getItemStack("", (org.bukkit.configuration.ConfigurationSection) configBlock);
                     } else {
                         material = Material.getMaterial(String.valueOf(configBlock));
 
