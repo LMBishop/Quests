@@ -58,7 +58,7 @@ public class QuestMenuElement extends MenuElement {
             placeholders.put("{quest}", quest.getDisplayNameStripped());
             ItemStack is = replaceItemStack(Items.QUEST_COMPLETED.getItem(), placeholders);
             return is;
-        } else if (quest.isPermissionRequired() && !Bukkit.getPlayer(owner.getUuid()).hasPermission("quests.quest." + quest.getId())) {
+        } else if (quest.isPermissionRequired() && !Bukkit.getPlayer(owner.getPlayerUUID()).hasPermission("quests.quest." + quest.getId())) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", quest.getDisplayNameStripped());
             ItemStack is = replaceItemStack(Items.QUEST_PERMISSION.getItem(), placeholders);
@@ -70,7 +70,7 @@ public class QuestMenuElement extends MenuElement {
             ItemStack is = replaceItemStack(Items.QUEST_COOLDOWN.getItem(), placeholders);
             return is;
         } else {
-            return replaceItemStack(quest.getDisplayItem().toItemStack(quest, owner.getQuestProgressFile(), questProgress));
+            return replaceItemStack(quest.getDisplayItem().toItemStack(quest, owner, questProgress));
         }
     }
 
@@ -83,7 +83,7 @@ public class QuestMenuElement extends MenuElement {
         List<String> lore = newItemStack.getItemMeta().getLore();
         List<String> newLore = new ArrayList<>();
         ItemMeta ism = newItemStack.getItemMeta();
-        Player player = Bukkit.getPlayer(owner.getUuid());
+        Player player = Bukkit.getPlayer(owner.getPlayerUUID());
         if (lore != null) {
             for (String s : lore) {
                 for (Map.Entry<String, String> entry : placeholders.entrySet()) {

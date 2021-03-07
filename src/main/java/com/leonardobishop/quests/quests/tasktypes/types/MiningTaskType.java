@@ -54,11 +54,9 @@ public final class MiningTaskType extends TaskType {
             return;
         }
 
-        QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile(); // the quest progress file stores progress about all quests and tasks
-
         for (Quest quest : super.getRegisteredQuests()) { // iterate through all quests which are registered to use this task type
-            if (questProgressFile.hasStartedQuest(quest)) { // check if the player has actually started the quest before progressing it
-                QuestProgress questProgress = questProgressFile.getQuestProgress(quest); // get their progress for the specific quest
+            if (qPlayer.hasStartedQuest(quest)) {
+                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) { // get all tasks of this type
                     if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;

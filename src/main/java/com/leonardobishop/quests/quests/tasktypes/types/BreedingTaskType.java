@@ -66,11 +66,9 @@ public final class BreedingTaskType extends TaskType {
                     continue;
                 }
 
-                QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-
                 for (Quest quest : super.getRegisteredQuests()) {
-                    if (questProgressFile.hasStartedQuest(quest)) {
-                        QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+                    if (qPlayer.hasStartedQuest(quest)) {
+                        QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                         for (Task task : quest.getTasksOfType(super.getType())) {
                             if (!TaskUtils.validateWorld(player, task)) continue;

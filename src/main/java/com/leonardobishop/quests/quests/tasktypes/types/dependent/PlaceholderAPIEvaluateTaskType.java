@@ -75,10 +75,9 @@ public final class PlaceholderAPIEvaluateTaskType extends TaskType {
                         continue;
                     }
 
-                    QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                     for (Quest quest : PlaceholderAPIEvaluateTaskType.super.getRegisteredQuests()) {
-                        if (questProgressFile.hasStartedQuest(quest)) {
-                            QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+                        if (qPlayer.hasStartedQuest(quest)) {
+                            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
                             for (Task task : quest.getTasksOfType(PlaceholderAPIEvaluateTaskType.super.getType())) {
                                 if (!TaskUtils.validateWorld(player, task)) continue;
                                 TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());

@@ -330,12 +330,12 @@ public class CommandQuests implements TabExecutor {
                             return true;
                         }
                         if (args[2].equalsIgnoreCase("reset")) {
-                            questProgressFile.generateBlankQuestProgress(quest.getId());
+                            questProgressFile.generateBlankQuestProgress(quest);
                             questProgressFile.saveToDisk(false);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         } else if (args[2].equalsIgnoreCase("start")) {
-                            QuestStartResult response = questProgressFile.startQuest(quest);
+                            QuestStartResult response = qPlayer.startQuest(quest);
                             if (response == QuestStartResult.QUEST_LIMIT_REACHED) {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILLIMIT.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                                 return true;
@@ -362,7 +362,7 @@ public class CommandQuests implements TabExecutor {
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         } else if (args[2].equalsIgnoreCase("complete")) {
-                            questProgressFile.completeQuest(quest);
+                            qPlayer.completeQuest(quest);
                             questProgressFile.saveToDisk(false);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
@@ -392,11 +392,11 @@ public class CommandQuests implements TabExecutor {
                         sender.sendMessage(Messages.COMMAND_QUEST_GENERAL_DOESNTEXIST.getMessage().replace("{quest}", args[1]));
                     }
                     if (args[2].equalsIgnoreCase("s") || args[2].equalsIgnoreCase("start")) {
-                        qPlayer.getQuestProgressFile().startQuest(quest);
+                        qPlayer.startQuest(quest);
                     } else if (args[2].equalsIgnoreCase("c") || args[2].equalsIgnoreCase("cancel")) {
-                        qPlayer.getQuestProgressFile().cancelQuest(quest);
+                        qPlayer.cancelQuest(quest);
                     } else if (args[2].equalsIgnoreCase("t") || args[2].equalsIgnoreCase("track")) {
-                        qPlayer.getQuestProgressFile().trackQuest(quest);
+                        qPlayer.trackQuest(quest);
                     } else {
                         sender.sendMessage(Messages.COMMAND_SUB_DOESNTEXIST.getMessage().replace("{sub}", args[2]));
                     }
@@ -428,7 +428,7 @@ public class CommandQuests implements TabExecutor {
                 }
                 List<Quest> validQuests = new ArrayList<>();
                 for (Quest quest : plugin.getQuestManager().getQuests().values()) {
-                    if (qPlayer.getQuestProgressFile().canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
+                    if (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
                         validQuests.add(quest);
                     }
                 }
@@ -438,7 +438,7 @@ public class CommandQuests implements TabExecutor {
                     return true;
                 }
                 int random = ThreadLocalRandom.current().nextInt(0, validQuests.size());
-                qPlayer.getQuestProgressFile().startQuest(validQuests.get(random));
+                qPlayer.startQuest(validQuests.get(random));
                 return true;
             } else if (sender instanceof Player && (args[0].equalsIgnoreCase("started"))) {
                 Player player = (Player) sender;

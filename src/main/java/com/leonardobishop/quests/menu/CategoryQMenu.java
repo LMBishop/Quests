@@ -56,11 +56,11 @@ public class CategoryQMenu implements QMenu {
         for (QuestQMenu questQMenu : menuQuests) {
             while (menuElements.containsKey(slot)) slot++;
             if (Options.GUI_HIDE_CATEGORIES_NOPERMISSION.getBooleanValue() && plugin.getQuestManager().getCategoryById(questQMenu.getCategoryName()).isPermissionRequired()) {
-                if (!Bukkit.getPlayer(owner.getUuid()).hasPermission("quests.category." + questQMenu.getCategoryName())) {
+                if (!Bukkit.getPlayer(owner.getPlayerUUID()).hasPermission("quests.category." + questQMenu.getCategoryName())) {
                     continue;
                 }
             }
-            menuElements.put(slot, new CategoryMenuElement(plugin, owner.getUuid(), questQMenu));
+            menuElements.put(slot, new CategoryMenuElement(plugin, owner.getPlayerUUID(), questQMenu));
             slot++;
         }
 
@@ -100,10 +100,10 @@ public class CategoryQMenu implements QMenu {
         pageplaceholders.put("{prevpage}", String.valueOf(page - 1));
         pageplaceholders.put("{nextpage}", String.valueOf(page + 1));
         pageplaceholders.put("{page}", String.valueOf(page));
-        pageIs = MenuUtil.applyPlaceholders(plugin, owner.getUuid(), Items.PAGE_DESCRIPTION.getItem(), pageplaceholders);
+        pageIs = MenuUtil.applyPlaceholders(plugin, owner.getPlayerUUID(), Items.PAGE_DESCRIPTION.getItem(), pageplaceholders);
         pageIs.setAmount(Math.min(page, 64));
-        pagePrevIs = MenuUtil.applyPlaceholders(plugin, owner.getUuid(), Items.PAGE_PREV.getItem(), pageplaceholders);
-        pageNextIs = MenuUtil.applyPlaceholders(plugin, owner.getUuid(), Items.PAGE_NEXT.getItem(), pageplaceholders);
+        pagePrevIs = MenuUtil.applyPlaceholders(plugin, owner.getPlayerUUID(), Items.PAGE_PREV.getItem(), pageplaceholders);
+        pageNextIs = MenuUtil.applyPlaceholders(plugin, owner.getPlayerUUID(), Items.PAGE_NEXT.getItem(), pageplaceholders);
 
         if (maxElement > pageSize) {
             inventory.setItem(49, pageIs);

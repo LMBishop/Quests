@@ -55,7 +55,7 @@ public class CancelQMenu implements QMenu {
         inventory.setItem(10, no);
         inventory.setItem(11, no);
         inventory.setItem(12, no);
-        inventory.setItem(13, quest.getDisplayItem().toItemStack(quest, owner.getQuestProgressFile(), owner.getQuestProgressFile().getQuestProgress(quest)));
+        inventory.setItem(13, quest.getDisplayItem().toItemStack(quest, owner, owner.getQuestProgressFile().getQuestProgress(quest)));
         inventory.setItem(14, yes);
         inventory.setItem(15, yes);
         inventory.setItem(16, yes);
@@ -66,9 +66,9 @@ public class CancelQMenu implements QMenu {
     @Override
     public void handleClick(InventoryClickEvent event, MenuController controller) {
         if (event.getSlot() == 10 || event.getSlot() == 11 || event.getSlot() == 12) {
-            controller.openMenu(event.getWhoClicked(), this.getSuperMenu(), 1);
+            controller.openMenu(event.getWhoClicked(), superMenu, 1);
         } else if (event.getSlot() == 14 || event.getSlot() == 15 || event.getSlot() == 16) {
-            if (this.getOwner().getQuestProgressFile().cancelQuest(this.getQuest())) {
+            if (owner.cancelQuest(quest)) {
                 event.getWhoClicked().closeInventory();
             }
         }

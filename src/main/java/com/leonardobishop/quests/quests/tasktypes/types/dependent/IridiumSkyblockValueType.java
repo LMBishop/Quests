@@ -53,11 +53,9 @@ public final class IridiumSkyblockValueType extends TaskType {
                 continue;
             }
 
-            QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-
             for (Quest quest : IridiumSkyblockValueType.super.getRegisteredQuests()) {
-                if (questProgressFile.hasStartedQuest(quest)) {
-                    QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+                if (qPlayer.hasStartedQuest(quest)) {
+                    QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                     for (Task task : quest.getTasksOfType(IridiumSkyblockValueType.super.getType())) {
                         TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());

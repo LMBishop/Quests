@@ -82,7 +82,7 @@ public class QPlayerManager {
     public void loadPlayer(UUID uuid) {
         plugin.getQuestsLogger().debug("Loading player " + uuid + " from disk. Main thread: " + Bukkit.isPrimaryThread());
         qPlayers.computeIfAbsent(uuid, s -> {
-            QuestProgressFile questProgressFile = new QuestProgressFile(uuid, new QPlayerPreferences(null), plugin);
+            QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
 
             try {
                 File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
@@ -123,7 +123,7 @@ public class QPlayerManager {
                 // fuck
             }
 
-            return new QPlayer(uuid, questProgressFile, plugin);
+            return new QPlayer(uuid, questProgressFile, new QPlayerPreferences(null), plugin);
         });
 //        else {
 //            plugin.getQuestsLogger().debug("Player " + uuid + " is already loaded.");

@@ -50,20 +50,20 @@ public class MenuUtil {
     }
 
     public static void handleMiddleClick(QMenu menu, Quest quest, Player player, MenuController controller) {
-        if (menu.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
-            String tracked = menu.getOwner().getQuestProgressFile().getPlayerPreferences().getTrackedQuestId();
+        if (menu.getOwner().hasStartedQuest(quest)) {
+            String tracked = menu.getOwner().getPlayerPreferences().getTrackedQuestId();
 
             if (quest.getId().equals(tracked)) {
-                menu.getOwner().getQuestProgressFile().trackQuest(null);
+                menu.getOwner().trackQuest(null);
             } else {
-                menu.getOwner().getQuestProgressFile().trackQuest(quest);
+                menu.getOwner().trackQuest(quest);
             }
             player.closeInventory();
         }
     }
 
     public static void handleRightClick(QMenu menu, Quest quest, Player player, MenuController controller) {
-        if (menu.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
+        if (menu.getOwner().hasStartedQuest(quest)) {
             if (Options.QUEST_AUTOSTART.getBooleanValue()) return;
             CancelQMenu cancelQMenu = new CancelQMenu(menu.getOwner(), menu, quest);
             controller.openMenu(player, cancelQMenu, 1);

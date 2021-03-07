@@ -1,22 +1,23 @@
 package com.leonardobishop.quests.api.events;
 
+import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerStartTrackQuestEvent extends PlayerEvent {
+public class PlayerStartTrackQuestEvent extends PlayerQuestEvent {
     private final static HandlerList handlers = new HandlerList();
-    private final QuestProgressFile questProgressFile;
+    private final QPlayer qPlayer;
 
-    public PlayerStartTrackQuestEvent(@NotNull Player who, QuestProgressFile questProgressFile) {
-        super(who);
-        this.questProgressFile = questProgressFile;
+    public PlayerStartTrackQuestEvent(@NotNull Player who, QPlayer qPlayer) {
+        super(who, qPlayer);
+        this.qPlayer = qPlayer;
     }
 
-    public QuestProgressFile getQuestProgressFile() {
-        return questProgressFile;
+    public QPlayer getQPlayer() {
+        return qPlayer;
     }
 
     @NotNull

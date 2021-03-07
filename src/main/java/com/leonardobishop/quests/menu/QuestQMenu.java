@@ -85,7 +85,7 @@ public class QuestQMenu implements QMenu {
                 }
             }
             if (Options.GUI_HIDE_QUESTS_NOPERMISSION.getBooleanValue() && quest.isPermissionRequired()) {
-                if (!Bukkit.getPlayer(owner.getUuid()).hasPermission("quests.quest." + quest.getId())) {
+                if (!Bukkit.getPlayer(owner.getPlayerUUID()).hasPermission("quests.quest." + quest.getId())) {
                     continue;
                 }
             }
@@ -207,7 +207,7 @@ public class QuestQMenu implements QMenu {
             controller.openMenu(event.getWhoClicked(), this, currentPage + 1);
 
         } else if (Options.CATEGORIES_ENABLED.getBooleanValue() && backButtonLocation == event.getSlot()) {
-            controller.openMenu(event.getWhoClicked(), this.getSuperMenu(), 1);
+            controller.openMenu(event.getWhoClicked(), superMenu, 1);
 
         } else if (event.getSlot() < pageSize && menuElements.containsKey(event.getSlot() + (((currentPage) - 1) * pageSize))) {
             MenuElement menuElement = menuElements.get(event.getSlot() + ((currentPage - 1) * pageSize));
@@ -216,14 +216,14 @@ public class QuestQMenu implements QMenu {
                 Quest quest = plugin.getQuestManager().getQuestById(questMenuElement.getQuestId());
                 if (event.getClick() == ClickType.LEFT) {
                     if (Options.QUEST_AUTOSTART.getBooleanValue()) return;
-                    if (this.getOwner().getQuestProgressFile().startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
+                    if (owner.startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
                         event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
                     }
                 } else if (event.getClick() == ClickType.MIDDLE && Options.ALLOW_QUEST_TRACK.getBooleanValue()) {
-                    MenuUtil.handleMiddleClick(this, quest, Bukkit.getPlayer(owner.getUuid()), controller);
+                    MenuUtil.handleMiddleClick(this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
                 } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()
-                        && this.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
-                    MenuUtil.handleRightClick(this, quest, Bukkit.getPlayer(owner.getUuid()), controller);
+                        && owner.hasStartedQuest(quest)) {
+                    MenuUtil.handleRightClick(this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
                 }
             }
         }
@@ -254,7 +254,7 @@ public class QuestQMenu implements QMenu {
         List<String> lore = newItemStack.getItemMeta().getLore();
         List<String> newLore = new ArrayList<>();
         ItemMeta ism = newItemStack.getItemMeta();
-        Player player = Bukkit.getPlayer(owner.getUuid());
+        Player player = Bukkit.getPlayer(owner.getPlayerUUID());
         if (lore != null) {
             for (String s : lore) {
                 for (Map.Entry<String, String> entry : placeholders.entrySet()) {

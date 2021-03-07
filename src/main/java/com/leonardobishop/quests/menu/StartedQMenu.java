@@ -41,7 +41,7 @@ public class StartedQMenu implements QMenu {
         Collections.sort(quests);
         int slot = 0;
         for (QuestSortWrapper quest : quests) {
-            if (owner.getQuestProgressFile().hasStartedQuest(quest.getQuest())) {
+            if (owner.hasStartedQuest(quest.getQuest())) {
                 slotsToQuestIds.put(slot, quest.getQuest().getId());
                 slot++;
             }
@@ -93,8 +93,8 @@ public class StartedQMenu implements QMenu {
                     Quest quest = plugin.getQuestManager().getQuestById(slotsToQuestIds.get(pointer));
                     QuestProgress questProgress = owner.getQuestProgressFile().getQuestProgress(quest);
 
-                    inventory.setItem(invSlot, MenuUtil.applyPlaceholders(plugin, owner.getUuid(), plugin.getQuestManager().getQuestById(
-                            quest.getId()).getDisplayItem().toItemStack(quest, owner.getQuestProgressFile(), questProgress)));
+                    inventory.setItem(invSlot, MenuUtil.applyPlaceholders(plugin, owner.getPlayerUUID(), plugin.getQuestManager().getQuestById(
+                            quest.getId()).getDisplayItem().toItemStack(quest, owner, questProgress)));
                 }
                 invSlot++;
             }
@@ -109,10 +109,10 @@ public class StartedQMenu implements QMenu {
         pageplaceholders.put("{prevpage}", String.valueOf(page - 1));
         pageplaceholders.put("{nextpage}", String.valueOf(page + 1));
         pageplaceholders.put("{page}", String.valueOf(page));
-        pageIs = MenuUtil.applyPlaceholders(plugin, owner.getUuid(), Items.PAGE_DESCRIPTION.getItem(), pageplaceholders);
+        pageIs = MenuUtil.applyPlaceholders(plugin, owner.getPlayerUUID(), Items.PAGE_DESCRIPTION.getItem(), pageplaceholders);
         pageIs.setAmount(Math.min(page, 64));
-        pagePrevIs = MenuUtil.applyPlaceholders(plugin, owner.getUuid(), Items.PAGE_PREV.getItem(), pageplaceholders);
-        pageNextIs = MenuUtil.applyPlaceholders(plugin, owner.getUuid(), Items.PAGE_NEXT.getItem(), pageplaceholders);
+        pagePrevIs = MenuUtil.applyPlaceholders(plugin, owner.getPlayerUUID(), Items.PAGE_PREV.getItem(), pageplaceholders);
+        pageNextIs = MenuUtil.applyPlaceholders(plugin, owner.getPlayerUUID(), Items.PAGE_NEXT.getItem(), pageplaceholders);
 
         if (slotsToQuestIds.size() > pageSize) {
             inventory.setItem(49, pageIs);
@@ -163,10 +163,10 @@ public class StartedQMenu implements QMenu {
             String questid = slotsToQuestIds.get(event.getSlot() + (((currentPage) - 1) * pageSize));
             Quest quest = plugin.getQuestManager().getQuestById(questid);
             if (event.getClick() == ClickType.MIDDLE && Options.ALLOW_QUEST_TRACK.getBooleanValue()) {
-                MenuUtil.handleMiddleClick(this, quest, Bukkit.getPlayer(owner.getUuid()), controller);
+                MenuUtil.handleMiddleClick(this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
             } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()
-                    && owner.getQuestProgressFile().hasStartedQuest(quest)) {
-                MenuUtil.handleRightClick(this, quest, Bukkit.getPlayer(owner.getUuid()), controller);
+                    && owner.hasStartedQuest(quest)) {
+                MenuUtil.handleRightClick(this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
             }
         }
     }

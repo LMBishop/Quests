@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Quest;
@@ -76,7 +77,7 @@ public class QItemStack {
     }
 
     @SuppressWarnings("deprecation")
-    public ItemStack toItemStack(Quest quest, QuestProgressFile questProgressFile, QuestProgress questProgress) {
+    public ItemStack toItemStack(Quest quest, QPlayer qPlayer, QuestProgress questProgress) {
         ItemStack is = new ItemStack(startingItemStack);
         ItemMeta ism = is.getItemMeta();
         ism.setDisplayName(name);
@@ -90,9 +91,9 @@ public class QItemStack {
             tempLore.addAll(globalLoreAppendNormal);
         }
 
-        Player player = Bukkit.getPlayer(questProgressFile.getPlayerUUID());
-        if (questProgressFile.hasStartedQuest(quest)) {
-            boolean tracked = quest.getId().equals(questProgressFile.getPlayerPreferences().getTrackedQuestId());
+        Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
+        if (qPlayer.hasStartedQuest(quest)) {
+            boolean tracked = quest.getId().equals(qPlayer.getPlayerPreferences().getTrackedQuestId());
             if (!Options.GLOBAL_QUEST_DISPLAY_CONFIGURATION_OVERRIDE.getBooleanValue() || globalLoreAppendStarted.isEmpty()) {
                 tempLore.addAll(loreStarted);
             }

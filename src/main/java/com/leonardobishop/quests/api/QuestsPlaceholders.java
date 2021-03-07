@@ -133,7 +133,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                         quest = plugin.getQuestManager().getQuestById(key[1]);
                         if (quest == null) return key[1] + " is not a quest";
                     } else {
-                        quest = plugin.getQuestManager().getQuestById(qPlayer.getQuestProgressFile().getPlayerPreferences().getTrackedQuestId());
+                        quest = plugin.getQuestManager().getQuestById(qPlayer.getPlayerPreferences().getTrackedQuestId());
                         if (quest == null) {
                             if (args.length == 1) {
                                 return "No tracked quest";
@@ -176,7 +176,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                 }
                                 break;
                             case "canaccept":
-                                result = (qPlayer.getQuestProgressFile().canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS ? "true" : "false");
+                                result = (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS ? "true" : "false");
                                 break;
                             case "meetsrequirements":
                                 result = (qPlayer.getQuestProgressFile().hasMetRequirements(quest) ? "true" : "false");
