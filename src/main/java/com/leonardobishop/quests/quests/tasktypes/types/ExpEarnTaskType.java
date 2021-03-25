@@ -11,7 +11,6 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerExpChangeEvent;
@@ -47,12 +46,15 @@ public final class ExpEarnTaskType extends TaskType {
     public void onExpEarn(PlayerExpChangeEvent e) {
         if (e.getPlayer().hasMetadata("NPC")) return;
 
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(e.getPlayer().getUniqueId(), true);
-        QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-        
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(e.getPlayer().getUniqueId());
+        if (qPlayer == null) {
+            return;
+        }
+
+
         for (Quest quest : super.getRegisteredQuests()) {
-            if (questProgressFile.hasStartedQuest(quest)) {
-                QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+            if (qPlayer.hasStartedQuest(quest)) {
+                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
                 
                 for (Task task : quest.getTasksOfType(super.getType())) {
                     if (!TaskUtils.validateWorld(e.getPlayer(), task)) continue;

@@ -60,12 +60,14 @@ public final class MythicMobsKillingType extends TaskType {
 
         String mobName = event.getMobType().getInternalName();
 
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(killer.getUniqueId(), true);
-        QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(killer.getUniqueId());
+        if (qPlayer == null) {
+            return;
+        }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (questProgressFile.hasStartedQuest(quest)) {
-                QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+            if (qPlayer.hasStartedQuest(quest)) {
+                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
                     if (!TaskUtils.validateWorld(killer.getWorld().getName(), task)) continue;

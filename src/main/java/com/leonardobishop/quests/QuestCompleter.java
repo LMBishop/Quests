@@ -35,13 +35,12 @@ public class QuestCompleter implements Runnable {
         Player player = Bukkit.getPlayer(questProgress.getPlayer());
         if (player != null && player.isOnline()) {
             QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
-            QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
             Quest quest = plugin.getQuestManager().getQuestById(questProgress.getQuestId());
 
-            if (!questProgressFile.hasStartedQuest(quest)) return;
+            if (!qPlayer.hasStartedQuest(quest)) return;
 
             if (checkComplete(quest, questProgress)) {
-                questProgressFile.completeQuest(quest);
+                qPlayer.completeQuest(quest);
             }
         }
     }
@@ -52,10 +51,11 @@ public class QuestCompleter implements Runnable {
 
         Player player = Bukkit.getPlayer(questProgressFile.getPlayerUUID());
         if (player != null && player.isOnline()) {
+            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
             for (QuestProgress questProgress : questProgressFile.getAllQuestProgress()) {
                 Quest quest = plugin.getQuestManager().getQuestById(questProgress.getQuestId());
                 if (quest == null) continue;
-                if (!questProgressFile.hasStartedQuest(quest)) continue;
+                if (!qPlayer.hasStartedQuest(quest)) continue;
 
                 boolean complete = true;
                 for (Task task : quest.getTasks()) {
@@ -66,7 +66,7 @@ public class QuestCompleter implements Runnable {
                     }
                 }
                 if (complete) {
-                    questProgressFile.completeQuest(quest);
+                    qPlayer.completeQuest(quest);
                 }
             }
         }

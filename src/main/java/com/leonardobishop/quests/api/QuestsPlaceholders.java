@@ -2,19 +2,23 @@ package com.leonardobishop.quests.api;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
-import com.leonardobishop.quests.obj.Options;
-import com.leonardobishop.quests.obj.misc.QItemStack;
+import com.leonardobishop.quests.menu.QItemStack;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.quests.Quest;
+import com.leonardobishop.quests.util.Options;
 import me.clip.placeholderapi.expansion.Cacheable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheable {
@@ -129,7 +133,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                         quest = plugin.getQuestManager().getQuestById(key[1]);
                         if (quest == null) return key[1] + " is not a quest";
                     } else {
-                        quest = plugin.getQuestManager().getQuestById(qPlayer.getQuestProgressFile().getPlayerPreferences().getTrackedQuestId());
+                        quest = plugin.getQuestManager().getQuestById(qPlayer.getPlayerPreferences().getTrackedQuestId());
                         if (quest == null) {
                             if (args.length == 1) {
                                 return "No tracked quest";
@@ -172,7 +176,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                 }
                                 break;
                             case "canaccept":
-                                result = (qPlayer.getQuestProgressFile().canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS ? "true" : "false");
+                                result = (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS ? "true" : "false");
                                 break;
                             case "meetsrequirements":
                                 result = (qPlayer.getQuestProgressFile().hasMetRequirements(quest) ? "true" : "false");

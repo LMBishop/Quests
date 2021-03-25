@@ -20,11 +20,13 @@ import java.util.List;
 
 public final class PermissionTaskType extends TaskType {
 
+    private Quests plugin;
     private BukkitTask poll;
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
-    public PermissionTaskType() {
+    public PermissionTaskType(Quests plugin) {
         super("permission", "LMBishop", "Test if a player has a permission");
+        this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("permission", true, "The required permission."));
     }
 
@@ -34,11 +36,13 @@ public final class PermissionTaskType extends TaskType {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
-                    QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+                    QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
+                    if (qPlayer == null) {
+                        continue;
+                    }
                     for (Quest quest : PermissionTaskType.super.getRegisteredQuests()) {
-                        if (questProgressFile.hasStartedQuest(quest)) {
-                            QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+                        if (qPlayer.hasStartedQuest(quest)) {
+                            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
                             for (Task task : quest.getTasksOfType(PermissionTaskType.super.getType())) {
                                 TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
                                 if (taskProgress.isCompleted()) {
@@ -55,7 +59,7 @@ public final class PermissionTaskType extends TaskType {
                     }
                 }
             }
-        }.runTaskTimer(Quests.get(), 30L, 30L);
+        }.runTaskTimer(plugin, 30L, 30L);
     }
 
     @Override

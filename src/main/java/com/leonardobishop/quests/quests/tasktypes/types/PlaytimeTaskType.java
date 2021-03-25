@@ -23,11 +23,13 @@ import java.util.List;
 
 public final class PlaytimeTaskType extends TaskType {
 
+    private final Quests plugin;
     private BukkitTask poll;
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
-    public PlaytimeTaskType() {
+    public PlaytimeTaskType(Quests plugin) {
         super("playtime", "Reinatix", "Track the amount of playing time a user has been on");
+        this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("minutes", true, "Time in minutes."));
     }
 
@@ -47,11 +49,14 @@ public final class PlaytimeTaskType extends TaskType {
                 @Override
                 public void run() {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
-                        QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+                        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
+                        if (qPlayer == null) {
+                            continue;
+                        }
+
                         for (Quest quest : PlaytimeTaskType.super.getRegisteredQuests()) {
-                            if (questProgressFile.hasStartedQuest(quest)) {
-                                QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+                            if (qPlayer.hasStartedQuest(quest)) {
+                                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
                                 for (Task task : quest.getTasksOfType(PlaytimeTaskType.super.getType())) {
                                     if (!TaskUtils.validateWorld(player, task)) continue;
 
@@ -73,7 +78,7 @@ public final class PlaytimeTaskType extends TaskType {
                         }
                     }
                 }
-            }.runTaskTimer(Quests.get(), 1200L, 1200L);
+            }.runTaskTimer(plugin, 1200L, 1200L);
         }
     }
 

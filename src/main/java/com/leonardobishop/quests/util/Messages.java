@@ -1,4 +1,4 @@
-package com.leonardobishop.quests.obj;
+package com.leonardobishop.quests.util;
 
 import com.leonardobishop.quests.Quests;
 import org.bukkit.ChatColor;
@@ -11,6 +11,7 @@ public enum Messages {
     QUEST_CANCEL("messages.quest-cancel"),
     QUEST_TRACK("messages.quest-track"),
     QUEST_TRACK_STOP("messages.quest-track-stop"),
+    QUEST_RANDOM_NONE("messages.quest-random-none"),
     QUEST_START_LIMIT("messages.quest-start-limit"),
     QUEST_START_DISABLED("messages.quest-start-disabled"),
     QUEST_START_LOCKED("messages.quest-start-locked"),

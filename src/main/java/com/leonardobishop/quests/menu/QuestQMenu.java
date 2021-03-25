@@ -1,39 +1,52 @@
-package com.leonardobishop.quests.obj.misc;
+package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.obj.Items;
-import com.leonardobishop.quests.obj.Options;
+import com.leonardobishop.quests.api.enums.QuestStartResult;
+import com.leonardobishop.quests.events.MenuController;
+import com.leonardobishop.quests.menu.element.CustomMenuElement;
+import com.leonardobishop.quests.menu.element.MenuElement;
+import com.leonardobishop.quests.menu.element.QuestMenuElement;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.quests.Quest;
+import com.leonardobishop.quests.util.Items;
+import com.leonardobishop.quests.util.Options;
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Menu for a specific category.
+ * Represents a menu for a specified category (or all if they are disabled),
+ * which contains a listing of different quests.
  */
-public class QMenuQuest implements QMenu {
+public class QuestQMenu implements QMenu {
 
     private final Quests plugin;
-    private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
-    private final QMenuCategory superMenu;
+    private final HashMap<Integer, MenuElement> menuElements = new HashMap<>();
+    private final CategoryQMenu superMenu;
     private final String categoryName;
     private final int pageSize = 45;
     private final QPlayer owner;
 
+    private int maxElement = 0;
     private int backButtonLocation = -1;
     private int pagePrevLocation = -1;
     private int pageNextLocation = -1;
     private int currentPage = -1;
     private boolean backButtonEnabled = true;
 
-    public QMenuQuest(Quests plugin, QPlayer owner, String categoryName, QMenuCategory superMenu) {
+    public QuestQMenu(Quests plugin, QPlayer owner, String categoryName, CategoryQMenu superMenu) {
         this.plugin = plugin;
         this.owner = owner;
         this.categoryName = categoryName;
@@ -41,9 +54,29 @@ public class QMenuQuest implements QMenu {
     }
 
     public void populate(List<Quest> quests) {
+        String path;
+        if (Options.CATEGORIES_ENABLED.getBooleanValue()) {
+            path = "custom-elements.c:" + categoryName;
+        } else {
+            path = "custom-elements.quests";
+        }
+        if (plugin.getConfig().isConfigurationSection(path)) {
+            for (String s : plugin.getConfig().getConfigurationSection(path).getKeys(false)) {
+                if (!NumberUtils.isNumber(s)) continue;
+                int slot = Integer.parseInt(s);
+                int repeat = plugin.getConfig().getInt(path + "." + s + ".repeat");
+                ItemStack is = plugin.getItemStack(path + "." + s + ".display", plugin.getConfig());
+
+                for (int i = 0; i <= repeat; i++) {
+                    menuElements.put(slot + i, new CustomMenuElement(is));
+                }
+            }
+        }
+
         Collections.sort(quests);
         int slot = 0;
         for (Quest quest : quests) {
+            while (menuElements.containsKey(slot)) slot++;
             if (Options.GUI_HIDE_LOCKED.getBooleanValue()) {
                 QuestProgress questProgress = owner.getQuestProgressFile().getQuestProgress(quest);
                 long cooldown = owner.getQuestProgressFile().getCooldownFor(quest);
@@ -52,18 +85,17 @@ public class QMenuQuest implements QMenu {
                 }
             }
             if (Options.GUI_HIDE_QUESTS_NOPERMISSION.getBooleanValue() && quest.isPermissionRequired()) {
-                if (!Bukkit.getPlayer(owner.getUuid()).hasPermission("quests.quest." + quest.getId())) {
+                if (!Bukkit.getPlayer(owner.getPlayerUUID()).hasPermission("quests.quest." + quest.getId())) {
                     continue;
                 }
             }
-            slotsToQuestIds.put(slot, quest.getId());
+            menuElements.put(slot, new QuestMenuElement(plugin, owner, quest.getId()));
             slot++;
         }
-    }
 
-    @Override
-    public HashMap<Integer, String> getSlotsToMenu() {
-        return slotsToQuestIds;
+        for (Integer integer : menuElements.keySet()) {
+            if (integer + 1 > maxElement) maxElement = integer + 1;
+        }
     }
 
     @Override
@@ -104,44 +136,12 @@ public class QMenuQuest implements QMenu {
 
         Inventory inventory = Bukkit.createInventory(null, 54, title);
 
-        int invSlot = 0;
+        int highestOnPage = 0;
         for (int pointer = pageMin; pointer < pageMax; pointer++) {
-            if (slotsToQuestIds.containsKey(pointer)) {
-                Quest quest = Quests.get().getQuestManager().getQuestById(slotsToQuestIds.get(pointer));
-                QuestProgress questProgress = owner.getQuestProgressFile().getQuestProgress(quest);
-                long cooldown = owner.getQuestProgressFile().getCooldownFor(quest);
-                if (!owner.getQuestProgressFile().hasMetRequirements(quest)) {
-                    List<String> quests = new ArrayList<>();
-                    for (String requirement : quest.getRequirements()) {
-                        quests.add(Quests.get().getQuestManager().getQuestById(requirement).getDisplayNameStripped());
-                    }
-                    Map<String, String> placeholders = new HashMap<>();
-                    placeholders.put("{quest}", quest.getDisplayNameStripped());
-                    placeholders.put("{requirements}", String.join(", ", quests));
-                    ItemStack is = replaceItemStack(Items.QUEST_LOCKED.getItem(), placeholders);
-                    inventory.setItem(invSlot, is);
-                } else if (!quest.isRepeatable() && questProgress.isCompletedBefore()) {
-                    Map<String, String> placeholders = new HashMap<>();
-                    placeholders.put("{quest}", quest.getDisplayNameStripped());
-                    ItemStack is = replaceItemStack(Items.QUEST_COMPLETED.getItem(), placeholders);
-                    inventory.setItem(invSlot, is);
-                } else if (quest.isPermissionRequired() && !Bukkit.getPlayer(owner.getUuid()).hasPermission("quests.quest." + quest.getId())) {
-                    Map<String, String> placeholders = new HashMap<>();
-                    placeholders.put("{quest}", quest.getDisplayNameStripped());
-                    ItemStack is = replaceItemStack(Items.QUEST_PERMISSION.getItem(), placeholders);
-                    inventory.setItem(invSlot, is);
-                } else if (cooldown > 0) {
-                    Map<String, String> placeholders = new HashMap<>();
-                    placeholders.put("{time}", Quests.get().convertToFormat(TimeUnit.SECONDS.convert(cooldown, TimeUnit.MILLISECONDS)));
-                    placeholders.put("{quest}", quest.getDisplayNameStripped());
-                    ItemStack is = replaceItemStack(Items.QUEST_COOLDOWN.getItem(), placeholders);
-                    inventory.setItem(invSlot, is);
-                } else {
-                    inventory.setItem(invSlot, replaceItemStack(Quests.get().getQuestManager().getQuestById(
-                            quest.getId()).getDisplayItem().toItemStack(quest, owner.getQuestProgressFile(), questProgress)));
-                }
+            if (menuElements.containsKey(pointer)) {
+                inventory.setItem(pointer - ((page - 1) * pageSize), menuElements.get(pointer).asItemStack());
+                if (pointer + 1 > highestOnPage) highestOnPage = pointer + 1;
             }
-            invSlot++;
         }
 
         pageNextLocation = -1;
@@ -152,6 +152,7 @@ public class QMenuQuest implements QMenu {
         pageplaceholders.put("{nextpage}", String.valueOf(page + 1));
         pageplaceholders.put("{page}", String.valueOf(page));
         pageIs = replaceItemStack(Items.PAGE_DESCRIPTION.getItem(), pageplaceholders);
+        pageIs.setAmount(Math.min(page, 64));
         pagePrevIs = replaceItemStack(Items.PAGE_PREV.getItem(), pageplaceholders);
         pageNextIs = replaceItemStack(Items.PAGE_NEXT.getItem(), pageplaceholders);
 
@@ -159,25 +160,18 @@ public class QMenuQuest implements QMenu {
             inventory.setItem(45, back);
             backButtonLocation = 45;
         }
-        if (slotsToQuestIds.size() > pageSize) {
+        if (maxElement > pageSize) {
             inventory.setItem(49, pageIs);
             if (page != 1) {
                 inventory.setItem(48, pagePrevIs);
                 pagePrevLocation = 48;
             }
-            if (Math.ceil((double) slotsToQuestIds.size() / ((double) 45)) != page) {
+            if (Math.ceil((double) maxElement / ((double) pageSize)) != page) {
                 inventory.setItem(50, pageNextIs);
                 pageNextLocation = 50;
             }
         } else if (Options.TRIM_GUI_SIZE.getBooleanValue() && page == 1) {
-            int slotsUsed = 0;
-            for (int pointer = 0; pointer < pageMax; pointer++) {
-                if (inventory.getItem(pointer) != null) {
-                    slotsUsed++;
-                }
-            }
-
-            int inventorySize = (slotsUsed >= 54) ? 54 : slotsUsed + (9 - slotsUsed % 9) * Math.min(1, slotsUsed % 9);
+            int inventorySize = highestOnPage + (9 - highestOnPage % 9) * Math.min(1, highestOnPage % 9);
             inventorySize = inventorySize <= 0 ? 9 : inventorySize;
             if (inventorySize == 54) {
                 return inventory;
@@ -203,6 +197,38 @@ public class QMenuQuest implements QMenu {
         return inventory;
     }
 
+    @Override
+    public void handleClick(InventoryClickEvent event, MenuController controller) {
+        //TODO maybe redo this maybe
+        if (pagePrevLocation == event.getSlot()) {
+            controller.openMenu(event.getWhoClicked(), this, currentPage - 1);
+
+        } else if (pageNextLocation == event.getSlot()) {
+            controller.openMenu(event.getWhoClicked(), this, currentPage + 1);
+
+        } else if (Options.CATEGORIES_ENABLED.getBooleanValue() && backButtonLocation == event.getSlot()) {
+            controller.openMenu(event.getWhoClicked(), superMenu, 1);
+
+        } else if (event.getSlot() < pageSize && menuElements.containsKey(event.getSlot() + (((currentPage) - 1) * pageSize))) {
+            MenuElement menuElement = menuElements.get(event.getSlot() + ((currentPage - 1) * pageSize));
+            if (menuElement instanceof QuestMenuElement) {
+                QuestMenuElement questMenuElement = (QuestMenuElement) menuElement;
+                Quest quest = plugin.getQuestManager().getQuestById(questMenuElement.getQuestId());
+                if (event.getClick() == ClickType.LEFT) {
+                    if (Options.QUEST_AUTOSTART.getBooleanValue()) return;
+                    if (owner.startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
+                        event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
+                    }
+                } else if (event.getClick() == ClickType.MIDDLE && Options.ALLOW_QUEST_TRACK.getBooleanValue()) {
+                    MenuUtil.handleMiddleClick(this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
+                } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()
+                        && owner.hasStartedQuest(quest)) {
+                    MenuUtil.handleRightClick(this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
+                }
+            }
+        }
+    }
+
     public boolean isBackButtonEnabled() {
         return backButtonEnabled;
     }
@@ -215,7 +241,7 @@ public class QMenuQuest implements QMenu {
         return backButtonLocation;
     }
 
-    public QMenuCategory getSuperMenu() {
+    public CategoryQMenu getSuperMenu() {
         return superMenu;
     }
 
@@ -228,7 +254,7 @@ public class QMenuQuest implements QMenu {
         List<String> lore = newItemStack.getItemMeta().getLore();
         List<String> newLore = new ArrayList<>();
         ItemMeta ism = newItemStack.getItemMeta();
-        Player player = Bukkit.getPlayer(owner.getUuid());
+        Player player = Bukkit.getPlayer(owner.getPlayerUUID());
         if (lore != null) {
             for (String s : lore) {
                 for (Map.Entry<String, String> entry : placeholders.entrySet()) {

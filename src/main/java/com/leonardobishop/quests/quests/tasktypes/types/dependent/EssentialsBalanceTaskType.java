@@ -67,16 +67,14 @@ public class EssentialsBalanceTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMoneyEarn(UserBalanceUpdateEvent event) {
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId(), true);
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
         if (qPlayer == null) {
             return;
         }
 
-        QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-
         for (Quest quest : super.getRegisteredQuests()) {
-            if (questProgressFile.hasStartedQuest(quest)) {
-                QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+            if (qPlayer.hasStartedQuest(quest)) {
+                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());

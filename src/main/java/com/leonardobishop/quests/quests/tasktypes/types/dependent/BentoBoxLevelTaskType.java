@@ -18,7 +18,11 @@ import world.bentobox.bentobox.api.events.BentoBoxEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 public final class BentoBoxLevelTaskType extends TaskType {
@@ -58,16 +62,14 @@ public final class BentoBoxLevelTaskType extends TaskType {
             Island island = (Island) keyValues.get("island");
 
             for (UUID member : island.getMemberSet()) {
-                QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(member, true);
+                QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(member);
                 if (qPlayer == null) {
                     continue;
                 }
 
-                QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-
                 for (Quest quest : super.getRegisteredQuests()) {
-                    if (questProgressFile.hasStartedQuest(quest)) {
-                        QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+                    if (qPlayer.hasStartedQuest(quest)) {
+                        QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                         for (Task task : quest.getTasksOfType(super.getType())) {
                             TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());

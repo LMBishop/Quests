@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
+import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
@@ -11,7 +12,6 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -25,15 +25,19 @@ import java.util.List;
 
 public final class MiningCertainTaskType extends TaskType {
 
+    private final Quests plugin;
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
-    public MiningCertainTaskType() {
+    public MiningCertainTaskType(Quests plugin) {
         super("blockbreakcertain", "LMBishop", "Break a set amount of a specific block.");
+        this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of blocks to be broken."));
         this.creatorConfigValues.add(new ConfigValue("block", true, "Name or ID of block.", "block")); // Can use name:datacode
         this.creatorConfigValues.add(new ConfigValue("blocks", true, "List of blocks (alias for block for config readability).", "block"));
         this.creatorConfigValues.add(new ConfigValue("data", false, "Data code for block.")); // only used if no datacode provided in block or blocks
         this.creatorConfigValues.add(new ConfigValue("reverse-if-placed", false, "Will reverse progression if block of same type is placed."));
+        this.creatorConfigValues.add(new ConfigValue("check-coreprotect", false, "Use coreprotect to check for blocks placed by a player"));
+        this.creatorConfigValues.add(new ConfigValue("check-coreprotect-time", false, "Time period for coreprotect check"));
         this.creatorConfigValues.add(new ConfigValue("use-similar-blocks", false, "(Deprecated) If true, this will ignore orientation of doors, logs etc."));
         this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }
@@ -70,6 +74,8 @@ public final class MiningCertainTaskType extends TaskType {
             }
         }
         TaskUtils.configValidateBoolean(root + ".reverse-if-broken", config.get("reverse-if-broken"), problems, true,"reverse-if-broken");
+        TaskUtils.configValidateBoolean(root + ".check-coreprotect", config.get("check-coreprotect"), problems, true,"check-coreprotect");
+        TaskUtils.configValidateInt(root + ".check-coreprotect-time", config.get("check-coreprotect-time"), problems, true,true, "check-coreprotect-time");
         TaskUtils.configValidateBoolean(root + ".use-similar-blocks", config.get("use-similar-blocks"), problems, true,"use-similar-blocks");
         TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true,true, "data");
         return problems;
@@ -84,12 +90,14 @@ public final class MiningCertainTaskType extends TaskType {
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.getPlayer().hasMetadata("NPC")) return;
 
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId(), true);
-        QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
+        if (qPlayer == null) {
+            return;
+        }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (questProgressFile.hasStartedQuest(quest)) {
-                QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+            if (qPlayer.hasStartedQuest(quest)) {
+                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
@@ -99,6 +107,12 @@ public final class MiningCertainTaskType extends TaskType {
                     }
 
                     if (matchBlock(task, event.getBlock())) {
+                        boolean coreProtectEnabled = (boolean) task.getConfigValue("check-coreprotect", false);
+                        int coreProtectTime = (int) task.getConfigValue("check-coreprotect-time", 3600);
+
+                        if (coreProtectEnabled && plugin.getCoreProtectHook().checkBlock(event.getBlock(), coreProtectTime)) {
+                            continue;
+                        }
                         increment(task, taskProgress, 1);
                     }
                 }
@@ -111,12 +125,11 @@ public final class MiningCertainTaskType extends TaskType {
     public void onBlockPlace(BlockPlaceEvent event) {
         if (event.getPlayer().hasMetadata("NPC")) return;
 
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId(), true);
-        QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (questProgressFile.hasStartedQuest(quest)) {
-                QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+            if (qPlayer.hasStartedQuest(quest)) {
+                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
                     if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;

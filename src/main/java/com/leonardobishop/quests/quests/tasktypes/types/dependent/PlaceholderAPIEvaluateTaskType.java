@@ -13,7 +13,6 @@ import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.objecthunter.exp4j.operator.Operator;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -25,11 +24,13 @@ import java.util.List;
 
 public final class PlaceholderAPIEvaluateTaskType extends TaskType {
 
+    private final Quests plugin;
     private BukkitTask poll;
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
-    public PlaceholderAPIEvaluateTaskType() {
+    public PlaceholderAPIEvaluateTaskType(Quests plugin) {
         super("placeholderapi_evaluate", "LMBishop", "Evaluate the result of a placeholder");
+        this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("placeholder", true, "The placeholder string (including %%)."));
         this.creatorConfigValues.add(new ConfigValue("evaluates", true, "What it should evaluate to be marked as complete."));
         this.creatorConfigValues.add(new ConfigValue("operator", false, "Comparison method."));
@@ -69,11 +70,14 @@ public final class PlaceholderAPIEvaluateTaskType extends TaskType {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
-                    QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+                    QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
+                    if (qPlayer == null) {
+                        continue;
+                    }
+
                     for (Quest quest : PlaceholderAPIEvaluateTaskType.super.getRegisteredQuests()) {
-                        if (questProgressFile.hasStartedQuest(quest)) {
-                            QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+                        if (qPlayer.hasStartedQuest(quest)) {
+                            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
                             for (Task task : quest.getTasksOfType(PlaceholderAPIEvaluateTaskType.super.getType())) {
                                 if (!TaskUtils.validateWorld(player, task)) continue;
                                 TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
@@ -135,7 +139,7 @@ public final class PlaceholderAPIEvaluateTaskType extends TaskType {
                     }
                 }
             }
-        }.runTaskTimer(Quests.get(), 30L, 30L);
+        }.runTaskTimer(plugin, 30L, 30L);
     }
 
     @Override

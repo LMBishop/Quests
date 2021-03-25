@@ -2,17 +2,13 @@ plugins {
     id 'java'
 }
 
-group = 'com.leonardobishop.quests'
-version = '2.14.1'
+group = 'com.leonardobishop'
+version = '2.16'
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {
         include 'plugin.yml'
-        expand(
-                'name': project.name,
-                'main': project.group + '.' + project.name,
-                'version': project.version
-        )
+        expand('version': project.version)
     }
 }
 
@@ -21,7 +17,7 @@ repositories {
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     // ASkyBlock
     maven {
-        url 'http://dl.bintray.com/tastybento/maven-repo'
+        url 'https://dl.bintray.com/tastybento/maven-repo'
         credentials {
             username = 'bintray'
         }
@@ -31,15 +27,17 @@ repositories {
     // uSkyBlock
     maven { url = 'https://raw.github.com/rlf/uSkyBlock/mvn-repo/' }
     // Citizens
-    maven { url = 'http://repo.citizensnpcs.co/' }
+    maven { url = 'https://repo.citizensnpcs.co/' }
     // MythicMobs
     maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
     // PlaceholderAPI
-    maven { url = 'http://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     // EssentialsX
     maven { url = 'https://repo.essentialsx.net/releases/' }
-    // JitPack
+    // JitPack (IridiumSkyblock, ShopGUI+)
     maven { url = 'https://jitpack.io' }
+    // CoreProtect
+    maven { url = 'https://maven.playpro.com/' }
     mavenCentral()
 }
 
@@ -60,7 +58,9 @@ dependencies {
         exclude group: 'org.mongodb', module: 'mongodb-driver'
     }
     // IridiumSkyblock
-    compileOnly 'com.github.IridiumLLC:IridiumSkyblock:master-SNAPSHOT'
+    // TODO fix whenever repo is up
+    //    compileOnly 'com.github.Iridium-Development:IridiumSkyblock:master-SNAPSHOT'
+    // download  from spigot and add to /libs/ yourself
     // uSkyBlock
     compileOnly 'com.github.rlf:uSkyBlock-API:2.6.4'
     // MythicMobs
@@ -79,6 +79,17 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.10.9'
     // EssentialsX
     compileOnly "net.ess3:EssentialsX:2.18.2"
+    // ShopGUI+
+    compileOnly 'com.github.brcdev-minecraft:shopgui-api:master-SNAPSHOT'
+    // CoreProtect
+    compileOnly ('net.coreprotect:coreprotect:2.18.2') {
+        exclude group: 'com.sk89q.worldedit', module: 'worldedit-bukkit'
+    }
 
     compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
+}
+
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
 }

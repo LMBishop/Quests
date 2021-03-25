@@ -111,6 +111,11 @@ gui:
     - "&7(&a{quest}&7) and cannot."
     - "&7repeat it."
     type: "GREEN_STAINED_GLASS_PANE"
+  no-started-quests:
+    name: "&c&lNo Started Quests"
+    lore:
+    - "&7Go start some!"
+    type: "FEATHER"
   quest-cancel-yes:
     name: "&a&lConfirm Cancel"
     lore:
@@ -125,6 +130,36 @@ gui:
     type: "RED_STAINED_GLASS_PANE"
   quest-cancel-background:
     type: "GRAY_STAINED_GLASS_PANE"
+
+# Here you can add custom items to the quest menu
+# Categories & quests will fill empty slots
+#custom-elements:
+#  "categories": # apply to the categories menu (the main menu by default)
+#    0:   # <--- slot 1, note the slots start from 0! so 0 = slot 1 in this case
+#      display:
+#        name: "&cExample Custom Item (slot 1)"
+#        lore:
+#          - "&7This is a custom item which can be added"
+#          - "&7to your menus. This is purely cosmetic."
+#        type: "DIAMOND_BLOCK"
+#    1:
+#      display:
+#        name: "&cExample Custom Item (slots 2 - 5)"
+#        lore:
+#          - "&7This is a custom item which can be added"
+#          - "&7to your menus, but in slot 2 and repeated"
+#          - "&73 times."
+#          - "&7This is purely cosmetic."
+#        type: "NETHERRACK"
+#      repeat: 3 # repeats for 3 more slots
+#  "c:examples": # apply to the category "examples"
+#    0:
+#      display:
+#        name: "&cExample Custom Item (slot 1)"
+#        lore:
+#          - "&7This is a custom item which can be added"
+#          - "&7to your menus. This is purely cosmetic."
+#        type: "EMERALD_BLOCK"
 
 options:
   # If categories are disabled, quests will be put into one big gui.
@@ -145,6 +180,7 @@ options:
   guinames:
     quests-category: "Quests Categories"
     quests-menu: "Quests"
+    quests-started-menu: "Started Quests"
     daily-quests: "Daily Quests"
     quest-cancel: "Cancel Quest"
   # Show when quests register in console - will only show if verbose-logging-level=2. Disable if you want less console spam at startup.
@@ -171,6 +207,8 @@ options:
     quest-queue-executor-interval: 1      # how frequently Quests should execute the next check in the completion queue (def=1 - 0.05s) - increase this value if you are struggling with performance
     quest-autosave-interval: 12000        # how frequently online players data will be autosaved (def=12000 - 10 minutes)
     quests-autosave-async: false          # experimental - save asynchronously on autosave
+    quests-join-async: false              # experimental - load asynchronously on join
+    quests-leave-async: false             # experimental - save asynchronously on leave
   tab-completion:
     enabled: true
   error-checking:
@@ -245,6 +283,7 @@ messages:
   quest-cancel: "&7Quest &c{quest} &7cancelled!"
   quest-track: "&7Tracking quest &c{quest}&7."
   quest-track-stop: "&7No longer tracking quest &c{quest}&7."
+  quest-random-none: "&cYou have no quests which you can start."
   quest-start-limit: "&7Players are limited to &c{limit} &7started quests at a time."
   quest-start-disabled: "&7You cannot repeat this quest."
   quest-start-locked: "&7You have not unlocked this quest yet."

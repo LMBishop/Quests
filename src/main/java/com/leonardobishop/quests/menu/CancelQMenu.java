@@ -1,39 +1,29 @@
-package com.leonardobishop.quests.obj.misc;
+package com.leonardobishop.quests.menu;
 
-import com.leonardobishop.quests.obj.Items;
-import com.leonardobishop.quests.obj.Options;
+import com.leonardobishop.quests.events.MenuController;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.quests.Quest;
+import com.leonardobishop.quests.util.Items;
+import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+/**
+ * Represents a cancellation confirmation menu for a specific quest.
+ */
+public class CancelQMenu implements QMenu {
 
-public class QMenuCancel implements QMenu {
-
-    private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
-    private final QMenuQuest superMenu;
+    private final QMenu superMenu;
     private final QPlayer owner;
     private final Quest quest;
 
-    public QMenuCancel(QPlayer owner, QMenuQuest superMenu, Quest quest) {
+    public CancelQMenu(QPlayer owner, QMenu superMenu, Quest quest) {
         this.owner = owner;
         this.superMenu = superMenu;
         this.quest = quest;
-    }
-
-    public void populate(List<Quest> quests) {
-        /* ignored */
-    }
-
-    @Override
-    public HashMap<Integer, String> getSlotsToMenu() {
-        return slotsToQuestIds;
     }
 
     public Quest getQuest() {
@@ -45,7 +35,7 @@ public class QMenuCancel implements QMenu {
         return owner;
     }
 
-    public Inventory toInventory() {
+    public Inventory toInventory(int page) {
         String title = Options.color(Options.GUITITLE_QUEST_CANCEL.getStringValue());
 
         ItemStack yes = Items.QUEST_CANCEL_YES.getItem();
@@ -65,7 +55,7 @@ public class QMenuCancel implements QMenu {
         inventory.setItem(10, no);
         inventory.setItem(11, no);
         inventory.setItem(12, no);
-        inventory.setItem(13, quest.getDisplayItem().toItemStack(quest, owner.getQuestProgressFile(), owner.getQuestProgressFile().getQuestProgress(quest)));
+        inventory.setItem(13, quest.getDisplayItem().toItemStack(quest, owner, owner.getQuestProgressFile().getQuestProgress(quest)));
         inventory.setItem(14, yes);
         inventory.setItem(15, yes);
         inventory.setItem(16, yes);
@@ -73,7 +63,18 @@ public class QMenuCancel implements QMenu {
         return inventory;
     }
 
-    public QMenuQuest getSuperMenu() {
+    @Override
+    public void handleClick(InventoryClickEvent event, MenuController controller) {
+        if (event.getSlot() == 10 || event.getSlot() == 11 || event.getSlot() == 12) {
+            controller.openMenu(event.getWhoClicked(), superMenu, 1);
+        } else if (event.getSlot() == 14 || event.getSlot() == 15 || event.getSlot() == 16) {
+            if (owner.cancelQuest(quest)) {
+                event.getWhoClicked().closeInventory();
+            }
+        }
+    }
+
+    public QMenu getSuperMenu() {
         return superMenu;
     }
 

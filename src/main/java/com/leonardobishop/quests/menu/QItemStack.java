@@ -1,10 +1,11 @@
-package com.leonardobishop.quests.obj.misc;
+package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.obj.Options;
+import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Quest;
+import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -76,7 +77,7 @@ public class QItemStack {
     }
 
     @SuppressWarnings("deprecation")
-    public ItemStack toItemStack(Quest quest, QuestProgressFile questProgressFile, QuestProgress questProgress) {
+    public ItemStack toItemStack(Quest quest, QPlayer qPlayer, QuestProgress questProgress) {
         ItemStack is = new ItemStack(startingItemStack);
         ItemMeta ism = is.getItemMeta();
         ism.setDisplayName(name);
@@ -90,22 +91,16 @@ public class QItemStack {
             tempLore.addAll(globalLoreAppendNormal);
         }
 
-        Player player = Bukkit.getPlayer(questProgressFile.getPlayerUUID());
-        if (questProgressFile.hasStartedQuest(quest)) {
-            boolean tracked = quest.getId().equals(questProgressFile.getPlayerPreferences().getTrackedQuestId());
-            if (Options.GLOBAL_QUEST_DISPLAY_CONFIGURATION_OVERRIDE.getBooleanValue() && !globalLoreAppendStarted.isEmpty()) {
-                if (tracked) {
-                    tempLore.addAll(globalLoreAppendTracked);
-                } else {
-                    tempLore.addAll(globalLoreAppendStarted);
-                }
-            } else {
+        Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
+        if (qPlayer.hasStartedQuest(quest)) {
+            boolean tracked = quest.getId().equals(qPlayer.getPlayerPreferences().getTrackedQuestId());
+            if (!Options.GLOBAL_QUEST_DISPLAY_CONFIGURATION_OVERRIDE.getBooleanValue() || globalLoreAppendStarted.isEmpty()) {
                 tempLore.addAll(loreStarted);
-                if (tracked) {
-                    tempLore.addAll(globalLoreAppendTracked);
-                } else {
-                    tempLore.addAll(globalLoreAppendStarted);
-                }
+            }
+            if (tracked) {
+                tempLore.addAll(globalLoreAppendTracked);
+            } else {
+                tempLore.addAll(globalLoreAppendStarted);
             }
             ism.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
             try {

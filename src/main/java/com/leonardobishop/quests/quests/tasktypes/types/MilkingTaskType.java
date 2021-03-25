@@ -11,7 +11,6 @@ import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Player;
@@ -57,12 +56,16 @@ public final class MilkingTaskType extends TaskType {
 
         Player player = event.getPlayer();
 
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId(), true);
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(player.getUniqueId());
+        if (qPlayer == null) {
+            return;
+        }
+
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (questProgressFile.hasStartedQuest(quest)) {
-                QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+            if (qPlayer.hasStartedQuest(quest)) {
+                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
                     if (!TaskUtils.validateWorld(player, task)) continue;

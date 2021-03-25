@@ -1,14 +1,15 @@
-package com.leonardobishop.quests.obj;
+package com.leonardobishop.quests.util;
 
 import com.leonardobishop.quests.Quests;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public enum Options {
+
     CATEGORIES_ENABLED("options.categories-enabled"),
     TRIM_GUI_SIZE("options.trim-gui-size"),
     QUESTS_START_LIMIT("options.quest-started-limit"),
@@ -19,11 +20,14 @@ public enum Options {
     GUI_USE_PLACEHOLDERAPI("options.gui-use-placeholderapi"),
     GUITITLE_QUESTS_CATEGORY("options.guinames.quests-category"),
     GUITITLE_QUESTS("options.guinames.quests-menu"),
+    GUITITLE_QUESTS_STARTED("options.guinames.quests-started-menu"),
     GUITITLE_DAILY_QUESTS("options.guinames.daily-quests"),
     GUITITLE_QUEST_CANCEL("options.guinames.quest-cancel"),
     ALLOW_QUEST_CANCEL("options.allow-quest-cancel"),
     ALLOW_QUEST_TRACK("options.allow-quest-track"),
     QUEST_AUTOSAVE_ASYNC("options.performance-tweaking.quests-autosave-async"),
+    QUEST_JOIN_ASYNC("options.performance-tweaking.quests-join-async"),
+    QUEST_LEAVE_ASYNC("options.performance-tweaking.quests-leave-async"),
     SOFT_CLEAN_QUESTSPROGRESSFILE_ON_JOIN("options.soft-clean-questsprogressfile-on-join"),
     PUSH_SOFT_CLEAN_TO_DISK("options.tab-completion.push-soft-clean-to-disk"),
     TAB_COMPLETE_ENABLED("options.tab-completion.enabled"),
@@ -37,7 +41,7 @@ public enum Options {
     GLOBAL_QUEST_DISPLAY_LORE_APPEND_STARTED("global-quest-display.lore.append-started"),
     GLOBAL_QUEST_DISPLAY_LORE_APPEND_TRACKED("global-quest-display.lore.append-tracked");
 
-    private static final Map<String, Boolean> cachedBooleans = new HashMap<>();
+    private static final Map<String, Boolean> cachedBooleans = new ConcurrentHashMap<>();
 
     private final String path;
 
@@ -62,13 +66,7 @@ public enum Options {
     }
 
     public boolean getBooleanValue() {
-        Boolean val = cachedBooleans.get(path);
-        if (val != null) {
-            return val;
-        } else {
-            cachedBooleans.put(path, Quests.get().getConfig().getBoolean(path));
-            return getBooleanValue();
-        }
+        return cachedBooleans.computeIfAbsent(path, s -> Quests.get().getConfig().getBoolean(path));
     }
 
     public boolean getBooleanValue(boolean def) {

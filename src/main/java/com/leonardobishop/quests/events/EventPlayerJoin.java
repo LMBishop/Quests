@@ -1,10 +1,11 @@
 package com.leonardobishop.quests.events;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.obj.Messages;
-import com.leonardobishop.quests.obj.Options;
+import com.leonardobishop.quests.util.Messages;
+import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -17,6 +18,12 @@ public class EventPlayerJoin implements Listener {
 
     public EventPlayerJoin(Quests plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onAsyncJoin(AsyncPlayerPreLoginEvent event) {
+        if (!Options.QUEST_JOIN_ASYNC.getBooleanValue()) return;
+        plugin.getPlayerManager().loadPlayer(event.getUniqueId());
     }
 
     @EventHandler

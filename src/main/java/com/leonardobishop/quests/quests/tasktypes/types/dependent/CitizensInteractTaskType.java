@@ -46,16 +46,14 @@ public final class CitizensInteractTaskType extends TaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onNPCClick(NPCRightClickEvent event) {
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getClicker().getUniqueId(), true);
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getClicker().getUniqueId());
         if (qPlayer == null) {
             return;
         }
 
-        QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-
         for (Quest quest : super.getRegisteredQuests()) {
-            if (questProgressFile.hasStartedQuest(quest)) {
-                QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+            if (qPlayer.hasStartedQuest(quest)) {
+                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
                     if (!TaskUtils.validateWorld(event.getClicker(), task)) continue;

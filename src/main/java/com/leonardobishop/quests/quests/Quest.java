@@ -1,9 +1,13 @@
 package com.leonardobishop.quests.quests;
 
-import com.leonardobishop.quests.obj.misc.QItemStack;
+import com.leonardobishop.quests.menu.QItemStack;
 import org.bukkit.ChatColor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Quest implements Comparable<Quest> {
 
@@ -116,6 +120,10 @@ public class Quest implements Comparable<Quest> {
 
     public Map<String, String> getPlaceholders() {
         return placeholders;
+    }
+
+    public int getSortOrder() {
+        return sortOrder;
     }
 
     @Override

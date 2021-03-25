@@ -8,14 +8,17 @@ This plugin will allow your players to do quests in-game to earn rewards. This c
 
 ## Downloads/Building
 The latest release version of Quests can be found on [Spigot](https://www.spigotmc.org/resources/▶-quests-◀-set-up-goals-for-players.23696/).
-The latest build of Quests can be found on [Github](https://github.com/LMBishop/Quests/actions).
+The latest build of Quests (development version) can be found on [GitHub](https://github.com/LMBishop/Quests/actions).
 
-Alternatively, you can build Quests via Gradle using ``gradlew build``.
+Alternatively, you can build Quests via Gradle. Release versions of Quests are built using **Java 8**, you can change the target version in ``build.gradle``.
+* ensure Java 8 is installed on your machine
+* clone this repository
+* run ``gradlew build`` in the base directory
 
 ### Custom Task
 Creating new Task Types within Quests is supported, [see the wiki](https://github.com/LMBishop/Quests/wiki/New-Task-Type) for help.
 
-You can include quests in your project using [JitPack](https://jitpack.io/#LMBishop/Quests) repository.
+You can include quests in your project using [JitPack](https://jitpack.io/#LMBishop/Quests) as a repository.
 
 ### Maven
 ```xml
@@ -59,7 +62,7 @@ For support please open a [GitHub issue](https://github.com/LMBishop/Quests/issu
 Please speak English and do not use any vulgar or harmful language. We work on this project in our free time, getting mad at us if things do not work will not achieve anything.
 
 ## License
-The **source code** for Quests is licensed under the MIT License, to view the license click [here](https://github.com/LMBishop/Quests/blob/master/LICENSE).
+The **source code** for Quests is licensed under the GNU General Public License v3.0, to view the license click [here](https://github.com/LMBishop/Quests/blob/master/LICENSE.txt).
 
 The **artwork** for Quests is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License ![](https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png), to learn more click [here](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
@@ -67,17 +70,21 @@ The **artwork** for Quests is licensed under the Creative Commons Attribution-No
 The configuration documentation can be found at the [wiki](https://github.com/LMBishop/Quests/wiki/Creating-A-Quest-Or-Category).
 
 ## Contributing To Quests
-Fork and make a pull request. Please be consistent with the formatting of the file, please state what you have changed, please test what you have changed before submitting a pull request to make sure it works. Include your DiscordTag if you want a 'contributors' role in our [Discord server](https://discord.gg/8amrJnX).
+We welcome all contributions, we will check out all pull requests and determine if it should be added to Quests 
+### Guidance 
+* ensure Java 8 is installed on your machine
+* fork this repository and clone it
+* edit the source code as your please
+* run ``gradlew build`` in the base directory to build Quests
+* push to your fork when ready & submit a pull request
 
 ### Contribution Guidelines
-Make sure to format your file using *spaces* not *tabs*. This is how the rest of the project is, and it will remain that way. When committing, please follow normal convention which is to have a ~50 character summary on the first line, a blank line then (if applicable) a more detailed description either in bullet points (using a dash as the bullet) or as paragraphs.
+If you plan on contributing upstream please note the following:
+* discuss large changes first
+* indent the file with **4 spaces**
+* take a look at how the rest of the project is formatted and follow that
+* do not alter the version number in ``build.gradle``, that will be done when the release version is ready
+* limit the first line of commit messages to ~50 chars and leave a space below that
+* **test your changes** on the latest Spigot version before making a pull request
 
-Example commit message:
-```
-Added guidelines to README.md
-
-- Added information on using Maven to build Quests.
-- Added information on how to use the Issue Tracker effectively to communcate bugs.
-- Made sure to elaborate on how to format files and commit messages.
-```
-Make sure your changes actually work before submitting a pull request by building the project and testing it on a Spigot server using the latest version.
+By contributing to Quests you agree to license your code under the [GNU General Public License v3.0](https://github.com/LMBishop/Quests/blob/master/LICENSE.txt).

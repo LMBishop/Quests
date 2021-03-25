@@ -2,7 +2,6 @@ package com.leonardobishop.quests.quests.tasktypes.types.dependent;
 
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.api.IslandWorthCalculatedEvent;
-import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
@@ -16,7 +15,6 @@ import com.leonardobishop.quests.quests.tasktypes.TaskType;
 import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,19 +46,16 @@ public final class IridiumSkyblockValueType extends TaskType {
             try {
                  uuid = UUID.fromString(player);
             } catch (Exception e) {
-                Quests.get().getQuestsLogger().debug("Cannot convert from String to UUID for IridiumSkyblock");
                 continue;
             }
-            QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(uuid, true);
+            QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(uuid);
             if (qPlayer == null) {
                 continue;
             }
 
-            QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-
             for (Quest quest : IridiumSkyblockValueType.super.getRegisteredQuests()) {
-                if (questProgressFile.hasStartedQuest(quest)) {
-                    QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
+                if (qPlayer.hasStartedQuest(quest)) {
+                    QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                     for (Task task : quest.getTasksOfType(IridiumSkyblockValueType.super.getType())) {
                         TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
