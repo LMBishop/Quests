@@ -156,7 +156,7 @@ public class Quests extends JavaPlugin {
         dataGenerator();
         setupVersionSpecific();
 
-        Bukkit.getPluginCommand("quests").setExecutor(new CommandQuests(this));
+        super.getCommand("quests").setExecutor(new CommandQuests(this));
         Bukkit.getPluginManager().registerEvents(new EventPlayerJoin(this), this);
         Bukkit.getPluginManager().registerEvents(new MenuController(this), this);
         Bukkit.getPluginManager().registerEvents(new EventPlayerLeave(this), this);
