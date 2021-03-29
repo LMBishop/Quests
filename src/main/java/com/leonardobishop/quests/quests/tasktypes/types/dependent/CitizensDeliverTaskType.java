@@ -121,7 +121,8 @@ public final class CitizensDeliverTaskType extends TaskType {
 
                     ItemStack is;
                     if (configBlock instanceof ConfigurationSection) {
-                        is = Quests.get().getItemStack(null, (org.bukkit.configuration.ConfigurationSection) configBlock);
+                        is = Quests.get().getItemStack("", (org.bukkit.configuration.ConfigurationSection) configBlock);
+                        player.getInventory().addItem(is);
                     } else {
                         material = Material.getMaterial(String.valueOf(configBlock));
 
