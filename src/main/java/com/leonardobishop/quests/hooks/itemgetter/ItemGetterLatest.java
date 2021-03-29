@@ -190,16 +190,18 @@ public class ItemGetterLatest implements ItemGetter {
                         levelName = "1";
                     }
 
-                    NamespacedKey namespacedKey;
-                    try {
-                        namespacedKey = new NamespacedKey(namespace, ench);
-                    } catch (Exception e) {
-                        plugin.getQuestsLogger().debug("Unrecognised namespace: " + namespace);
-                        continue;
-                    }
+                    // TODO i don't know how these namespaces work
+//                    NamespacedKey namespacedKey;
+//                    try {
+//                        namespacedKey = new NamespacedKey(namespace, ench);
+//                    } catch (Exception e) {
+//                        plugin.getQuestsLogger().debug("Unrecognised namespace: " + namespace);
+//                        e.printStackTrace();
+//                        continue;
+//                    }
                     Enchantment enchantment;
-                    if ((enchantment = Enchantment.getByKey(namespacedKey)) == null) {
-                        plugin.getQuestsLogger().debug("Unrecognised enchantment: " + namespacedKey);
+                    if ((enchantment = Enchantment.getByName(ench)) == null) {
+                        plugin.getQuestsLogger().debug("Unrecognised enchantment: " + ench);
                         continue;
                     }
 
@@ -210,7 +212,7 @@ public class ItemGetterLatest implements ItemGetter {
                         level = 1;
                     }
 
-                    is.addUnsafeEnchantment(enchantment, level);
+                    ism.addEnchant(enchantment, level, true);
                 }
             }
         }
