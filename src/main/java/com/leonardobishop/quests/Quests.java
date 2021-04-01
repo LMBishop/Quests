@@ -1,6 +1,5 @@
 package com.leonardobishop.quests;
 
-import com.leonardobishop.quests.bstats.Metrics;
 import com.leonardobishop.quests.commands.CommandQuests;
 import com.leonardobishop.quests.events.EventPlayerJoin;
 import com.leonardobishop.quests.events.EventPlayerLeave;
@@ -60,6 +59,7 @@ import com.leonardobishop.quests.quests.tasktypes.types.dependent.ShopGUIPlusSel
 import com.leonardobishop.quests.quests.tasktypes.types.dependent.uSkyBlockLevelType;
 import com.leonardobishop.quests.updater.Updater;
 import com.leonardobishop.quests.util.Messages;
+import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -179,7 +179,7 @@ public class Quests extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(menuController, this);
         Bukkit.getPluginManager().registerEvents(new EventPlayerLeave(this), this);
 
-        Metrics metrics = new Metrics(this);
+        MetricsLite metrics = new MetricsLite(this, 3443);
         if (metrics.isEnabled()) {
             this.getQuestsLogger().info("Metrics started. This can be disabled at /plugins/bStats/config.yml.");
         }

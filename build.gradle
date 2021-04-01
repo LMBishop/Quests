@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 group = 'com.leonardobishop'
@@ -38,6 +39,8 @@ repositories {
     maven { url = 'https://jitpack.io' }
     // CoreProtect
     maven { url = 'https://maven.playpro.com/' }
+    // bStats
+    maven { url = uri('https://repo.codemc.org/repository/maven-public') }
     mavenCentral()
 }
 
@@ -85,8 +88,21 @@ dependencies {
     compileOnly ('net.coreprotect:coreprotect:2.18.2') {
         exclude group: 'com.sk89q.worldedit', module: 'worldedit-bukkit'
     }
+    // bStats
+    implementation 'org.bstats:bstats-bukkit-lite:1.8'
 
     compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
+}
+
+shadowJar {
+    relocate 'org.bstats', 'com.leonardobishop.quests.libs.bstats'
+    archiveClassifier.set('')
+}
+
+jar.enabled = false
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
 }
 
 compileJava {
