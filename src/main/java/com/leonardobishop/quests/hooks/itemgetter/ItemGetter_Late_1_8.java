@@ -105,7 +105,7 @@ public class ItemGetter_Late_1_8 implements ItemGetter {
                         level = 1;
                     }
 
-                    is.addUnsafeEnchantment(enchantment, level);
+                    ism.addEnchant(enchantment, level, true);
                 }
             }
         }

@@ -156,7 +156,6 @@ public class ItemGetter_1_13 implements ItemGetter {
             }
         }
 
-
         // unbreakable
         if (!filters.contains(Filter.UNBREAKABLE)) {
             ism.setUnbreakable(unbreakable);

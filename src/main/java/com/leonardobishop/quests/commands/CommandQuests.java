@@ -98,6 +98,21 @@ public class CommandQuests implements TabExecutor {
                     } else if (args[1].equalsIgnoreCase("config")) {
                         showProblems(sender);
                         return true;
+                        //TODO
+//                    } else if (args[1].equalsIgnoreCase("itemstack")) {
+//                        if (!(sender instanceof Player)) {
+//                            sender.sendMessage("You must be a player to use this command.");
+//                            return true;
+//                        }
+//                        Player player = (Player) sender;
+//                        ItemStack is = player.getItemInHand();
+//                        if (is == null || is.getType() == Material.AIR) {
+//                            sender.sendMessage(ChatColor.GRAY + "There is no information about this ItemStack.");
+//                            return true;
+//                        }
+//                        sender.sendMessage(ToStringBuilder.reflectionToString(is));
+//                        sender.sendMessage(ToStringBuilder.reflectionToString(is.getItemMeta()));
+//                        return true;
                     } else if (args[1].equalsIgnoreCase("types")) {
                         sender.sendMessage(ChatColor.GRAY + "Registered task types:");
                         for (TaskType taskType : plugin.getTaskTypeManager().getTaskTypes()) {
@@ -553,6 +568,7 @@ public class CommandQuests implements TabExecutor {
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a info [quest]" + ChatColor.DARK_GRAY + ": see information about loaded quests");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a reload " + ChatColor.DARK_GRAY + ": reload Quests configuration");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a config " + ChatColor.DARK_GRAY + ": see detected problems in config");
+            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a itemstack " + ChatColor.DARK_GRAY + ": print information about the current held ItemStack");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a update " + ChatColor.DARK_GRAY + ": check for updates");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a wiki " + ChatColor.DARK_GRAY + ": get a link to the Quests wiki");
         }
