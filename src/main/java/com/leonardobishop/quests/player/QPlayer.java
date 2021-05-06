@@ -8,6 +8,8 @@ import com.leonardobishop.quests.obj.misc.QMenuQuest;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.quests.Category;
 import com.leonardobishop.quests.quests.Quest;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -16,15 +18,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Getter
+@Setter
 public class QPlayer {
 
     private final UUID uuid;
     private final QuestProgressFile questProgressFile;
+    private boolean onlyDataLoaded;
     private final Quests plugin;
 
-    public QPlayer(UUID uuid, QuestProgressFile questProgressFile,  Quests plugin) {
+    public QPlayer(UUID uuid, QuestProgressFile questProgressFile, Quests plugin) {
+        this(uuid, questProgressFile, false, plugin);
+    }
+
+    public QPlayer(UUID uuid, QuestProgressFile questProgressFile, boolean onlyDataLoaded, Quests plugin) {
         this.uuid = uuid;
         this.questProgressFile = questProgressFile;
+        this.onlyDataLoaded = onlyDataLoaded;
         this.plugin = plugin;
     }
 
@@ -36,6 +46,10 @@ public class QPlayer {
      * @return 0 if success, 1 if no permission, 2 is only data loaded, 3 if player not found
      */
     public int openCategory(Category category, QMenuCategory superMenu, boolean backButton) {
+        if (onlyDataLoaded) {
+            return 2;
+        }
+
         Player player = Bukkit.getPlayer(this.uuid);
         if (player == null) {
             return 3;
@@ -46,7 +60,7 @@ public class QPlayer {
         }
 
         // Using `this` instead of searching again for this QPlayer
-        QMenuQuest qMenuQuest = new QMenuQuest(plugin, this, category.getId(), superMenu);
+        QMenuQuest qMenuQuest = new QMenuQuest(this, category.getId(), superMenu);
         List<Quest> quests = new ArrayList<>();
         for (String questid : category.getRegisteredQuestIds()) {
             Quest quest = plugin.getQuestManager().getQuestById(questid);
@@ -63,6 +77,10 @@ public class QPlayer {
      * @return 0 if success, 1 if no permission, 2 is only data loaded, 3 if player not found
      */
     public int openCategory(Category category, QMenuQuest qMenuQuest) {
+        if (onlyDataLoaded) {
+            return 2;
+        }
+
         Player player = Bukkit.getPlayer(this.uuid);
         if (player == null) {
             return 3;
@@ -78,6 +96,10 @@ public class QPlayer {
     }
 
     public void openQuests() {
+        if (onlyDataLoaded) {
+            return;
+        }
+
         if (this.uuid == null) {
             return;
         }
@@ -87,10 +109,10 @@ public class QPlayer {
         }
 
         if (Options.CATEGORIES_ENABLED.getBooleanValue()) {
-            QMenuCategory qMenuCategory = new QMenuCategory(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()));
+            QMenuCategory qMenuCategory = new QMenuCategory(plugin.getPlayerManager().getPlayer(player.getUniqueId()));
             List<QMenuQuest> questMenus = new ArrayList<>();
             for (Category category : plugin.getQuestManager().getCategories()) {
-                QMenuQuest qMenuQuest = new QMenuQuest(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()), category.getId(), qMenuCategory);
+                QMenuQuest qMenuQuest = new QMenuQuest(plugin.getPlayerManager().getPlayer(player.getUniqueId()), category.getId(), qMenuCategory);
                 List<Quest> quests = new ArrayList<>();
                 for (String questid : category.getRegisteredQuestIds()) {
                     Quest quest = plugin.getQuestManager().getQuestById(questid);
@@ -106,7 +128,7 @@ public class QPlayer {
             player.openInventory(qMenuCategory.toInventory(1));
             EventInventory.track(player.getUniqueId(), qMenuCategory);
         } else {
-            QMenuQuest qMenuQuest = new QMenuQuest(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()), "", null);
+            QMenuQuest qMenuQuest = new QMenuQuest(plugin.getPlayerManager().getPlayer(player.getUniqueId()), "", null);
             List<Quest> quests = new ArrayList<>();
             for (Map.Entry<String, Quest> entry : plugin.getQuestManager().getQuests().entrySet()) {
                 quests.add(entry.getValue());
@@ -117,6 +139,14 @@ public class QPlayer {
             player.openInventory(qMenuQuest.toInventory(1));
             EventInventory.track(player.getUniqueId(), qMenuQuest);
         }
+    }
+
+    public boolean isOnlyDataLoaded() {
+        return onlyDataLoaded;
+    }
+
+    public void setOnlyDataLoaded(boolean onlyDataLoaded) {
+        this.onlyDataLoaded = onlyDataLoaded;
     }
 
     public QuestProgressFile getQuestProgressFile() {

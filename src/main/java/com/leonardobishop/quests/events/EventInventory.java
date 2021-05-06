@@ -1,16 +1,14 @@
 package com.leonardobishop.quests.events;
 
-import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
 import com.leonardobishop.quests.obj.Messages;
+import com.leonardobishop.quests.quests.Quest;
+import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.obj.misc.QMenu;
 import com.leonardobishop.quests.obj.misc.QMenuCancel;
 import com.leonardobishop.quests.obj.misc.QMenuCategory;
 import com.leonardobishop.quests.obj.misc.QMenuQuest;
-import com.leonardobishop.quests.quests.Quest;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
@@ -20,16 +18,17 @@ import org.bukkit.event.inventory.InventoryType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class EventInventory implements Listener {
 
-    private static final HashMap<UUID, QMenu> tracker = new HashMap<>();
-    private final Quests plugin;
+    private static Map<UUID, QMenu> tracker = new HashMap<>();
+    private Quests plugin;
 
     // ADD PLAYERS TO THE BUFFER BEFORE AN ANTICIPATED MENU CHANGE SO THAT
     // THEY ARE NOT LOST FROM THE TRACKER WHEN CHANGING MENUS
-    private final ArrayList<UUID> buffer = new ArrayList<>();
+    private ArrayList<UUID> buffer = new ArrayList<>();
 
     public EventInventory(Quests plugin) {
         this.plugin = plugin;
@@ -81,31 +80,15 @@ public class EventInventory implements Listener {
                     // map which maps quests to slots so you do not have to compare the item stack
                 } else if (event.getSlot() < qMenuQuest.getPageSize() && qMenuQuest.getSlotsToMenu().containsKey(event.getSlot() + (((qMenuQuest
                         .getCurrentPage()) - 1) * qMenuQuest.getPageSize()))) {
+                    if (Options.QUEST_AUTOSTART.getBooleanValue()) return;
 
                     String questid = qMenuQuest.getSlotsToMenu().get(event.getSlot() + (((qMenuQuest.getCurrentPage()) - 1) * qMenuQuest.getPageSize()));
                     Quest quest = plugin.getQuestManager().getQuestById(questid);
                     if (event.getClick() == ClickType.LEFT) {
-                        if (Options.QUEST_AUTOSTART.getBooleanValue()) return;
                         if (qMenuQuest.getOwner().getQuestProgressFile().startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
                             event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
                         }
-                    } else if (event.getClick() == ClickType.MIDDLE) {
-                        if (qMenuQuest.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
-                            Player player = Bukkit.getPlayer(qMenuQuest.getOwner().getUuid());
-                            String tracked = qMenuQuest.getOwner().getQuestProgressFile().getPlayerPreferences().getTrackedQuestId();
-
-                            if (questid.equals(tracked)) {
-                                player.sendMessage(Messages.QUEST_TRACK_STOP.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
-                                qMenuQuest.getOwner().getQuestProgressFile().trackQuest(null);
-                            } else {
-                                player.sendMessage(Messages.QUEST_TRACK.getMessage().replace("{quest}", quest.getDisplayNameStripped()));
-                                qMenuQuest.getOwner().getQuestProgressFile().trackQuest(quest);
-                            }
-                            event.getWhoClicked().closeInventory();
-                        }
-                    } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()
-                            && qMenuQuest.getOwner().getQuestProgressFile().hasStartedQuest(quest)) {
-                        if (Options.QUEST_AUTOSTART.getBooleanValue()) return;
+                    } else if (event.getClick() == ClickType.RIGHT && Options.ALLOW_QUEST_CANCEL.getBooleanValue()) {
                         QMenuCancel qMenuCancel = new QMenuCancel(qMenuQuest.getOwner(), qMenuQuest, quest);
                         buffer.add(event.getWhoClicked().getUniqueId());
                         event.getWhoClicked().openInventory(qMenuCancel.toInventory());
@@ -153,4 +136,5 @@ public class EventInventory implements Listener {
             buffer.remove(event.getPlayer().getUniqueId());
         } else tracker.remove(event.getPlayer().getUniqueId());
     }
+
 }

@@ -5,28 +5,22 @@ import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.quests.Category;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Menu list of categories.
  */
 public class QMenuCategory implements QMenu {
 
-    private final Quests plugin;
     private final int pageSize = 45;
-    private final HashMap<Integer, QMenuQuest> slotsToMenuQuest = new HashMap<>();
+    private final Map<Integer, QMenuQuest> slotsToMenuQuest = new HashMap<>();
     private final QPlayer owner;
 
-    public QMenuCategory(Quests plugin, QPlayer owner) {
-        this.plugin = plugin;
+    public QMenuCategory(QPlayer owner) {
         this.owner = owner;
     }
 
@@ -44,7 +38,7 @@ public class QMenuCategory implements QMenu {
     }
 
     @Override
-    public HashMap<Integer, QMenuQuest> getSlotsToMenu() {
+    public Map<Integer, QMenuQuest> getSlotsToMenu() {
         return slotsToMenuQuest;
     }
 
@@ -58,7 +52,7 @@ public class QMenuCategory implements QMenu {
         int pageMax = pageSize * page;
         String title = Options.color(Options.GUITITLE_QUESTS_CATEGORY.getStringValue());
 
-        ItemStack pageIs = new ItemStack(Material.DIRT);
+        //ItemStack pageIs = new ItemStack(Material.DIRT);
 
         Inventory inventory = Bukkit.createInventory(null, 54, title);
 
@@ -66,12 +60,12 @@ public class QMenuCategory implements QMenu {
             if (slotsToMenuQuest.containsKey(pointer)) {
                 Category category = Quests.get().getQuestManager().getCategoryById(slotsToMenuQuest.get(pointer).getCategoryName());
                 if (category != null) {
-                    inventory.setItem(pointer, replaceItemStack(category.getDisplayItem()));
+                    inventory.setItem(pointer, category.getDisplayItem());
                 }
             }
         }
 
-        inventory.setItem(49, replaceItemStack(pageIs));
+        //inventory.setItem(49, pageIs);
 
         if (Options.TRIM_GUI_SIZE.getBooleanValue() && page == 1) {
             int slotsUsed = 0;
@@ -100,27 +94,6 @@ public class QMenuCategory implements QMenu {
             return inventory;
         }
 
-    }
-
-    public ItemStack replaceItemStack(ItemStack is) {
-        if (plugin.getPlaceholderAPIHook() != null && Options.GUI_USE_PLACEHOLDERAPI.getBooleanValue()) {
-            ItemStack newItemStack = is.clone();
-            List<String> lore = newItemStack.getItemMeta().getLore();
-            List<String> newLore = new ArrayList<>();
-            ItemMeta ism = newItemStack.getItemMeta();
-            Player player = Bukkit.getPlayer(owner.getUuid());
-            ism.setDisplayName(plugin.getPlaceholderAPIHook().replacePlaceholders(player, ism.getDisplayName()));
-            if (lore != null) {
-                for (String s : lore) {
-                    s = plugin.getPlaceholderAPIHook().replacePlaceholders(player, s);
-                    newLore.add(s);
-                }
-            }
-            ism.setLore(newLore);
-            newItemStack.setItemMeta(ism);
-            return newItemStack;
-        }
-        return is;
     }
 
 }

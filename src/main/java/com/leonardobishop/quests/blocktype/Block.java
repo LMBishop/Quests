@@ -2,7 +2,6 @@ package com.leonardobishop.quests.blocktype;
 
 import org.bukkit.Material;
 
-@Deprecated
 public class Block {
 
     private Material material;

@@ -1,0 +1,49 @@
+# This is a quest which requires the previous quest to be complete to start.
+# Unlike the previous quest, this one can be re-done but it has a 10 minute cooldown.
+
+tasks:
+  # Unlike the previous two quests, this quest specifies a specific block to be broken.
+  mining:
+    type: "blockbreakcertain"
+    amount: 81
+    block: GOLD_ORE
+  building:
+    type: "blockplacecertain"
+    amount: 9
+    block: GOLD_BLOCK
+display:
+  name: "&cExample III (Repeatable, 10 minute cooldown)"
+  lore-normal:
+    - "&cThis category is designed to show you the different"
+    - "&cattributes a quest can have. This quest can be replayed"
+    - "&cafter a cooldown, unlike the previous one."
+    - ""
+    - "&7This quest requires you to:"
+    - "&7 - Break &f81 gold ore&7."
+    - "&7 - Place &f9 gold blocks&7."
+    - ""
+    - "&7Rewards:"
+    - "&7 - &f30 diamonds&7."
+    - "&7 - &f$10&7 added to your in-game balance."
+  lore-started:
+    - ""
+    - "&7Your current progression:"
+    - "&7 - &f{mining:progress}&7/81 gold ore broken."
+    - "&7 - &f{building:progress}&7/9 gold blocks placed."
+  type: "GOLD_ORE"
+rewards:
+  - "give {player} diamond 30"
+  - "eco give {player} 10"
+placeholders:
+  description: "&7Break &f81 gold ore &7and place &f9 gold blocks."
+  progress: " &8- &f{mining:progress}&7/81 gold ore, &f{building:progress}&7/9 gold blocks"
+options:
+  category: "examples"
+  requires:
+    - "example2"
+  # This quest is repeatable, it has cooldowns enabled (meaning the player must wait before repeating it) and the time set to 10 (minutes).
+  repeatable: true
+  cooldown:
+    enabled: true
+    time: 10
+  sort-order: 3

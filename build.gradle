@@ -44,6 +44,12 @@ repositories {
 }
 
 dependencies {
+
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.20'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
     // Spigot
     compileOnly ('org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT') {
         exclude group: 'net.md-5', module: 'bungeecord-chat'
@@ -51,16 +57,16 @@ dependencies {
         exclude group: 'org.yaml', module: 'snakeyaml'
     }
     // ASkyBlock
-    compileOnly ('com.wasteofplastic:askyblock:3.0.8.2') {
+/*    compileOnly ('com.wasteofplastic:askyblock:V3.0.9.1 RC') {
         exclude group: 'net.milkbowl.vault', module: 'VaultAPI'
-    }
+    }*/
     // BentoBox (bSkyBlock)
     compileOnly ('world.bentobox:bentobox:1.15.5-SNAPSHOT') {
         exclude group: 'org.eclipse.jdt', module: 'org.eclipse.jdt.annotation'
         exclude group: 'org.mongodb', module: 'mongodb-driver'
     }
     // IridiumSkyblock
-    compileOnly 'com.github.IridiumLLC:IridiumSkyblock:master-SNAPSHOT'
+    //compileOnly 'com.github.IridiumLLC:IridiumSkyblock:master-SNAPSHOT'
     // uSkyBlock
     compileOnly 'com.github.rlf:uSkyBlock-API:2.6.4'
     // MythicMobs

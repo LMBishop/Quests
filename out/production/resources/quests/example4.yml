@@ -1,0 +1,50 @@
+# This is a quest which requires the previous quest to be complete to start.
+# Unlike the previous quests, this quest has a reward string and a start string.
+
+tasks:
+  mobkilling:
+    type: "mobkilling"
+    amount: 3
+display:
+  name: "&cExample IV (Reward String)"
+  lore-normal:
+    - "&cThis category is designed to show you the different"
+    - "&cattributes a quest can have. This quest has a 'reward string'"
+    - "&c(a series of messages sent when a quest is complete),"
+    - "&cunlike the previous one."
+    - ""
+    - "&7This quest requires you to:"
+    - "&7 - Kill &f3 &7mobs."
+    - ""
+    - "&7Rewards:"
+    - "&7 - &f$50 &7added to your in-game balance."
+    - "&7 - &f1 diamond&7."
+  lore-started:
+    - ""
+    - "&7Your current progression:"
+    - "&7 - &f{mobkilling:progress}&7/3 mobs killed."
+  type: "STRING"
+# Here you can list messages which will be sent to the player (if they are online) upon the quest starting.
+startstring:
+  - "&7Upon completion of this quest, you will be rewarded with"
+  - " &8* &c$50"
+  - " &8* &c1 diamonds"
+rewards:
+  - "eco give {player} 50"
+  - "give {player} diamond 1"
+placeholders:
+  description: "&7Kill &f3 &7mobs."
+  progress: " &8- &f{mobkilling:progress}&7/3 mobs"
+# Here you can list messages which will be sent to the player (if they are online) upon completion.
+rewardstring:
+  - " &8* &c$1000 &7was added to your in-game balance."
+  - " &8* &c1 diamond &7was added to your inventory."
+options:
+  category: "examples"
+  requires:
+    - "example3"
+  repeatable: true
+  cooldown:
+    enabled: true
+    time: 10
+  sort-order: 4

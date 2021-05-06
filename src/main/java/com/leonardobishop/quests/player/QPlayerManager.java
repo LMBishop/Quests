@@ -1,18 +1,20 @@
 package com.leonardobishop.quests.player;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.QuestsLogger;
-import com.leonardobishop.quests.player.questprogressfile.QPlayerPreferences;
+import com.leonardobishop.quests.api.enums.StoreType;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class QPlayerManager {
 
@@ -22,46 +24,14 @@ public class QPlayerManager {
         this.plugin = plugin;
     }
 
-    private final Map<UUID, QPlayer> qPlayers = new HashMap<>();
+    private final ConcurrentMap<UUID, QPlayer> qPlayers = new ConcurrentHashMap<>();
 
-    /**
-     * Gets the QPlayer from a given UUID.
-     * Calls {@link QPlayerManager#getPlayer(UUID, boolean)} with the 2nd argument as false.
-     *
-     * @param uuid the uuid
-     * @return {@link QPlayer} if they are loaded
-     */
     public QPlayer getPlayer(UUID uuid) {
-        return getPlayer(uuid, false);
-    }
-
-    /**
-     * Gets the QPlayer from a given UUID.
-     *
-     * @param uuid the uuid
-     * @param loadIfNull do not use
-     * @return {@link QPlayer} if they are loaded
-     */
-    public QPlayer getPlayer(UUID uuid, boolean loadIfNull) {
-        QPlayer qPlayer = qPlayers.get(uuid);
-        if (qPlayer == null) {
-            plugin.getQuestsLogger().debug("QPlayer of " + uuid + " is null, but was requested:");
-            if (plugin.getQuestsLogger().getServerLoggingLevel() == QuestsLogger.LoggingLevel.DEBUG) {
-                Thread.dumpStack();
-            }
-        }
-        return qPlayer;
+        return qPlayers.get(uuid);
     }
 
     public void removePlayer(UUID uuid) {
-        plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + ".");
-        this.getPlayer(uuid).getQuestProgressFile().saveToDisk(false);
-        qPlayers.remove(uuid);
-    }
-
-    public void dropPlayer(UUID uuid) {
-        plugin.getQuestsLogger().debug("Dropping player " + uuid + ".");
-        qPlayers.remove(uuid);
+        qPlayers.remove(uuid).getQuestProgressFile().saveToDisk(plugin.getDatabase().getStoreType());
     }
 
     public Collection<QPlayer> getQPlayers() {
@@ -73,54 +43,92 @@ public class QPlayerManager {
     //   loadPlayer(uuid, false);
     //}
 
-    public void loadPlayer(UUID uuid) {
-        plugin.getQuestsLogger().debug("Loading player " + uuid + " from disk.");
-        if (qPlayers.get(uuid) == null) {
-            QuestProgressFile questProgressFile = new QuestProgressFile(uuid, new QPlayerPreferences(null), plugin);
+    public void loadPlayer(UUID uuid, boolean onlyData, StoreType storeType) {
 
-            try {
-                File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
-                if (directory.exists() && directory.isDirectory()) {
-                    File file = new File(plugin.getDataFolder() + File.separator + "playerdata" + File.separator + uuid.toString() + ".yml");
-                    if (file.exists()) {
-                        YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
-                        if (data.isConfigurationSection("quest-progress")) { //Same job as "isSet" + it checks if is CfgSection
-                            for (String id : data.getConfigurationSection("quest-progress").getKeys(false)) {
-                                boolean started = data.getBoolean("quest-progress." + id + ".started");
-                                boolean completed = data.getBoolean("quest-progress." + id + ".completed");
-                                boolean completedBefore = data.getBoolean("quest-progress." + id + ".completed-before");
-                                long completionDate = data.getLong("quest-progress." + id + ".completion-date");
+        System.out.println("test-1");
+        if (getPlayer(uuid) == null || getPlayer(uuid).isOnlyDataLoaded()) {
+            QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
+            System.out.println("test0");
+            if (storeType != StoreType.YAML) { // Load from mysql/sql
+                try {
+                    PreparedStatement progressStatement = this.plugin.getDatabase().getConnection().prepareStatement("SELECT * FROM progress WHERE player_uuid='" + uuid.toString() + "';");
+                    ResultSet progressResult = progressStatement.executeQuery();
+                    System.out.println("test");
 
-                                QuestProgress questProgress = new QuestProgress(plugin, id, completed, completedBefore, completionDate, uuid, started, true);
+                    while (progressResult.next()) {
 
-                                if (data.isConfigurationSection("quest-progress." + id + ".task-progress")) {
+                        String id = progressResult.getString("quest_id");
+
+                        boolean started = progressResult.getBoolean("started");
+                        boolean completed = progressResult.getBoolean("completed");
+                        boolean completedBefore = progressResult.getBoolean("completed_before");
+                        long completionDate = progressResult.getLong("completition_date");
+                        System.out.println(id + " " + started);
+                        QuestProgress questProgress = new QuestProgress(id, completed, completedBefore, completionDate, uuid, started, true);
+
+                        PreparedStatement progressTaskStatement = this.plugin.getDatabase().getConnection().prepareStatement("SELECT * FROM task_progress WHERE player_uuid='" + uuid.toString() + "' AND quest_id='" + id + "';");
+                        ResultSet progressTaskResult = progressTaskStatement.executeQuery();
+                        while (progressTaskResult.next()) {
+                            String taskid = progressTaskResult.getString("task_id");
+                            boolean taskCompleted = progressTaskResult.getBoolean("completed");
+                            Object taskProgression = progressTaskResult.getObject("progress");
+
+                            TaskProgress taskProgress = new TaskProgress(taskid, taskProgression, uuid, taskCompleted, false);
+                            questProgress.addTaskProgress(taskProgress);
+                        }
+                        questProgressFile.addQuestProgress(questProgress);
+
+                    }
+                    if (progressResult != null)
+                        progressResult.close(); //finished the job
+                } catch (SQLException ex) {
+                    plugin.getLogger().severe("Failed to load player: " + uuid + "! This WILL cause errors.");
+                    ex.printStackTrace(); //expected during sql fails (when database is not setup properly)
+                }
+                QPlayer qPlayer = new QPlayer(uuid, questProgressFile, onlyData, plugin);
+
+                this.qPlayers.put(uuid, qPlayer);
+                return;
+
+            } else { // Load file
+                try {
+                    File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
+                    if (directory.exists() && directory.isDirectory()) {
+                        File file = new File(plugin.getDataFolder() + File.separator + "playerdata" + File.separator + uuid.toString() + ".yml");
+                        if (file.exists()) {
+                            YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
+                            if (data.isConfigurationSection("quest-progress")) { //Same job as "isSet" + it checks if is CfgSection
+                                for (String id : data.getConfigurationSection("quest-progress").getKeys(false)) {
+                                    boolean started = data.getBoolean("quest-progress." + id + ".started");
+                                    boolean completed = data.getBoolean("quest-progress." + id + ".completed");
+                                    boolean completedBefore = data.getBoolean("quest-progress." + id + ".completed-before");
+                                    long completionDate = data.getLong("quest-progress." + id + ".completion-date");
+
+                                    QuestProgress questProgress = new QuestProgress(id, completed, completedBefore, completionDate, uuid, started, true);
+
                                     for (String taskid : data.getConfigurationSection("quest-progress." + id + ".task-progress").getKeys(false)) {
                                         boolean taskCompleted = data.getBoolean("quest-progress." + id + ".task-progress." + taskid + ".completed");
                                         Object taskProgression = data.get("quest-progress." + id + ".task-progress." + taskid + ".progress");
 
-                                        TaskProgress taskProgress = new TaskProgress(questProgress, taskid, taskProgression, uuid, taskCompleted, false);
+                                        TaskProgress taskProgress = new TaskProgress(taskid, taskProgression, uuid, taskCompleted, false);
                                         questProgress.addTaskProgress(taskProgress);
                                     }
-                                }
 
-                                questProgressFile.addQuestProgress(questProgress);
+                                    questProgressFile.addQuestProgress(questProgress);
+                                }
                             }
                         }
-                    } else {
-                        plugin.getQuestsLogger().debug("Player " + uuid + " does not have a quest progress file.");
                     }
+                } catch (Exception ex) {
+                    plugin.getLogger().severe("Failed to load player: " + uuid + "! This WILL cause errors.");
+                    ex.printStackTrace();
+                    // fuck
                 }
-            } catch (Exception ex) {
-                plugin.getQuestsLogger().severe("Failed to load player: " + uuid + "! This WILL cause errors.");
-                ex.printStackTrace();
-                // fuck
+
+                QPlayer qPlayer = new QPlayer(uuid, questProgressFile, onlyData, plugin);
+
+                this.qPlayers.put(uuid, qPlayer);
             }
-
-            QPlayer qPlayer = new QPlayer(uuid, questProgressFile, plugin);
-
-            this.qPlayers.put(uuid, qPlayer);
-        } else {
-            plugin.getQuestsLogger().debug("Player " + uuid + " is already loaded.");
         }
     }
 }

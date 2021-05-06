@@ -8,13 +8,11 @@ public final class ConfigValue {
     private final String key;
     private final boolean required;
     private final String description;
-    private final String[] requirementExceptions;
 
-    public ConfigValue(String key, boolean required, String description, String... requirementExceptions) {
+    public ConfigValue(String key, boolean required, String description) {
         this.key = key;
         this.required = required;
         this.description = description;
-        this.requirementExceptions = requirementExceptions;
     }
 
     public String getKey() {
@@ -27,9 +25,5 @@ public final class ConfigValue {
 
     public String getDescription() {
         return description;
-    }
-
-    public String[] getRequirementExceptions() {
-        return requirementExceptions;
     }
 }

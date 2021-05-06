@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class QMenuCancel implements QMenu {
 
-    private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
+    private final Map<Integer, String> slotsToQuestIds = new HashMap<>();
     private final QMenuQuest superMenu;
     private final QPlayer owner;
     private final Quest quest;
@@ -32,7 +32,7 @@ public class QMenuCancel implements QMenu {
     }
 
     @Override
-    public HashMap<Integer, String> getSlotsToMenu() {
+    public Map<Integer, String> getSlotsToMenu() {
         return slotsToQuestIds;
     }
 
@@ -51,15 +51,12 @@ public class QMenuCancel implements QMenu {
         ItemStack yes = Items.QUEST_CANCEL_YES.getItem();
         ItemStack no = Items.QUEST_CANCEL_NO.getItem();
 
-        ItemStack background = Items.QUEST_CANCEL_BACKGROUND.getItem();
-        ItemMeta backgroundMeta = background.getItemMeta();
-        backgroundMeta.setDisplayName(" ");
-        background.setItemMeta(backgroundMeta);
+        ItemStack is = Items.QUEST_CANCEL_FILLER.getItem();
 
         Inventory inventory = Bukkit.createInventory(null, 27, title);
 
         for (int i = 0; i < inventory.getSize(); i++) {
-            inventory.setItem(i, background);
+            inventory.setItem(i, is.clone());
         }
 
         inventory.setItem(10, no);
@@ -77,4 +74,22 @@ public class QMenuCancel implements QMenu {
         return superMenu;
     }
 
+    public ItemStack replaceItemStack(ItemStack is, Map<String, String> placeholders) {
+        ItemStack newItemStack = is.clone();
+        List<String> lore = newItemStack.getItemMeta().getLore();
+        List<String> newLore = new ArrayList<>();
+        ItemMeta ism = newItemStack.getItemMeta();
+        if (lore != null) {
+            for (String s : lore) {
+                for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+                    s = s.replace(entry.getKey(), entry.getValue());
+                    ism.setDisplayName(ism.getDisplayName().replace(entry.getKey(), entry.getValue()));
+                }
+                newLore.add(s);
+            }
+        }
+        ism.setLore(newLore);
+        newItemStack.setItemMeta(ism);
+        return newItemStack;
+    }
 }

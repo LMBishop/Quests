@@ -1,11 +1,11 @@
 package com.leonardobishop.quests.quests.tasktypes;
 
-import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.quests.Quest;
-import com.leonardobishop.quests.quests.Task;
 import org.bukkit.event.Listener;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A task type which can be used within Quests. A {@link Quest}
@@ -77,34 +77,14 @@ public abstract class TaskType implements Listener {
     }
 
     public List<ConfigValue> getCreatorConfigValues() {
-        // not implemented here
         return Collections.emptyList();
     }
 
-    /**
-     * Called when Quests has finished registering all quests to the task type
-     * May be called several times if an operator uses /quests admin reload
-     */
     public void onReady() {
-        // not implemented here
-    }
-
-    /**
-     * Called when a player starts a quest containing a task of this type
-     */
-    public void onStart(Quest quest, Task task, UUID playerUUID) {
         // not implemented here
     }
 
     public void onDisable() {
         // not implemented here
-    }
-
-    /**
-     * Called when Quests reloads the configuration - used to detect errors in the configuration of your task type
-     */
-    public List<QuestsConfigLoader.ConfigProblem> detectProblemsInConfig(String root, HashMap<String, Object> config) {
-        // not implemented here
-        return Collections.emptyList();
     }
 }

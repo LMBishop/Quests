@@ -1,0 +1,278 @@
+# | =================================================== |
+# |      Thank you for downloading and trying out       |
+# |                       Quests                        |
+# |      https://www.spigotmc.org/resources/23696/      |
+# |         https://github.com/LMBishop/Quests/         |
+# |                                                     |
+# |                         =x=                         |
+# |                                                     |
+# |              Trying to add new quests?              |
+# |                                                     |
+# |                 Go to the 'quests'                  |
+# |               subdirectory to edit the              |
+# |                        quests                       |
+# |                                                     |
+# |                 The example quests                  |
+# |              are commented to help you              |
+# |             learn how to use the plugin             |
+# |                                                     |
+# |                         =x=                         |
+# |                                                     |
+# |              Have Discord & need help?              |
+# |       Head to the GitHub page and click on the      |
+# |           Discord link, or create an issue          |
+# | =================================================== |
+
+
+# Categories are a way of grouping up quests.
+# When a player uses /quests, a menu of categories will be presented to them.
+# When a player clicks ona category, a list of quests under that category will show.
+# If categories are disabled, all quests will be shown under one big GUI.
+# Players can access specific categories by command using /quests c [category].
+# If a quest does not have a category, it will not be shown.
+categories:
+  examples:
+    display:
+      name: "&cExample Quests"
+      lore:
+      - "&7This category contains example quests"
+      - "&7which are commented in the config."
+      - "&7The comments should guide you with"
+      - "&7how the config works."
+      - ""
+      - "&cIt is highly recommended you read this"
+      - "&csection and all the comments so you can"
+      - "&cmake the most of this plugin."
+      type: "WATER_BUCKET"
+  permissionexample:
+    display:
+      name: "&cPermission Example"
+      lore:
+      - "&7This category is an example of one which"
+      - "&7requires a permission to open."
+      - ""
+      - "&cIt is highly recommended you read this"
+      - "&csection and all the comments so you can"
+      - "&cmake the most of this plugin."
+      type: "WATER_BUCKET"
+    # This category needs the permission "quests.category.permissionexample", because the category ID is 'permissionexample'.
+    # The permission for other categories is: "quests.category.<id>".
+    permission-required: true
+
+# The items listed below are placeholder items for quests which the player cannot start.
+# You should change these for 1.8
+gui:
+  back-button:
+    name: "&cReturn"
+    lore:
+    - "&7Return to the categories menu."
+    type: "ARROW"
+  page-prev:
+    name: "&7Previous Page"
+    lore:
+    - "&7Switch the page to page &c{prevpage}."
+    type: "FEATHER"
+  page-next:
+    name: "&7Next Page"
+    lore:
+    - "&7Switch the page to page &c{nextpage}."
+    type: "FEATHER"
+  page-desc:
+    name: "&7Page &c{page}"
+    lore:
+    - "&7You are currently viewing page &c{page}."
+    type: "PAPER"
+  quest-locked-display:
+    name: "&c&lQuest Locked"
+    lore:
+    - "&7You have not completed the requirements"
+    - "&7for this quest (&c{quest}&7)."
+    - ""
+    - "&7Requires: &c{requirements}"
+    - "&7to be completed to unlock."
+    type: "RED_STAINED_GLASS_PANE"
+  quest-permission-display:
+    name: "&6&lNo Permission"
+    lore:
+    - "&7You do not have permission for this"
+    - "&7quest (&6{quest}&7)."
+    type: "BROWN_STAINED_GLASS_PANE"
+  quest-cooldown-display:
+    name: "&e&lQuest On Cooldown"
+    lore:
+    - "&7You have recently completed this quest"
+    - "&7(&e{quest}&7) and you must"
+    - "&7wait another &e{time} &7to unlock again."
+    type: "ORANGE_STAINED_GLASS_PANE"
+  quest-completed-display:
+    name: "&a&lQuest Complete"
+    lore:
+    - "&7You have completed this quest"
+    - "&7(&a{quest}&7) and cannot."
+    - "&7repeat it."
+    type: "GREEN_STAINED_GLASS_PANE"
+  quest-cancel-yes:
+    name: "&a&lConfirm Cancel"
+    lore:
+    - "&7Confirm you wish to cancel"
+    - "&7this quest and lose all"
+    - "&7progress."
+    type: "GREEN_STAINED_GLASS_PANE"
+  quest-cancel-no:
+    name: "&c&lAbort Cancel"
+    lore:
+    - "&7Return to the quest menu."
+    type: "RED_STAINED_GLASS_PANE"
+  quest-cancel-background:
+    type: "GRAY_STAINED_GLASS_PANE"
+
+options:
+  # If categories are disabled, quests will be put into one big gui.
+  categories-enabled: true
+  # If true, the gui size will automatically change based on the amount of quests inside it.
+  trim-gui-size: true
+  # Enable/disable titles
+  titles-enabled: true
+  # Players cannot start any more quests than this at a single time
+  quest-started-limit: 2
+  # Hide locked quests, quests on cooldown and completed (but not repeatable) quests
+  gui-hide-locked: false
+  # Allow players to cancel a quest (you may want to remove the cancel instructions in the global item lore)
+  allow-quest-cancel: true
+  # Titles for the GUIs
+  guinames:
+    quests-category: "Quests Categories"
+    quests-menu: "Quests"
+    daily-quests: "Daily Quests"
+    quest-cancel: "Cancel Quest"
+  # Show when quests register in console - will only show if verbose-logging-level=2. Disable if you want less console spam at startup.
+  show-quest-registrations: true
+  # Hide quests which a player cannot start due to permissions.
+  gui-hide-quests-nopermission: false
+  # Hide categories which a player cannot open due to permissions.
+  gui-hide-categories-nopermission: false
+  # Replace placeholders from PlaceholderAPI in Quests GUI items
+  gui-use-placeholderapi: false
+  # Make it so players do not have to start quest themselves
+  quest-autostart: false
+  # Automatically track quests on start, and stop tracking on completion
+  quest-autotrack: true
+  # How much quests should log, 0 = errors only, 1 = warnings, 2 = info, 3 = debug
+  verbose-logging-level: 2
+  # Automatically clean player's quest progress files when they join.
+  # These changes will not be reflected to disk.
+  # Useful if you frequently add and remove quests on a production server. Equivalent of executing /q a moddata clean, without overwriting the file.
+  soft-clean-questsprogressfile-on-join: false
+  # The above, but overwriting the file on disk with the cleaned version, so it does not soft clean on every join.
+  push-soft-clean-to-disk: false
+  performance-tweaking: # The following are measured in server ticks, multiply SECONDS by 20 to get the number of ticks.
+    quest-queue-executor-interval: 1    # how frequently Quests should execute the next check in the completion queue (def=1 - 0.05s) - increase this value if you are struggling with performance
+    quest-autosave-interval: 12000        # how frequently online players data will be autosaved (def=12000 - 10 minutes)
+  tab-completion:
+    enabled: true
+  error-checking:
+    # Allow quests to be loaded if they contain errors
+    # This may lead to errors in the console!
+    override-errors: false
+  # How many time (in seconds) plugin save placeholders
+  placeholder-cache-time: 10
+  # Whether or not the global task configuration will override per-task configuration settings
+  global-task-configuration-override: false
+
+# This switches up the entire quest system.
+# By enabling daily-quests, players will no longer be presented with the standard Quest GUI.
+# Instead, they will be presented with 5 random quests.
+# The 'requirements' section in each quest does not apply here.
+# The 'cooldown' section in each quest does not apply here - if it's done, it's done (and will be repeatable next time they get the quest).
+# The 'repeatable' section in each quest does not apply here. It will NOT be repeatable until the next day.
+# Enabling this MAY cause previous quest progress to be modified, wiped or changed irreversibly! If you're testing this on a live server, it is wise to backup
+# the Quests/playerdata/ folder! You've been warned!
+#
+# Quests BETA: this feature is a work in progress, it does not work yet!
+daily-quests:
+  enabled: false # <----- NOT YET IMPLEMENTED (THIS WILL NOT DO ANYTHING)
+
+# The global task configuration will apply to the config of each task of a specified type in each quest.
+# In the example below, every task with a type of "inventory" will have the config option "update-progress"
+# set to true. This is useful if you do not want to go through each quest if you want to update the configuration
+# for every task of a specific type.
+#
+# You must uncomment all below lines for the example to have any effect
+# vvvvvvvvvvvvvvvvvvvvvvvvv
+#global-task-configuration:
+#  types:
+#    inventory:
+#      update-progress: true
+
+global-quest-display:
+  lore:
+    append-not-started:
+      - ""
+      - "&eLeft Click &7to start this quest."
+    append-started:
+      - ""
+      - "&aYou have started this quest."
+      - "&eMiddle Click &7to track this quest."
+      - "&eRight Click &7to cancel this quest."
+    append-tracked:
+      - ""
+      - "&aYou are &etracking &athis quest."
+      - "&eMiddle Click &7to stop tracking this quest."
+      - "&eRight Click &7to cancel this quest."
+
+
+# Configure titles
+titles:
+  quest-start:
+    title: "&cQuest Started"
+    subtitle: "&7{quest}"
+  quest-complete:
+    title: "&cQuest Complete"
+    subtitle: "&7{quest}"
+
+# Configure messages
+messages:
+  time-format: "{hours}h {minutes}m"
+  quest-start: "&7Quest &c{quest} &7started!"
+  quest-complete: "&7Quest &c{quest} &7completed!"
+  quest-cancel: "&7Quest &c{quest} &7cancelled!"
+  quest-track: "&7Tracking quest &c{quest}&7."
+  quest-track-stop: "&7No longer tracking quest &c{quest}&7."
+  quest-start-limit: "&7Players are limited to &c{limit} &7started quests at a time."
+  quest-start-disabled: "&7You cannot repeat this quest."
+  quest-start-locked: "&7You have not unlocked this quest yet."
+  quest-start-cooldown: "&7You have recently completed this quest. You have to wait &c{time} &7until you are able to restart it."
+  quest-start-started: "&7You have already started this quest."
+  quest-start-permission: "&7You do not have permission to start this quest."
+  quest-category-permission: "&7You do not have permission to view this category."
+  quest-category-quest-permission: "&7You do not have permission to start this quest since it is in a category you do not have permission to view."
+  quest-cancel-notstarted: "&7You have not started this quest."
+  quest-updater: "&cQuests > &7A new version &c{newver} &7was found on Spigot (your version: &c{oldver}&7). Please update me! <3 - Link: {link}"
+  command-sub-doesntexist: "&7The specified subcommand '&c{sub}' &7does not exist."
+  command-quest-start-doesntexist: "&7The specified quest '&c{quest}&7' does not exist."
+  command-quest-general-doesntexist: "&7The specified quest '&c{quest}&7' does not exist."
+  command-category-open-disabled: "&7Categories are disabled."
+  command-category-open-doesntexist: "&7The specified category '&c{category}&7' does not exist."
+  command-quest-admin-playernotfound: "&7Player '&c{player}&7' could not be found."
+  command-quest-openquests-admin-success: "&7Opened Quest GUI for player &c{player}&7."
+  command-quest-opencategory-admin-success: "&7Opened category &c{category} &7for player &c{player}&7."
+  command-taskview-admin-fail: "&7Task type '&c{task}&7' does not exist."
+  beta-reminder: "&cQuests > &7Reminder: you are currently using a &cbeta &7version of Quests. Please send bug reports to https://github.com/fatpigsarefat/Quests/issues and check for updates regularly using &c/quests admin update&7!"
+  command-quest-admin-loaddata: "&7Quest data for '&c{player}&7' is being loaded."
+  command-quest-admin-nodata: "&7No data could be found for player &c{player}&7."
+  command-quest-admin-fullreset: "&7Data for player &c{player}&7 has been fully reset."
+  command-quest-admin-clean-success: "&7All quest progress files have been cleaned."
+  command-quest-admin-clean-fail: "&cFailed to clean quest progress files. Please report the error in the console."
+  command-quest-admin-start-faillocked: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They have not yet unlocked it."
+  command-quest-admin-start-failcooldown: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. It is still on cooldown for them."
+  command-quest-admin-start-failcomplete: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They have already completed it."
+  command-quest-admin-start-faillimit: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They have reached their quest start limit."
+  command-quest-admin-start-failstarted: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. It is already started."
+  command-quest-admin-start-failpermission: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They do not have permission."
+  command-quest-admin-start-failcategorypermission: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They do not have permission for the category which the quest is in."
+  command-quest-admin-start-failother: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7."
+  command-quest-admin-start-success: "&7Quest &c{quest} &7started for player &c{player}&7."
+  command-quest-admin-category-permission: "&7Category &c{category} &7 could not be opened for player &c{player}&7. They do not have permission to view it."
+  command-quest-admin-complete-success: "&7Quest &c{quest} &7completed for player &c{player}&7."
+  command-quest-admin-reset-success: "&7Successfully reset quest '&c{quest}&7' for player &c{player}&7."
+

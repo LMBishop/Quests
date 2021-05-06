@@ -1,28 +1,21 @@
 # | =================================================== |
-# |      Thank you for downloading and trying out       |
+# | Thank you for downloading and trying out my plugin: |
 # |                       Quests                        |
 # |      https://www.spigotmc.org/resources/23696/      |
 # |         https://github.com/LMBishop/Quests/         |
 # |                                                     |
 # |                         =x=                         |
 # |                                                     |
-# |              Trying to add new quests?              |
-# |                                                     |
-# |                 Go to the 'quests'                  |
-# |               subdirectory to edit the              |
+# |              File comments should help              |
+# |               you with the new config               |
+# |              and guide you with making              |
 # |                        quests                       |
-# |                                                     |
-# |                 The example quests                  |
-# |              are commented to help you              |
-# |             learn how to use the plugin             |
 # |                                                     |
 # |                         =x=                         |
 # |                                                     |
 # |              Have Discord & need help?              |
-# |       Head to the GitHub page and click on the      |
-# |           Discord link, or create an issue          |
+# |           https://www.discord.gg/8amrJnX            |
 # | =================================================== |
-
 
 # Categories are a way of grouping up quests.
 # When a player uses /quests, a menu of categories will be presented to them.
@@ -60,7 +53,6 @@ categories:
     permission-required: true
 
 # The items listed below are placeholder items for quests which the player cannot start.
-# You should change these for 1.8
 gui:
   back-button:
     name: "&cReturn"
@@ -123,8 +115,9 @@ gui:
     lore:
     - "&7Return to the quest menu."
     type: "RED_STAINED_GLASS_PANE"
-  quest-cancel-background:
-    type: "GRAY_STAINED_GLASS_PANE"
+  quest-cancel-filler:
+    name: "."
+    type: "RED_STAINED_GLASS_PANE"
 
 options:
   # If categories are disabled, quests will be put into one big gui.
@@ -137,7 +130,7 @@ options:
   quest-started-limit: 2
   # Hide locked quests, quests on cooldown and completed (but not repeatable) quests
   gui-hide-locked: false
-  # Allow players to cancel a quest (you may want to remove the cancel instructions in the global item lore)
+  # Allow players to cancel a quest
   allow-quest-cancel: true
   # Titles for the GUIs
   guinames:
@@ -145,39 +138,14 @@ options:
     quests-menu: "Quests"
     daily-quests: "Daily Quests"
     quest-cancel: "Cancel Quest"
-  # Show when quests register in console - will only show if verbose-logging-level=2. Disable if you want less console spam at startup.
+  # Show when quests register in console. Disable if you want less console spam at startup.
   show-quest-registrations: true
   # Hide quests which a player cannot start due to permissions.
   gui-hide-quests-nopermission: false
   # Hide categories which a player cannot open due to permissions.
   gui-hide-categories-nopermission: false
-  # Replace placeholders from PlaceholderAPI in Quests GUI items
-  gui-use-placeholderapi: false
   # Make it so players do not have to start quest themselves
   quest-autostart: false
-  # Automatically track quests on start, and stop tracking on completion
-  quest-autotrack: true
-  # How much quests should log, 0 = errors only, 1 = warnings, 2 = info, 3 = debug
-  verbose-logging-level: 2
-  # Automatically clean player's quest progress files when they join.
-  # These changes will not be reflected to disk.
-  # Useful if you frequently add and remove quests on a production server. Equivalent of executing /q a moddata clean, without overwriting the file.
-  soft-clean-questsprogressfile-on-join: false
-  # The above, but overwriting the file on disk with the cleaned version, so it does not soft clean on every join.
-  push-soft-clean-to-disk: false
-  performance-tweaking: # The following are measured in server ticks, multiply SECONDS by 20 to get the number of ticks.
-    quest-queue-executor-interval: 1    # how frequently Quests should execute the next check in the completion queue (def=1 - 0.05s) - increase this value if you are struggling with performance
-    quest-autosave-interval: 12000        # how frequently online players data will be autosaved (def=12000 - 10 minutes)
-  tab-completion:
-    enabled: true
-  error-checking:
-    # Allow quests to be loaded if they contain errors
-    # This may lead to errors in the console!
-    override-errors: false
-  # How many time (in seconds) plugin save placeholders
-  placeholder-cache-time: 10
-  # Whether or not the global task configuration will override per-task configuration settings
-  global-task-configuration-override: false
 
 # This switches up the entire quest system.
 # By enabling daily-quests, players will no longer be presented with the standard Quest GUI.
@@ -190,36 +158,7 @@ options:
 #
 # Quests BETA: this feature is a work in progress, it does not work yet!
 daily-quests:
-  enabled: false # <----- NOT YET IMPLEMENTED (THIS WILL NOT DO ANYTHING)
-
-# The global task configuration will apply to the config of each task of a specified type in each quest.
-# In the example below, every task with a type of "inventory" will have the config option "update-progress"
-# set to true. This is useful if you do not want to go through each quest if you want to update the configuration
-# for every task of a specific type.
-#
-# You must uncomment all below lines for the example to have any effect
-# vvvvvvvvvvvvvvvvvvvvvvvvv
-#global-task-configuration:
-#  types:
-#    inventory:
-#      update-progress: true
-
-global-quest-display:
-  lore:
-    append-not-started:
-      - ""
-      - "&eLeft Click &7to start this quest."
-    append-started:
-      - ""
-      - "&aYou have started this quest."
-      - "&eMiddle Click &7to track this quest."
-      - "&eRight Click &7to cancel this quest."
-    append-tracked:
-      - ""
-      - "&aYou are &etracking &athis quest."
-      - "&eMiddle Click &7to stop tracking this quest."
-      - "&eRight Click &7to cancel this quest."
-
+  enabled: false
 
 # Configure titles
 titles:
@@ -230,14 +169,28 @@ titles:
     title: "&cQuest Complete"
     subtitle: "&7{quest}"
 
+# Saving Options
+database:
+  # Chaging the type does not convert the values already stored
+  # Available values: YAML, SQL, MYSQL
+  type: YAML
+  # SQL database file name (.db for extension)
+  file_name: "quests.db"
+  # Ignore these if type is SQL or YAML
+  host: "localhost"
+  user: "database_user"
+  pass: "p4ssW0rd"
+  port: "3306"
+  name: "database_name"
+  ssl: true
+  table_prefix: "Quests_"
+
 # Configure messages
 messages:
   time-format: "{hours}h {minutes}m"
   quest-start: "&7Quest &c{quest} &7started!"
   quest-complete: "&7Quest &c{quest} &7completed!"
   quest-cancel: "&7Quest &c{quest} &7cancelled!"
-  quest-track: "&7Tracking quest &c{quest}&7."
-  quest-track-stop: "&7No longer tracking quest &c{quest}&7."
   quest-start-limit: "&7Players are limited to &c{limit} &7started quests at a time."
   quest-start-disabled: "&7You cannot repeat this quest."
   quest-start-locked: "&7You have not unlocked this quest yet."
@@ -248,9 +201,7 @@ messages:
   quest-category-quest-permission: "&7You do not have permission to start this quest since it is in a category you do not have permission to view."
   quest-cancel-notstarted: "&7You have not started this quest."
   quest-updater: "&cQuests > &7A new version &c{newver} &7was found on Spigot (your version: &c{oldver}&7). Please update me! <3 - Link: {link}"
-  command-sub-doesntexist: "&7The specified subcommand '&c{sub}' &7does not exist."
   command-quest-start-doesntexist: "&7The specified quest '&c{quest}&7' does not exist."
-  command-quest-general-doesntexist: "&7The specified quest '&c{quest}&7' does not exist."
   command-category-open-disabled: "&7Categories are disabled."
   command-category-open-doesntexist: "&7The specified category '&c{category}&7' does not exist."
   command-quest-admin-playernotfound: "&7Player '&c{player}&7' could not be found."
@@ -261,8 +212,6 @@ messages:
   command-quest-admin-loaddata: "&7Quest data for '&c{player}&7' is being loaded."
   command-quest-admin-nodata: "&7No data could be found for player &c{player}&7."
   command-quest-admin-fullreset: "&7Data for player &c{player}&7 has been fully reset."
-  command-quest-admin-clean-success: "&7All quest progress files have been cleaned."
-  command-quest-admin-clean-fail: "&cFailed to clean quest progress files. Please report the error in the console."
   command-quest-admin-start-faillocked: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They have not yet unlocked it."
   command-quest-admin-start-failcooldown: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. It is still on cooldown for them."
   command-quest-admin-start-failcomplete: "&7Quest '&c{quest}&7' could not be started for player &c{player}&7. They have already completed it."

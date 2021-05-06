@@ -1,6 +1,5 @@
 package com.leonardobishop.quests.quests.tasktypes.types;
 
-import com.leonardobishop.quests.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
@@ -10,7 +9,6 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
-import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +16,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public final class PlayerkillingTaskType extends TaskType {
@@ -27,15 +24,8 @@ public final class PlayerkillingTaskType extends TaskType {
 
     public PlayerkillingTaskType() {
         super("playerkilling", "LMBishop", "Kill a set amount of players.");
-        this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of players to be killed."));
-    }
-
-    @Override
-    public List<QuestsConfigLoader.ConfigProblem> detectProblemsInConfig(String root, HashMap<String, Object> config) {
-        ArrayList<QuestsConfigLoader.ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-        return problems;
+        this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of mobs to be killed."));
+        this.creatorConfigValues.add(new ConfigValue("hostile", false, "Only allow hostile or non-hostile mobs (unspecified = any type allowed)."));
     }
 
     @Override
@@ -56,7 +46,7 @@ public final class PlayerkillingTaskType extends TaskType {
             return;
         }
 
-        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(killer.getUniqueId(), true);
+        QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(killer.getUniqueId());
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
         for (Quest quest : super.getRegisteredQuests()) {
@@ -64,8 +54,6 @@ public final class PlayerkillingTaskType extends TaskType {
                 QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(killer, task)) continue;
-
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
                     if (taskProgress.isCompleted()) {

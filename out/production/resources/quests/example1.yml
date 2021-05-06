@@ -1,0 +1,61 @@
+# The name of this file is the quest ID. It must be alphanumeric and unique.
+
+# Everything inside of this section defines tasks the player must complete to progress.
+tasks:
+  # This is the task ID ("mining"). This can share the same name as the quest ID but MUST be unique with all other task IDs in the same quest.
+  mining:
+    # This defines what type of task this is. In this instance, it is "blockbreak" (breaking blocks)
+    # NOTE: guides to set up each type of task is on the wiki (see README)!
+    type: "blockbreak"
+    # This defines the amount of blocks which need to be broken
+    amount: 30
+  # You can have multiple tasks for each quest (example further down).
+
+# Everything inside of this section defines the display item.
+display:
+  # This is the name of the item. This allows color codes.
+  name: "&cExample I (Single Task)"
+  # This is the lore of the item if the player has not started the quest. This allows color codes and task/player placeholders.
+  lore-normal:
+    - "&cThis category is designed to show you the different"
+    - "&cattributes a quest can have."
+    - ""
+    - "&7This quest requires you to:"
+    - "&7 - Break &f30 blocks&7."
+    - ""
+    - "&7Rewards:"
+    - "&7 - &f10 &7diamonds."
+  # This lore will be appended to the bottom of the above lore when the player starts their quest.
+  # To get the players progress through a task, use {TASKID:progress}  and replace TASKID with the ID of the task.
+  lore-started:
+    - ""
+    - "&7Your current progression:"
+    - "&7 - &f{mining:progress}&7/30 blocks broken."
+  # This is the material of the item. It is recommended to stick to bukkit names.
+  type: "WOODEN_PICKAXE"
+
+# List all commands to be executed by the server when the player completes the quest. Use {player} to get the players name.
+rewards:
+  - "give {player} diamond 10"
+
+# These placeholders are accessible using PlaceholderAPI, for example %quests_tracked_p:description%
+# They are useful for putting information about the players tracked quest on a scoreboard
+# You may want to keep the names of them the same for ALL quests for this use-case
+placeholders:
+  description: "&7Break &f30 blocks &7of any type."
+  progress: " &8- &f{mining:progress}&7/30 broken"
+
+# Everything inside this section define quest-specific options
+options:
+  # This is the category for the quest, it will appear under the "examples" category. Categories can be disabled.
+  category: "examples"
+  # Set if the quest can be repeated after being completed for the first time.
+  repeatable: false
+  # Define the cooldown on quests. The above (repeatable) must be true for this to take effect.
+  cooldown:
+    # If true, players will have to wait between repeating quests.
+    enabled: true
+    # Time (in minutes)
+    time: 1440
+  # This is the relative position in the GUI
+  sort-order: 1

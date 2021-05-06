@@ -3,12 +3,19 @@ package com.leonardobishop.quests.player.questprogressfile;
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
-import com.leonardobishop.quests.api.events.*;
+import com.leonardobishop.quests.api.enums.StoreType;
+import com.leonardobishop.quests.api.events.PlayerCancelQuestEvent;
+import com.leonardobishop.quests.api.events.PlayerFinishQuestEvent;
+import com.leonardobishop.quests.api.events.PlayerStartQuestEvent;
+import com.leonardobishop.quests.api.events.PreStartQuestEvent;
 import com.leonardobishop.quests.obj.Messages;
 import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,35 +23,33 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class QuestProgressFile {
-
-    private final Map<String, QuestProgress> questProgress = new HashMap<>();
-    private final QPlayerPreferences playerPreferences;
-    private final UUID playerUUID;
+    @Getter
+    @Setter
+    private Map<String, QuestProgress> questProgress = new HashMap<>();
+    @Getter
+    @Setter
+    private UUID playerUUID;
     private final Quests plugin;
 
-    public QuestProgressFile(UUID playerUUID, QPlayerPreferences playerPreferences, Quests plugin) {
-        this.playerUUID = playerUUID;
-        this.playerPreferences = playerPreferences;
+    public QuestProgressFile(UUID player, Quests plugin) {
+        this.playerUUID = player;
         this.plugin = plugin;
     }
+
+    //TODO change back to quest id to save performance
 
     public boolean completeQuest(Quest quest) {
         QuestProgress questProgress = getQuestProgress(quest);
         questProgress.setStarted(false);
-        for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
-            taskProgress.setCompleted(false);
-            taskProgress.setProgress(null);
-        }
         questProgress.setCompleted(true);
         questProgress.setCompletedBefore(true);
         questProgress.setCompletionDate(System.currentTimeMillis());
-        if (Options.QUEST_AUTOTRACK.getBooleanValue() && !(quest.isRepeatable() && !quest.isCooldownEnabled())) {
-            trackQuest(null);
-        }
         Player player = Bukkit.getPlayer(this.playerUUID);
         if (player != null) {
             QPlayer questPlayer = QuestsAPI.getPlayerManager().getPlayer(this.playerUUID);
@@ -72,21 +77,6 @@ public class QuestProgressFile {
         return true;
     }
 
-    public void trackQuest(Quest quest) {
-        Player player = Bukkit.getPlayer(playerUUID);
-        if (quest == null) {
-            playerPreferences.setTrackedQuestId(null);
-            if (player != null) {
-                Bukkit.getPluginManager().callEvent(new PlayerStopTrackQuestEvent(player, this));
-            }
-        } else if (hasStartedQuest(quest)) {
-            playerPreferences.setTrackedQuestId(quest.getId());
-            if (player != null) {
-                Bukkit.getPluginManager().callEvent(new PlayerStartTrackQuestEvent(player, this));
-            }
-        }
-    }
-
     /**
      * Check if the player can start a quest.
      * <p>
@@ -97,7 +87,7 @@ public class QuestProgressFile {
      */
     public QuestStartResult canStartQuest(Quest quest) {
         Player p = Bukkit.getPlayer(playerUUID);
-        if (getStartedQuests().size() >= Options.QUESTS_START_LIMIT.getIntValue() && !Options.QUEST_AUTOSTART.getBooleanValue()) {
+        if (getStartedQuests().size() >= Options.QUESTS_START_LIMIT.getIntValue()) {
             return QuestStartResult.QUEST_LIMIT_REACHED;
         }
         QuestProgress questProgress = getQuestProgress(quest);
@@ -196,9 +186,6 @@ public class QuestProgressFile {
                 taskProgress.setCompleted(false);
                 taskProgress.setProgress(null);
             }
-            if (Options.QUEST_AUTOTRACK.getBooleanValue()) {
-                trackQuest(quest);
-            }
             questProgress.setCompleted(false);
             if (player != null) {
                 QPlayer questPlayer = QuestsAPI.getPlayerManager().getPlayer(this.playerUUID);
@@ -216,13 +203,6 @@ public class QuestProgressFile {
                 }
                 for (String s : quest.getStartString()) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
-                }
-            }
-            for (Task task : quest.getTasks()) {
-                try {
-                    plugin.getTaskTypeManager().getTaskType(task.getType()).onStart(quest, task, playerUUID);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
         }
@@ -269,90 +249,16 @@ public class QuestProgressFile {
         return startedQuests;
     }
 
-    /**
-     * @return {@code List<Quest>} all quest
-     * @deprecated use {@code getAllQuestsFromProgress(QuestsProgressFilter)} instead
-     * <p>
-     * Returns all {@code Quest}s a player has encountered
-     * (not to be confused with a collection of quest progress)
-     */
-    @Deprecated
-    public List<Quest> getQuestsProgress(String filter) {
-        return getAllQuestsFromProgress(QuestsProgressFilter.fromLegacy(filter));
-    }
-
-    /**
-     * Returns all {@code Quest}s a player has encountered
-     * (not to be confused with a collection of quest progress)
-     *
-     * @return {@code List<Quest>} all quests
-     */
-    public List<Quest> getAllQuestsFromProgress(QuestsProgressFilter filter) {
-        List<Quest> questsProgress = new ArrayList<>();
-        for (QuestProgress qProgress : questProgress.values()) {
-            boolean condition = false;
-            if (filter == QuestsProgressFilter.STARTED) {
-                condition = qProgress.isStarted();
-            } else if (filter == QuestsProgressFilter.COMPLETED_BEFORE) {
-                condition = qProgress.isCompletedBefore();
-            } else if (filter == QuestsProgressFilter.COMPLETED) {
-                condition = qProgress.isCompleted();
-            } else if (filter == QuestsProgressFilter.ALL) {
-                condition = true;
-            }
-            if (condition) {
-                Quest quest = plugin.getQuestManager().getQuestById(qProgress.getQuestId());
-                if (quest != null) {
-                    questsProgress.add(quest);
-                }
-            }
-        }
-        return questsProgress;
-    }
-
-    public enum QuestsProgressFilter {
-        ALL("all"),
-        COMPLETED("completed"),
-        COMPLETED_BEFORE("completedBefore"),
-        STARTED("started");
-
-        private String legacy;
-
-        QuestsProgressFilter(String legacy) {
-            this.legacy = legacy;
-        }
-
-        public static QuestsProgressFilter fromLegacy(String filter) {
-            for (QuestsProgressFilter filterEnum : QuestsProgressFilter.values()) {
-                if (filterEnum.getLegacy().equals(filter)) return filterEnum;
-            }
-            return QuestsProgressFilter.ALL;
-        }
-
-        public String getLegacy() {
-            return legacy;
-        }
-    }
-
-    /**
-     * Gets all the quest progress that it has ever encountered.
-     *
-     * @return {@code Collection<QuestProgress>} all quest progresses
-     */
-    public Collection<QuestProgress> getAllQuestProgress() {
-        return questProgress.values();
-    }
-
     public boolean hasQuestProgress(Quest quest) {
         return questProgress.containsKey(quest.getId());
     }
 
     public boolean hasStartedQuest(Quest quest) {
-        if (Options.QUEST_AUTOSTART.getBooleanValue()) {
+        if (!Options.QUEST_AUTOSTART.getBooleanValue()) {
+            return hasQuestProgress(quest) && getQuestProgress(quest).isStarted();
+        } else {
             QuestStartResult response = canStartQuest(quest);
             return response == QuestStartResult.QUEST_SUCCESS || response == QuestStartResult.QUEST_ALREADY_STARTED;
-        } else {
-            return hasQuestProgress(quest) && getQuestProgress(quest).isStarted();
         }
     }
 
@@ -398,9 +304,9 @@ public class QuestProgressFile {
     public boolean generateBlankQuestProgress(String questid) {
         if (plugin.getQuestManager().getQuestById(questid) != null) {
             Quest quest = plugin.getQuestManager().getQuestById(questid);
-            QuestProgress questProgress = new QuestProgress(plugin, quest.getId(), false, false, 0, playerUUID, false, false);
+            QuestProgress questProgress = new QuestProgress(quest.getId(), false, false, 0, playerUUID, false, false);
             for (Task task : quest.getTasks()) {
-                TaskProgress taskProgress = new TaskProgress(questProgress, task.getId(), null, playerUUID, false, false);
+                TaskProgress taskProgress = new TaskProgress(task.getId(), null, playerUUID, false, false);
                 questProgress.addTaskProgress(taskProgress);
             }
 
@@ -410,20 +316,52 @@ public class QuestProgressFile {
         return false;
     }
 
-    public QPlayerPreferences getPlayerPreferences() {
-        return playerPreferences;
+    @SneakyThrows
+    private boolean containQuestProgress(Connection connection, QuestProgress questProgress) {
+        ResultSet set = connection.prepareStatement("SELECT * FROM progress WHERE player_uuid='" + questProgress.getPlayer().toString() +
+                "' AND quest_id='" + questProgress.getQuestId() + "'").executeQuery();
+        return set.next();
     }
 
-    public void saveToDisk() {
-        saveToDisk(false, false);
+    @SneakyThrows
+    private boolean containTaskPrograss(Connection connection, TaskProgress taskProgress, String Quest_ID) {
+
+        ResultSet set = connection.prepareStatement("SELECT * FROM task_progress WHERE player_uuid='" + taskProgress.getPlayer().toString() +
+                "' AND task_id='" + taskProgress.getTaskId() + "' AND quest_id='" + Quest_ID + "'").executeQuery();
+        return set.next();
+
+
     }
 
-    public void saveToDisk(boolean disable) {
-        saveToDisk(disable, false);
-    }
+    @SneakyThrows
+    public void saveToDisk(StoreType type) {
+        System.out.println(type);
+        if (type == StoreType.MY_SQL) {
+            Connection connection = plugin.getDatabase().getConnection();
+            for (QuestProgress questProgress : questProgress.values()) {
+                if (containQuestProgress(connection, questProgress)) {
+                    connection.prepareStatement("UPDATE progress SET started=" + questProgress.isStarted() + ", completed=" + questProgress.isCompleted() + ", completition_date=" + questProgress.getCompletionDate() + " WHERE player_uuid='" + questProgress.getPlayer().toString() + "' AND quest_id='" + questProgress.getQuestId() + "'").executeUpdate();
+                } else {
+                    connection.prepareStatement("INSERT INTO progress (player_uuid,quest_id,started,completed,completed_before,completition_date) values " +
+                            "('" + questProgress.getPlayer().toString() + "','" + questProgress.getQuestId() + "'," + questProgress.isStarted() + "," + questProgress.isCompleted() + "," + questProgress.isCompletedBefore() + "," + questProgress.getCompletionDate() + ")").executeUpdate();
+                }
+                if (questProgress.getTaskProgress() == null)
+                    continue;
+                for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
+                    if (taskProgress == null)
+                        continue;
+                    if (containTaskPrograss(connection, taskProgress, questProgress.getQuestId())) {
+                        connection.prepareStatement("UPDATE task_progress SET completed=" + taskProgress.isCompleted() + ", progress=" + taskProgress.getProgress() + " WHERE player_uuid='" + taskProgress.getPlayer().toString() + "' AND quest_id='" + questProgress.getQuestId() + "'AND task_id='" + taskProgress.getTaskId()+"';").executeUpdate();
+                    } else {
+                        connection.prepareStatement("INSERT INTO task_progress (player_uuid,quest_id,task_id,completed,progress) values ('" + taskProgress.getPlayer() + "','" + questProgress.getQuestId() + "','" + taskProgress.getTaskId() + "'," + taskProgress.isCompleted() + "," + taskProgress.getProgress() + ")").executeUpdate();
+                    }
 
-    public void saveToDisk(boolean disable, boolean fullWrite) {
-        plugin.getQuestsLogger().debug("Saving player " + playerUUID + " to disk.");
+                }
+
+            }
+            return;
+        }
+
         File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
         if (!directory.exists() && !directory.isDirectory()) {
             directory.mkdirs();
@@ -435,11 +373,15 @@ public class QuestProgressFile {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
 
         YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
-        data.set("quest-progress", null);
+        //data.set("quest-progress", null);
         for (QuestProgress questProgress : questProgress.values()) {
+            if (!questProgress.isWorthSaving()) {
+                continue;
+            }
             data.set("quest-progress." + questProgress.getQuestId() + ".started", questProgress.isStarted());
             data.set("quest-progress." + questProgress.getQuestId() + ".completed", questProgress.isCompleted());
             data.set("quest-progress." + questProgress.getQuestId() + ".completed-before", questProgress.isCompletedBefore());
@@ -454,16 +396,9 @@ public class QuestProgressFile {
 
         try {
             data.save(file);
-            if (disable)
-                synchronized (this.questProgress) {
-                    for (QuestProgress questProgress : questProgress.values()) {
-                        questProgress.resetModified();
-                    }
-                }
-            else
-                for (QuestProgress questProgress : questProgress.values()) {
-                    questProgress.resetModified();
-                }
+            for (QuestProgress questProgress : questProgress.values()) {
+                questProgress.resetModified();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -473,33 +408,5 @@ public class QuestProgressFile {
         questProgress.clear();
     }
 
-    /**
-     * Removes any references to quests or tasks which are no longer defined in the config
-     */
-    public void clean() {
-        plugin.getQuestsLogger().debug("Cleaning file " + playerUUID + ".");
-        if (!plugin.getTaskTypeManager().areRegistrationsAccepted()) {
-            ArrayList<String> invalidQuests = new ArrayList<>();
-            for (String questId : this.questProgress.keySet()) {
-                Quest q;
-                if ((q = plugin.getQuestManager().getQuestById(questId)) == null) {
-                    invalidQuests.add(questId);
-                } else {
-                    ArrayList<String> invalidTasks = new ArrayList<>();
-                    for (String taskId : this.questProgress.get(questId).getTaskProgressMap().keySet()) {
-                        if (q.getTaskById(taskId) == null) {
-                            invalidTasks.add(taskId);
-                        }
-                    }
-                    for (String taskId : invalidTasks) {
-                        this.questProgress.get(questId).getTaskProgressMap().remove(taskId);
-                    }
-                }
-            }
-            for (String questId : invalidQuests) {
-                this.questProgress.remove(questId);
-            }
-        }
-    }
-
 }
+

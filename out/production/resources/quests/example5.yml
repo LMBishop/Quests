@@ -1,0 +1,38 @@
+tasks:
+  building:
+    type: "blockplace"
+    amount: 10
+display:
+  name: "&cExample V (Permission)"
+  lore-normal:
+    - "&cThis category is designed to show you the different"
+    - "&cattributes a quest can have. This quest requires"
+    - "&ccertain permissions."
+    - ""
+    - "&7This quest requires you to:"
+    - "&7 - Place &f10 &7blocks."
+    - ""
+    - "&7Rewards:"
+    - "&7 - &f$10 &7added to your in-game balance."
+  lore-started:
+    - ""
+    - "&7Your current progression:"
+    - "&7 - &f{building:progress}&7/10 blocks placed."
+  type: "GRASS_BLOCK"
+rewards:
+  - "eco give {player} 10"
+placeholders:
+  description: "&7Place &f10 &7blocks of any type."
+  progress: " &8- &f{building:progress}&7/10 blocks"
+options:
+  category: "examples"
+  requires:
+    - "example4"
+  # Unlike the previous quests, this one requires you to have the permission "quests.quest.example5" to start.
+  # The permission for other quests is: "quests.quest.<id>".
+  permission-required: true
+  repeatable: false
+  cooldown:
+    enabled: true
+    time: 1440
+  sort-order: 5

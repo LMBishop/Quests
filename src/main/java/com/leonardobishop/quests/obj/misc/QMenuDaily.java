@@ -1,8 +1,8 @@
 package com.leonardobishop.quests.obj.misc;
 
-import com.leonardobishop.quests.obj.Options;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.quests.Quest;
+import com.leonardobishop.quests.obj.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class QMenuDaily implements QMenu {
 
-    private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
+    private final Map<Integer, String> slotsToQuestIds = new HashMap<>();
     private int backButtonLocation = -1;
     private boolean backButtonEnabled = true;
     private final QMenuCategory superMenu;
@@ -40,7 +40,7 @@ public class QMenuDaily implements QMenu {
     }
 
     @Override
-    public HashMap<Integer, String> getSlotsToMenu() {
+    public Map<Integer, String> getSlotsToMenu() {
         return slotsToQuestIds;
     }
 
@@ -97,6 +97,22 @@ public class QMenuDaily implements QMenu {
 //        }
 //      return inventory;
         return Bukkit.createInventory(null, 27, title);
+    }
+
+    public ItemStack replaceItemStack(ItemStack is, Map<String, String> placeholders) {
+        ItemStack newItemStack = is.clone();
+        List<String> lore = newItemStack.getItemMeta().getLore();
+        List<String> newLore = new ArrayList<>();
+        for (String s : lore) {
+            for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+                s = s.replace(entry.getKey(), entry.getValue());
+            }
+            newLore.add(s);
+        }
+        ItemMeta ism = newItemStack.getItemMeta();
+        ism.setLore(newLore);
+        newItemStack.setItemMeta(ism);
+        return newItemStack;
     }
 
     //Implement too

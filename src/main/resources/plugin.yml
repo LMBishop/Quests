@@ -1,18 +1,13 @@
-# This will be replaced with the property "rootProject.name" in settings.gradle
-name: ${name}
+name: Quests
 
-# This will be replaced with the property "version" in build.gradle
-version: ${version}
+# This will be replaced with the property "release.version" in pom.xml upon build.
+version: 111
 
-# This will be replaced with the property "group" in build.gradle + plugin name
-# See "processResources" in build.gradle for more info
-main: ${main}
-
-website: https://github.com/LMBishop/Quests
-authors: [LMBishop, NicoNekoDev, nivcoo, Rubenicos, RodneyMKay, Auxilor, BavoVanMeel, SuSeu1414, Reinatix]
-softdepend: [ASkyBlock, BentoBox, IridiumSkyblock, uSkyBlock, Citizens, MythicMobs, PlaceholderAPI, Essentials]
+main: com.leonardobishop.quests.Quests
+author: LMBishop
+softdepend: [ASkyBlock, uSkyBlock, Citizens, PlaceholderAPI]
 prefix: Quests
-api-version: "1.13" # allows new API features but Quests will still work pre-1.13
+api-version: 1.16
 
 commands:
   quests:

@@ -1,7 +1,7 @@
 package com.leonardobishop.quests.updater;
 
-import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.obj.Messages;
+import org.bukkit.plugin.Plugin;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,20 +10,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class Updater {
  
     private static final int PROJECT_ID = 23696;
-
-    private final String installedVersion;
-    private final Quests plugin;
-
+    private String installedVersion;
     private String returnedVersion;
     private URL api;
+    private Plugin plugin;
     private boolean updateReady;
     private long lastCheck;
 
-    public Updater(Quests plugin) {
+    public Updater(Plugin plugin) {
         this.plugin = plugin;
         this.installedVersion = plugin.getDescription().getVersion();
         try {
@@ -46,11 +45,11 @@ public class Updater {
             URLConnection con = api.openConnection();
             returnedVersion = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
             if (!returnedVersion.equals(installedVersion)) {
-                plugin.getQuestsLogger().info("A new version " + returnedVersion + " was found on Spigot (your version: " + installedVersion + "). Please update me! <3 - Link: " + getLink());
+                plugin.getLogger().log(Level.INFO, "A new version " + returnedVersion + " was found on Spigot (your version: " + installedVersion + "). Please update me! <3 - Link: " + getLink());
                 updateReady = true;
             }
         } catch (IOException e) {
-            plugin.getQuestsLogger().warning("Failed to check for updates. You can check manually at " + getLink());
+            plugin.getLogger().log(Level.WARNING, "Failed to check for updates. You can check manually at " + getLink());
             // probably offline
         }
         return false;
