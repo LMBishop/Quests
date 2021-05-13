@@ -6,6 +6,7 @@ import com.leonardobishop.quests.events.MenuController;
 import com.leonardobishop.quests.menu.element.CustomMenuElement;
 import com.leonardobishop.quests.menu.element.MenuElement;
 import com.leonardobishop.quests.menu.element.QuestMenuElement;
+import com.leonardobishop.quests.menu.element.SpacerMenuElement;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.quests.Quest;
@@ -65,10 +66,16 @@ public class QuestQMenu implements QMenu {
                 if (!NumberUtils.isNumber(s)) continue;
                 int slot = Integer.parseInt(s);
                 int repeat = plugin.getConfig().getInt(path + "." + s + ".repeat");
-                ItemStack is = plugin.getItemStack(path + "." + s + ".display", plugin.getConfig());
+                MenuElement menuElement;
+                if (plugin.getConfig().contains(path + "." + s + ".display")) {
+                    ItemStack is = plugin.getItemStack(path + "." + s + ".display", plugin.getConfig());
+                    menuElement = new CustomMenuElement(is);
+                } else if (plugin.getConfig().getBoolean(path + "." + s + ".spacer", false)) {
+                    menuElement = new SpacerMenuElement();
+                } else continue; // user = idiot
 
                 for (int i = 0; i <= repeat; i++) {
-                    menuElements.put(slot + i, new CustomMenuElement(is));
+                    menuElements.put(slot + i, menuElement);
                 }
             }
         }

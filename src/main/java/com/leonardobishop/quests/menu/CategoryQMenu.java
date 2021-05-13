@@ -5,6 +5,7 @@ import com.leonardobishop.quests.events.MenuController;
 import com.leonardobishop.quests.menu.element.CategoryMenuElement;
 import com.leonardobishop.quests.menu.element.CustomMenuElement;
 import com.leonardobishop.quests.menu.element.MenuElement;
+import com.leonardobishop.quests.menu.element.SpacerMenuElement;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.util.Items;
 import com.leonardobishop.quests.util.Messages;
@@ -45,10 +46,16 @@ public class CategoryQMenu implements QMenu {
                 if (!NumberUtils.isNumber(s)) continue;
                 int slot = Integer.parseInt(s);
                 int repeat = plugin.getConfig().getInt("custom-elements.categories." + s + ".repeat");
-                ItemStack is = plugin.getItemStack("custom-elements.categories." + s + ".display", plugin.getConfig());
+                MenuElement menuElement;
+                if (plugin.getConfig().contains("custom-elements.categories." + s + ".display")) {
+                    ItemStack is = plugin.getItemStack("custom-elements.categories." + s + ".display", plugin.getConfig());
+                    menuElement = new CustomMenuElement(is);
+                } else if (plugin.getConfig().getBoolean("custom-elements.categories." + s + ".spacer", false)) {
+                    menuElement = new SpacerMenuElement();
+                } else continue; // user = idiot
 
                 for (int i = 0; i <= repeat; i++) {
-                    menuElements.put(slot + i, new CustomMenuElement(is));
+                    menuElements.put(slot + i, menuElement);
                 }
             }
         }

@@ -141,18 +141,34 @@ gui:
 #        lore:
 #          - "&7This is a custom item which can be added"
 #          - "&7to your menus. This is purely cosmetic."
+#          - ""
+#          - "&7Two empty slots should follow."
 #        type: "DIAMOND_BLOCK"
-#    1:
+#    1:   # <--- start from slot 2
+#      spacer: true # empty slot in GUI
+#      repeat: 2 # repeats for 2 slots
+#    3:   # <--- start from slot 4
 #      display:
-#        name: "&cExample Custom Item (slots 2 - 5)"
+#        name: "&cExample Custom Item (slots 4 - 7)"
 #        lore:
 #          - "&7This is a custom item which can be added"
-#          - "&7to your menus, but in slot 2 and repeated"
+#          - "&7to your menus, but in slot 4 and repeated"
 #          - "&73 times."
+#          - "&7"
+#          - "&7This will come after 2 empty slots."
+#          - "&7"
 #          - "&7This is purely cosmetic."
 #        type: "NETHERRACK"
 #      repeat: 3 # repeats for 3 more slots
 #  "c:examples": # apply to the category "examples"
+#    0:
+#      display:
+#        name: "&cExample Custom Item (slot 1)"
+#        lore:
+#          - "&7This is a custom item which can be added"
+#          - "&7to your menus. This is purely cosmetic."
+#        type: "EMERALD_BLOCK"
+#  "quests": # apply to the general quests menu IF categories are disabled
 #    0:
 #      display:
 #        name: "&cExample Custom Item (slot 1)"
