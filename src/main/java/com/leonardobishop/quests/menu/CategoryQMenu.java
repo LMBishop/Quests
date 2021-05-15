@@ -26,10 +26,10 @@ import java.util.Map;
 public class CategoryQMenu implements QMenu {
 
     private final Quests plugin;
-    private final int pageSize = 45;
     private final HashMap<Integer, MenuElement> menuElements = new HashMap<>();
     private final QPlayer owner;
 
+    private int pageSize = 45;
     private int maxElement = 0;
     private int pagePrevLocation = -1;
     private int pageNextLocation = -1;
@@ -73,6 +73,13 @@ public class CategoryQMenu implements QMenu {
 
         for (Integer integer : menuElements.keySet()) {
             if (integer + 1 > maxElement) maxElement = integer + 1;
+        }
+
+        // stop bottom row of pg1 going to pg2 if entire inv contents would fit on pg1 perfectly
+        if (maxElement > 45 && maxElement <= 54) {
+            pageSize = 54;
+        } else {
+            pageSize = 45;
         }
     }
 
