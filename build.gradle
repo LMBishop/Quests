@@ -16,14 +16,7 @@ processResources {
 repositories {
     // Spigot
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-    // ASkyBlock
-    maven {
-        url 'https://dl.bintray.com/tastybento/maven-repo'
-        credentials {
-            username = 'bintray'
-        }
-    }
-    // BentoBox
+    // ASkyBlock, BentoBox
     maven { url = 'https://repo.codemc.org/repository/maven-public/' }
     // uSkyBlock
     maven { url = 'https://raw.github.com/rlf/uSkyBlock/mvn-repo/' }
