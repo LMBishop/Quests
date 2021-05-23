@@ -45,7 +45,7 @@ dependencies {
         exclude group: 'org.yaml', module: 'snakeyaml'
     }
     // ASkyBlock
-    compileOnly ('com.wasteofplastic:askyblock:3.0.8.2') {
+    compileOnly ('com.wasteofplastic:askyblock:3.0.9.4') {
         exclude group: 'net.milkbowl.vault', module: 'VaultAPI'
     }
     // BentoBox (bSkyBlock)
