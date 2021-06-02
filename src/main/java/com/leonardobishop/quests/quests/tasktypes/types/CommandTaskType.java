@@ -44,7 +44,7 @@ public final class CommandTaskType extends TaskType {
         return creatorConfigValues;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onCommand(PlayerCommandPreprocessEvent e) {
         if (e.getPlayer().hasMetadata("NPC")) return;
 
