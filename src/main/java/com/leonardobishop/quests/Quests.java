@@ -301,7 +301,9 @@ public class Quests extends JavaPlugin {
             } catch (Exception ignored) { }
         }
         for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
-            qPlayer.getQuestProgressFile().saveToDisk(false);
+            try {
+                qPlayerManager.savePlayer(qPlayer.getPlayerUUID());
+            } catch (Exception ignored) { }
         }
         if (placeholderAPIHook != null) placeholderAPIHook.unregisterExpansion();
     }

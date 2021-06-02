@@ -6,6 +6,8 @@ import com.leonardobishop.quests.player.questprogressfile.QPlayerPreferences;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
+import com.leonardobishop.quests.storage.StorageProvider;
+import com.leonardobishop.quests.storage.YamlStorageProvider;
 import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,8 +21,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class QPlayerManager {
 
     private final Quests plugin;
+    private StorageProvider storageProvider;
 
     public QPlayerManager(Quests plugin) {
+        this.storageProvider = new YamlStorageProvider(plugin);
         this.plugin = plugin;
     }
 
@@ -44,14 +48,37 @@ public class QPlayerManager {
     }
 
     /**
-     * Unloads and saves the player to disk. Must be invoked from the main thread.
+     * Unloads and saves the player to disk.
+     *
+     * @param uuid the uuid of the player
+     * @param questProgressFile the quest progress file to save
+     */
+    public void removePlayer(UUID uuid, QuestProgressFile questProgressFile) {
+        plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + ". Main thread: " + Bukkit.isPrimaryThread());
+        qPlayers.computeIfPresent(uuid, (mapUUID, qPlayer) -> {
+            storageProvider.saveProgressFile(uuid, questProgressFile);
+            return null;
+        });
+    }
+
+    /**
+     * Saves the player to disk with a specified {@link QuestProgressFile}.
+     *
+     * @param uuid the uuid of the player
+     * @param questProgressFile the quest progress file to associate with and save
+     */
+    public void savePlayer(UUID uuid, QuestProgressFile questProgressFile) {
+        plugin.getQuestsLogger().debug("Saving player " + uuid + ". Main thread: " + Bukkit.isPrimaryThread());
+        storageProvider.saveProgressFile(uuid, questProgressFile);
+    }
+
+    /**
+     * Saves the player to disk using the {@link QuestProgressFile} associated by the {@link QPlayerManager}
      *
      * @param uuid the uuid of the player
      */
-    public void removePlayer(UUID uuid) {
-        plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + ".");
-        this.getPlayer(uuid).getQuestProgressFile().saveToDisk(Options.QUEST_LEAVE_ASYNC.getBooleanValue());
-        qPlayers.remove(uuid);
+    public void savePlayer(UUID uuid) {
+        savePlayer(uuid, getPlayer(uuid).getQuestProgressFile());
     }
 
     /**
@@ -68,11 +95,6 @@ public class QPlayerManager {
         return qPlayers.values();
     }
 
-    //Better to use the second method, so we know if we only load the data
-    //public void loadPlayer(UUID uuid) {
-    //   loadPlayer(uuid, false);
-    //}
-
     /**
      * Load the player from disk if they exist, otherwise create a new {@link QuestProgressFile}.
      * This will have no effect if player is already loaded. Can be invoked asynchronously.
@@ -80,53 +102,10 @@ public class QPlayerManager {
      * @param uuid the uuid of the player
      */
     public void loadPlayer(UUID uuid) {
-        plugin.getQuestsLogger().debug("Loading player " + uuid + " from disk. Main thread: " + Bukkit.isPrimaryThread());
+        plugin.getQuestsLogger().debug("Loading player " + uuid + ". Main thread: " + Bukkit.isPrimaryThread());
         qPlayers.computeIfAbsent(uuid, s -> {
-            QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
-
-            try {
-                File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
-                if (directory.exists() && directory.isDirectory()) {
-                    File file = new File(plugin.getDataFolder() + File.separator + "playerdata" + File.separator + uuid.toString() + ".yml");
-                    if (file.exists()) {
-                        YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
-                        plugin.getQuestsLogger().debug("Player " + uuid + " has a valid quest progress file.");
-                        if (data.isConfigurationSection("quest-progress")) { //Same job as "isSet" + it checks if is CfgSection
-                            for (String id : data.getConfigurationSection("quest-progress").getKeys(false)) {
-                                boolean started = data.getBoolean("quest-progress." + id + ".started");
-                                boolean completed = data.getBoolean("quest-progress." + id + ".completed");
-                                boolean completedBefore = data.getBoolean("quest-progress." + id + ".completed-before");
-                                long completionDate = data.getLong("quest-progress." + id + ".completion-date");
-
-                                QuestProgress questProgress = new QuestProgress(plugin, id, completed, completedBefore, completionDate, uuid, started, true);
-
-                                if (data.isConfigurationSection("quest-progress." + id + ".task-progress")) {
-                                    for (String taskid : data.getConfigurationSection("quest-progress." + id + ".task-progress").getKeys(false)) {
-                                        boolean taskCompleted = data.getBoolean("quest-progress." + id + ".task-progress." + taskid + ".completed");
-                                        Object taskProgression = data.get("quest-progress." + id + ".task-progress." + taskid + ".progress");
-
-                                        TaskProgress taskProgress = new TaskProgress(questProgress, taskid, taskProgression, uuid, taskCompleted, false);
-                                        questProgress.addTaskProgress(taskProgress);
-                                    }
-                                }
-
-                                questProgressFile.addQuestProgress(questProgress);
-                            }
-                        }
-                    } else {
-                        plugin.getQuestsLogger().debug("Player " + uuid + " does not have a quest progress file.");
-                    }
-                }
-            } catch (Exception ex) {
-                plugin.getQuestsLogger().severe("Failed to load player: " + uuid + "! This WILL cause errors.");
-                ex.printStackTrace();
-                // fuck
-            }
-
+            QuestProgressFile questProgressFile = storageProvider.loadProgressFile(uuid);
             return new QPlayer(uuid, questProgressFile, new QPlayerPreferences(null), plugin);
         });
-//        else {
-//            plugin.getQuestsLogger().debug("Player " + uuid + " is already loaded.");
-//        }
     }
 }

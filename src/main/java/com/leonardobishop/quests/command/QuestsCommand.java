@@ -173,7 +173,7 @@ public class QuestsCommand implements TabExecutor {
                                     plugin.getPlayerManager().loadPlayer(uuid);
                                     QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
                                     qPlayer.getQuestProgressFile().clean();
-                                    qPlayer.getQuestProgressFile().saveToDisk(false);
+                                    plugin.getPlayerManager().savePlayer(uuid, qPlayer.getQuestProgressFile());
                                     if (Bukkit.getPlayer(uuid) == null) {
                                         plugin.getPlayerManager().dropPlayer(uuid);
                                     }
@@ -285,7 +285,7 @@ public class QuestsCommand implements TabExecutor {
                             }
                             QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                             questProgressFile.clear();
-                            questProgressFile.saveToDisk(false);
+                            plugin.getPlayerManager().savePlayer(uuid, questProgressFile);
                             if (Bukkit.getPlayer(uuid) == null) {
                                 plugin.getPlayerManager().dropPlayer(uuid);
                             }
@@ -355,7 +355,7 @@ public class QuestsCommand implements TabExecutor {
                         }
                         if (args[2].equalsIgnoreCase("reset")) {
                             questProgressFile.generateBlankQuestProgress(quest);
-                            questProgressFile.saveToDisk(false);
+                            plugin.getPlayerManager().savePlayer(uuid, questProgressFile);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         } else if (args[2].equalsIgnoreCase("start")) {
@@ -382,12 +382,12 @@ public class QuestsCommand implements TabExecutor {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCATEGORYPERMISSION.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                                 return true;
                             }
-                            questProgressFile.saveToDisk(false);
+                            plugin.getPlayerManager().savePlayer(uuid, questProgressFile);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         } else if (args[2].equalsIgnoreCase("complete")) {
                             qPlayer.completeQuest(quest);
-                            questProgressFile.saveToDisk(false);
+                            plugin.getPlayerManager().savePlayer(uuid, questProgressFile);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         }

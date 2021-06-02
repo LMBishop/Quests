@@ -36,6 +36,20 @@ public class QuestProgress {
         this.modified = modified;
     }
 
+    public QuestProgress(QuestProgress questProgress) {
+        this.plugin = questProgress.plugin;
+        for (Map.Entry<String, TaskProgress> progressEntry : questProgress.taskProgress.entrySet()) {
+            taskProgress.put(progressEntry.getKey(), new TaskProgress(progressEntry.getValue()));
+        }
+        this.questid = questProgress.questid;
+        this.player = questProgress.player;
+        this.started = questProgress.started;
+        this.completed = questProgress.completed;
+        this.completedBefore = questProgress.completedBefore;
+        this.completionDate = questProgress.completionDate;
+        this.modified = questProgress.modified;
+    }
+
     public String getQuestId() {
         return questid;
     }

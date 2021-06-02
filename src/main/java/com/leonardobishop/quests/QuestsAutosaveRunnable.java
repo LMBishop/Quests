@@ -1,6 +1,7 @@
 package com.leonardobishop.quests;
 
 import com.leonardobishop.quests.player.QPlayer;
+import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -36,8 +37,8 @@ public class QuestsAutosaveRunnable extends BukkitRunnable {
         }
 
         if (Bukkit.getPlayer(player) != null) {
-            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player);
-            qPlayer.getQuestProgressFile().saveToDisk(Options.QUEST_AUTOSAVE_ASYNC.getBooleanValue());
+            QuestProgressFile clonedProgressFile = new QuestProgressFile(plugin.getPlayerManager().getPlayer(player).getQuestProgressFile());
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getPlayerManager().removePlayer(player, clonedProgressFile));
         }
     }
 

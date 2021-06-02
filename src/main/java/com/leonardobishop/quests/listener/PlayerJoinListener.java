@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.listener;
 
 import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.util.Messages;
 import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
@@ -22,7 +23,6 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onAsyncJoin(AsyncPlayerPreLoginEvent event) {
-        if (!Options.QUEST_JOIN_ASYNC.getBooleanValue()) return;
         plugin.getPlayerManager().loadPlayer(event.getUniqueId());
     }
 
@@ -31,9 +31,10 @@ public class PlayerJoinListener implements Listener {
         UUID playerUuid = event.getPlayer().getUniqueId();
         plugin.getPlayerManager().loadPlayer(playerUuid);
         if (Options.SOFT_CLEAN_QUESTSPROGRESSFILE_ON_JOIN.getBooleanValue()) {
-            plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile().clean();
+            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(playerUuid);
+            qPlayer.getQuestProgressFile().clean();
             if (Options.PUSH_SOFT_CLEAN_TO_DISK.getBooleanValue()) {
-                plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile().saveToDisk(false);
+                plugin.getPlayerManager().savePlayer(playerUuid, qPlayer.getQuestProgressFile());
             }
         }
         if (plugin.getDescription().getVersion().contains("beta") && event.getPlayer().hasPermission("quests.admin")) {

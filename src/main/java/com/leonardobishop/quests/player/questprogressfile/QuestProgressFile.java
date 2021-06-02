@@ -31,6 +31,14 @@ public class QuestProgressFile {
         this.plugin = plugin;
     }
 
+    public QuestProgressFile(QuestProgressFile questProgressFile) {
+        for (Map.Entry<String, QuestProgress> progressEntry : questProgressFile.questProgress.entrySet()) {
+            questProgress.put(progressEntry.getKey(), new QuestProgress(progressEntry.getValue()));
+        }
+        this.playerUUID = questProgressFile.playerUUID;
+        this.plugin = questProgressFile.plugin;
+    }
+
     public void addQuestProgress(QuestProgress questProgress) {
         this.questProgress.put(questProgress.getQuestId(), questProgress);
     }
@@ -202,59 +210,6 @@ public class QuestProgressFile {
         addQuestProgress(questProgress);
     }
 
-    /**
-     * Save the quest progress file to disk at /playerdata/[uuid]. Must be invoked from the main thread.
-     *
-     * @param async save the file asynchronously
-     */
-    public void saveToDisk(boolean async) {
-        plugin.getQuestsLogger().debug("Saving player " + playerUUID + " to disk. Main thread: " + async);
-        List<QuestProgress> questProgressValues = new ArrayList<>(questProgress.values());
-        File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
-        if (!directory.exists() && !directory.isDirectory()) {
-            directory.mkdirs();
-        }
-
-        if (async) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                save(questProgressValues);
-            });
-        } else {
-            save(questProgressValues);
-        }
-    }
-
-    private void save(List<QuestProgress> questProgressValues) {
-        File file = new File(plugin.getDataFolder() + File.separator + "playerdata" + File.separator + playerUUID.toString() + ".yml");
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
-        data.set("quest-progress", null);
-        for (QuestProgress questProgress : questProgressValues) {
-            data.set("quest-progress." + questProgress.getQuestId() + ".started", questProgress.isStarted());
-            data.set("quest-progress." + questProgress.getQuestId() + ".completed", questProgress.isCompleted());
-            data.set("quest-progress." + questProgress.getQuestId() + ".completed-before", questProgress.isCompletedBefore());
-            data.set("quest-progress." + questProgress.getQuestId() + ".completion-date", questProgress.getCompletionDate());
-            for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
-                data.set("quest-progress." + questProgress.getQuestId() + ".task-progress." + taskProgress.getTaskId() + ".completed", taskProgress
-                        .isCompleted());
-                data.set("quest-progress." + questProgress.getQuestId() + ".task-progress." + taskProgress.getTaskId() + ".progress", taskProgress
-                        .getProgress());
-            }
-        }
-        try {
-            data.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void clear() {
         questProgress.clear();
     }
@@ -262,6 +217,7 @@ public class QuestProgressFile {
     /**
      * Removes any references to quests or tasks which are no longer defined in the config.
      */
+    @Deprecated
     public void clean() {
         plugin.getQuestsLogger().debug("Cleaning file " + playerUUID + ".");
         if (!plugin.getTaskTypeManager().areRegistrationsAccepted()) {
