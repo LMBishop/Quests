@@ -2,7 +2,7 @@ package com.leonardobishop.quests.menu.element;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.menu.QuestQMenu;
-import com.leonardobishop.quests.quests.Category;
+import com.leonardobishop.quests.quest.Category;
 import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

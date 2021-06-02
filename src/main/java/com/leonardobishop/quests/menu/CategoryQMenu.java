@@ -1,7 +1,7 @@
 package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.events.MenuController;
+import com.leonardobishop.quests.listener.MenuController;
 import com.leonardobishop.quests.menu.element.CategoryMenuElement;
 import com.leonardobishop.quests.menu.element.CustomMenuElement;
 import com.leonardobishop.quests.menu.element.MenuElement;

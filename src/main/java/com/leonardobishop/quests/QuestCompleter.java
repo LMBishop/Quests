@@ -4,8 +4,8 @@ import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
-import com.leonardobishop.quests.quests.Quest;
-import com.leonardobishop.quests.quests.Task;
+import com.leonardobishop.quests.quest.Quest;
+import com.leonardobishop.quests.quest.Task;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

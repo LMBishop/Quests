@@ -1,8 +1,8 @@
 package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.quests.Category;
-import com.leonardobishop.quests.quests.Quest;
+import com.leonardobishop.quests.quest.Category;
+import com.leonardobishop.quests.quest.Quest;
 
 public class QuestSortWrapper implements Comparable<QuestSortWrapper> {
 

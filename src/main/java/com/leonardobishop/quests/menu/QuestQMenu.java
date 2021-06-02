@@ -2,14 +2,14 @@ package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
-import com.leonardobishop.quests.events.MenuController;
+import com.leonardobishop.quests.listener.MenuController;
 import com.leonardobishop.quests.menu.element.CustomMenuElement;
 import com.leonardobishop.quests.menu.element.MenuElement;
 import com.leonardobishop.quests.menu.element.QuestMenuElement;
 import com.leonardobishop.quests.menu.element.SpacerMenuElement;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
-import com.leonardobishop.quests.quests.Quest;
+import com.leonardobishop.quests.quest.Quest;
 import com.leonardobishop.quests.util.Items;
 import com.leonardobishop.quests.util.Options;
 import org.apache.commons.lang.math.NumberUtils;

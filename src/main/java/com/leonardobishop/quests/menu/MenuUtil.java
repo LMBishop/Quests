@@ -1,8 +1,8 @@
 package com.leonardobishop.quests.menu;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.events.MenuController;
-import com.leonardobishop.quests.quests.Quest;
+import com.leonardobishop.quests.listener.MenuController;
+import com.leonardobishop.quests.quest.Quest;
 import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

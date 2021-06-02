@@ -1,23 +1,11 @@
 package com.leonardobishop.quests.player.questprogressfile;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.api.QuestsAPI;
-import com.leonardobishop.quests.api.enums.QuestStartResult;
-import com.leonardobishop.quests.api.events.PlayerCancelQuestEvent;
-import com.leonardobishop.quests.api.events.PlayerFinishQuestEvent;
-import com.leonardobishop.quests.api.events.PlayerStartQuestEvent;
-import com.leonardobishop.quests.api.events.PlayerStartTrackQuestEvent;
-import com.leonardobishop.quests.api.events.PlayerStopTrackQuestEvent;
-import com.leonardobishop.quests.api.events.PreStartQuestEvent;
 import com.leonardobishop.quests.player.QPlayer;
-import com.leonardobishop.quests.quests.Quest;
-import com.leonardobishop.quests.quests.Task;
-import com.leonardobishop.quests.util.Messages;
-import com.leonardobishop.quests.util.Options;
+import com.leonardobishop.quests.quest.Quest;
+import com.leonardobishop.quests.quest.Task;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
