@@ -234,6 +234,34 @@ options:
   global-task-configuration-override: false
   # Whether or not the global display configuration will override per-quest display settins
   global-quest-display-configuration-override: false
+  # Storage options
+  storage:
+    # Either 'yaml' (flatfile) or 'mysql' (network)
+    provider: "yaml"
+    # The following is only applicable for database storage providers (e.g. mysql)
+    database-settings:
+      # The name of the database. This database should already exist!
+      database-name: "minecraft"
+      network:
+        username: "root"
+        password: ""
+        address: "localhost"
+        port: 3306
+      # This plugin uses 'HikariCP' for connection management, the pooling configuration can be changed here
+      connection-pool-settings:
+        # The maximum number of connections to keep open with the database (def=8)
+        maximum-pool-size: 8
+        # The minimum number of connections to keep open with the database (def=8)
+        minimum-pool-size: 8
+        # The maximum time (in milliseconds) to keep a single connection open (def=1800000 - 30 min)
+        connection-lifetime: 1800000
+        # The time (in milliseconds) to ping the database (0 to disable, def=0)
+        heartbeat-time: 0
+        # The time (in milliseconds) the plugin will wait for a response by the database (def=0)
+        timeout: 5000
+      # The prefix each table will use
+      table-prefix: "quests_"
+
 
 # This switches up the entire quest system.
 # By enabling daily-quests, players will no longer be presented with the standard Quest GUI.
