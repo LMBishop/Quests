@@ -25,7 +25,7 @@ public final class EnchantingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public EnchantingTaskType() {
-        super("enchanting", "toasted", "Enchant a certain amount of items.");
+        super("enchanting", TaskUtils.TASK_ATTRIBUTION_STRING, "Enchant a certain amount of items.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of items you need to enchant."));
         this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }

@@ -25,7 +25,7 @@ public final class CitizensInteractTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public CitizensInteractTaskType() {
-        super("citizens_interact", "LMBishop", "Interact with an NPC to complete the quest.");
+        super("citizens_interact", TaskUtils.TASK_ATTRIBUTION_STRING, "Interact with an NPC to complete the quest.");
         this.creatorConfigValues.add(new ConfigValue("npc-name", true, "Name of the NPC."));
         this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }

@@ -32,7 +32,7 @@ public final class InventoryTaskType extends TaskType {
     private final Quests plugin;
     
     public InventoryTaskType(Quests plugin) {
-        super("inventory", "LMBishop", "Obtain a set of items.");
+        super("inventory", TaskUtils.TASK_ATTRIBUTION_STRING, "Obtain a set of items.");
         this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of item to retrieve."));
         this.creatorConfigValues.add(new ConfigValue("item", true, "Name or ID of item."));

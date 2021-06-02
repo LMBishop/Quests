@@ -10,6 +10,7 @@ import com.leonardobishop.quests.quests.Quest;
 import com.leonardobishop.quests.quests.Task;
 import com.leonardobishop.quests.quests.tasktypes.ConfigValue;
 import com.leonardobishop.quests.quests.tasktypes.TaskType;
+import com.leonardobishop.quests.quests.tasktypes.TaskUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -25,7 +26,7 @@ public final class PermissionTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public PermissionTaskType(Quests plugin) {
-        super("permission", "LMBishop", "Test if a player has a permission");
+        super("permission", TaskUtils.TASK_ATTRIBUTION_STRING, "Test if a player has a permission");
         this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("permission", true, "The required permission."));
     }

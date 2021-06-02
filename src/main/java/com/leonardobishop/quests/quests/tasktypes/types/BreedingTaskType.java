@@ -27,7 +27,7 @@ public final class BreedingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public BreedingTaskType() {
-        super("breeding", "toasted", "Breed a set amount of animals.");
+        super("breeding", TaskUtils.TASK_ATTRIBUTION_STRING, "Breed a set amount of animals.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of animals to be bred"));
         this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }

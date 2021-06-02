@@ -26,7 +26,7 @@ public final class IridiumSkyblockValueType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public IridiumSkyblockValueType() {
-        super("iridiumskyblock_value", "LMBishop", "Reach a certain island value for Iridium Skyblock.");
+        super("iridiumskyblock_value", TaskUtils.TASK_ATTRIBUTION_STRING, "Reach a certain island value for Iridium Skyblock.");
         this.creatorConfigValues.add(new ConfigValue("value", true, "Minimum island value needed."));
     }
 

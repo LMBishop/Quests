@@ -29,7 +29,7 @@ public final class PlaceholderAPIEvaluateTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public PlaceholderAPIEvaluateTaskType(Quests plugin) {
-        super("placeholderapi_evaluate", "LMBishop", "Evaluate the result of a placeholder");
+        super("placeholderapi_evaluate", TaskUtils.TASK_ATTRIBUTION_STRING, "Evaluate the result of a placeholder");
         this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("placeholder", true, "The placeholder string (including %%)."));
         this.creatorConfigValues.add(new ConfigValue("evaluates", true, "What it should evaluate to be marked as complete."));

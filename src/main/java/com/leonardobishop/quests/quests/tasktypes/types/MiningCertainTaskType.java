@@ -29,7 +29,7 @@ public final class MiningCertainTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public MiningCertainTaskType(Quests plugin) {
-        super("blockbreakcertain", "LMBishop", "Break a set amount of a specific block.");
+        super("blockbreakcertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Break a set amount of a specific block.");
         this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of blocks to be broken."));
         this.creatorConfigValues.add(new ConfigValue("block", true, "Name or ID of block.", "block")); // Can use name:datacode

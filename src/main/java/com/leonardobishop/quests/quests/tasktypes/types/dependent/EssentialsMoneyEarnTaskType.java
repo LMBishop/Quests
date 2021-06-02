@@ -25,7 +25,7 @@ public class EssentialsMoneyEarnTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public EssentialsMoneyEarnTaskType() {
-        super("essentials_moneyearn", "LMBishop", "Earn a set amount of money.");
+        super("essentials_moneyearn", TaskUtils.TASK_ATTRIBUTION_STRING, "Earn a set amount of money.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of money to earn."));
     }
 

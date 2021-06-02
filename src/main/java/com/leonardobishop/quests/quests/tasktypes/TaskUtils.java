@@ -8,6 +8,8 @@ import java.util.List;
 
 public class TaskUtils {
 
+    public static String TASK_ATTRIBUTION_STRING = "<built-in>";
+
     public static boolean validateWorld(Player player, Task task) {
         return validateWorld(player.getLocation().getWorld().getName(), task.getConfigValue("worlds"));
     }

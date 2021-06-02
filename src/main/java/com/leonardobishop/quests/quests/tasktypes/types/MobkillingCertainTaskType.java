@@ -28,7 +28,7 @@ public final class MobkillingCertainTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public MobkillingCertainTaskType() {
-        super("mobkillingcertain", "LMBishop", "Kill a set amount of a specific entity type.");
+        super("mobkillingcertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of a specific entity type.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of mobs to be killed."));
         this.creatorConfigValues.add(new ConfigValue("mob", true, "Name of mob."));
         this.creatorConfigValues.add(new ConfigValue("name", false, "Only allow a specific name for mob (unspecified = any name allowed)."));

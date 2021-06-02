@@ -22,7 +22,7 @@ import java.util.List;
 public class ShopGUIPlusSellCertainTaskType extends TaskType {
 
     public ShopGUIPlusSellCertainTaskType() {
-        super("shopguiplus_sellcertain", "LMBishop", "Sell a given item from to a ShopGUI+ shop");
+        super("shopguiplus_sellcertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Sell a given item from to a ShopGUI+ shop");
     }
 
     @Override

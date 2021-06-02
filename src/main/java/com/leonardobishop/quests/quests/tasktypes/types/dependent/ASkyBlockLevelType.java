@@ -24,7 +24,7 @@ public final class ASkyBlockLevelType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public ASkyBlockLevelType() {
-        super("askyblock_level", "LMBishop", "Reach a certain island level for ASkyBlock.");
+        super("askyblock_level", TaskUtils.TASK_ATTRIBUTION_STRING, "Reach a certain island level for ASkyBlock.");
         this.creatorConfigValues.add(new ConfigValue("level", true, "Minimum island level needed."));
     }
 

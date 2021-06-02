@@ -24,7 +24,7 @@ public final class FarmingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public FarmingTaskType() {
-        super("farming", "LMBishop", "Break a set amount of a crop.");
+        super("farming", TaskUtils.TASK_ATTRIBUTION_STRING, "Break a set amount of a crop.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of crops to be broken."));
         this.creatorConfigValues.add(new ConfigValue("crop", true, "Name or ID of crop."));
         this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));

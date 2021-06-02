@@ -28,7 +28,7 @@ public final class PlaytimeTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public PlaytimeTaskType(Quests plugin) {
-        super("playtime", "Reinatix", "Track the amount of playing time a user has been on");
+        super("playtime", TaskUtils.TASK_ATTRIBUTION_STRING, "Track the amount of playing time a user has been on");
         this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("minutes", true, "Time in minutes."));
     }

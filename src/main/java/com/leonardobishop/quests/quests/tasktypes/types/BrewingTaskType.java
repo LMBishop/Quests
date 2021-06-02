@@ -33,7 +33,7 @@ public final class BrewingTaskType extends TaskType {
     private HashMap<Location, UUID> brewingStands = new HashMap<>();
 
     public BrewingTaskType() {
-        super("brewing", "LMBishop", "Brew a potion.");
+        super("brewing", TaskUtils.TASK_ATTRIBUTION_STRING, "Brew a potion.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of potions to be brewed."));
         this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }

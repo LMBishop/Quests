@@ -31,7 +31,7 @@ public final class CitizensDeliverTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public CitizensDeliverTaskType(Quests plugin) {
-        super("citizens_deliver", "LMBishop", "Deliver a set of items to a NPC.");
+        super("citizens_deliver", TaskUtils.TASK_ATTRIBUTION_STRING, "Deliver a set of items to a NPC.");
         this.plugin = plugin;
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of item to retrieve."));
         this.creatorConfigValues.add(new ConfigValue("item", true, "Name or ID of item."));

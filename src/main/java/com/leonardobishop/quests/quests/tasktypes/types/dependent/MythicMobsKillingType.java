@@ -26,7 +26,7 @@ public final class MythicMobsKillingType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public MythicMobsKillingType() {
-        super("mythicmobs_killing", "LMBishop", "Kill a set amount of a MythicMobs entity.");
+        super("mythicmobs_killing", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of a MythicMobs entity.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of mobs to be killed."));
         this.creatorConfigValues.add(new ConfigValue("name", true, "The 'internal name' of the MythicMob."));
     }

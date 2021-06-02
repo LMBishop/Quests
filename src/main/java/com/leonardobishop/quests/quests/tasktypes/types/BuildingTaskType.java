@@ -24,7 +24,7 @@ public final class BuildingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public BuildingTaskType() {
-        super("blockplace", "LMBishop", "Place a set amount of blocks.");
+        super("blockplace", TaskUtils.TASK_ATTRIBUTION_STRING, "Place a set amount of blocks.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of blocks to be placed."));
         this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }

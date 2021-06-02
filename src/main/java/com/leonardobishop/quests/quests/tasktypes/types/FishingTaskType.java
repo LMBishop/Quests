@@ -25,7 +25,7 @@ public final class FishingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public FishingTaskType() {
-        super("fishing", "LMBishop", "Catch a set amount of items from the sea.");
+        super("fishing", TaskUtils.TASK_ATTRIBUTION_STRING, "Catch a set amount of items from the sea.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of fish to be caught."));
         this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }

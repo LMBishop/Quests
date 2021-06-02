@@ -28,7 +28,7 @@ public final class PositionTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public PositionTaskType() {
-        super("position", "LMBishop", "Reach a set of co-ordinates.");
+        super("position", TaskUtils.TASK_ATTRIBUTION_STRING, "Reach a set of co-ordinates.");
         this.creatorConfigValues.add(new ConfigValue("x", true, "X position."));
         this.creatorConfigValues.add(new ConfigValue("y", true, "Y position."));
         this.creatorConfigValues.add(new ConfigValue("z", true, "Z position."));

@@ -24,7 +24,7 @@ public final class ExpEarnTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
     
     public ExpEarnTaskType() {
-        super("expearn", "toasted", "Earn a set amount of exp.");
+        super("expearn", TaskUtils.TASK_ATTRIBUTION_STRING, "Earn a set amount of exp.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of exp that needs to be earned."));
         this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }

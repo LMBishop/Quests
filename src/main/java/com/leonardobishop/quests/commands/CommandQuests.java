@@ -141,6 +141,15 @@ public class CommandQuests implements TabExecutor {
                     } else if (args[1].equalsIgnoreCase("wiki")) {
                         sender.sendMessage(ChatColor.RED + "Link to Quests wiki: " + ChatColor.GRAY + "https://github.com/LMBishop/Quests/wiki");
                         return true;
+                    } else if (args[1].equalsIgnoreCase("about")) {
+                        sender.sendMessage(ChatColor.RED + "Quests " + ChatColor.BOLD + "v" + plugin.getDescription().getVersion());
+                        sender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Source code: " + ChatColor.GRAY + "https://github.com/LMBishop/Quests/");
+                        sender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Report an issue: " + ChatColor.GRAY + "https://github.com/LMBishop/Quests/issues");
+                        sender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Wiki: " + ChatColor.GRAY + "https://github.com/LMBishop/Quests/wiki");
+                        sender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Licensed under the GPLv3");
+                        sender.sendMessage(ChatColor.GRAY + "Many contributors have written source code and task types for Quests," +
+                                " please see the GitHub link for an up-to-date list of contributors.");
+                        return true;
                     }
                 } else if (args.length == 3) {
                     if (args[1].equalsIgnoreCase("opengui")) {
@@ -571,6 +580,7 @@ public class CommandQuests implements TabExecutor {
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a itemstack " + ChatColor.DARK_GRAY + ": print information about the current held ItemStack");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a update " + ChatColor.DARK_GRAY + ": check for updates");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a wiki " + ChatColor.DARK_GRAY + ": get a link to the Quests wiki");
+            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a about " + ChatColor.DARK_GRAY + ": get information about Quests");
         }
         sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----=[" + ChatColor.RED + " requires permission: quests.admin " +
                 ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "]=-----");
@@ -619,7 +629,7 @@ public class CommandQuests implements TabExecutor {
                     return tabCompleteQuests(args[1]);
                 } else if (args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin")
                         && sender.hasPermission("quests.admin")) {
-                    List<String> options = Arrays.asList("opengui", "moddata", "types", "reload", "update", "config", "info", "wiki");
+                    List<String> options = Arrays.asList("opengui", "moddata", "types", "reload", "update", "config", "info", "wiki", "about");
                     return matchTabComplete(args[1], options);
                 }
             } else if (args.length == 3) {

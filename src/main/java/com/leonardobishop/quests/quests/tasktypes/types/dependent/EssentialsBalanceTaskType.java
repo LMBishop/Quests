@@ -29,7 +29,7 @@ public class EssentialsBalanceTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public EssentialsBalanceTaskType() {
-        super("essentials_balance", "LMBishop", "Reach a set amount of money.");
+        super("essentials_balance", TaskUtils.TASK_ATTRIBUTION_STRING, "Reach a set amount of money.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of money to reach."));
     }
 

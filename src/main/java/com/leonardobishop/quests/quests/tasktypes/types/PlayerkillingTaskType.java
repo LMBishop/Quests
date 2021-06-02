@@ -26,7 +26,7 @@ public final class PlayerkillingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public PlayerkillingTaskType() {
-        super("playerkilling", "LMBishop", "Kill a set amount of players.");
+        super("playerkilling", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of players.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of players to be killed."));
     }
 

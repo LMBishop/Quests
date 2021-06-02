@@ -27,7 +27,7 @@ public final class MilkingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public MilkingTaskType() {
-        super("milking", "LMBishop", "Milk a set amount of cows.");
+        super("milking", TaskUtils.TASK_ATTRIBUTION_STRING, "Milk a set amount of cows.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of cows to be milked."));
         this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));
     }

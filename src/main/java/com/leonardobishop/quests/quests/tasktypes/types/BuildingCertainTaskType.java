@@ -27,7 +27,7 @@ public final class BuildingCertainTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public BuildingCertainTaskType() {
-        super("blockplacecertain", "LMBishop", "Place a set amount of a specific block.");
+        super("blockplacecertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Place a set amount of a specific block.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of blocks to be placed."));
         this.creatorConfigValues.add(new ConfigValue("block", true, "Name or ID of block."));
         this.creatorConfigValues.add(new ConfigValue("data", false, "Data code for block."));

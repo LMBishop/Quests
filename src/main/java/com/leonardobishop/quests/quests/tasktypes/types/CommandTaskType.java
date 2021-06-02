@@ -25,7 +25,7 @@ public final class CommandTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public CommandTaskType() {
-        super("command", "LMBishop", "Execute a certain command.");
+        super("command", TaskUtils.TASK_ATTRIBUTION_STRING, "Execute a certain command.");
         this.creatorConfigValues.add(new ConfigValue("command", true, "The command to execute."));
         this.creatorConfigValues.add(new ConfigValue("ignore-case", false, "Ignore the casing of the command."));
         this.creatorConfigValues.add(new ConfigValue("worlds", false, "Permitted worlds the player must be in."));

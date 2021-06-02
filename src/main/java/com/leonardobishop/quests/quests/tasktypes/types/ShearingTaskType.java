@@ -26,7 +26,7 @@ public final class ShearingTaskType extends TaskType {
     private List<ConfigValue> creatorConfigValues = new ArrayList<>();
 
     public ShearingTaskType() {
-        super("shearing", "LMBishop", "Shear a set amount of sheep.");
+        super("shearing", TaskUtils.TASK_ATTRIBUTION_STRING, "Shear a set amount of sheep.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of cows to be milked."));
     }
 
