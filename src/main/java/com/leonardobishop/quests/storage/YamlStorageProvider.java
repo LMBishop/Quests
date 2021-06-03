@@ -117,10 +117,11 @@ public class YamlStorageProvider implements StorageProvider {
             plugin.getQuestsLogger().debug("Writing player " + uuid + " to disk.");
             try {
                 data.save(file);
+                plugin.getQuestsLogger().debug("Write of player " + uuid + " to disk complete.");
             } catch (IOException e) {
+                plugin.getQuestsLogger().debug("Failed to write player: " + uuid + "!.");
                 e.printStackTrace();
             }
-            plugin.getQuestsLogger().debug("Write of player " + uuid + " to disk complete.");
         } finally {
             unlock(uuid);
         }
