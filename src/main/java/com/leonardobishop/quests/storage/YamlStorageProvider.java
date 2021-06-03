@@ -37,6 +37,11 @@ public class YamlStorageProvider implements StorageProvider {
         directory.mkdirs();
     }
 
+    @Override
+    public void shutdown() {
+        // no impl
+    }
+
     public QuestProgressFile loadProgressFile(UUID uuid) {
         ReentrantLock lock = lock(uuid);
         QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);

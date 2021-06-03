@@ -7,6 +7,7 @@ import java.util.UUID;
 public interface StorageProvider {
 
     void init();
+    void shutdown();
     QuestProgressFile loadProgressFile(UUID uuid);
     void saveProgressFile(UUID uuid, QuestProgressFile questProgressFile);
 

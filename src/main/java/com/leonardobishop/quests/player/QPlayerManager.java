@@ -119,4 +119,13 @@ public class QPlayerManager {
             return new QPlayer(uuid, questProgressFile, new QPlayerPreferences(null), plugin);
         });
     }
+
+    /**
+     * Gets the current storage provider which loads and saves players.
+     *
+     * @return {@link StorageProvider}
+     */
+    public StorageProvider getStorageProvider() {
+        return storageProvider;
+    }
 }

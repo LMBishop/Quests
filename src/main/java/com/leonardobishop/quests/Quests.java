@@ -307,6 +307,9 @@ public class Quests extends JavaPlugin {
             } catch (Exception ignored) { }
         }
         if (placeholderAPIHook != null) placeholderAPIHook.unregisterExpansion();
+        try {
+            qPlayerManager.getStorageProvider().shutdown();
+        } catch (Exception ignored) { }
     }
 
     public void reloadQuests() {

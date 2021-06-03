@@ -120,6 +120,11 @@ public class MySqlStorageProvider implements StorageProvider {
     }
 
     @Override
+    public void shutdown() {
+        if (hikari != null) hikari.close();
+    }
+
+    @Override
     public QuestProgressFile loadProgressFile(UUID uuid) {
         QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
         try (Connection connection = hikari.getConnection()) {
