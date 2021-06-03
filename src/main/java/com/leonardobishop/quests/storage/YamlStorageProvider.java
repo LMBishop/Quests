@@ -24,18 +24,15 @@ public class YamlStorageProvider implements StorageProvider {
         this.plugin = plugin;
     }
 
-    private void lock(UUID uuid) {
+    private ReentrantLock lock(UUID uuid) {
         locks.putIfAbsent(uuid, new ReentrantLock());
-        locks.get(uuid).lock();
-    }
-
-    private void unlock(UUID uuid) {
         ReentrantLock lock = locks.get(uuid);
-        if (lock != null) lock.unlock();
+        lock.lock();
+        return lock;
     }
 
     public QuestProgressFile loadProgressFile(UUID uuid) {
-        lock(uuid);
+        ReentrantLock lock = lock(uuid);
         QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
         try {
             File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
@@ -75,14 +72,14 @@ public class YamlStorageProvider implements StorageProvider {
             ex.printStackTrace();
             // fuck
         } finally {
-            unlock(uuid);
+            lock.unlock();
         }
 
         return questProgressFile;
     }
 
     public void saveProgressFile(UUID uuid, QuestProgressFile questProgressFile) {
-        lock(uuid);
+        ReentrantLock lock = lock(uuid);
         try {
             List<QuestProgress> questProgressValues = new ArrayList<>(questProgressFile.getAllQuestProgress());
             File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
@@ -123,7 +120,7 @@ public class YamlStorageProvider implements StorageProvider {
                 e.printStackTrace();
             }
         } finally {
-            unlock(uuid);
+            lock.unlock();
         }
     }
 }
