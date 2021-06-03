@@ -6,6 +6,7 @@ import com.leonardobishop.quests.player.questprogressfile.QPlayerPreferences;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
+import com.leonardobishop.quests.storage.MySqlStorageProvider;
 import com.leonardobishop.quests.storage.StorageProvider;
 import com.leonardobishop.quests.storage.YamlStorageProvider;
 import com.leonardobishop.quests.util.Options;
@@ -24,7 +25,8 @@ public class QPlayerManager {
     private StorageProvider storageProvider;
 
     public QPlayerManager(Quests plugin) {
-        this.storageProvider = new YamlStorageProvider(plugin);
+        this.storageProvider = new MySqlStorageProvider(plugin, plugin.getConfig().getConfigurationSection("options.storage.database-settings"));
+        storageProvider.init();
         this.plugin = plugin;
     }
 

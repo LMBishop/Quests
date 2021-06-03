@@ -166,13 +166,14 @@ public class Quests extends JavaPlugin {
         questsLogger = new QuestsLogger(this, QuestsLogger.LoggingLevel.INFO);
         questCompleter = new QuestCompleter(this);
 
+        this.generateConfigurations();
+        this.setupVersionSpecific();
+
         taskTypeManager = new TaskTypeManager(this);
         questManager = new QuestManager(this);
         qPlayerManager = new QPlayerManager(this);
         menuController = new MenuController(this);
 
-        this.generateConfigurations();
-        this.setupVersionSpecific();
 
         super.getCommand("quests").setExecutor(new QuestsCommand(this));
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);

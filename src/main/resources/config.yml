@@ -240,25 +240,23 @@ options:
     provider: "yaml"
     # The following is only applicable for database storage providers (e.g. mysql)
     database-settings:
-      # The name of the database. This database should already exist!
-      database-name: "minecraft"
       network:
+        # The name of the database. This database should already exist!
+        database: "minecraft"
         username: "root"
         password: ""
-        address: "localhost"
-        port: 3306
+        # Address should be in the format ip:port (just like the game itself)
+        address: "localhost:3306"
       # This plugin uses 'HikariCP' for connection management, the pooling configuration can be changed here
       connection-pool-settings:
         # The maximum number of connections to keep open with the database (def=8)
         maximum-pool-size: 8
         # The minimum number of connections to keep open with the database (def=8)
-        minimum-pool-size: 8
+        minimum-idle: 8
         # The maximum time (in milliseconds) to keep a single connection open (def=1800000 - 30 min)
-        connection-lifetime: 1800000
-        # The time (in milliseconds) to ping the database (0 to disable, def=0)
-        heartbeat-time: 0
-        # The time (in milliseconds) the plugin will wait for a response by the database (def=0)
-        timeout: 5000
+        maximum-lifetime: 1800000
+        # The time (in milliseconds) the plugin will wait for a response by the database (def=500)
+        connection-timeout: 5000
       # The prefix each table will use
       table-prefix: "quests_"
 
