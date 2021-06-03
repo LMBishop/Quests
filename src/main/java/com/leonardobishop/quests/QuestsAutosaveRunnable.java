@@ -38,7 +38,7 @@ public class QuestsAutosaveRunnable extends BukkitRunnable {
 
         if (Bukkit.getPlayer(player) != null) {
             QuestProgressFile clonedProgressFile = new QuestProgressFile(plugin.getPlayerManager().getPlayer(player).getQuestProgressFile());
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getPlayerManager().removePlayer(player, clonedProgressFile));
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getPlayerManager().savePlayer(player, clonedProgressFile));
         }
     }
 
