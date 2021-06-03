@@ -25,9 +25,18 @@ public class QPlayerManager {
     private StorageProvider storageProvider;
 
     public QPlayerManager(Quests plugin) {
-        this.storageProvider = new MySqlStorageProvider(plugin, plugin.getConfig().getConfigurationSection("options.storage.database-settings"));
-        storageProvider.init();
         this.plugin = plugin;
+
+        String configuredProvider = plugin.getConfig().getString("options.storage.provider", "yaml");
+        if (configuredProvider.equalsIgnoreCase("yaml")) {
+            this.storageProvider = new YamlStorageProvider(plugin);
+        } else if (configuredProvider.equalsIgnoreCase("mysql")) {
+            this.storageProvider = new MySqlStorageProvider(plugin, plugin.getConfig().getConfigurationSection("options.storage.database-settings"));
+        } else {
+            plugin.getQuestsLogger().warning("No valid storage provider is configured - Quests will use YAML storage as a default");
+            this.storageProvider = new YamlStorageProvider(plugin);
+        }
+        storageProvider.init();
     }
 
     private final Map<UUID, QPlayer> qPlayers = new ConcurrentHashMap<>();
