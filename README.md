@@ -5,6 +5,7 @@
 <img src="https://mc-download-badges.herokuapp.com/services/spigotsongoda/downloads.php?spigot=23696&songoda=quests-quests"><br>
 <h1 align="center">Quests</h1>
 </p>
+
 ## About Quests
 This plugin will allow your players to do quests in-game to earn rewards. This can all be configured.
 
