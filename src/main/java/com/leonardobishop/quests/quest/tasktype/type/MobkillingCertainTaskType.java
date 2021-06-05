@@ -48,8 +48,6 @@ public final class MobkillingCertainTaskType extends TaskType {
         }
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-        if (config.get("name") == null && config.get("names") == null)
-            TaskUtils.configValidateExists(root + ".name", config.get("name"), problems, "name", super.getType());
         return problems;
     }
 
