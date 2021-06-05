@@ -11,6 +11,8 @@ import com.leonardobishop.quests.quest.tasktype.ConfigValue;
 import com.leonardobishop.quests.quest.tasktype.TaskType;
 import com.leonardobishop.quests.quest.tasktype.TaskUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -46,6 +48,8 @@ public final class MobkillingCertainTaskType extends TaskType {
         }
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+        if (config.get("name") == null && config.get("names") == null)
+            TaskUtils.configValidateExists(root + ".name", config.get("name"), problems, "name", super.getType());
         return problems;
     }
 
@@ -89,7 +93,6 @@ public final class MobkillingCertainTaskType extends TaskType {
                     }
 
                     String configEntity = (String) task.getConfigValue("mob");
-                    String configName = (String) task.getConfigValue("name");
 
                     EntityType entity;
                     try {
@@ -98,11 +101,26 @@ public final class MobkillingCertainTaskType extends TaskType {
                         continue;
                     }
 
+                    Object configName = task.getConfigValues().containsKey("name") ? task.getConfigValue("name") : task.getConfigValue("names");
+
                     if (configName != null) {
-                        configName = ChatColor.translateAlternateColorCodes('&', configName);
-                        if (mob.getCustomName() == null || !mob.getCustomName().equals(configName)) {
-                            continue;
+                        List<String> configNames = new ArrayList<>();
+                        if (configName instanceof List) {
+                            configNames.addAll((List) configName);
+                        } else {
+                            configNames.add(String.valueOf(configName));
                         }
+
+                        boolean validName = false;
+                        for (String name : configNames) {
+                            name = ChatColor.translateAlternateColorCodes('&', name);
+                            if (mob.getCustomName() == null || !mob.getCustomName().equals(name)) {
+                                validName = true;
+                                break;
+                            }
+                        }
+
+                        if (!validName) continue;
                     }
 
                     if (mob.getType() != entity) {
