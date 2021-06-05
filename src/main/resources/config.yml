@@ -213,12 +213,12 @@ options:
   quest-autotrack: true
   # How much quests should log, 0 = errors only, 1 = warnings, 2 = info, 3 = debug
   verbose-logging-level: 2
-  # Automatically clean player's quest progress files when they join.
-  # These changes will not be reflected to disk.
-  # Useful if you frequently add and remove quests on a production server. Equivalent of executing /q a moddata clean, without overwriting the file.
-  soft-clean-questsprogressfile-on-join: false
-  # The above, but overwriting the file on disk with the cleaned version, so it does not soft clean on every join.
-  push-soft-clean-to-disk: false
+  # Verify quests exist when a player's data is loaded - inconsistencies may arise when
+  # players progress on specific quests and those quests are later removed. The problem is that their progress
+  # is still kept in the quest progress file, which may lead to issues such as players reaching a quest started
+  # limit when the quests they had active no longer exist - having this option enabled prevents
+  # non-existent quests from being loaded
+  verify-quest-exists-on-load: true
   performance-tweaking: # The following are measured in server ticks, multiply SECONDS by 20 to get the number of ticks.
     quest-queue-executor-interval: 1      # how frequently Quests should execute the next check in the completion queue (def=1 - 0.05s) - increase this value if you are struggling with performance
     quest-autosave-interval: 12000        # how frequently online players data will be autosaved (def=12000 - 10 minutes)

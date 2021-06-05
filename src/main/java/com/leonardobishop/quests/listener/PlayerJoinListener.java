@@ -30,13 +30,6 @@ public class PlayerJoinListener implements Listener {
     public void onEvent(PlayerJoinEvent event) {
         UUID playerUuid = event.getPlayer().getUniqueId();
         plugin.getPlayerManager().loadPlayer(playerUuid);
-        if (Options.SOFT_CLEAN_QUESTSPROGRESSFILE_ON_JOIN.getBooleanValue()) {
-            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(playerUuid);
-            qPlayer.getQuestProgressFile().clean();
-            if (Options.PUSH_SOFT_CLEAN_TO_DISK.getBooleanValue()) {
-                plugin.getPlayerManager().savePlayer(playerUuid, qPlayer.getQuestProgressFile());
-            }
-        }
         if (plugin.getDescription().getVersion().contains("beta") && event.getPlayer().hasPermission("quests.admin")) {
             event.getPlayer().sendMessage(Messages.BETA_REMINDER.getMessage());
         }

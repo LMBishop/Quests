@@ -248,12 +248,6 @@ public class Quests extends JavaPlugin {
 
             taskTypeManager.closeRegistrations();
             reloadQuests();
-//            if (!questsConfigLoader.getBrokenFiles().isEmpty()) {
-//                this.getQuestsLogger().severe("Quests has failed to load the following files:");
-//                for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : questsConfigLoader.getBrokenFiles().entrySet()) {
-//                    this.getQuestsLogger().severe(" - " + entry.getKey() + ": " + entry.getValue().getMessage());
-//                }
-//            }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
                 qPlayerManager.loadPlayer(player.getUniqueId());

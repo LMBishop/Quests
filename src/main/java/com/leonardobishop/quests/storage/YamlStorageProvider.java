@@ -108,8 +108,8 @@ public class YamlStorageProvider implements StorageProvider {
             }
 
             YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
-            data.set("quest-progress", null);
             for (QuestProgress questProgress : questProgressValues) {
+                if (!questProgress.isModified()) continue;
                 data.set("quest-progress." + questProgress.getQuestId() + ".started", questProgress.isStarted());
                 data.set("quest-progress." + questProgress.getQuestId() + ".completed", questProgress.isCompleted());
                 data.set("quest-progress." + questProgress.getQuestId() + ".completed-before", questProgress.isCompletedBefore());

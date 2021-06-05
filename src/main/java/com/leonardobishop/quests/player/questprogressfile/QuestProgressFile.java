@@ -4,6 +4,7 @@ import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.quest.Quest;
 import com.leonardobishop.quests.quest.Task;
+import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -40,6 +41,9 @@ public class QuestProgressFile {
     }
 
     public void addQuestProgress(QuestProgress questProgress) {
+        if (Options.VERIFY_QUEST_EXISTS_ON_LOAD.getBooleanValue(true) && plugin.getQuestManager().getQuestById(questProgress.getQuestId()) == null) {
+            return;
+        }
         this.questProgress.put(questProgress.getQuestId(), questProgress);
     }
 
