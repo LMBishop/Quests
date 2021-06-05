@@ -28,6 +28,7 @@ public final class MythicMobsKillingType extends TaskType {
         super("mythicmobs_killing", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of a MythicMobs entity.");
         this.creatorConfigValues.add(new ConfigValue("amount", true, "Amount of mobs to be killed."));
         this.creatorConfigValues.add(new ConfigValue("name", true, "The 'internal name' of the MythicMob."));
+        this.creatorConfigValues.add(new ConfigValue("min-level", true, "The minimum level for the MythicMob."));
     }
 
     @Override
@@ -36,6 +37,7 @@ public final class MythicMobsKillingType extends TaskType {
         TaskUtils.configValidateExists(root + ".name", config.get("name"), problems, "name", super.getType());
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+        TaskUtils.configValidateInt(root + ".min-level", config.get("min-level"), problems, true, true, "min-level");
         return problems;
     }
 
@@ -58,6 +60,7 @@ public final class MythicMobsKillingType extends TaskType {
         }
 
         String mobName = event.getMobType().getInternalName();
+        double level = event.getMobLevel();
 
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(killer.getUniqueId());
         if (qPlayer == null) {
@@ -78,8 +81,9 @@ public final class MythicMobsKillingType extends TaskType {
                     }
 
                     String configName = (String) task.getConfigValue("name");
+                    int minMobLevel = (int) task.getConfigValue("min-level", -1);
 
-                    if (!mobName.equals(configName)) {
+                    if (!mobName.equals(configName) || level < minMobLevel) {
                         return;
                     }
 
