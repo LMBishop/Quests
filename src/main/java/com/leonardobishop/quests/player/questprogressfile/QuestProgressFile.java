@@ -244,4 +244,10 @@ public class QuestProgressFile {
         }
     }
 
+    public void resetModified() {
+        for (QuestProgress questProgress : questProgress.values()) {
+            questProgress.resetModified();
+        }
+    }
+
 }

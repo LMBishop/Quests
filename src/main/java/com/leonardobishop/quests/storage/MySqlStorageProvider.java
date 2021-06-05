@@ -7,7 +7,6 @@ import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.sql.Connection;
@@ -205,7 +204,7 @@ public class MySqlStorageProvider implements StorageProvider {
     @Override
     public void saveProgressFile(UUID uuid, QuestProgressFile questProgressFile) {
         try (Connection connection = hikari.getConnection()) {
-            plugin.getQuestsLogger().debug("Saving player " + uuid);
+            plugin.getQuestsLogger().debug("Getting known entries for player " + uuid);
             List<String> knownQuestIds = new ArrayList<>();
             Map<String, List<String>> knownTaskIds = new HashMap<>();
             try (PreparedStatement ps = connection.prepareStatement(this.statementProcessor.apply(SELECT_KNOWN_PLAYER_QUEST_PROGRESS))) {
@@ -238,6 +237,8 @@ public class MySqlStorageProvider implements StorageProvider {
 
                 List<QuestProgress> questProgressValues = new ArrayList<>(questProgressFile.getAllQuestProgress());
                 for (QuestProgress questProgress : questProgressValues) {
+                    if (!questProgress.isModified()) continue;
+                    
                     String questId = questProgress.getQuestId();
                     if (knownQuestIds.contains(questId)) {
                         updateQuestProgress.setBoolean(1, questProgress.isStarted());
@@ -301,13 +302,9 @@ public class MySqlStorageProvider implements StorageProvider {
                     }
                 }
 
-                System.out.println(insertQuestProgress);
                 insertQuestProgress.executeBatch();
-                System.out.println(insertTaskProgress);
                 insertTaskProgress.executeBatch();
-                System.out.println(updateQuestProgress);
                 updateQuestProgress.executeBatch();
-                System.out.println(updateTaskProgress);
                 updateTaskProgress.executeBatch();
             }
         } catch (SQLException e) {

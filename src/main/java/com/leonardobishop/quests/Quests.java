@@ -303,7 +303,7 @@ public class Quests extends JavaPlugin {
         }
         for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
             try {
-                qPlayerManager.savePlayer(qPlayer.getPlayerUUID());
+                qPlayerManager.savePlayerSync(qPlayer.getPlayerUUID());
             } catch (Exception ignored) { }
         }
         if (placeholderAPIHook != null) placeholderAPIHook.unregisterExpansion();

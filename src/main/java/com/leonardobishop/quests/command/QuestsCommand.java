@@ -285,7 +285,7 @@ public class QuestsCommand implements TabExecutor {
                             }
                             QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                             questProgressFile.clear();
-                            plugin.getPlayerManager().savePlayer(uuid, questProgressFile);
+                            plugin.getPlayerManager().savePlayerSync(uuid, questProgressFile);
                             if (Bukkit.getPlayer(uuid) == null) {
                                 plugin.getPlayerManager().dropPlayer(uuid);
                             }
@@ -355,7 +355,7 @@ public class QuestsCommand implements TabExecutor {
                         }
                         if (args[2].equalsIgnoreCase("reset")) {
                             questProgressFile.generateBlankQuestProgress(quest);
-                            plugin.getPlayerManager().savePlayer(uuid, questProgressFile);
+                            plugin.getPlayerManager().savePlayerSync(uuid, questProgressFile);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         } else if (args[2].equalsIgnoreCase("start")) {
@@ -382,12 +382,12 @@ public class QuestsCommand implements TabExecutor {
                                 sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCATEGORYPERMISSION.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                                 return true;
                             }
-                            plugin.getPlayerManager().savePlayer(uuid, questProgressFile);
+                            plugin.getPlayerManager().savePlayerSync(uuid, questProgressFile);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         } else if (args[2].equalsIgnoreCase("complete")) {
                             qPlayer.completeQuest(quest);
-                            plugin.getPlayerManager().savePlayer(uuid, questProgressFile);
+                            plugin.getPlayerManager().savePlayerSync(uuid, questProgressFile);
                             sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
                             success = true;
                         }
