@@ -161,42 +161,6 @@ public class QuestsCommand implements TabExecutor {
                         showAdminHelp(sender, "opengui");
                         return true;
                     } else if (args[1].equalsIgnoreCase("moddata")) {
-                        // TODO remove me
-                        if (args[2].equalsIgnoreCase("clean")) {
-                            FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
-                                @Override
-                                public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) {
-                                    File playerDataFile = new File(path.toUri());
-                                    if (!playerDataFile.getName().toLowerCase().endsWith(".yml")) return FileVisitResult.CONTINUE;
-                                    String uuidStr = playerDataFile.getName().replace(".yml", "");
-                                    UUID uuid;
-                                    try {
-                                        uuid = UUID.fromString(uuidStr);
-                                    } catch (IllegalArgumentException ex) {
-                                        return FileVisitResult.CONTINUE;
-                                    }
-
-                                    plugin.getPlayerManager().loadPlayer(uuid);
-                                    QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
-                                    qPlayer.getQuestProgressFile().clean();
-                                    plugin.getPlayerManager().savePlayer(uuid, qPlayer.getQuestProgressFile());
-                                    if (Bukkit.getPlayer(uuid) == null) {
-                                        plugin.getPlayerManager().dropPlayer(uuid);
-                                    }
-                                    return FileVisitResult.CONTINUE;
-                                }
-                            };
-                            //TODO command to clean specific player
-                            try {
-                                Files.walkFileTree(Paths.get(plugin.getDataFolder() + File.separator + "playerdata"), fileVisitor);
-                            } catch (IOException e) {
-                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_CLEAN_FAIL.getMessage());
-                                e.printStackTrace();
-                                return true;
-                            }
-                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_CLEAN_SUCCESS.getMessage());
-                            return true;
-                        }
                         showAdminHelp(sender, "moddata");
                         return true;
                     } else if (args[1].equalsIgnoreCase("types")) {
@@ -564,8 +528,6 @@ public class QuestsCommand implements TabExecutor {
                     "quest for a player");
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata complete <player> <questid> " + ChatColor.DARK_GRAY + ": " +
                     "complete a quest for a player");
-            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata clean " + ChatColor.DARK_GRAY + ": " +
-                    "clean quest data files for quests which are no longer defined");
             sender.sendMessage(ChatColor.GRAY + "These commands modify quest progress for players. Use them cautiously. Changes are irreversible.");
         } else {
             sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "------------=[" + ChatColor.RED + " Quests Admin " + ChatColor.GRAY
@@ -652,7 +614,7 @@ public class QuestsCommand implements TabExecutor {
                         List<String> options = Arrays.asList("quests", "category");
                         return matchTabComplete(args[2], options);
                     } else if (args[1].equalsIgnoreCase("moddata")) {
-                        List<String> options = Arrays.asList("fullreset", "reset", "start", "complete", "clean");
+                        List<String> options = Arrays.asList("fullreset", "reset", "start", "complete");
                         return matchTabComplete(args[2], options);
                     } else if (args[1].equalsIgnoreCase("info")) {
                         return tabCompleteQuests(args[2]);
