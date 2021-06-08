@@ -37,6 +37,7 @@ public final class MythicMobsKillingType extends TaskType {
         TaskUtils.configValidateExists(root + ".name", config.get("name"), problems, "name", super.getType());
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+        TaskUtils.configValidateInt(root + ".level", config.get("level"), problems, true, true, "level");
         TaskUtils.configValidateInt(root + ".min-level", config.get("min-level"), problems, true, true, "min-level");
         return problems;
     }
@@ -82,8 +83,13 @@ public final class MythicMobsKillingType extends TaskType {
 
                     String configName = (String) task.getConfigValue("name");
                     int minMobLevel = (int) task.getConfigValue("min-level", -1);
+                    int requiredLevel = (int) task.getConfigValue("level", -1);
 
                     if (!mobName.equals(configName) || level < minMobLevel) {
+                        return;
+                    }
+
+                    if (requiredLevel != -1 && level != requiredLevel) {
                         return;
                     }
 
