@@ -28,24 +28,22 @@ public class MySqlStorageProvider implements StorageProvider {
 
     private static final String CREATE_TABLE_QUEST_PROGRESS =
             "CREATE TABLE IF NOT EXISTS `{prefix}quest_progress` (" +
-                    " `id`                INT          NOT NULL AUTO_INCREMENT," +
                     " `uuid`              VARCHAR(36)  NOT NULL," +
                     " `quest_id`          VARCHAR(50)  NOT NULL," +
                     " `started`           BOOL         NOT NULL," +
                     " `completed`         BOOL         NOT NULL," +
                     " `completed_before`  BOOL         NOT NULL," +
                     " `completion_date`   BIGINT       NOT NULL," +
-                    " PRIMARY KEY (`id`));";
+                    " PRIMARY KEY (`uuid`, `quest_id`));";
     private static final String CREATE_TABLE_TASK_PROGRESS =
             "CREATE TABLE IF NOT EXISTS `{prefix}task_progress` (" +
-                    " `id`         INT          NOT NULL AUTO_INCREMENT," +
                     " `uuid`       VARCHAR(36)  NOT NULL," +
                     " `quest_id`   VARCHAR(50)  NOT NULL," +
                     " `task_id`    VARCHAR(50)  NOT NULL," +
                     " `completed`  BOOL         NOT NULL," +
                     " `progress`   VARCHAR(64)  NULL," +
                     " `data_type`  VARCHAR(10)  NULL," +
-                    " PRIMARY KEY (`id`));";
+                    " PRIMARY KEY (`uuid`, `quest_id`, `task_id`));";
     private static final String SELECT_PLAYER_QUEST_PROGRESS =
             "SELECT quest_id, started, completed, completed_before, completion_date FROM `{prefix}quest_progress` WHERE uuid=?;";
     private static final String SELECT_PLAYER_TASK_PROGRESS =
@@ -54,14 +52,10 @@ public class MySqlStorageProvider implements StorageProvider {
             "SELECT quest_id FROM `{prefix}quest_progress` WHERE uuid=?;";
     private static final String SELECT_KNOWN_PLAYER_TASK_PROGRESS =
             "SELECT quest_id, task_id FROM `{prefix}task_progress` WHERE uuid=?;";
-    private static final String INSERT_PLAYER_QUEST_PROGRESS =
-            "INSERT INTO `{prefix}quest_progress` (uuid, quest_id, started, completed, completed_before, completion_date) VALUES (?,?,?,?,?,?)";
-    private static final String INSERT_PLAYER_TASK_PROGRESS =
-            "INSERT INTO `{prefix}task_progress` (uuid, quest_id, task_id, completed, progress, data_type) VALUES (?,?,?,?,?,?)";
-    private static final String UPDATE_PLAYER_QUEST_PROGRESS =
-            "UPDATE `{prefix}quest_progress` SET started=?, completed=?, completed_before=?, completion_date=? WHERE uuid=? AND quest_id=?";
-    private static final String UPDATE_PLAYER_TASK_PROGRESS =
-            "UPDATE `{prefix}task_progress` SET completed=?, progress=?, data_type=? WHERE uuid=? AND quest_id=? AND task_id=?";
+    private static final String WRITE_PLAYER_QUEST_PROGRESS =
+            "INSERT INTO `{prefix}quest_progress` (uuid, quest_id, started, completed, completed_before, completion_date) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE started=?, completed=?, completed_before=?, completion_date=?";
+    private static final String WRITE_PLAYER_TASK_PROGRESS =
+            "INSERT INTO `{prefix}task_progress` (uuid, quest_id, task_id, completed, progress, data_type) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE completed=?, progress=?, data_type=?";
 
     private final HikariDataSource hikari;
     private final String prefix;
@@ -206,60 +200,26 @@ public class MySqlStorageProvider implements StorageProvider {
     @Override
     public void saveProgressFile(UUID uuid, QuestProgressFile questProgressFile) {
         try (Connection connection = hikari.getConnection()) {
-            plugin.getQuestsLogger().debug("Getting known entries for player " + uuid);
-            List<String> knownQuestIds = new ArrayList<>();
-            Map<String, List<String>> knownTaskIds = new HashMap<>();
-            try (PreparedStatement ps = connection.prepareStatement(this.statementProcessor.apply(SELECT_KNOWN_PLAYER_QUEST_PROGRESS))) {
-                ps.setString(1, uuid.toString());
-
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        knownQuestIds.add(rs.getString(1));
-                    }
-                }
-            }
-            try (PreparedStatement ps = connection.prepareStatement(this.statementProcessor.apply(SELECT_KNOWN_PLAYER_TASK_PROGRESS))) {
-                ps.setString(1, uuid.toString());
-
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        String questId = rs.getString(1);
-                        String taskId = rs.getString(2);
-
-                        knownTaskIds.putIfAbsent(questId, new ArrayList<>());
-                        knownTaskIds.get(questId).add(taskId);
-                    }
-                }
-            }
-
-            try (PreparedStatement insertQuestProgress = connection.prepareStatement(this.statementProcessor.apply(INSERT_PLAYER_QUEST_PROGRESS));
-                 PreparedStatement insertTaskProgress = connection.prepareStatement(this.statementProcessor.apply(INSERT_PLAYER_TASK_PROGRESS));
-                 PreparedStatement updateQuestProgress = connection.prepareStatement(this.statementProcessor.apply(UPDATE_PLAYER_QUEST_PROGRESS));
-                 PreparedStatement updateTaskProgress = connection.prepareStatement(this.statementProcessor.apply(UPDATE_PLAYER_TASK_PROGRESS))) {
+            try (PreparedStatement writeQuestProgress = connection.prepareStatement(this.statementProcessor.apply(WRITE_PLAYER_QUEST_PROGRESS));
+                 PreparedStatement writeTaskProgress = connection.prepareStatement(this.statementProcessor.apply(WRITE_PLAYER_TASK_PROGRESS))) {
 
                 List<QuestProgress> questProgressValues = new ArrayList<>(questProgressFile.getAllQuestProgress());
                 for (QuestProgress questProgress : questProgressValues) {
                     if (!questProgress.isModified()) continue;
                     
                     String questId = questProgress.getQuestId();
-                    if (knownQuestIds.contains(questId)) {
-                        updateQuestProgress.setBoolean(1, questProgress.isStarted());
-                        updateQuestProgress.setBoolean(2, questProgress.isCompleted());
-                        updateQuestProgress.setBoolean(3, questProgress.isCompletedBefore());
-                        updateQuestProgress.setLong(4, questProgress.getCompletionDate());
-                        updateQuestProgress.setString(5, uuid.toString());
-                        updateQuestProgress.setString(6, questId);
-                        updateQuestProgress.addBatch();
-                    } else {
-                        insertQuestProgress.setString(1, uuid.toString());
-                        insertQuestProgress.setString(2, questProgress.getQuestId());
-                        insertQuestProgress.setBoolean(3, questProgress.isStarted());
-                        insertQuestProgress.setBoolean(4, questProgress.isCompleted());
-                        insertQuestProgress.setBoolean(5, questProgress.isCompletedBefore());
-                        insertQuestProgress.setLong(6, questProgress.getCompletionDate());
-                        insertQuestProgress.addBatch();
-                    }
-                    List<String> taskIds = knownTaskIds.getOrDefault(questProgress.getQuestId(), Collections.emptyList());
+                    writeQuestProgress.setString(1, uuid.toString());
+                    writeQuestProgress.setString(2, questProgress.getQuestId());
+                    writeQuestProgress.setBoolean(3, questProgress.isStarted());
+                    writeQuestProgress.setBoolean(4, questProgress.isCompleted());
+                    writeQuestProgress.setBoolean(5, questProgress.isCompletedBefore());
+                    writeQuestProgress.setLong(6, questProgress.getCompletionDate());
+                    writeQuestProgress.setBoolean(7, questProgress.isStarted());
+                    writeQuestProgress.setBoolean(8, questProgress.isCompleted());
+                    writeQuestProgress.setBoolean(9, questProgress.isCompletedBefore());
+                    writeQuestProgress.setLong(10, questProgress.getCompletionDate());
+                    writeQuestProgress.addBatch();
+
                     for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
                         String taskId = taskProgress.getTaskId();
 
@@ -284,30 +244,21 @@ public class MySqlStorageProvider implements StorageProvider {
                                     + " since type " + progress.getClass().getName() + " cannot be encoded!");
                             continue;
                         }
-                        if (taskIds.contains(taskId)) {
-                            updateTaskProgress.setBoolean(1, taskProgress.isCompleted());
-                            updateTaskProgress.setString(2, encodedProgress);
-                            updateTaskProgress.setString(3, type);
-                            updateTaskProgress.setString(4, uuid.toString());
-                            updateTaskProgress.setString(5, questId);
-                            updateTaskProgress.setString(6, taskId);
-                            updateTaskProgress.addBatch();
-                        } else {
-                            insertTaskProgress.setString(1, uuid.toString());
-                            insertTaskProgress.setString(2, questId);
-                            insertTaskProgress.setString(3, taskProgress.getTaskId());
-                            insertTaskProgress.setBoolean(4, taskProgress.isCompleted());
-                            insertTaskProgress.setString(5, encodedProgress);
-                            insertTaskProgress.setString(6, type);
-                            insertTaskProgress.addBatch();
-                        }
+                        writeTaskProgress.setString(1, uuid.toString());
+                        writeTaskProgress.setString(2, questId);
+                        writeTaskProgress.setString(3, taskProgress.getTaskId());
+                        writeTaskProgress.setBoolean(4, taskProgress.isCompleted());
+                        writeTaskProgress.setString(5, encodedProgress);
+                        writeTaskProgress.setString(6, type);
+                        writeTaskProgress.setBoolean(7, taskProgress.isCompleted());
+                        writeTaskProgress.setString(8, encodedProgress);
+                        writeTaskProgress.setString(9, type);
+                        writeTaskProgress.addBatch();
                     }
                 }
 
-                insertQuestProgress.executeBatch();
-                insertTaskProgress.executeBatch();
-                updateQuestProgress.executeBatch();
-                updateTaskProgress.executeBatch();
+                writeQuestProgress.executeBatch();
+                writeTaskProgress.executeBatch();
             }
         } catch (SQLException e) {
             plugin.getQuestsLogger().severe("Failed to save player: " + uuid + "!");
