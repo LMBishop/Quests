@@ -234,9 +234,10 @@ options:
   global-task-configuration-override: false
   # Whether or not the global display configuration will override per-quest display settins
   global-quest-display-configuration-override: false
-  # Storage options
+  # Storage options - please see the following: https://github.com/LMBishop/Quests/wiki/Storage-Providers
   storage:
     # Either 'yaml' (flatfile) or 'mysql' (network)
+    # Please read the following before using MySQL https://github.com/LMBishop/Quests/wiki/Storage-Providers#network
     provider: "yaml"
     # The following is only applicable for database storage providers (e.g. mysql)
     database-settings:
