@@ -174,7 +174,6 @@ public class Quests extends JavaPlugin {
         qPlayerManager = new QPlayerManager(this);
         menuController = new MenuController(this);
 
-
         super.getCommand("quests").setExecutor(new QuestsCommand(this));
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(menuController, this);

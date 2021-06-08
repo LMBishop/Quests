@@ -36,7 +36,11 @@ public class QPlayerManager {
             plugin.getQuestsLogger().warning("No valid storage provider is configured - Quests will use YAML storage as a default");
             this.storageProvider = new YamlStorageProvider(plugin);
         }
-        storageProvider.init();
+        try {
+            storageProvider.init();
+        } catch (Exception ignored) {
+            plugin.getQuestsLogger().severe("An error occurred initialising the storage provider.");
+        }
     }
 
     private final Map<UUID, QPlayer> qPlayers = new ConcurrentHashMap<>();
@@ -78,7 +82,9 @@ public class QPlayerManager {
      * @param uuid the uuid of the player
      */
     public void savePlayer(UUID uuid) {
-        savePlayer(uuid, getPlayer(uuid).getQuestProgressFile());
+        QPlayer qPlayer = getPlayer(uuid);
+        if (qPlayer == null) return;
+        savePlayer(uuid, qPlayer.getQuestProgressFile());
     }
 
     /**
@@ -101,7 +107,9 @@ public class QPlayerManager {
      * @param uuid the uuid of the player
      */
     public void savePlayerSync(UUID uuid) {
-        savePlayerSync(uuid, getPlayer(uuid).getQuestProgressFile());
+        QPlayer qPlayer = getPlayer(uuid);
+        if (qPlayer == null) return;
+        savePlayerSync(uuid, qPlayer.getQuestProgressFile());
     }
 
     /**
@@ -144,6 +152,7 @@ public class QPlayerManager {
         plugin.getQuestsLogger().debug("Loading player " + uuid + ". Main thread: " + Bukkit.isPrimaryThread());
         qPlayers.computeIfAbsent(uuid, s -> {
             QuestProgressFile questProgressFile = storageProvider.loadProgressFile(uuid);
+            if (questProgressFile == null) return null;
             return new QPlayer(uuid, questProgressFile, new QPlayerPreferences(null), plugin);
         });
     }

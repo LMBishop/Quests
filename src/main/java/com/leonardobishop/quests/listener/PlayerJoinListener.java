@@ -38,8 +38,11 @@ public class PlayerJoinListener implements Listener {
             Bukkit.getScheduler().runTaskLater(this.plugin, () -> event.getPlayer().sendMessage(plugin.getUpdater().getMessage()), 50L);
         }
 
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(playerUuid);
+        if (qPlayer == null) return;
+
         // run a full check to check for any missed quest completions
-        plugin.getQuestCompleter().queueFullCheck(plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile());
+        plugin.getQuestCompleter().queueFullCheck(qPlayer.getQuestProgressFile());
     }
 
 }

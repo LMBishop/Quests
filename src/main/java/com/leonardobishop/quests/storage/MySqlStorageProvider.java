@@ -57,17 +57,23 @@ public class MySqlStorageProvider implements StorageProvider {
     private static final String WRITE_PLAYER_TASK_PROGRESS =
             "INSERT INTO `{prefix}task_progress` (uuid, quest_id, task_id, completed, progress, data_type) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE completed=?, progress=?, data_type=?";
 
-    private final HikariDataSource hikari;
-    private final String prefix;
+    private final ConfigurationSection configuration;
     private final Quests plugin;
-    private final Function<String, String> statementProcessor;
+    private HikariDataSource hikari;
+    private String prefix;
+    private Function<String, String> statementProcessor;
+    private boolean fault;
 
     public MySqlStorageProvider(Quests plugin, ConfigurationSection configuration) {
         this.plugin = plugin;
         if (configuration == null) {
             configuration = new YamlConfiguration();
         }
+        this.configuration = configuration;
+    }
 
+    @Override
+    public void init() {
         String address = configuration.getString("network.address", "localhost:3306");
         String database = configuration.getString("network.database", "minecraft");
         String url = "jdbc:mysql://" + address + "/" + database;
@@ -94,13 +100,14 @@ public class MySqlStorageProvider implements StorageProvider {
         config.addDataSourceProperty("elideSetAutoCommits", true);
         config.addDataSourceProperty("maintainTimeStats", false);
 
-        this.hikari = new HikariDataSource(config);
+        try {
+            this.hikari = new HikariDataSource(config);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fault = true;
+        }
         this.prefix = configuration.getString("database-settings.table-prefix", "quests_");
         this.statementProcessor = s -> s.replace("{prefix}", prefix);
-    }
-
-    @Override
-    public void init() {
         try (Connection connection = hikari.getConnection()) {
             try (Statement s = connection.createStatement()) {
                 plugin.getQuestsLogger().debug("Creating default tables");
@@ -121,6 +128,7 @@ public class MySqlStorageProvider implements StorageProvider {
 
     @Override
     public QuestProgressFile loadProgressFile(UUID uuid) {
+        if (fault) return null;
         QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
         try (Connection connection = hikari.getConnection()) {
             plugin.getQuestsLogger().debug("Querying player " + uuid);
@@ -193,12 +201,14 @@ public class MySqlStorageProvider implements StorageProvider {
         } catch (SQLException e) {
             plugin.getQuestsLogger().severe("Failed to load player: " + uuid + "!");
             e.printStackTrace();
+            return null;
         }
         return questProgressFile;
     }
 
     @Override
     public void saveProgressFile(UUID uuid, QuestProgressFile questProgressFile) {
+        if (fault) return;
         try (Connection connection = hikari.getConnection()) {
             try (PreparedStatement writeQuestProgress = connection.prepareStatement(this.statementProcessor.apply(WRITE_PLAYER_QUEST_PROGRESS));
                  PreparedStatement writeTaskProgress = connection.prepareStatement(this.statementProcessor.apply(WRITE_PLAYER_TASK_PROGRESS))) {

@@ -78,10 +78,9 @@ public class QPlayer {
         }
         Player player = Bukkit.getPlayer(uuid);
         if (player != null) {
-            QPlayer questPlayer = QuestsAPI.getPlayerManager().getPlayer(uuid);
             String questFinishMessage = Messages.QUEST_COMPLETE.getMessage().replace("{quest}", quest.getDisplayNameStripped());
             // PlayerFinishQuestEvent -- start
-            PlayerFinishQuestEvent questFinishEvent = new PlayerFinishQuestEvent(player, questPlayer, questProgress, questFinishMessage);
+            PlayerFinishQuestEvent questFinishEvent = new PlayerFinishQuestEvent(player, this, questProgress, questFinishMessage);
             Bukkit.getPluginManager().callEvent(questFinishEvent);
             // PlayerFinishQuestEvent -- end
             Bukkit.getServer().getScheduler().runTask(plugin, () -> {
@@ -375,10 +374,10 @@ public class QPlayer {
         }
 
         if (Options.CATEGORIES_ENABLED.getBooleanValue()) {
-            CategoryQMenu categoryQMenu = new CategoryQMenu(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()));
+            CategoryQMenu categoryQMenu = new CategoryQMenu(plugin, this);
             List<QuestQMenu> questMenus = new ArrayList<>();
             for (Category category : plugin.getQuestManager().getCategories()) {
-                QuestQMenu questQMenu = new QuestQMenu(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()), category.getId(), categoryQMenu);
+                QuestQMenu questQMenu = new QuestQMenu(plugin, this, category.getId(), categoryQMenu);
                 List<Quest> quests = new ArrayList<>();
                 for (String questid : category.getRegisteredQuestIds()) {
                     Quest quest = plugin.getQuestManager().getQuestById(questid);
@@ -393,7 +392,7 @@ public class QPlayer {
 
             plugin.getMenuController().openMenu(player, categoryQMenu, 1);
         } else {
-            QuestQMenu questQMenu = new QuestQMenu(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()), "", null);
+            QuestQMenu questQMenu = new QuestQMenu(plugin, this, "", null);
             List<Quest> quests = new ArrayList<>();
             for (Map.Entry<String, Quest> entry : plugin.getQuestManager().getQuests().entrySet()) {
                 quests.add(entry.getValue());
@@ -414,7 +413,7 @@ public class QPlayer {
             return;
         }
 
-        StartedQMenu startedQMenu = new StartedQMenu(plugin, plugin.getPlayerManager().getPlayer(player.getUniqueId()));
+        StartedQMenu startedQMenu = new StartedQMenu(plugin, this);
         List<QuestSortWrapper> quests = new ArrayList<>();
         for (Map.Entry<String, Quest> entry : plugin.getQuestManager().getQuests().entrySet()) {
             quests.add(new QuestSortWrapper(plugin, entry.getValue()));

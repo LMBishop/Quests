@@ -47,6 +47,9 @@ public class EssentialsBalanceTaskType extends TaskType {
         Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
         if (player != null && player.isOnline() && ess != null) {
             QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(playerUUID);
+            if (qPlayer == null) {
+                return;
+            }
             QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
             QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
             TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
