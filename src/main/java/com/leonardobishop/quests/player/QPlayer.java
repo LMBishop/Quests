@@ -99,6 +99,14 @@ public class QPlayer {
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
             }
         }
+        if ((Options.ALLOW_QUEST_TRACK.getBooleanValue() && Options.QUEST_AUTOTRACK.getBooleanValue() && !(quest.isRepeatable() && !quest.isCooldownEnabled()))
+            || (!Options.ALLOW_QUEST_TRACK.getBooleanValue() && Options.QUEST_AUTOTRACK.getBooleanValue())) {
+            Quest nextQuest;
+            if (questProgressFile.getStartedQuests().size() > 0) {
+                nextQuest = questProgressFile.getStartedQuests().get(0);
+                trackQuest(nextQuest);
+            }
+        }
         return true;
     }
 
