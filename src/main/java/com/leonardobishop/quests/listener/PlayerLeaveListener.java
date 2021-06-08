@@ -20,8 +20,7 @@ public class PlayerLeaveListener implements Listener {
     public void onEvent(PlayerQuitEvent event) {
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
         if (qPlayer == null) return;
-        QuestProgressFile clonedProgressFile = new QuestProgressFile(qPlayer.getQuestProgressFile());
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> plugin.getPlayerManager().removePlayer(qPlayer.getPlayerUUID(), clonedProgressFile));
+        plugin.getPlayerManager().removePlayer(qPlayer.getPlayerUUID());
     }
 
 }

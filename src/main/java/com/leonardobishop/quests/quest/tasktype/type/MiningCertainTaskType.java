@@ -127,6 +127,9 @@ public final class MiningCertainTaskType extends TaskType {
         if (event.getPlayer().hasMetadata("NPC")) return;
 
         QPlayer qPlayer = QuestsAPI.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
+        if (qPlayer == null) {
+            return;
+        }
 
         for (Quest quest : super.getRegisteredQuests()) {
             if (qPlayer.hasStartedQuest(quest)) {

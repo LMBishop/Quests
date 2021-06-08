@@ -70,6 +70,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
         if (save) args = Arrays.copyOf(args, args.length - 1);
 
         final QPlayer qPlayer = plugin.getPlayerManager().getPlayer(p.getUniqueId());
+        if (qPlayer == null) return "Data not loaded";
         String split = args[args.length - 1];
 
         String result = "null";

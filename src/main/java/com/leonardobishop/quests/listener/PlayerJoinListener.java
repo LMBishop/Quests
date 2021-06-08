@@ -30,13 +30,6 @@ public class PlayerJoinListener implements Listener {
     public void onEvent(PlayerJoinEvent event) {
         UUID playerUuid = event.getPlayer().getUniqueId();
         plugin.getPlayerManager().loadPlayer(playerUuid);
-        if (Options.SOFT_CLEAN_QUESTSPROGRESSFILE_ON_JOIN.getBooleanValue()) {
-            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(playerUuid);
-            qPlayer.getQuestProgressFile().clean();
-            if (Options.PUSH_SOFT_CLEAN_TO_DISK.getBooleanValue()) {
-                plugin.getPlayerManager().savePlayer(playerUuid, qPlayer.getQuestProgressFile());
-            }
-        }
         if (plugin.getDescription().getVersion().contains("beta") && event.getPlayer().hasPermission("quests.admin")) {
             event.getPlayer().sendMessage(Messages.BETA_REMINDER.getMessage());
         }
@@ -45,8 +38,11 @@ public class PlayerJoinListener implements Listener {
             Bukkit.getScheduler().runTaskLater(this.plugin, () -> event.getPlayer().sendMessage(plugin.getUpdater().getMessage()), 50L);
         }
 
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(playerUuid);
+        if (qPlayer == null) return;
+
         // run a full check to check for any missed quest completions
-        plugin.getQuestCompleter().queueFullCheck(plugin.getPlayerManager().getPlayer(playerUuid).getQuestProgressFile());
+        plugin.getQuestCompleter().queueFullCheck(qPlayer.getQuestProgressFile());
     }
 
 }

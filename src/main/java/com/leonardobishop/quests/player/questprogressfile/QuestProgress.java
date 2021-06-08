@@ -120,8 +120,7 @@ public class QuestProgress {
         this.addTaskProgress(taskProgress);
     }
 
-    @Deprecated // this shit is annoying to maintain
-    public boolean isWorthSaving() {
+    public boolean isModified() {
         if (modified) return true;
         else {
             for (TaskProgress progress : this.taskProgress.values()) {
@@ -138,7 +137,7 @@ public class QuestProgress {
     public void resetModified() {
         this.modified = false;
         for (TaskProgress progress : this.taskProgress.values()) {
-            progress.setModified(false);
+            progress.resetModified();
         }
     }
 }

@@ -78,6 +78,10 @@ public class QuestsCommand implements TabExecutor {
         if (args.length == 0 && sender instanceof Player) {
             Player player = (Player) sender;
             QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+            if (qPlayer == null) {
+                player.sendMessage(Messages.COMMAND_DATA_NOT_LOADED.getMessage());
+                return true;
+            }
             qPlayer.openQuests();
             return true;
         } else if (args.length >= 1) {
@@ -90,10 +94,11 @@ public class QuestsCommand implements TabExecutor {
                         showAdminHelp(sender, "moddata");
                         return true;
                     } else if (args[1].equalsIgnoreCase("reload")) {
+                        sender.sendMessage(ChatColor.GRAY + "Please note that some options, such as storage, require a full restart for chances to take effect.");
                         plugin.reloadConfig();
                         plugin.reloadQuests();
-                        showProblems(sender);
-                        sender.sendMessage(ChatColor.GRAY + "Quests successfully reloaded.");
+                        if (!plugin.getQuestsConfigLoader().getFilesWithProblems().isEmpty()) showProblems(sender);
+                        sender.sendMessage(ChatColor.GREEN + "Quests successfully reloaded.");
                         return true;
                     } else if (args[1].equalsIgnoreCase("config")) {
                         showProblems(sender);
@@ -156,6 +161,7 @@ public class QuestsCommand implements TabExecutor {
                         showAdminHelp(sender, "opengui");
                         return true;
                     } else if (args[1].equalsIgnoreCase("moddata")) {
+                        // TODO remove me
                         if (args[2].equalsIgnoreCase("clean")) {
                             FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
                                 @Override
@@ -260,36 +266,16 @@ public class QuestsCommand implements TabExecutor {
                         showAdminHelp(sender, "opengui");
                         return true;
                     } else if (args[1].equalsIgnoreCase("moddata")) {
-                        OfflinePlayer ofp = Bukkit.getOfflinePlayer(args[3]);
-                        UUID uuid;
-                        String name;
-                        // Player.class is a superclass for OfflinePlayer.
-                        // getofflinePlayer return a player regardless if exists or not
-                        if (ofp.hasPlayedBefore()) {
-                            uuid = ofp.getUniqueId();
-                            name = ofp.getName();
-                        } else {
-                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.getMessage().replace("{player}", args[3]));
-                            return true;
-                        }
+                        QPlayer qPlayer = getOtherPlayer(sender, args[3]);
+                        if (qPlayer == null) return true;
                         if (args[2].equalsIgnoreCase("fullreset")) {
-                            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
-                            if (qPlayer == null) {
-                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", name));
-                                plugin.getPlayerManager().loadPlayer(uuid);
-                                qPlayer = plugin.getPlayerManager().getPlayer(uuid); //get again
-                            }
-                            if (qPlayer == null) {
-                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_NODATA.getMessage().replace("{player}", name));
-                                return true;
-                            }
                             QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                             questProgressFile.clear();
-                            plugin.getPlayerManager().savePlayer(uuid, questProgressFile);
-                            if (Bukkit.getPlayer(uuid) == null) {
-                                plugin.getPlayerManager().dropPlayer(uuid);
+                            plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
+                            if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
+                                plugin.getPlayerManager().dropPlayer(qPlayer.getPlayerUUID());
                             }
-                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_FULLRESET.getMessage().replace("{player}", name));
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_FULLRESET.getMessage().replace("{player}", args[3]));
                             return true;
                         }
                         showAdminHelp(sender, "moddata");
@@ -326,26 +312,8 @@ public class QuestsCommand implements TabExecutor {
                         }
                     } else if (args[1].equalsIgnoreCase("moddata")) {
                         boolean success = false;
-                        OfflinePlayer ofp = Bukkit.getOfflinePlayer(args[3]);
-                        UUID uuid;
-                        String name;
-                        if (ofp.hasPlayedBefore()) {
-                            uuid = ofp.getUniqueId();
-                            name = ofp.getName();
-                        } else {
-                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.getMessage().replace("{player}", args[3]));
-                            return true;
-                        }
-                        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
-                        if (qPlayer == null) {
-                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", name));
-                            plugin.getPlayerManager().loadPlayer(uuid);
-                        }
-                        if (qPlayer == null) {
-                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_NODATA.getMessage().replace("{player}", name));
-                            success = true;
-                        }
-                        qPlayer = plugin.getPlayerManager().getPlayer(uuid); //get again
+                        QPlayer qPlayer = getOtherPlayer(sender, args[3]);
+                        if (qPlayer == null) return true;
                         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                         Quest quest = plugin.getQuestManager().getQuestById(args[4]);
                         if (quest == null) {
@@ -355,47 +323,47 @@ public class QuestsCommand implements TabExecutor {
                         }
                         if (args[2].equalsIgnoreCase("reset")) {
                             questProgressFile.generateBlankQuestProgress(quest);
-                            plugin.getPlayerManager().savePlayer(uuid, questProgressFile);
-                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                            plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.getMessage().replace("{player}", args[3]).replace("{quest}", quest.getId()));
                             success = true;
                         } else if (args[2].equalsIgnoreCase("start")) {
                             QuestStartResult response = qPlayer.startQuest(quest);
                             if (response == QuestStartResult.QUEST_LIMIT_REACHED) {
-                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILLIMIT.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILLIMIT.getMessage().replace("{player}", args[3]).replace("{quest}", quest.getId()));
                                 return true;
                             } else if (response == QuestStartResult.QUEST_ALREADY_COMPLETED) {
-                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCOMPLETE.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCOMPLETE.getMessage().replace("{player}", args[3]).replace("{quest}", quest.getId()));
                                 return true;
                             } else if (response == QuestStartResult.QUEST_COOLDOWN) {
-                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCOOLDOWN.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCOOLDOWN.getMessage().replace("{player}", args[3]).replace("{quest}", quest.getId()));
                                 return true;
                             } else if (response == QuestStartResult.QUEST_LOCKED) {
-                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILLOCKED.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILLOCKED.getMessage().replace("{player}", args[3]).replace("{quest}", quest.getId()));
                                 return true;
                             } else if (response == QuestStartResult.QUEST_ALREADY_STARTED) {
-                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILSTARTED.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILSTARTED.getMessage().replace("{player}", args[3]).replace("{quest}", quest.getId()));
                                 return true;
                             } else if (response == QuestStartResult.QUEST_NO_PERMISSION) {
-                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILPERMISSION.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILPERMISSION.getMessage().replace("{player}", args[3]).replace("{quest}", quest.getId()));
                                 return true;
                             } else if (response == QuestStartResult.NO_PERMISSION_FOR_CATEGORY) {
-                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCATEGORYPERMISSION.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_FAILCATEGORYPERMISSION.getMessage().replace("{player}", args[3]).replace("{quest}", quest.getId()));
                                 return true;
                             }
-                            plugin.getPlayerManager().savePlayer(uuid, questProgressFile);
-                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                            plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_START_SUCCESS.getMessage().replace("{player}", args[3]).replace("{quest}", quest.getId()));
                             success = true;
                         } else if (args[2].equalsIgnoreCase("complete")) {
                             qPlayer.completeQuest(quest);
-                            plugin.getPlayerManager().savePlayer(uuid, questProgressFile);
-                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS.getMessage().replace("{player}", name).replace("{quest}", quest.getId()));
+                            plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
+                            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS.getMessage().replace("{player}", args[3]).replace("{quest}", quest.getId()));
                             success = true;
                         }
                         if (!success) {
                             showAdminHelp(sender, "moddata");
                         }
-                        if (Bukkit.getPlayer(uuid) == null) {
-                            plugin.getPlayerManager().dropPlayer(uuid);
+                        if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
+                            plugin.getPlayerManager().dropPlayer(qPlayer.getPlayerUUID());
                         }
                         return true;
                     }
@@ -409,7 +377,7 @@ public class QuestsCommand implements TabExecutor {
                     Quest quest = plugin.getQuestManager().getQuestById(args[1]);
                     QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                     if (qPlayer == null) {
-                        sender.sendMessage(ChatColor.RED + "Your quest progress file has not been loaded yet.");
+                        player.sendMessage(Messages.COMMAND_DATA_NOT_LOADED.getMessage());
                         return true;
                     }
                     if (quest == null) {
@@ -434,10 +402,14 @@ public class QuestsCommand implements TabExecutor {
                 Player player = (Player) sender;
                 if (args.length >= 2) {
                     Category category = plugin.getQuestManager().getCategoryById(args[1]);
+                    QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+                    if (qPlayer == null) {
+                        player.sendMessage(Messages.COMMAND_DATA_NOT_LOADED.getMessage());
+                        return true;
+                    }
                     if (category == null) {
                         sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.getMessage().replace("{category}", args[1]));
                     } else {
-                        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                         qPlayer.openCategory(category, null, false);
                         return true;
                     }
@@ -447,7 +419,7 @@ public class QuestsCommand implements TabExecutor {
                 Player player = (Player) sender;
                 QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                 if (qPlayer == null) {
-                    sender.sendMessage(ChatColor.RED + "Your quest progress file has not been loaded yet.");
+                    player.sendMessage(Messages.COMMAND_DATA_NOT_LOADED.getMessage());
                     return true;
                 }
                 List<Quest> validQuests = new ArrayList<>();
@@ -467,6 +439,10 @@ public class QuestsCommand implements TabExecutor {
             } else if (sender instanceof Player && (args[0].equalsIgnoreCase("started"))) {
                 Player player = (Player) sender;
                 QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+                if (qPlayer == null) {
+                    player.sendMessage(Messages.COMMAND_DATA_NOT_LOADED.getMessage());
+                    return true;
+                }
                 qPlayer.openStartedQuests();
                 return true;
             }
@@ -475,6 +451,30 @@ public class QuestsCommand implements TabExecutor {
             sender.sendMessage(ChatColor.RED + "Only admin commands are available to non-player senders.");
         }
         return true;
+    }
+
+    private QPlayer getOtherPlayer(CommandSender sender, String name) {
+        OfflinePlayer ofp = Bukkit.getOfflinePlayer(name);
+        UUID uuid;
+        String username;
+        if (ofp.hasPlayedBefore()) {
+            uuid = ofp.getUniqueId();
+            username = ofp.getName();
+        } else {
+            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.getMessage().replace("{player}", name));
+            return null;
+        }
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
+        if (qPlayer == null) {
+            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", username));
+            plugin.getPlayerManager().loadPlayer(uuid);
+            qPlayer = plugin.getPlayerManager().getPlayer(uuid);
+        }
+        if (qPlayer == null) {
+            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_NODATA.getMessage().replace("{player}", username));
+            return null;
+        }
+        return qPlayer;
     }
 
     private void showProblems(CommandSender sender) {

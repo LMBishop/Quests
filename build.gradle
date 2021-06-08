@@ -83,12 +83,18 @@ dependencies {
     }
     // bStats
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
+    // HikariCP
+    implementation 'com.zaxxer:HikariCP:4.0.3'
+    // slf4j
+    implementation 'org.slf4j:slf4j-simple:1.7.30'
 
     compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
 }
 
 shadowJar {
     relocate 'org.bstats', 'com.leonardobishop.quests.libs.bstats'
+    relocate 'com.zaxxer.hikari', 'com.leonardobishop.quests.libs.hikaricp'
+    relocate 'org.slf4j', 'com.leonardobishop.quests.libs.slf4j'
     archiveClassifier.set('')
 }
 

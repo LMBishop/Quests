@@ -166,13 +166,13 @@ public class Quests extends JavaPlugin {
         questsLogger = new QuestsLogger(this, QuestsLogger.LoggingLevel.INFO);
         questCompleter = new QuestCompleter(this);
 
+        this.generateConfigurations();
+        this.setupVersionSpecific();
+
         taskTypeManager = new TaskTypeManager(this);
         questManager = new QuestManager(this);
         qPlayerManager = new QPlayerManager(this);
         menuController = new MenuController(this);
-
-        this.generateConfigurations();
-        this.setupVersionSpecific();
 
         super.getCommand("quests").setExecutor(new QuestsCommand(this));
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this), this);
@@ -247,12 +247,6 @@ public class Quests extends JavaPlugin {
 
             taskTypeManager.closeRegistrations();
             reloadQuests();
-//            if (!questsConfigLoader.getBrokenFiles().isEmpty()) {
-//                this.getQuestsLogger().severe("Quests has failed to load the following files:");
-//                for (Map.Entry<String, QuestsConfigLoader.ConfigLoadError> entry : questsConfigLoader.getBrokenFiles().entrySet()) {
-//                    this.getQuestsLogger().severe(" - " + entry.getKey() + ": " + entry.getValue().getMessage());
-//                }
-//            }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
                 qPlayerManager.loadPlayer(player.getUniqueId());
@@ -302,10 +296,13 @@ public class Quests extends JavaPlugin {
         }
         for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
             try {
-                qPlayerManager.savePlayer(qPlayer.getPlayerUUID());
+                qPlayerManager.savePlayerSync(qPlayer.getPlayerUUID());
             } catch (Exception ignored) { }
         }
         if (placeholderAPIHook != null) placeholderAPIHook.unregisterExpansion();
+        try {
+            qPlayerManager.getStorageProvider().shutdown();
+        } catch (Exception ignored) { }
     }
 
     public void reloadQuests() {
