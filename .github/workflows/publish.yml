@@ -14,7 +14,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
-          java-version: '1.8'
+          java-version: '8.0'
           distribution: 'adopt'
       - name: Publish to repository
         run: gradle publish
