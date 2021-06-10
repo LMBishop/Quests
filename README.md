@@ -21,20 +21,20 @@ Alternatively, you can build Quests via Gradle. Release versions of Quests are b
 ### Custom Task
 Creating new Task Types within Quests is supported, [see the wiki](https://github.com/LMBishop/Quests/wiki/New-Task-Type) for help.
 
-You can include quests in your project using [JitPack](https://jitpack.io/#LMBishop/Quests) as a repository.
+Quests can be found on the Maven repository listed below, or alternatively on [JitPack](https://jitpack.io/#LMBishop/Quests).
 
+For versions from `repo.leonardobishop.com`, the **version number corresponds to the release version**. Please see Spigot for the latest release number.
 ### Maven
 ```xml
 <repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
+    <id>repo.leonardobishop.com</id>
+    <url>https://repo.leonardobishop.com/releases/</url>
 </repository>
-```
-```xml
+
 <dependency>
-    <groupId>com.github.LMBishop</groupId>
-    <artifactId>Quests</artifactId>
-    <version>master-SNAPSHOT</version>
+    <groupId>com.leonardobishop</groupId>
+    <artifactId>quests</artifactId>
+    <version>2.18</version>
     <scope>provided</scope>
 </dependency>
 ```
@@ -42,10 +42,11 @@ You can include quests in your project using [JitPack](https://jitpack.io/#LMBis
 ### Gradle
 ```groovy
 repositories {
-    maven { url = 'https://jitpack.io' }
-}  
+    maven { url = uri('https://repo.leonardobishop.com/releases/') }
+}
+
 dependencies {
-    compileOnly 'com.github.LMBishop:Quests:master-SNAPSHOT'
+    compileOnly 'com.leonardobishop:quests:2.18'
 }
 ```
 
