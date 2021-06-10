@@ -108,6 +108,11 @@ publishing {
             version = project.version
 
             from components.java
+            pom.withXml {
+                asNode().dependencies.dependency.each { dep ->
+                    dep.parent().remove(dep)
+                }
+            }
         }
     }
 
