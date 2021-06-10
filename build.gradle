@@ -8,6 +8,7 @@ group = 'com.leonardobishop'
 version = '2.18'
 
 processResources {
+    duplicatesStrategy = 'include'
     from(sourceSets.main.resources.srcDirs) {
         include 'plugin.yml'
         expand('version': project.version)
