@@ -1,4 +1,4 @@
-name: Build Plugin
+name: Build plugin
 
 on: ["pull_request", "push"]
 

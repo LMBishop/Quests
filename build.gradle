@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'maven-publish'
 }
 
 group = 'com.leonardobishop'
@@ -98,7 +99,29 @@ shadowJar {
     archiveClassifier.set('')
 }
 
-jar.enabled = false
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.leonardobishop'
+            artifactId = 'quests'
+            version = project.version
+
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            credentials {
+                username = project.findProperty('mavenUser') ?: System.getenv('MAVEN_USER')
+                password = project.findProperty('mavenPassword') ?: System.getenv('MAVEN_PASSWORD')
+            }
+            url = "https://repo.leonardobishop.com/releases/"
+        }
+    }
+}
+
+jar.enabled = true
 
 tasks.build {
     dependsOn(tasks.shadowJar)
