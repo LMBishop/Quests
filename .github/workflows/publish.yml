@@ -1,9 +1,11 @@
 name: Publish plugin to repository
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+     - '*'
 jobs:
   publish:
+    if: github.event.base_ref == 'refs/heads/master'
     runs-on: ubuntu-18.04
     permissions:
       contents: read
