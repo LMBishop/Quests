@@ -2,7 +2,7 @@ package com.leonardobishop.quests.quest.tasktype.type.dependent;
 
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.api.IslandWorthCalculatedEvent;
-import com.leonardobishop.quests.QuestsConfigLoader;
+import com.leonardobishop.quests.util.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;

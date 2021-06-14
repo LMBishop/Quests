@@ -1,4 +1,6 @@
-package com.leonardobishop.quests;
+package com.leonardobishop.quests.util;
+
+import com.leonardobishop.quests.Quests;
 
 public class QuestsLogger {
 

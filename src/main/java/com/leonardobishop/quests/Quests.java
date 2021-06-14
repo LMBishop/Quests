@@ -20,6 +20,7 @@ import com.leonardobishop.quests.hook.title.Title_Other;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.QPlayerManager;
 import com.leonardobishop.quests.quest.QuestManager;
+import com.leonardobishop.quests.quest.controller.NormalQuestController;
 import com.leonardobishop.quests.quest.tasktype.TaskType;
 import com.leonardobishop.quests.quest.tasktype.TaskTypeManager;
 import com.leonardobishop.quests.quest.tasktype.type.BreedingTaskType;
@@ -59,6 +60,11 @@ import com.leonardobishop.quests.quest.tasktype.type.dependent.ShopGUIPlusSellCe
 import com.leonardobishop.quests.quest.tasktype.type.dependent.uSkyBlockLevelType;
 import com.leonardobishop.quests.updater.Updater;
 import com.leonardobishop.quests.util.Messages;
+import com.leonardobishop.quests.util.QuestCompleter;
+import com.leonardobishop.quests.util.QuestMode;
+import com.leonardobishop.quests.util.QuestsAutosaveRunnable;
+import com.leonardobishop.quests.util.QuestsConfigLoader;
+import com.leonardobishop.quests.util.QuestsLogger;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -107,6 +113,7 @@ public class Quests extends JavaPlugin {
     private boolean brokenConfig = false;
     private BukkitTask questAutosaveTask;
     private BukkitTask questQueuePollTask;
+    private QuestMode questMode;
 
     public static Quests get() {
         return instance;
@@ -148,6 +155,14 @@ public class Quests extends JavaPlugin {
         return menuController;
     }
 
+    public QuestMode getQuestMode() {
+        return questMode;
+    }
+
+    protected void setQuestMode(QuestMode questMode) {
+        this.questMode = questMode;
+    }
+
     public String convertToFormat(long m) { //seconds please
         long hours = m / 3600;
         long minutes = (m % 3600) / 60;
@@ -162,6 +177,7 @@ public class Quests extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        questMode = QuestMode.NORMAL;
 
         questsLogger = new QuestsLogger(this, QuestsLogger.LoggingLevel.INFO);
         questCompleter = new QuestCompleter(this);
@@ -311,6 +327,17 @@ public class Quests extends JavaPlugin {
         taskTypeManager.resetTaskTypes();
 
         questsConfigLoader.loadConfig();
+
+        switch (this.questMode) {
+//            TODO
+//            case DAILY:
+//                qPlayerManager.setActiveQuestController(new DailyQuestController(this));
+//                break;
+            default:
+            case NORMAL:
+                qPlayerManager.setActiveQuestController(new NormalQuestController(this));
+                break;
+        }
 
         long autosaveInterval = 12000;
         if (!isBrokenConfig()) {

@@ -262,18 +262,8 @@ options:
       table-prefix: "quests_"
 
 
-# This switches up the entire quest system.
-# By enabling daily-quests, players will no longer be presented with the standard Quest GUI.
-# Instead, they will be presented with 5 random quests.
-# The 'requirements' section in each quest does not apply here.
-# The 'cooldown' section in each quest does not apply here - if it's done, it's done (and will be repeatable next time they get the quest).
-# The 'repeatable' section in each quest does not apply here. It will NOT be repeatable until the next day.
-# Enabling this MAY cause previous quest progress to be modified, wiped or changed irreversibly! If you're testing this on a live server, it is wise to backup
-# the Quests/playerdata/ folder! You've been warned!
-#
-# Quests BETA: this feature is a work in progress, it does not work yet!
-daily-quests:
-  enabled: false # <----- NOT YET IMPLEMENTED (THIS WILL NOT DO ANYTHING)
+quest-mode:
+  mode: "NORMAL" # More modes are a work in progress
 
 # The global task configuration will apply to the config of each task of a specified type in each quest.
 # In the example below, every task with a type of "inventory" will have the config option "update-progress"

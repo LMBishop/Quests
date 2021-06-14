@@ -1,6 +1,6 @@
 package com.leonardobishop.quests.quest.tasktype.type;
 
-import com.leonardobishop.quests.QuestsConfigLoader;
+import com.leonardobishop.quests.util.QuestsConfigLoader;
 import com.leonardobishop.quests.api.QuestsAPI;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
@@ -11,8 +11,6 @@ import com.leonardobishop.quests.quest.tasktype.ConfigValue;
 import com.leonardobishop.quests.quest.tasktype.TaskType;
 import com.leonardobishop.quests.quest.tasktype.TaskUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;

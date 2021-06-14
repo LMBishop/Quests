@@ -1,7 +1,7 @@
 package com.leonardobishop.quests.command;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.QuestsConfigLoader;
+import com.leonardobishop.quests.util.QuestsConfigLoader;
 import com.leonardobishop.quests.api.enums.QuestStartResult;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
@@ -22,15 +22,6 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -126,6 +117,7 @@ public class QuestsCommand implements TabExecutor {
                         sender.sendMessage(ChatColor.DARK_GRAY + "View info using /q a types [type].");
                         return true;
                     } else if (args[1].equalsIgnoreCase("info")) {
+                        sender.sendMessage(ChatColor.RED + "Quest mode: " + plugin.getQuestMode().toString());
                         sender.sendMessage(ChatColor.GRAY + "Loaded quests:");
                         for (Quest quest : plugin.getQuestManager().getQuests().values()) {
                             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + quest.getId() + ChatColor.GRAY + " [" + quest.getTasks().size() + " tasks]");

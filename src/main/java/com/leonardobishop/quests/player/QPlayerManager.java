@@ -1,19 +1,16 @@
 package com.leonardobishop.quests.player;
 
 import com.leonardobishop.quests.Quests;
-import com.leonardobishop.quests.QuestsLogger;
+import com.leonardobishop.quests.util.QuestsLogger;
 import com.leonardobishop.quests.player.questprogressfile.QPlayerPreferences;
-import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;
-import com.leonardobishop.quests.player.questprogressfile.TaskProgress;
+import com.leonardobishop.quests.quest.controller.NormalQuestController;
+import com.leonardobishop.quests.quest.controller.QuestController;
 import com.leonardobishop.quests.storage.MySqlStorageProvider;
 import com.leonardobishop.quests.storage.StorageProvider;
 import com.leonardobishop.quests.storage.YamlStorageProvider;
-import com.leonardobishop.quests.util.Options;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
@@ -21,8 +18,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class QPlayerManager {
 
+    private final Map<UUID, QPlayer> qPlayers = new ConcurrentHashMap<>();
     private final Quests plugin;
     private StorageProvider storageProvider;
+    private QuestController activeQuestController;
+
 
     public QPlayerManager(Quests plugin) {
         this.plugin = plugin;
@@ -41,9 +41,9 @@ public class QPlayerManager {
         } catch (Exception ignored) {
             plugin.getQuestsLogger().severe("An error occurred initialising the storage provider.");
         }
-    }
 
-    private final Map<UUID, QPlayer> qPlayers = new ConcurrentHashMap<>();
+        this.activeQuestController = new NormalQuestController(plugin);
+    }
 
     /**
      * Gets the QPlayer from a given UUID.
@@ -153,7 +153,7 @@ public class QPlayerManager {
         qPlayers.computeIfAbsent(uuid, s -> {
             QuestProgressFile questProgressFile = storageProvider.loadProgressFile(uuid);
             if (questProgressFile == null) return null;
-            return new QPlayer(uuid, questProgressFile, new QPlayerPreferences(null), plugin);
+            return new QPlayer(plugin, uuid, new QPlayerPreferences(null), questProgressFile, activeQuestController);
         });
     }
 
@@ -164,5 +164,16 @@ public class QPlayerManager {
      */
     public StorageProvider getStorageProvider() {
         return storageProvider;
+    }
+
+    public QuestController getActiveQuestController() {
+        return activeQuestController;
+    }
+
+    public void setActiveQuestController(QuestController activeQuestController) {
+        this.activeQuestController = activeQuestController;
+        for (QPlayer qPlayer : qPlayers.values()) {
+            qPlayer.setQuestController(activeQuestController);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.menu.element;
 
 import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.api.enums.QuestStartResult;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.quest.Quest;
@@ -42,8 +43,9 @@ public class QuestMenuElement extends MenuElement {
     public ItemStack asItemStack() {
         Quest quest = plugin.getQuestManager().getQuestById(questId);
         QuestProgress questProgress = owner.getQuestProgressFile().getQuestProgress(quest);
+        QuestStartResult status = owner.canStartQuest(quest);
         long cooldown = owner.getQuestProgressFile().getCooldownFor(quest);
-        if (!owner.getQuestProgressFile().hasMetRequirements(quest)) {
+        if (status == QuestStartResult.QUEST_LOCKED) {
             List<String> quests = new ArrayList<>();
             for (String requirement : quest.getRequirements()) {
                 Quest requirementQuest = Quests.get().getQuestManager().getQuestById(requirement);
@@ -57,12 +59,12 @@ public class QuestMenuElement extends MenuElement {
             placeholders.put("{requirements}", String.join(", ", quests));
             ItemStack is = replaceItemStack(Items.QUEST_LOCKED.getItem(), placeholders);
             return is;
-        } else if (!quest.isRepeatable() && questProgress.isCompletedBefore()) {
+        } else if (status == QuestStartResult.QUEST_ALREADY_COMPLETED) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", quest.getDisplayNameStripped());
             ItemStack is = replaceItemStack(Items.QUEST_COMPLETED.getItem(), placeholders);
             return is;
-        } else if (quest.isPermissionRequired() && !Bukkit.getPlayer(owner.getPlayerUUID()).hasPermission("quests.quest." + quest.getId())) {
+        } else if (status == QuestStartResult.QUEST_NO_PERMISSION) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", quest.getDisplayNameStripped());
             ItemStack is = replaceItemStack(Items.QUEST_PERMISSION.getItem(), placeholders);

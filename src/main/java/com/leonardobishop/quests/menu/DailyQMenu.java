@@ -1,106 +1,98 @@
-//package com.leonardobishop.quests.menu;
-//
-//import com.leonardobishop.quests.util.Options;
-//import com.leonardobishop.quests.player.QPlayer;
-//import com.leonardobishop.quests.quests.Quest;
-//import org.bukkit.Bukkit;
-//import org.bukkit.inventory.Inventory;
-//
-//import java.util.HashMap;
-//import java.util.List;
-//
-//public class QMenuDaily implements QMenu {
-//
-//    private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
-//    private int backButtonLocation = -1;
-//    private boolean backButtonEnabled = true;
-//    private final QMenuCategory superMenu;
-//    private String categoryName;
-//    private final int pageSize = 45;
-//    private final QPlayer owner;
-//
-//    public QMenuDaily(QPlayer owner, QMenuCategory superMenu) {
-//        this.owner = owner;
-//        this.superMenu = superMenu;
-//    }
-//
-//    public void populate(List<Quest> quests) {
-//        int slot = 11;
-//        for (Quest quest : quests) {
-//            slotsToQuestIds.put(slot, quest.getId());
-//            slot++;
-//            if (slot == 16) {
-//                break;
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public HashMap<Integer, String> getSlotsToMenu() {
-//        return slotsToQuestIds;
-//    }
-//
-//    @Override
-//    public QPlayer getOwner() {
-//        return owner;
-//    }
-//
-//    public String getCategoryName() {
-//        return categoryName;
-//    }
-//
-//    public Inventory toInventory(int page) {
-//        int pageMin = pageSize * (page - 1);
-//        int pageMax = pageSize * page;
-//        String title = Options.GUITITLE_DAILY_QUESTS.toString();
-//
-// //       Inventory inventory = Bukkit.createInventory(null, 27, title);
-//
-//        //TODO daily quests
-//
-////        int invSlot = 11;
-////        for (int pointer = pageMin; pointer < pageMax; pointer++) {
-////            if (slotsToQuestIds.containsKey(pointer)) {
-////                Quest quest = Quests.getQuestManager().getQuestById(slotsToQuestIds.get(pointer));
-////                QuestProgress questProgress = owner.getQuestProgressFile().getQuestProgress(quest);
-////                long cooldown = owner.getQuestProgressFile().getCooldownFor(quest);
-////                if (!owner.getQuestProgressFile().hasMetRequirements(quest)) {
-////                    List<String> quests = new ArrayList<>();
-////                    for (String requirement : quest.getRequirements()) {
-////                        quests.add(Quests.getQuestManager().getQuestById(requirement).getDisplayNameStripped());
-////                    }
-////                    Map<String, String> placeholders = new HashMap<>();
-////                    placeholders.put("{quest}", quest.getDisplayNameStripped());
-////                    placeholders.put("{requirements}", String.join(", ", quests));
-////                    ItemStack is = replaceItemStack(Items.QUEST_LOCKED.getItem(), placeholders);
-////                    inventory.setItem(invSlot, is);
-////                } else if (!quest.isRepeatable() && questProgress.isCompletedBefore()) {
-////                    Map<String, String> placeholders = new HashMap<>();
-////                    placeholders.put("{quest}", quest.getDisplayNameStripped());
-////                    ItemStack is = replaceItemStack(Items.QUEST_COMPLETED.getItem(), placeholders);
-////                    inventory.setItem(invSlot, is);
-////                } else if (cooldown > 0) {
-////                    Map<String, String> placeholders = new HashMap<>();
-////                    placeholders.put("{time}", Quests.convertToFormat(TimeUnit.MINUTES.convert(cooldown, TimeUnit.MILLISECONDS)));
-////                    placeholders.put("{quest}", quest.getDisplayNameStripped());
-////                    ItemStack is = replaceItemStack(Items.QUEST_COOLDOWN.getItem(), placeholders);
-////                    inventory.setItem(invSlot, is);
-////                } else {
-////                    inventory.setItem(invSlot, Quests.getQuestManager().getQuestById(quest.getId()).getDisplayItem().toItemStack(questProgress));
-////                }
-////            }
-////            invSlot++;
-////        }
-////      return inventory;
-//        return Bukkit.createInventory(null, 27, title);
-//    }
-//
-//    //Implement too
-//    public QMenuCategory getSuperMenu() {
-//        return this.superMenu;
-//    }
-//
-//    public int getPageSize() {
-//        return this.pageSize;
-//    }
-//}
+package com.leonardobishop.quests.menu;
+
+import com.leonardobishop.quests.Quests;
+import com.leonardobishop.quests.api.enums.QuestStartResult;
+import com.leonardobishop.quests.listener.MenuController;
+import com.leonardobishop.quests.menu.element.MenuElement;
+import com.leonardobishop.quests.menu.element.QuestMenuElement;
+import com.leonardobishop.quests.player.QPlayer;
+import com.leonardobishop.quests.quest.Quest;
+import com.leonardobishop.quests.quest.controller.DailyQuestController;
+import com.leonardobishop.quests.quest.controller.QuestController;
+import com.leonardobishop.quests.util.Items;
+import com.leonardobishop.quests.util.Options;
+import org.bukkit.Bukkit;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Represents a cancellation confirmation menu for a specific quest.
+ */
+public class DailyQMenu implements QMenu {
+
+    private final Map<Integer, MenuElement> menuElements = new HashMap<>();
+    private final Quests plugin;
+    private final QPlayer owner;
+
+    public DailyQMenu(Quests plugin, QPlayer owner) {
+        this.plugin = plugin;
+        this.owner = owner;
+    }
+
+    @Override
+    public QPlayer getOwner() {
+        return owner;
+    }
+
+    public void populate() {
+        if (!(owner.getQuestController() instanceof DailyQuestController)) {
+            return;
+        }
+        DailyQuestController dailyQuestController = (DailyQuestController) owner.getQuestController();
+        List<String> quests = dailyQuestController.getQuests();
+        for (int i = 0; i < quests.size(); i++) {
+            menuElements.put(11 + i, new QuestMenuElement(plugin, owner, quests.get(i)));
+        }
+    }
+
+    public Inventory toInventory(int page) {
+        String title = Options.color(Options.GUITITLE_DAILY_QUESTS.getStringValue());
+
+        ItemStack background = Items.QUEST_CANCEL_BACKGROUND.getItem();
+        ItemMeta backgroundMeta = background.getItemMeta();
+        backgroundMeta.setDisplayName(" ");
+        background.setItemMeta(backgroundMeta);
+
+        Inventory inventory = Bukkit.createInventory(null, 27, title);
+
+        for (int i = 0; i < inventory.getSize(); i++) {
+            inventory.setItem(i, background);
+        }
+
+        for (int pointer = 0; pointer < 27; pointer++) {
+            if (menuElements.containsKey(pointer)) {
+                inventory.setItem(pointer, menuElements.get(pointer).asItemStack());
+            }
+        }
+
+        return inventory;
+    }
+
+    @Override
+    public void handleClick(InventoryClickEvent event, MenuController controller) {
+        if (menuElements.containsKey(event.getSlot())) {
+            MenuElement menuElement = menuElements.get(event.getSlot());
+            if (menuElement instanceof QuestMenuElement) {
+                QuestMenuElement questMenuElement = (QuestMenuElement) menuElement;
+                Quest quest = plugin.getQuestManager().getQuestById(questMenuElement.getQuestId());
+                if (event.getClick() == ClickType.LEFT) {
+                    if (Options.QUEST_AUTOSTART.getBooleanValue()) return;
+                    if (owner.startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
+                        event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
+                    }
+                } else if (event.getClick() == ClickType.MIDDLE && Options.ALLOW_QUEST_TRACK.getBooleanValue()) {
+                    MenuUtil.handleMiddleClick(this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
+                }
+            }
+        }
+    }
+
+
+}

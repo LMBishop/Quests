@@ -1,5 +1,6 @@
-package com.leonardobishop.quests;
+package com.leonardobishop.quests.util;
 
+import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.player.QPlayer;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.player.questprogressfile.QuestProgressFile;

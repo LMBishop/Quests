@@ -1,6 +1,6 @@
 package com.leonardobishop.quests.quest.tasktype;
 
-import com.leonardobishop.quests.QuestsConfigLoader;
+import com.leonardobishop.quests.util.QuestsConfigLoader;
 import com.leonardobishop.quests.quest.Task;
 import org.bukkit.entity.Player;
 

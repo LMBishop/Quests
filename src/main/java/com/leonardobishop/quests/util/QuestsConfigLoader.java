@@ -1,12 +1,12 @@
-package com.leonardobishop.quests;
+package com.leonardobishop.quests.util;
 
+import com.leonardobishop.quests.Quests;
 import com.leonardobishop.quests.hook.itemgetter.ItemGetter;
 import com.leonardobishop.quests.menu.QItemStack;
 import com.leonardobishop.quests.quest.Category;
 import com.leonardobishop.quests.quest.Quest;
 import com.leonardobishop.quests.quest.Task;
 import com.leonardobishop.quests.quest.tasktype.TaskType;
-import com.leonardobishop.quests.util.Options;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -81,6 +81,12 @@ public class QuestsConfigLoader {
                     }
                     globalTaskConfig.putIfAbsent(type, configValues);
                 }
+            }
+
+            try {
+                plugin.setQuestMode(QuestMode.valueOf(plugin.getConfig().getString("quest-mode.mode", "NORMAL").toUpperCase()));
+            } catch (IllegalArgumentException ex) {
+                plugin.setQuestMode(QuestMode.NORMAL);
             }
 
             FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
@@ -179,6 +185,14 @@ public class QuestsConfigLoader {
                             Map<String, String> placeholders = new HashMap<>();
 
                             if (category == null) category = "";
+
+                            if (plugin.getQuestMode() == QuestMode.DAILY) {
+                                repeatable = true;
+                                cooldown = true;
+                                cooldownTime = 0;
+                                requirements = Collections.emptyList();
+                                permissionRequired = false;
+                            }
 
                             Quest quest;
                             if (category.equals("")) {
