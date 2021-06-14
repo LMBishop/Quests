@@ -159,7 +159,7 @@ public class Quests extends JavaPlugin {
         return questMode;
     }
 
-    protected void setQuestMode(QuestMode questMode) {
+    public void setQuestMode(QuestMode questMode) {
         this.questMode = questMode;
     }
 
