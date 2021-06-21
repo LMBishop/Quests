@@ -31,6 +31,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.BrewingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BuildingCertainTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BuildingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.CommandTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.CraftingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.DealDamageTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.DistancefromTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.EnchantingTaskType;
@@ -273,6 +274,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new PermissionTaskType(this));
             taskTypeManager.registerTaskType(new DistancefromTaskType(this));
             taskTypeManager.registerTaskType(new CommandTaskType(this));
+            taskTypeManager.registerTaskType(new CraftingTaskType(this));
             // TODO: FIX
             // taskTypeManager.registerTaskType(new BrewingCertainTaskType());
             if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
@@ -320,7 +322,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @Override
     public void onDisable() {
         if (!validConfiguration) return;
-        
+
         for (TaskType taskType : getTaskTypeManager().getTaskTypes()) {
             try {
                 taskType.onDisable();
