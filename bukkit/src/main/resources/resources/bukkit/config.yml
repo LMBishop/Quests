@@ -239,6 +239,10 @@ options:
     # Either 'yaml' (flatfile) or 'mysql' (network)
     # Please read the following before using MySQL https://github.com/LMBishop/Quests/wiki/Storage-Providers#network
     provider: "yaml"
+    # See: https://github.com/LMBishop/Quests/wiki/Storage-Providers#Data-synchronisiation
+    #      https://github.com/LMBishop/Quests/issues/180
+    synchronisation:
+      delay-loading: 0 # (ticks)
     # The following is only applicable for database storage providers (e.g. mysql)
     database-settings:
       network:

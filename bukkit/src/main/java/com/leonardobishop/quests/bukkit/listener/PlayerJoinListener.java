@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.common.player.QPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -20,15 +21,8 @@ public class PlayerJoinListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onAsyncJoin(AsyncPlayerPreLoginEvent event) {
-        plugin.getPlayerManager().loadPlayer(event.getUniqueId());
-    }
-
     @EventHandler
     public void onEvent(PlayerJoinEvent event) {
-        UUID playerUuid = event.getPlayer().getUniqueId();
-        plugin.getPlayerManager().loadPlayer(playerUuid);
         if (plugin.getDescription().getVersion().contains("beta") && event.getPlayer().hasPermission("quests.admin")) {
             event.getPlayer().sendMessage(Messages.BETA_REMINDER.getMessage());
         }
@@ -41,11 +35,17 @@ public class PlayerJoinListener implements Listener {
             Bukkit.getScheduler().runTaskLater(this.plugin, () -> event.getPlayer().sendMessage(updateMessage), 50L);
         }
 
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(playerUuid);
-        if (qPlayer == null) return;
-
-        // run a full check to check for any missed quest completions
-        plugin.getQuestCompleter().queueFullCheck(qPlayer.getQuestProgressFile());
+        final Player player = event.getPlayer();
+        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+            if (!player.isOnline()) return;
+            plugin.getPlayerManager().loadPlayer(player.getUniqueId());
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+                if (qPlayer == null) return;
+                // run a full check to check for any missed quest completions
+                plugin.getQuestCompleter().queueFullCheck(qPlayer.getQuestProgressFile());
+            });
+        }, plugin.getQuestsConfig().getInt("options.storage.synchronisation.delay-loading", 0));
     }
 
 }
