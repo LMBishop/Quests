@@ -1,10 +1,10 @@
 package com.leonardobishop.quests.common.player;
 
 import com.leonardobishop.quests.common.logger.QuestsLogger;
-import com.leonardobishop.quests.common.storage.StorageProvider;
+import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.questcontroller.QuestController;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
+import com.leonardobishop.quests.common.storage.StorageProvider;
 
 import java.util.Collection;
 import java.util.Map;

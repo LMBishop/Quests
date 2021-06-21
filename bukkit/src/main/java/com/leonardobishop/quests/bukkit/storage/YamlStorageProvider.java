@@ -21,7 +21,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class YamlStorageProvider implements StorageProvider {
 
     private final Map<UUID, ReentrantLock> locks = new ConcurrentHashMap<>();
-    private BukkitQuestsPlugin plugin;
+    private final BukkitQuestsPlugin plugin;
 
     public YamlStorageProvider(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -49,7 +49,7 @@ public class YamlStorageProvider implements StorageProvider {
         ReentrantLock lock = lock(uuid);
         Map<String, Quest> presentQuests = new HashMap<>(plugin.getQuestManager().getQuests());
         boolean validateQuests = plugin.getQuestsConfig().getBoolean("options.verify-quest-exists-on-load", true);
-
+        
         QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
         try {
             File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
@@ -75,7 +75,7 @@ public class YamlStorageProvider implements StorageProvider {
                                     Object taskProgression = data.get("quest-progress." + id + ".task-progress." + taskid + ".progress");
 
                                     if (validateQuests && presentQuests.get(id).getTaskById(taskid) == null) continue;
-                                    
+
                                     TaskProgress taskProgress = new TaskProgress(questProgress, taskid, taskProgression, uuid, taskCompleted, false);
                                     questProgress.addTaskProgress(taskProgress);
                                 }

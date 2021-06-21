@@ -1,10 +1,10 @@
 package com.leonardobishop.quests.common.player;
 
-import com.leonardobishop.quests.common.questcontroller.QuestController;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
-import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
+import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.quest.Quest;
+import com.leonardobishop.quests.common.questcontroller.QuestController;
 
 import java.util.UUID;
 
