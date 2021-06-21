@@ -1,0 +1,48 @@
+name: Bug Report
+description: Report issues/unexpected behaviour with Quests
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before reporting an issue here, please make sure you are on the latest version of Quests.
+  - type: textarea
+    attributes:
+      label: Description of Bug
+      description: Describe what went wrong, and what the expected behaviour was.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: |
+        Describe any steps or details intructions to reproduce this bug.
+        Your answer may include any screenshots or video.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Quests Version
+      description: |
+        State the version of Quests which this bug is present on.
+        You can identify your current version by running `/version Quests`.
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Agreements
+      description: Please agree to the following.
+      options:
+        - label: I am running the latest version of Quests
+          required: true
+        - label: I am certain this issue is unique and a similar issue is not currently open
+          required: true
+        - label: I am using a version of Minecraft which is supported by Quests
+          required: true
+  - type: textarea
+    attributes:
+      label: Other
+      description: |
+        Please include other helpful information below.
+        This field is not required.
+    validations:
+      required: false
