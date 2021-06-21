@@ -319,6 +319,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     @Override
     public void onDisable() {
+        if (!validConfiguration) return;
+        
         for (TaskType taskType : getTaskTypeManager().getTaskTypes()) {
             try {
                 taskType.onDisable();
@@ -537,5 +539,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @Override
     public FileConfiguration getConfig() {
         return questsConfig.getConfig();
+    }
+
+    @Override
+    public void reloadConfig() {
+        this.reloadBaseConfiguration();
     }
 }

@@ -2,6 +2,9 @@ package com.leonardobishop.quests.bukkit.config;
 
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
 import com.leonardobishop.quests.common.config.QuestsConfig;
+import com.leonardobishop.quests.common.plugin.Quests;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,8 +18,8 @@ public class BukkitQuestsConfig implements QuestsConfig {
     private final Map<String, ItemStack> cachedItemStacks = new HashMap<>();
     // this is faster than just relying on the YamlConfiguration to cache it for some reason
     private final Map<String, Boolean> cachedBooleans = new HashMap<>();
+    private final File file;
     private YamlConfiguration config;
-    private File file;
     private ItemGetter itemGetter;
 
     public BukkitQuestsConfig(File file) {
@@ -31,8 +34,9 @@ public class BukkitQuestsConfig implements QuestsConfig {
     public boolean loadConfig() {
         this.cachedBooleans.clear();
         this.cachedItemStacks.clear();
+        this.config = new YamlConfiguration();
         try {
-            config = YamlConfiguration.loadConfiguration(file);
+            config.load(file);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,12 +60,12 @@ public class BukkitQuestsConfig implements QuestsConfig {
 
     @Override
     public boolean getBoolean(String path) {
-        return config.getBoolean(path);
+        return cachedBooleans.computeIfAbsent(path, s -> config.getBoolean(path));
     }
 
     @Override
     public boolean getBoolean(String path, boolean def) {
-        return config.getBoolean(path, def);
+        return cachedBooleans.computeIfAbsent(path, s -> config.getBoolean(path, def));
     }
 
     @Override
