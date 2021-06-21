@@ -111,7 +111,7 @@ public class StartedQMenu implements QMenu {
         pageplaceholders.put("{prevpage}", String.valueOf(page - 1));
         pageplaceholders.put("{nextpage}", String.valueOf(page + 1));
         pageplaceholders.put("{page}", String.valueOf(page));
-        pageIs = MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.page-description"), pageplaceholders);
+        pageIs = MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.page-desc"), pageplaceholders);
         pageIs.setAmount(Math.min(page, 64));
         pagePrevIs = MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.page-prev"), pageplaceholders);
         pageNextIs = MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.page-next"), pageplaceholders);

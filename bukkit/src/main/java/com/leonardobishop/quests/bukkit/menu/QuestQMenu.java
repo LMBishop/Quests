@@ -160,7 +160,7 @@ public class QuestQMenu implements QMenu {
         pageplaceholders.put("{prevpage}", String.valueOf(page - 1));
         pageplaceholders.put("{nextpage}", String.valueOf(page + 1));
         pageplaceholders.put("{page}", String.valueOf(page));
-        pageIs = replaceItemStack(config.getItem("gui.page-description"), pageplaceholders);
+        pageIs = replaceItemStack(config.getItem("gui.page-desc"), pageplaceholders);
         pageIs.setAmount(Math.min(page, 64));
         pagePrevIs = replaceItemStack(config.getItem("gui.page-prev"), pageplaceholders);
         pageNextIs = replaceItemStack(config.getItem("gui.page-next"), pageplaceholders);
