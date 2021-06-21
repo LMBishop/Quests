@@ -13,26 +13,89 @@ import com.leonardobishop.quests.common.config.QuestsConfig;
 
 public interface Quests {
 
+    /**
+     * Obtain an instance of the Quests logger.
+     *
+     * @see QuestsLogger
+     * @return quests logger
+     */
     QuestsLogger getQuestsLogger();
 
+    /**
+     * Obtain an instance of the QuestManager.
+     *
+     * @see QuestManager
+     * @return quest manager
+     */
     QuestManager getQuestManager();
 
+    /**
+     * Obtain an instance of the QPlayerManager.
+     *
+     * @see QPlayerManager
+     * @return quest player manager
+     */
     QPlayerManager getPlayerManager();
 
+    /**
+     * Obtain an instance of the QuestController.
+     *
+     * @see QuestController
+     * @return quest controller
+     */
     QuestController getQuestController();
 
+    /**
+     * Obtain an instance of the TaskTypeManager.
+     *
+     * @see TaskTypeManager
+     * @return task type manager
+     */
     TaskTypeManager getTaskTypeManager();
 
+    /**
+     * Obtain an instance of the QuestCompleter.
+     *
+     * @see QuestCompleter
+     * @return quest completer
+     */
     QuestCompleter getQuestCompleter();
 
+    /**
+     * Obtain an instance of the QuestConfig.
+     *
+     * @see QuestsConfig
+     * @return quest config
+     */
     QuestsConfig getQuestsConfig();
 
+    /**
+     * Obtain an instance of the Updater.
+     *
+     * @see Updater
+     * @return updater
+     */
     Updater getUpdater();
 
+    /**
+     * Obtain an instance of the ServerScheduler.
+     *
+     * @see ServerScheduler
+     * @return server scheduler
+     */
     ServerScheduler getScheduler();
 
+    /**
+     * Obtain an instance of the StorageProvider.
+     *
+     * @see StorageProvider
+     * @return storage provider
+     */
     StorageProvider getStorageProvider();
 
+    /**
+     * Performs a full reload of the plugin, unloading and re-registering quests to their task types.
+     */
     void reloadQuests();
 
 }

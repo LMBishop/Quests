@@ -6,8 +6,14 @@ import com.leonardobishop.quests.common.quest.Task;
 
 import java.util.ArrayList;
 
+/**
+ * The task type manager stores all registered task types and registers individual quests to each task type.
+ * Task types can only be registered if registrations are enabled, which is typically only during start-up.
+ * This is to ensure quests are only registered to task types when all task types have been registered first.
+ */
 public abstract class TaskTypeManager {
 
+    private final ArrayList<TaskType> taskTypes = new ArrayList<>();
     private final Quests plugin;
     private boolean allowRegistrations;
 
@@ -23,8 +29,6 @@ public abstract class TaskTypeManager {
     public boolean areRegistrationsAccepted() {
         return allowRegistrations;
     }
-
-    private ArrayList<TaskType> taskTypes = new ArrayList<>();
 
     public ArrayList<TaskType> getTaskTypes() {
         return taskTypes;

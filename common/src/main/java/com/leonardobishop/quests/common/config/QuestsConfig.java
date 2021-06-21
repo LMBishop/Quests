@@ -2,6 +2,9 @@ package com.leonardobishop.quests.common.config;
 
 import java.util.List;
 
+/**
+ * The quests config stores configuration values for the plugin.
+ */
 public interface QuestsConfig {
 
     boolean loadConfig();

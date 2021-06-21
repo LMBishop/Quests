@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The QPlayerManager is responsible for keeping a reference to all players on the server and is used to
+ * obtain an instance of a player, load new players and save current players.
+ */
 public class QPlayerManager {
 
     private final Map<UUID, QPlayer> qPlayers = new ConcurrentHashMap<>();

@@ -4,6 +4,10 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFi
 
 import java.util.UUID;
 
+/**
+ * The storage provider is responsible for obtaining a QuestProgressFile for a specified UUID and for
+ * writing a QuestProgressFile.
+ */
 public interface StorageProvider {
 
     void init();

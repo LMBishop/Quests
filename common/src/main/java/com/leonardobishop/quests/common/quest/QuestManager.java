@@ -7,6 +7,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The quests manager stores all present Quests and Categories on the server and is used as a registry.
+ */
 public class QuestManager {
 
     private final Quests plugin;

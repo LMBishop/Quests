@@ -1,5 +1,9 @@
 package com.leonardobishop.quests.common.logger;
 
+/**
+ * The quests logger allows for user customisation of what gets logged.
+ * Implementations of QuestsLogger should wrap the logger of that platform.
+ */
 public interface QuestsLogger {
 
     LoggingLevel getServerLoggingLevel();

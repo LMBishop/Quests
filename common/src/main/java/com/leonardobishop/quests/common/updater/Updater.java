@@ -10,6 +10,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The updater checks for updates on Spigot, and prints to the logger if one is found.
+ */
 public class Updater {
  
     private static final int PROJECT_ID = 23696;

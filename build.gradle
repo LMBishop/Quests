@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'maven-publish'
 }
 
 defaultTasks 'allJar'
@@ -25,4 +26,31 @@ task allJar( type: Jar, dependsOn: subprojects.tasks['build'] ) {
 
 artifacts {
     archives allJar
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.leonardobishop'
+            artifactId = 'quests'
+            version = project.version
+
+            artifact allJar
+            pom.withXml {
+                asNode().dependencies.dependency.each { dep ->
+                    dep.parent().remove(dep)
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            credentials {
+                username = project.findProperty('mavenUser') ?: System.getenv('MAVEN_USER')
+                password = project.findProperty('mavenPassword') ?: System.getenv('MAVEN_PASSWORD')
+            }
+            url = "https://repo.leonardobishop.com/releases/"
+        }
+    }
 }
