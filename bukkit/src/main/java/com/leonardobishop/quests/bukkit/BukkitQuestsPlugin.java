@@ -65,6 +65,7 @@ import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.config.QuestsConfig;
 import com.leonardobishop.quests.common.logger.QuestsLogger;
+import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.QPlayerManager;
 import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.quest.QuestCompleter;
@@ -314,6 +315,31 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 qPlayerManager.loadPlayer(player.getUniqueId());
             }
         });
+    }
+
+    @Override
+    public void onDisable() {
+        for (TaskType taskType : getTaskTypeManager().getTaskTypes()) {
+            try {
+                taskType.onDisable();
+            } catch (Exception ignored) { }
+        }
+        for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
+            try {
+                qPlayerManager.savePlayerSync(qPlayer.getPlayerUUID());
+            } catch (Exception ignored) { }
+        }
+        if (placeholderAPIHook != null) {
+            try {
+                placeholderAPIHook.unregisterExpansion();
+            } catch (Exception e) {
+                questsLogger.warning("You need to update PlaceholderAPI for Quests to exit gracefully:");
+                e.printStackTrace();
+            }
+        }
+        try {
+            qPlayerManager.getStorageProvider().shutdown();
+        } catch (Exception ignored) { }
     }
 
     @Override
