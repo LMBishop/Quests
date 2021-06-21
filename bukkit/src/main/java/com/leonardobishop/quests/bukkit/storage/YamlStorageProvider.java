@@ -4,12 +4,14 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
+import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.storage.StorageProvider;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -45,6 +47,9 @@ public class YamlStorageProvider implements StorageProvider {
 
     public QuestProgressFile loadProgressFile(UUID uuid) {
         ReentrantLock lock = lock(uuid);
+        Map<String, Quest> presentQuests = new HashMap<>(plugin.getQuestManager().getQuests());
+        boolean validateQuests = plugin.getQuestsConfig().getBoolean("options.verify-quest-exists-on-load", true);
+
         QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
         try {
             File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
@@ -60,6 +65,8 @@ public class YamlStorageProvider implements StorageProvider {
                             boolean completedBefore = data.getBoolean("quest-progress." + id + ".completed-before");
                             long completionDate = data.getLong("quest-progress." + id + ".completion-date");
 
+                            if (validateQuests && !presentQuests.containsKey(id)) continue;
+
                             QuestProgress questProgress = new QuestProgress(plugin, id, completed, completedBefore, completionDate, uuid, started, true);
 
                             if (data.isConfigurationSection("quest-progress." + id + ".task-progress")) {
@@ -67,6 +74,8 @@ public class YamlStorageProvider implements StorageProvider {
                                     boolean taskCompleted = data.getBoolean("quest-progress." + id + ".task-progress." + taskid + ".completed");
                                     Object taskProgression = data.get("quest-progress." + id + ".task-progress." + taskid + ".progress");
 
+                                    if (validateQuests && presentQuests.get(id).getTaskById(taskid) == null) continue;
+                                    
                                     TaskProgress taskProgress = new TaskProgress(questProgress, taskid, taskProgression, uuid, taskCompleted, false);
                                     questProgress.addTaskProgress(taskProgress);
                                 }

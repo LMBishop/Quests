@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
+import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.storage.StorageProvider;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -127,6 +128,9 @@ public class MySqlStorageProvider implements StorageProvider {
     @Override
     public QuestProgressFile loadProgressFile(UUID uuid) {
         if (fault) return null;
+        Map<String, Quest> presentQuests = new HashMap<>(plugin.getQuestManager().getQuests());
+        boolean validateQuests = plugin.getQuestsConfig().getBoolean("options.verify-quest-exists-on-load", true);
+
         QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
         try (Connection connection = hikari.getConnection()) {
             plugin.getQuestsLogger().debug("Querying player " + uuid);
@@ -142,6 +146,7 @@ public class MySqlStorageProvider implements StorageProvider {
                         boolean completedBefore = rs.getBoolean(4);
                         long completionDate = rs.getLong(5);
 
+                        if (validateQuests && !presentQuests.containsKey(questId)) continue;
                         QuestProgress questProgress = new QuestProgress(plugin, questId, completed, completedBefore, completionDate, uuid, started);
                         questProgressMap.put(questId, questProgress);
                     }
@@ -187,7 +192,11 @@ public class MySqlStorageProvider implements StorageProvider {
                         }
 
                         QuestProgress linkedQuestProgress = questProgressMap.get(questId);
-                        if (linkedQuestProgress == null) continue; // lost quest progress ?
+                        if (linkedQuestProgress == null) continue;
+                        if (validateQuests) {
+                            if (!presentQuests.containsKey(questId)) continue;
+                            if (presentQuests.get(questId).getTaskById(taskId) == null) continue;
+                        }
                         TaskProgress questProgress = new TaskProgress(linkedQuestProgress, taskId, progress, uuid, completed);
                         linkedQuestProgress.addTaskProgress(questProgress);
                     }
