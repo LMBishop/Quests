@@ -56,6 +56,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensDeliverT
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensInteractTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsBalanceTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsMoneyEarnTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.IridiumSkyblockValueTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.MythicMobsKillingType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PlaceholderAPIEvaluateTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ShopGUIPlusBuyCertainTaskType;
@@ -284,9 +285,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 BentoBoxLevelTaskType.register(this, taskTypeManager);
             }
             //TODO FIX
-//            if (Bukkit.getPluginManager().isPluginEnabled("IridiumSkyblock")) {
-//                taskTypeManager.registerTaskType(new IridiumSkyblockValueType());
-//            }
+            if (Bukkit.getPluginManager().isPluginEnabled("IridiumSkyblock")) {
+                taskTypeManager.registerTaskType(new IridiumSkyblockValueTaskType(this));
+            }
             if (Bukkit.getPluginManager().isPluginEnabled("uSkyBlock")) {
                 taskTypeManager.registerTaskType(new uSkyBlockLevelTaskType(this));
             }
