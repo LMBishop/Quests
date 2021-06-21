@@ -79,10 +79,6 @@ public class YamlStorageProvider implements StorageProvider {
                     plugin.getQuestsLogger().debug("Player " + uuid + " does not have a quest progress file.");
                 }
             }
-        } catch (Exception ex) {
-            plugin.getQuestsLogger().severe("Failed to load player: " + uuid + "! This WILL cause errors.");
-            ex.printStackTrace();
-            // fuck
         } finally {
             lock.unlock();
         }
@@ -104,7 +100,7 @@ public class YamlStorageProvider implements StorageProvider {
                 try {
                     file.createNewFile();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
 
@@ -128,8 +124,7 @@ public class YamlStorageProvider implements StorageProvider {
                 data.save(file);
                 plugin.getQuestsLogger().debug("Write of player " + uuid + " to disk complete.");
             } catch (IOException e) {
-                plugin.getQuestsLogger().debug("Failed to write player: " + uuid + "!.");
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         } finally {
             lock.unlock();

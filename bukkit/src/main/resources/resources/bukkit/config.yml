@@ -237,8 +237,11 @@ options:
   # Storage options - please see the following: https://github.com/LMBishop/Quests/wiki/Storage-Providers
   storage:
     # Either 'yaml' (flatfile) or 'mysql' (network)
-    # Please read the following before using MySQL https://github.com/LMBishop/Quests/wiki/Storage-Providers#network
+    # You must read the following before using MySQL https://github.com/LMBishop/Quests/wiki/Storage-Providers#network
     provider: "yaml"
+    # Please see the following wiki page before changing these options:
+    synchronisation:
+      bungeecord: false
     # The following is only applicable for database storage providers (e.g. mysql)
     database-settings:
       network:

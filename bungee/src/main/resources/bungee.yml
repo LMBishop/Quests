@@ -1,0 +1,8 @@
+name: Quests
+
+# This will be replaced with the property "version" in build.gradle
+version: ${version}
+
+main: com.leonardobishop.quests.bungee.BungeeQuestsPlugin
+website: https://github.com/LMBishop/Quests
+author: "LMBishop & contributors"

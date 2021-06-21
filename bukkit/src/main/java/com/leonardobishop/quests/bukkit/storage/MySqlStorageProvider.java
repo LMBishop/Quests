@@ -126,7 +126,7 @@ public class MySqlStorageProvider implements StorageProvider {
 
     @Override
     public QuestProgressFile loadProgressFile(UUID uuid) {
-        if (fault) return null;
+        if (fault) throw new RuntimeException("storage provider encountered a fault during initialization and cannot be used");
         QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
         try (Connection connection = hikari.getConnection()) {
             plugin.getQuestsLogger().debug("Querying player " + uuid);
@@ -197,16 +197,14 @@ public class MySqlStorageProvider implements StorageProvider {
                 questProgressFile.addQuestProgress(questProgress);
             }
         } catch (SQLException e) {
-            plugin.getQuestsLogger().severe("Failed to load player: " + uuid + "!");
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
         return questProgressFile;
     }
 
     @Override
     public void saveProgressFile(UUID uuid, QuestProgressFile questProgressFile) {
-        if (fault) return;
+        if (fault) throw new RuntimeException("storage provider encountered a fault during initialization and cannot be used");
         try (Connection connection = hikari.getConnection()) {
             try (PreparedStatement writeQuestProgress = connection.prepareStatement(this.statementProcessor.apply(WRITE_PLAYER_QUEST_PROGRESS));
                  PreparedStatement writeTaskProgress = connection.prepareStatement(this.statementProcessor.apply(WRITE_PLAYER_TASK_PROGRESS))) {
@@ -269,8 +267,7 @@ public class MySqlStorageProvider implements StorageProvider {
                 writeTaskProgress.executeBatch();
             }
         } catch (SQLException e) {
-            plugin.getQuestsLogger().severe("Failed to save player: " + uuid + "!");
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }

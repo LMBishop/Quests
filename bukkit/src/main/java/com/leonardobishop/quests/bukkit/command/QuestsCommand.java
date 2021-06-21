@@ -6,6 +6,7 @@ import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.player.QPlayerManager;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.quest.Category;
 import com.leonardobishop.quests.common.quest.Quest;
@@ -41,7 +42,6 @@ public class QuestsCommand implements TabExecutor {
         this.plugin = plugin;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (plugin.getTaskTypeManager().areRegistrationsAccepted()) {

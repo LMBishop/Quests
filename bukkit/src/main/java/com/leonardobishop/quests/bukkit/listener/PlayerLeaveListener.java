@@ -16,9 +16,7 @@ public class PlayerLeaveListener implements Listener {
 
     @EventHandler
     public void onEvent(PlayerQuitEvent event) {
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
-        if (qPlayer == null) return;
-        plugin.getPlayerManager().removePlayer(qPlayer.getPlayerUUID());
+        plugin.getPlayerManager().removePlayer(event.getPlayer().getUniqueId());
     }
 
 }

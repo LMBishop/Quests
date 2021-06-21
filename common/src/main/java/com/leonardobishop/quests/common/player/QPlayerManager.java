@@ -49,7 +49,7 @@ public class QPlayerManager {
     public void removePlayer(UUID uuid) {
         plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + ".");
         qPlayers.computeIfPresent(uuid, (mapUUID, qPlayer) -> {
-            savePlayer(uuid);
+            savePlayer(uuid, qPlayer.getQuestProgressFile());
             return null;
         });
     }
@@ -104,7 +104,12 @@ public class QPlayerManager {
 
     private void save(UUID uuid, QuestProgressFile questProgressFile) {
         plugin.getQuestsLogger().debug("Saving player " + uuid + ".");
-        storageProvider.saveProgressFile(uuid, questProgressFile);
+        try {
+            storageProvider.saveProgressFile(uuid, questProgressFile);
+        } catch (Exception e) {
+            plugin.getQuestsLogger().debug("Failed to save player: " + uuid + "!");
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -126,14 +131,22 @@ public class QPlayerManager {
      * This will have no effect if player is already loaded. Can be invoked asynchronously.
      *
      * @param uuid the uuid of the player
+     * @return {@link LoadResult} - if the player was successfully loaded
      */
-    public void loadPlayer(UUID uuid) {
+    public LoadResult loadPlayer(UUID uuid) {
         plugin.getQuestsLogger().debug("Loading player " + uuid + ".");
-        qPlayers.computeIfAbsent(uuid, s -> {
-            QuestProgressFile questProgressFile = storageProvider.loadProgressFile(uuid);
-            if (questProgressFile == null) return null;
-            return new QPlayer(plugin, uuid, new QPlayerPreferences(null), questProgressFile, activeQuestController);
-        });
+        try {
+            QPlayer qPlayer = qPlayers.computeIfAbsent(uuid, s -> {
+                QuestProgressFile questProgressFile = storageProvider.loadProgressFile(uuid);
+                if (questProgressFile == null) return null;
+                return new QPlayer(plugin, uuid, new QPlayerPreferences(null), questProgressFile, activeQuestController);
+            });
+            return (qPlayer != null) ? LoadResult.LOADED : LoadResult.UNAVAILABLE;
+        } catch (Exception e) {
+            plugin.getQuestsLogger().severe("Failed to load player: " + uuid + "!");
+            e.printStackTrace();
+        }
+        return LoadResult.FAILED;
     }
 
     /**
@@ -154,5 +167,16 @@ public class QPlayerManager {
         for (QPlayer qPlayer : qPlayers.values()) {
             qPlayer.setQuestController(activeQuestController);
         }
+    }
+
+    public enum LoadResult {
+
+        /** A successful load into the QPlayerManager */
+        LOADED,
+        /** An unsuccessful load, however not due to an error (e.g deferred) */
+        UNAVAILABLE,
+        /** An unsuccessful load */
+        FAILED;
+
     }
 }

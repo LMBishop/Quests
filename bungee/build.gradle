@@ -1,0 +1,23 @@
+processResources {
+    duplicatesStrategy = 'include'
+    from(sourceSets.main.resources.srcDirs) {
+        include 'bungee.yml'
+        expand('version': project.version)
+    }
+}
+
+repositories {
+    // BungeeCord
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly project(':common')
+
+    // BungeeCord
+    compileOnly ('net.md-5:bungeecord-api:1.16-R0.5-SNAPSHOT')
+
+    compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
+}

@@ -64,6 +64,7 @@ import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.config.QuestsConfig;
+import com.leonardobishop.quests.common.enums.PluginMessagingChannels;
 import com.leonardobishop.quests.common.logger.QuestsLogger;
 import com.leonardobishop.quests.common.player.QPlayerManager;
 import com.leonardobishop.quests.common.plugin.Quests;
@@ -82,6 +83,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -214,7 +216,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
         MetricsLite metrics = new MetricsLite(this, 3443);
         if (metrics.isEnabled()) {
-            this.getQuestsLogger().info("Metrics started. This can be disabled at /plugins/bStats/config.yml.");
+            this.questsLogger.info("Metrics started. This can be disabled at /plugins/bStats/config.yml.");
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -246,6 +248,31 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         super.getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
         super.getServer().getPluginManager().registerEvents(menuController, this);
         super.getServer().getPluginManager().registerEvents(new PlayerLeaveListener(this), this);
+
+        // TODO https://github.com/LMBishop/Quests/issues/180
+//        this.getServer().getMessenger().registerOutgoingPluginChannel(this, PluginMessagingChannels.QUESTS_LOCKS_CHANNEL);
+//        this.getServer().getMessenger().registerIncomingPluginChannel(this, PluginMessagingChannels.QUESTS_LOCKS_CHANNEL, new PluginMessageListener() {
+//            @Override
+//            public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
+//                System.out.println("A PLUGIN MESSAGE HAS BEEN RECEIVED");
+//            }
+//        });
+//
+//        this.questsLogger.warning("#########################################################");
+//        this.questsLogger.warning("WARNING WARNING WARNING WARNING WARNING WARNING WARNING");
+//        this.questsLogger.warning("");
+//        this.questsLogger.warning("You have BungeeCord synchronisation enabled, however");
+//        this.questsLogger.warning("Quests does not appear to be present on the proxy server.");
+//        this.questsLogger.warning("");
+//        this.questsLogger.warning("Player data will not be loaded if the BungeeCord plugin");
+//        this.questsLogger.warning("is missing!");
+//        this.questsLogger.warning("");
+//        this.questsLogger.warning("You must install Quests onto your BungeeCord server, in");
+//        this.questsLogger.warning("addition to this installation, in order for synchronisation");
+//        this.questsLogger.warning("to work!");
+//        this.questsLogger.warning("");
+//        this.questsLogger.warning("For more info: "); //TODO write wiki page
+//        this.questsLogger.warning("#########################################################");
 
         // register task types after the server has fully started
         Bukkit.getScheduler().runTask(this, () -> {
@@ -314,6 +341,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 qPlayerManager.loadPlayer(player.getUniqueId());
             }
         });
+    }
+
+    @Override
+    public void onDisable() {
+        this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
     }
 
     @Override
