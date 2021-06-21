@@ -6,7 +6,7 @@ version: ${version}
 main: com.leonardobishop.quests.bukkit.BukkitQuestsPlugin
 website: https://github.com/LMBishop/Quests
 author: "LMBishop & contributors"
-softdepend: [ASkyBlock, BentoBox, IridiumSkyblock, uSkyBlock, Citizens, MythicMobs, PlaceholderAPI, Essentials, ShopGUIPlus, CoreProtect]
+softdepend: [PlaceholderAPI]
 prefix: Quests
 api-version: "1.13" # allows new API features but Quests will still work pre-1.13
 
