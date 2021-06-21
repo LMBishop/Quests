@@ -6,12 +6,12 @@
 <h1 align="center">Quests</h1>
 </p>
 
-####Quick Navigation
-- [Downloads / Building](#💾-Downloads-/-Building)
-- [Contributors](#👫-Contributors)
-- [Support](#👫-Contributors)
-- [License](#📜-License)
-- [Wiki](#📖-Wiki)
+#### Quick Navigation
+- [Downloads / Building](#-downloads--building)
+- [Contributors](#-contributors)
+- [Support](#-support)
+- [License](#-license)
+- [Wiki](#-wiki)
 
 ## 💾 Downloads / Building
 The latest release version of Quests can be found on [Spigot](https://www.spigotmc.org/resources/▶-quests-◀-set-up-goals-for-players.23696/).
@@ -69,7 +69,7 @@ Quests is split into separate modules:
 
 For instructions on building Quests, see [Downloads / Building](#💾-Downloads-/-Building).
 
-## 💭 Support
+## 💡 Support
 For support please open a [GitHub issue](https://github.com/LMBishop/Quests/issues) or join our [Discord server](https://discord.gg/mQ2RcJC). Please provide information of the issue, any errors that may come up and make sure you are using the latest version of the plugin.
 
 #### ⁉️ Issue Tracker
