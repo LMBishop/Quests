@@ -41,7 +41,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
 
     @Override
     public String getIdentifier() {
-        return "resources/bukkit/quests";
+        return "quests";
     }
 
     @Override
