@@ -36,6 +36,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.DealDamageTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.DistancefromTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.EnchantingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.ExpEarnTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.FishingCertainTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.FishingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.InventoryTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.MilkingTaskType;
@@ -260,6 +261,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new MobkillingCertainTaskType(this));
             taskTypeManager.registerTaskType(new PlayerkillingTaskType(this));
             taskTypeManager.registerTaskType(new FishingTaskType(this));
+            taskTypeManager.registerTaskType(new FishingCertainTaskType(this));
             taskTypeManager.registerTaskType(new InventoryTaskType(this));
             taskTypeManager.registerTaskType(new WalkingTaskType(this));
             taskTypeManager.registerTaskType(new TamingTaskType(this));
