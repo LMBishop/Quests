@@ -65,7 +65,7 @@ public class MenuUtils {
 
     public static void handleRightClick(BukkitQuestsPlugin plugin, QMenu menu, Quest quest, Player player, MenuController controller) {
         if (menu.getOwner().hasStartedQuest(quest)) {
-            if (plugin.getQuestsConfig().getBoolean("options.allow-quest-cancel")) return;
+            if (!plugin.getQuestsConfig().getBoolean("options.allow-quest-cancel")) return;
             CancelQMenu cancelQMenu = new CancelQMenu(plugin, menu, menu.getOwner(), quest);
             controller.openMenu(player, cancelQMenu, 1);
         }
