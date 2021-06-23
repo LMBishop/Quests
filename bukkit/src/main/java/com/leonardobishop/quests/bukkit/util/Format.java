@@ -1,7 +1,7 @@
 package com.leonardobishop.quests.bukkit.util;
 
 public class Format {
-    
+
     public static String formatTime(long sec) {
         long hours = sec / 3600;
         long minutes = (sec % 3600) / 60;
