@@ -1,5 +1,6 @@
 name: Feature Request
 description: Suggest an idea for Quests
+labels: [enhancement]
 body:
   - type: markdown
     attributes:
@@ -9,7 +10,7 @@ body:
     attributes:
       label: Reason for Addition
       description: |
-        Discuss your rationale for coming up with this idea.
+        Explain your rationale for coming up with this idea.
         Your answer may describe a problem you're having, or any context for this request.
         This field is not required.
     validations:

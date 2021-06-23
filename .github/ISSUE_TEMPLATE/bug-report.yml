@@ -1,5 +1,6 @@
 name: Bug Report
 description: Report issues/unexpected behaviour with Quests
+labels: [bug]
 body:
   - type: markdown
     attributes:
@@ -16,17 +17,20 @@ body:
       label: Steps to Reproduce
       description: |
         Describe any steps or details intructions to reproduce this bug.
-        Your answer may include any screenshots or video.
+        Your answer may include any screenshots or videos, or may list steps.
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Quests Version
+      label: Environment
       description: |
-        State the version of Quests which this bug is present on.
-        You can identify your current version by running `/version Quests`.
-    validations:
-      required: true
+        State the Minecraft version and server software this bug is present on.
+        You can identify your server software by running `/version`, and your Quests version by running `/version Quests`.
+      value: |
+          - Minecraft version:
+          - Server software:
+          - Quests version:
+      render: markdown
   - type: checkboxes
     attributes:
       label: Agreements
@@ -46,3 +50,7 @@ body:
         This field is not required.
     validations:
       required: false
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking your time to file this bug report.
