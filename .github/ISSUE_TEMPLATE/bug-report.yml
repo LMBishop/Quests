@@ -30,7 +30,6 @@ body:
           - Minecraft version:
           - Server software:
           - Quests version:
-      render: markdown
   - type: checkboxes
     attributes:
       label: Agreements
