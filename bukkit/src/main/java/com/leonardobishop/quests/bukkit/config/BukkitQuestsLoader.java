@@ -176,12 +176,13 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         boolean repeatable = config.getBoolean("options.repeatable", false);
                         boolean cooldown = config.getBoolean("options.cooldown.enabled", false);
                         boolean permissionRequired = config.getBoolean("options.permission-required", false);
+                        boolean autostart = config.getBoolean("options.autostart", false);
                         int cooldownTime = config.getInt("options.cooldown.time", 10);
                         int sortOrder = config.getInt("options.sort-order", 1);
                         String category = config.getString("options.category");
                         Map<String, String> placeholders = new HashMap<>();
 
-                        if (category == null) category = "";
+                        if (category != null && category.equals("")) category = null;
 
                         if (questController.getName().equals("daily")) {
                             repeatable = true;
@@ -191,11 +192,22 @@ public class BukkitQuestsLoader implements QuestsLoader {
                             permissionRequired = false;
                         }
 
-                        Quest quest;
-                        if (category.equals("")) {
-                            quest = new Quest(id, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, startString, placeholders, sortOrder);
-                        } else {
-                            quest = new Quest(id, rewards, requirements, repeatable, cooldown, cooldownTime, permissionRequired, rewardString, startString, placeholders, category, sortOrder);
+                        Quest quest = new Quest.Builder(id)
+                                .withRewards(rewards)
+                                .withRequirements(requirements)
+                                .withRewardString(rewardString)
+                                .withStartString(startString)
+                                .withPlaceholders(placeholders)
+                                .withCooldown(cooldownTime)
+                                .withSortOrder(sortOrder)
+                                .withCooldownEnabled(cooldown)
+                                .withPermissionRequired(permissionRequired)
+                                .withRepeatEnabled(repeatable)
+                                .withAutoStartEnabled(autostart)
+                                .inCategory(category)
+                                .build();
+
+                        if (category != null) {
                             Category c = questManager.getCategoryById(category);
                             if (c != null) {
                                 c.registerQuestId(id);

@@ -205,6 +205,7 @@ public class QuestsCommand implements TabExecutor {
                             sender.sendMessage(ChatColor.RED + "Requirements: " + ChatColor.GRAY + String.join(", ", quest.getRequirements()));
                             sender.sendMessage(ChatColor.RED + "Cooldown enabled: " + ChatColor.GRAY + quest.isCooldownEnabled());
                             sender.sendMessage(ChatColor.RED + "Cooldown time: " + ChatColor.GRAY + quest.getCooldown());
+                            sender.sendMessage(ChatColor.RED + "Autostart: " + ChatColor.GRAY + quest.isAutoStartEnabled());
                         }
                         return true;
                     }

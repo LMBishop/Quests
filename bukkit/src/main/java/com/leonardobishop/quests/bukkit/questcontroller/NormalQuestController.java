@@ -23,6 +23,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class NormalQuestController implements QuestController {
@@ -30,9 +34,18 @@ public class NormalQuestController implements QuestController {
     private final BukkitQuestsPlugin plugin;
     private final BukkitQuestsConfig config;
 
+    private final List<Quest> autoStartQuestCache;
+
     public NormalQuestController(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
         this.config = (BukkitQuestsConfig) plugin.getQuestsConfig();
+
+        List<Quest> autoStartQuestCache = new ArrayList<>();
+        List<Quest> nonAutoStartQuestCache = new ArrayList<>();
+        for (Quest quest : plugin.getQuestManager().getQuests().values()) {
+            if (quest.isAutoStartEnabled()) autoStartQuestCache.add(quest);
+        }
+        this.autoStartQuestCache = autoStartQuestCache;
     }
 
     @Override
@@ -125,7 +138,7 @@ public class NormalQuestController implements QuestController {
     @Override
     public QuestStartResult canPlayerStartQuest(QPlayer qPlayer, Quest quest) {
         Player p = Bukkit.getPlayer(qPlayer.getPlayerUUID());
-        if (qPlayer.getQuestProgressFile().getStartedQuests().size() >= config.getInt("options.quest-started-limit") && !config.getBoolean("options.quest-autostart")) {
+        if (getStartedQuestsForPlayer(qPlayer).size() >= config.getInt("options.quest-started-limit") && !config.getBoolean("options.quest-autostart")) {
             return QuestStartResult.QUEST_LIMIT_REACHED;
         }
         QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
@@ -223,7 +236,10 @@ public class NormalQuestController implements QuestController {
             QuestStartResult response = canPlayerStartQuest(qPlayer, quest);
             return response == QuestStartResult.QUEST_SUCCESS || response == QuestStartResult.QUEST_ALREADY_STARTED;
         } else {
-            return qPlayer.getQuestProgressFile().hasQuestProgress(quest) && qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted();
+            if (quest.isAutoStartEnabled()) {
+                QuestStartResult response = canPlayerStartQuest(qPlayer, quest);
+                return response == QuestStartResult.QUEST_SUCCESS || response == QuestStartResult.QUEST_ALREADY_STARTED;
+            } else return qPlayer.getQuestProgressFile().hasQuestProgress(quest) && qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted();
         }
     }
 
@@ -280,6 +296,27 @@ public class NormalQuestController implements QuestController {
                 player.sendMessage(Messages.QUEST_TRACK.getMessage().replace("{quest}", displayName));
             }
         }
+    }
+
+    private Set<Quest> getStartedQuestsForPlayer(QPlayer qPlayer) {
+        Set<Quest> startedQuests = new HashSet<>();
+        if (config.getBoolean("options.quest-autostart")) {
+            for (Quest quest : plugin.getQuestManager().getQuests().values()) {
+                QuestStartResult response = canPlayerStartQuest(qPlayer, quest);
+                if (response == QuestStartResult.QUEST_SUCCESS || response == QuestStartResult.QUEST_ALREADY_STARTED) {
+                    startedQuests.add(quest);
+                }
+            }
+        } else {
+            startedQuests.addAll(qPlayer.getQuestProgressFile().getStartedQuests());
+            for (Quest quest : autoStartQuestCache) {
+                QuestStartResult response = canPlayerStartQuest(qPlayer, quest);
+                if (response == QuestStartResult.QUEST_SUCCESS || response == QuestStartResult.QUEST_ALREADY_STARTED) {
+                    startedQuests.add(quest);
+                }
+            }
+        }
+        return startedQuests;
     }
 
 }
