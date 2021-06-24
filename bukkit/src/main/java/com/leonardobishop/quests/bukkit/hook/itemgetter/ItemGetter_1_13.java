@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.bukkit.hook.itemgetter;
 
+import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -55,19 +56,13 @@ public class ItemGetter_1_13 implements ItemGetter {
 
         // name
         if (!filters.contains(Filter.DISPLAY_NAME)) {
-            name = ChatColor.translateAlternateColorCodes('&', cName);
+            name = Chat.color(cName);
             ism.setDisplayName(name);
         }
 
         // lore
         if (!filters.contains(Filter.LORE)) {
-            List<String> lore = new ArrayList<>();
-            if (cLore != null) {
-                for (String s : cLore) {
-                    lore.add(ChatColor.translateAlternateColorCodes('&', s));
-                }
-            }
-            ism.setLore(lore);
+            ism.setLore(Chat.color(cLore));
         }
 
         // attribute modifiers

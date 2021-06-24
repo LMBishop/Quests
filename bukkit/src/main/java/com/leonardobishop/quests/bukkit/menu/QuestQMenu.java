@@ -6,7 +6,7 @@ import com.leonardobishop.quests.bukkit.menu.element.CustomMenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.MenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.QuestMenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.SpacerMenuElement;
-import com.leonardobishop.quests.bukkit.util.Chat;
+import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;

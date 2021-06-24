@@ -1,6 +1,7 @@
-package com.leonardobishop.quests.bukkit.util;
+package com.leonardobishop.quests.bukkit.util.chat;
 
 import com.leonardobishop.quests.common.config.ConfigProblem;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -8,8 +9,21 @@ import java.util.List;
 
 public class Chat {
 
+    private static final ColorAdapter colorAdapter;
+
+    static {
+        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];;
+        if (version.startsWith("v1_7") || version.startsWith("v1_8") || version.startsWith("v1_9")
+                || version.startsWith("v1_10") || version.startsWith("v1_11") || version.startsWith("v1_12")
+                || version.startsWith("v1_13") || version.startsWith("v1_14") || version.startsWith("v1_15")) {
+            colorAdapter = new CodedColorAdapter();
+        } else {
+            colorAdapter = new HexColorAdapter();
+        }
+    }
+
     public static String color(String s) {
-        return ChatColor.translateAlternateColorCodes('&', s);
+        return colorAdapter.color(s);
     }
 
     public static List<String> color(List<String> s) {
@@ -17,13 +31,13 @@ public class Chat {
 
         List<String> colored = new ArrayList<>();
         for (String line : s) {
-            colored.add(ChatColor.translateAlternateColorCodes('&', line));
+            colored.add(colorAdapter.color(line));
         }
         return colored;
     }
 
     public static String strip(String s) {
-        return ChatColor.stripColor(s);
+        return colorAdapter.strip(s);
     }
 
     public static ChatColor matchConfigProblemToColor(ConfigProblem.ConfigProblemType configProblem) {

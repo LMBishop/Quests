@@ -1,6 +1,6 @@
 package com.leonardobishop.quests.bukkit.hook.itemgetter;
 
-import org.bukkit.ChatColor;
+import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -11,7 +11,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -59,19 +58,13 @@ public class ItemGetterLatest implements ItemGetter {
 
         // name
         if (!filters.contains(Filter.DISPLAY_NAME)) {
-            name = ChatColor.translateAlternateColorCodes('&', cName);
+            name = Chat.color(cName);
             ism.setDisplayName(name);
         }
 
         // lore
         if (!filters.contains(Filter.LORE)) {
-            List<String> lore = new ArrayList<>();
-            if (cLore != null) {
-                for (String s : cLore) {
-                    lore.add(ChatColor.translateAlternateColorCodes('&', s));
-                }
-            }
-            ism.setLore(lore);
+            ism.setLore(Chat.color(cLore));
         }
 
         // attribute modifiers

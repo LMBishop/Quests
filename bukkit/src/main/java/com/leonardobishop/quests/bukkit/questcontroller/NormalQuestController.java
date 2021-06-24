@@ -9,8 +9,9 @@ import com.leonardobishop.quests.bukkit.api.event.PlayerStopTrackQuestEvent;
 import com.leonardobishop.quests.bukkit.api.event.PreStartQuestEvent;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
-import com.leonardobishop.quests.bukkit.util.Chat;
+import com.leonardobishop.quests.bukkit.util.Format;
 import com.leonardobishop.quests.bukkit.util.Messages;
+import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
@@ -18,9 +19,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import com.leonardobishop.quests.common.questcontroller.QuestController;
-import com.leonardobishop.quests.bukkit.util.Format;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -121,7 +120,7 @@ public class NormalQuestController implements QuestController {
                             Messages.TITLE_QUEST_START_SUBTITLE.getMessage().replace("{quest}", displayName));
                 }
                 for (String s : quest.getStartString()) {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
+                    player.sendMessage(Chat.color(s));
                 }
             }
             for (Task task : quest.getTasks()) {
@@ -216,7 +215,7 @@ public class NormalQuestController implements QuestController {
                         Messages.TITLE_QUEST_COMPLETE_SUBTITLE.getMessage().replace("{quest}", displayName));
             }
             for (String s : quest.getRewardString()) {
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
+                player.sendMessage(Chat.color(s));
             }
         }
         if ((config.getBoolean("options.allow-quest-track") && config.getBoolean("options.quest-autotrack") && !(quest.isRepeatable() && !quest.isCooldownEnabled()))

@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStackRegistry;
+import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.config.QuestsLoader;
@@ -321,11 +322,11 @@ public class BukkitQuestsLoader implements QuestsLoader {
         List<String> cLoreNormal = config.getStringList(path + ".lore-normal");
         List<String> cLoreStarted = config.getStringList(path + ".lore-started");
 
-        List<String> loreNormal = translateColoursInList(cLoreNormal);
-        List<String> loreStarted = translateColoursInList(cLoreStarted);
+        List<String> loreNormal = Chat.color(cLoreNormal);
+        List<String> loreStarted = Chat.color(cLoreStarted);
 
         String name;
-        name = ChatColor.translateAlternateColorCodes('&', cName);
+        name = Chat.color(cName);
 
         ItemStack is = plugin.getItemStack(path, config,
                 ItemGetter.Filter.DISPLAY_NAME, ItemGetter.Filter.LORE, ItemGetter.Filter.ENCHANTMENTS, ItemGetter.Filter.ITEM_FLAGS);
@@ -333,11 +334,4 @@ public class BukkitQuestsLoader implements QuestsLoader {
         return new QItemStack(plugin, name, loreNormal, loreStarted, is);
     }
 
-    private List<String> translateColoursInList(List<String> list) {
-        List<String> coloured = new ArrayList<>();
-        for (String s : list) {
-            coloured.add(ChatColor.translateAlternateColorCodes('&', s));
-        }
-        return coloured;
-    }
 }

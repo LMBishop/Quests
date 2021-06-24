@@ -1,7 +1,7 @@
 package com.leonardobishop.quests.bukkit.util;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
-import org.bukkit.ChatColor;
+import com.leonardobishop.quests.bukkit.util.chat.Chat;
 
 //TODO refactor this
 public enum Messages {
@@ -75,7 +75,7 @@ public enum Messages {
         if (plugin.getConfig().contains(path)) {
             String message = plugin.getQuestsConfig().getString(path);
             if (message != null) {
-                return ChatColor.translateAlternateColorCodes('&', message);
+                return Chat.color(message);
             }
         }
         return path;

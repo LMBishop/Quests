@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit.tasktype.type.dependent;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
+import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -12,7 +13,6 @@ import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -88,8 +88,8 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
                 QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', String.valueOf(task.getConfigValue("npc-name")))).equals(ChatColor
-                            .stripColor(ChatColor.translateAlternateColorCodes('&', citizenName)))) {
+                    if (!Chat.strip(Chat.color(String.valueOf(task.getConfigValue("npc-name"))))
+                            .equals(Chat.strip(Chat.color(citizenName)))) {
                         return;
                     }
                     if (!TaskUtils.validateWorld(player, task)) continue;

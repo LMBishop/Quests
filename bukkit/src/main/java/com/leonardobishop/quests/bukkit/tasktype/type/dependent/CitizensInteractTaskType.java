@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit.tasktype.type.dependent;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
+import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
@@ -10,7 +11,6 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
@@ -49,8 +49,8 @@ public final class CitizensInteractTaskType extends BukkitTaskType {
                 for (Task task : quest.getTasksOfType(super.getType())) {
                     if (!TaskUtils.validateWorld(event.getClicker(), task)) continue;
 
-                    if (!ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', String.valueOf(task.getConfigValue("npc-name")))).equals(ChatColor
-                            .stripColor(ChatColor.translateAlternateColorCodes('&', event.getNPC().getName())))) {
+                    if (!Chat.strip(Chat.color(String.valueOf(task.getConfigValue("npc-name"))))
+                            .equals(Chat.strip(Chat.color(event.getNPC().getName())))) {
                         return;
                     }
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
