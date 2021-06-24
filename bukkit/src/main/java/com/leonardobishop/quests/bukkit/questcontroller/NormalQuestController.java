@@ -137,9 +137,6 @@ public class NormalQuestController implements QuestController {
     @Override
     public QuestStartResult canPlayerStartQuest(QPlayer qPlayer, Quest quest) {
         Player p = Bukkit.getPlayer(qPlayer.getPlayerUUID());
-        if (getStartedQuestsForPlayer(qPlayer).size() >= config.getInt("options.quest-started-limit") && !config.getBoolean("options.quest-autostart")) {
-            return QuestStartResult.QUEST_LIMIT_REACHED;
-        }
         QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
         if (!quest.isRepeatable() && questProgress.isCompletedBefore()) {
             //if (playerUUID != null) {
@@ -175,6 +172,9 @@ public class NormalQuestController implements QuestController {
             } else {
                 return QuestStartResult.NO_PERMISSION_FOR_CATEGORY;
             }
+        }
+        if (getStartedQuestsForPlayer(qPlayer).size() >= config.getInt("options.quest-started-limit") && !config.getBoolean("options.quest-autostart")) {
+            return QuestStartResult.QUEST_LIMIT_REACHED;
         }
         return QuestStartResult.QUEST_SUCCESS;
     }
