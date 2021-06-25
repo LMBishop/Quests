@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 /**
  * The updater checks for updates on Spigot, and prints to the logger if one is found.
@@ -17,6 +18,7 @@ public class Updater {
  
     private static final int PROJECT_ID = 23696;
     private final String installedVersion;
+    private final int[] tokenizedInstalledVersion;
     private final boolean enabled;
     private final Quests plugin;
 
@@ -28,6 +30,7 @@ public class Updater {
     public Updater(Quests plugin, String installedVersion, boolean enabled) {
         this.plugin = plugin;
         this.installedVersion = installedVersion;
+        this.tokenizedInstalledVersion = tokenize(installedVersion);
         this.enabled = enabled;
         try {
             this.api = new URL(getApiUrl());
@@ -62,7 +65,22 @@ public class Updater {
             lastCheck = System.currentTimeMillis();
             URLConnection con = api.openConnection();
             returnedVersion = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-            if (!returnedVersion.equals(installedVersion)) {
+
+            int[] tokenizedReturnedVersion = tokenize(returnedVersion);
+
+            boolean newVersion = false;
+            for (int i = 0; i < tokenizedReturnedVersion.length; i++) {
+                if (tokenizedInstalledVersion.length <= i && tokenizedReturnedVersion[i] != 0) {
+                    newVersion = true;
+                    break;
+                }
+                if (tokenizedReturnedVersion[i] > tokenizedInstalledVersion[i]) {
+                    newVersion = true;
+                    break;
+                }
+            }
+
+            if (newVersion) {
                 plugin.getQuestsLogger().info("A new version " + returnedVersion + " was found on Spigot (your version: " + installedVersion + "). Please update me! <3 - Link: " + getUpdateLink());
                 updateReady = true;
             } else {
@@ -76,6 +94,21 @@ public class Updater {
 
     public boolean isUpdateReady() {
         return updateReady;
+    }
+
+    private int[] tokenize(String s) {
+        String[] numericVersion = s.split(Pattern.quote("-"));
+        String[] tokenizedVersion = numericVersion[0].split(Pattern.quote("."));
+        int[] intTokenizedVersion = new int[tokenizedVersion.length];
+        for (int i = 0; i < tokenizedVersion.length; i++) {
+            try {
+                intTokenizedVersion[i] = Integer.parseInt(tokenizedVersion[i]);
+            } catch (NumberFormatException ignored) {
+                intTokenizedVersion[i] = 0;
+            }
+        }
+
+        return intTokenizedVersion;
     }
 
 }
