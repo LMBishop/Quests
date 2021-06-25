@@ -1,6 +1,6 @@
 name: Bug Report
 description: Report issues/unexpected behaviour with Quests
-labels: [bug]
+labels: ['bug', 'status: needs investigating']
 body:
   - type: markdown
     attributes:

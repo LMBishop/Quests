@@ -1,6 +1,6 @@
 name: Feature Request
 description: Suggest an idea for Quests
-labels: [enhancement]
+labels: ['enhancement', 'status: needs investigating']
 body:
   - type: markdown
     attributes:
