@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +45,7 @@ public final class FishingCertainTaskType extends BukkitTaskType {
         }
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true, false, "data");
         return problems;
     }
 
@@ -80,7 +82,21 @@ public final class FishingCertainTaskType extends BukkitTaskType {
 
                     int catchesNeeded = (int) task.getConfigValue("amount");
                     String configItem = (String) task.getConfigValue("item");
-                    if (caught.getItemStack().getType() != Material.getMaterial(String.valueOf(configItem))) {
+                    Object configData = task.getConfigValue("data");
+
+                    ItemStack is;
+                    Material material = Material.getMaterial(String.valueOf(configItem));
+
+                    if (material == null) {
+                        continue;
+                    }
+                    if (configData != null) {
+                        is = new ItemStack(material, 1, ((Integer) configData).shortValue());
+                    } else {
+                        is = new ItemStack(material, 1);
+                    }
+
+                    if (caught.getItemStack().isSimilar(is)) {
                         return;
                     }
 
