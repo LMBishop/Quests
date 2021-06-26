@@ -173,7 +173,7 @@ public class NormalQuestController implements QuestController {
                 return QuestStartResult.NO_PERMISSION_FOR_CATEGORY;
             }
         }
-        if (getStartedQuestsForPlayer(qPlayer).size() >= config.getInt("options.quest-started-limit") && !config.getBoolean("options.quest-autostart")) {
+        if (!config.getBoolean("options.quest-autostart") && getStartedQuestsForPlayer(qPlayer).size() >= config.getInt("options.quest-started-limit")) {
             return QuestStartResult.QUEST_LIMIT_REACHED;
         }
         return QuestStartResult.QUEST_SUCCESS;
