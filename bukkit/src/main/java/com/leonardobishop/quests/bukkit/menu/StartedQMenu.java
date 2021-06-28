@@ -12,6 +12,8 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.Material;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +28,7 @@ public class StartedQMenu implements QMenu {
     private final BukkitQuestsPlugin plugin;
     private final BukkitQuestsConfig config;
     private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
-    private final int pageSize = 45;
+    private final int pageSize = 36;
     private final QPlayer owner;
 
     private int pagePrevLocation = -1;
@@ -41,7 +43,7 @@ public class StartedQMenu implements QMenu {
 
     public void populate(List<QuestSortWrapper> quests) {
         Collections.sort(quests);
-        int slot = 0;
+        int slot = 9;
         for (QuestSortWrapper quest : quests) {
             if (owner.hasStartedQuest(quest.getQuest())) {
                 slotsToQuestIds.put(slot, quest.getQuest().getId());
@@ -85,6 +87,7 @@ public class StartedQMenu implements QMenu {
         ItemStack pagePrevIs;
         ItemStack pageNextIs;
         ItemStack none = config.getItem("gui.no-started-quests");
+        ItemStack bg = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
 
         Inventory inventory = Bukkit.createInventory(null, 54, title);
 
@@ -101,7 +104,7 @@ public class StartedQMenu implements QMenu {
                 invSlot++;
             }
         } else {
-            inventory.setItem(4, none);
+            inventory.setItem(22, none);
         }
 
         pageNextLocation = -1;
@@ -115,6 +118,17 @@ public class StartedQMenu implements QMenu {
         pageIs.setAmount(Math.min(page, 64));
         pagePrevIs = MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.page-prev"), pageplaceholders);
         pageNextIs = MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.page-next"), pageplaceholders);
+        ItemMeta bgMeta = bg.getItemMeta();
+        bgMeta.setDisplayName(" ");
+        bg.setItemMeta(bgMeta);
+
+        for (int i = 45; i < 54; i++) {
+            inventory.setItem(i, bg);
+        }
+
+        for (int i = 0; i < 9; i++) {
+            inventory.setItem(i, bg);
+        }
 
         if (slotsToQuestIds.size() > pageSize) {
             inventory.setItem(49, pageIs);

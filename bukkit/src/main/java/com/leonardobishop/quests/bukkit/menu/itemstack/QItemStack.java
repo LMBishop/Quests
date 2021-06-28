@@ -139,7 +139,7 @@ public class QItemStack {
                     s = s.replace("{" + m.group(1) + "}", (str.equals("null") ? String.valueOf(0) : str));
                 }
                 if (parts[1].equals("complete")) {
-                    String str = String.valueOf(questProgress.getTaskProgress(parts[0]).isCompleted() ? "(?)" : "(?)");
+                    String str = String.valueOf(questProgress.getTaskProgress(parts[0]).isCompleted() ? "(+)" : "(-)");
                     s = s.replace("{" + m.group(1) + "}", str);
                 }
             }

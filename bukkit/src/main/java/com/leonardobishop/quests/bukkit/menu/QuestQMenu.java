@@ -182,11 +182,7 @@ public class QuestQMenu implements QMenu {
         for (int i = 45; i < 54; i++) {
             inventory.setItem(i, bg);
         }
-
-        for (int i = 0; i < 9; i++) {
-            inventory.setItem(i, bg);
-        }
-
+        
         if (config.getBoolean("options.categories-enabled") && backButtonEnabled) {
             inventory.setItem(45, back);
             backButtonLocation = 45;
