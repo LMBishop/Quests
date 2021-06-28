@@ -96,7 +96,7 @@ public final class FishingCertainTaskType extends BukkitTaskType {
                         is = new ItemStack(material, 1);
                     }
 
-                    if (caught.getItemStack().isSimilar(is)) {
+                    if (!caught.getItemStack().isSimilar(is)) {
                         return;
                     }
 
