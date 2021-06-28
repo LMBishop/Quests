@@ -58,7 +58,6 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensInteract
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsBalanceTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsMoneyEarnTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.IridiumSkyblockValueTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.MythicMobsKillingType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PlaceholderAPIEvaluateTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ShopGUIPlusBuyCertainTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ShopGUIPlusSellCertainTaskType;
@@ -216,11 +215,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         this.qItemStackRegistry = new QItemStackRegistry();
         this.questCompleter = new BukkitQuestCompleter(this);
 
-        MetricsLite metrics = new MetricsLite(this, 3443);
-        if (metrics.isEnabled()) {
-            this.getQuestsLogger().info("Metrics started. This can be disabled at /plugins/bStats/config.yml.");
-        }
-
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             this.placeholderAPIHook = new PlaceholderAPIHook();
             this.placeholderAPIHook.registerExpansion(this);
@@ -236,14 +230,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         try {
             ignoreUpdates = new File(this.getDataFolder() + File.separator + "stfuQuestsUpdate").exists();
         } catch (Throwable ignored) { }
-
-
-        this.updater = new Updater(this, super.getDescription().getVersion(), !ignoreUpdates);
-        if (!ignoreUpdates) {
-            serverScheduler.doAsync(() -> {
-                updater.check();
-            });
-        }
 
         super.getCommand("quests").setExecutor(new QuestsCommand(this));
 
@@ -296,9 +282,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
                 taskTypeManager.registerTaskType(new CitizensDeliverTaskType(this));
                 taskTypeManager.registerTaskType(new CitizensInteractTaskType(this));
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
-                taskTypeManager.registerTaskType(new MythicMobsKillingType(this));
             }
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 taskTypeManager.registerTaskType(new PlaceholderAPIEvaluateTaskType(this));

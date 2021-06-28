@@ -19,6 +19,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.Material;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
@@ -65,7 +66,9 @@ public class QuestQMenu implements QMenu {
         }
         if (plugin.getConfig().isConfigurationSection(path)) {
             for (String s : plugin.getConfig().getConfigurationSection(path).getKeys(false)) {
-                if (!NumberUtils.isNumber(s)) continue;
+                if (!NumberUtils.isNumber(s)) {
+                    continue;
+                }
                 int slot = Integer.parseInt(s);
                 int repeat = plugin.getConfig().getInt(path + "." + s + ".repeat");
                 MenuElement menuElement;
@@ -74,9 +77,10 @@ public class QuestQMenu implements QMenu {
                     menuElement = new CustomMenuElement(is);
                 } else if (plugin.getConfig().getBoolean(path + "." + s + ".spacer", false)) {
                     menuElement = new SpacerMenuElement();
-                } else continue; // user = idiot
-
-                for (int i = 0; i <= repeat; i++) {
+                } else {
+                    continue; // user = idiot
+                }
+                for (int i = 9; i <= repeat; i++) {
                     menuElements.put(slot + i, menuElement);
                 }
             }
@@ -85,7 +89,9 @@ public class QuestQMenu implements QMenu {
         Collections.sort(quests);
         int slot = 0;
         for (Quest quest : quests) {
-            while (menuElements.containsKey(slot)) slot++;
+            while (menuElements.containsKey(slot)) {
+                slot++;
+            }
             if (config.getBoolean("options.gui-hide-locked")) {
                 QuestProgress questProgress = owner.getQuestProgressFile().getQuestProgress(quest);
                 long cooldown = owner.getQuestProgressFile().getCooldownFor(quest);
@@ -103,7 +109,9 @@ public class QuestQMenu implements QMenu {
         }
 
         for (Integer integer : menuElements.keySet()) {
-            if (integer + 1 > maxElement) maxElement = integer + 1;
+            if (integer + 1 > maxElement) {
+                maxElement = integer + 1;
+            }
         }
     }
 
@@ -142,6 +150,7 @@ public class QuestQMenu implements QMenu {
         ItemStack pagePrevIs;
         ItemStack pageNextIs;
         ItemStack back = config.getItem("gui.back-button");
+        ItemStack bg = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
 
         Inventory inventory = Bukkit.createInventory(null, 54, title);
 
@@ -149,7 +158,9 @@ public class QuestQMenu implements QMenu {
         for (int pointer = pageMin; pointer < pageMax; pointer++) {
             if (menuElements.containsKey(pointer)) {
                 inventory.setItem(pointer - ((page - 1) * pageSize), menuElements.get(pointer).asItemStack());
-                if (pointer + 1 > highestOnPage) highestOnPage = pointer + 1;
+                if (pointer + 1 > highestOnPage) {
+                    highestOnPage = pointer + 1;
+                }
             }
         }
 
@@ -164,6 +175,17 @@ public class QuestQMenu implements QMenu {
         pageIs.setAmount(Math.min(page, 64));
         pagePrevIs = replaceItemStack(config.getItem("gui.page-prev"), pageplaceholders);
         pageNextIs = replaceItemStack(config.getItem("gui.page-next"), pageplaceholders);
+        ItemMeta bgMeta = bg.getItemMeta();
+        bgMeta.setDisplayName(" ");
+        bg.setItemMeta(bgMeta);
+
+        for (int i = 45; i < 54; i++) {
+            inventory.setItem(i, bg);
+        }
+
+        for (int i = 0; i < 9; i++) {
+            inventory.setItem(i, bg);
+        }
 
         if (config.getBoolean("options.categories-enabled") && backButtonEnabled) {
             inventory.setItem(45, back);
@@ -191,7 +213,7 @@ public class QuestQMenu implements QMenu {
             Inventory trimmedInventory = Bukkit.createInventory(null, inventorySize, title);
 
             for (int slot = 0; slot < trimmedInventory.getSize(); slot++) {
-                if (slot >= (trimmedInventory.getSize() - 9) && backButtonEnabled){
+                if (slot >= (trimmedInventory.getSize() - 9) && backButtonEnabled) {
                     if (config.getBoolean("options.categories-enabled")) {
                         trimmedInventory.setItem(slot, back);
                         backButtonLocation = slot;
@@ -224,9 +246,14 @@ public class QuestQMenu implements QMenu {
                 QuestMenuElement questMenuElement = (QuestMenuElement) menuElement;
                 Quest quest = plugin.getQuestManager().getQuestById(questMenuElement.getQuestId());
                 if (event.getClick() == ClickType.LEFT) {
-                    if (config.getBoolean("options.quest-autostart")) return;
+                    if (config.getBoolean("options.quest-autostart")) {
+                        return;
+                    }
                     if (owner.startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
-                        event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
+                        QMenu currMenu = this;
+                        event.getWhoClicked().closeInventory();
+                        controller.openMenu(event.getWhoClicked(), currMenu, 1);
+                        
                     }
                 } else if (event.getClick() == ClickType.MIDDLE && config.getBoolean("options.quest-autostart")) {
                     MenuUtils.handleMiddleClick(plugin, this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
