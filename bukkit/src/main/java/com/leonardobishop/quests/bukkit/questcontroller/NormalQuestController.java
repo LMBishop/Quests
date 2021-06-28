@@ -11,6 +11,7 @@ import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.util.Format;
 import com.leonardobishop.quests.bukkit.util.Messages;
+import com.leonardobishop.quests.bukkit.util.SoundUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -40,7 +41,6 @@ public class NormalQuestController implements QuestController {
         this.config = (BukkitQuestsConfig) plugin.getQuestsConfig();
 
         List<Quest> autoStartQuestCache = new ArrayList<>();
-        List<Quest> nonAutoStartQuestCache = new ArrayList<>();
         for (Quest quest : plugin.getQuestManager().getQuests().values()) {
             if (quest.isAutoStartEnabled()) autoStartQuestCache.add(quest);
         }
@@ -122,6 +122,7 @@ public class NormalQuestController implements QuestController {
                 for (String s : quest.getStartString()) {
                     player.sendMessage(Chat.color(s));
                 }
+                SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-start"));
             }
             for (Task task : quest.getTasks()) {
                 try {
@@ -217,6 +218,7 @@ public class NormalQuestController implements QuestController {
             for (String s : quest.getRewardString()) {
                 player.sendMessage(Chat.color(s));
             }
+            SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-complete"));
         }
         if ((config.getBoolean("options.allow-quest-track") && config.getBoolean("options.quest-autotrack") && !(quest.isRepeatable() && !quest.isCooldownEnabled()))
                 || (!config.getBoolean("options.allow-quest-track") && config.getBoolean("options.quest-autotrack"))) {
@@ -264,8 +266,10 @@ public class NormalQuestController implements QuestController {
             PlayerCancelQuestEvent questCancelEvent = new PlayerCancelQuestEvent(player, qPlayer, questProgress, questCancelMessage);
             Bukkit.getPluginManager().callEvent(questCancelEvent);
             // PlayerCancelQuestEvent -- end
-            if (questCancelEvent.getQuestCancelMessage() != null)
+            if (questCancelEvent.getQuestCancelMessage() != null) {
                 player.sendMessage(questCancelEvent.getQuestCancelMessage());
+            }
+            SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-cancel"));
         }
         return true;
     }

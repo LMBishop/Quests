@@ -152,13 +152,13 @@ public class StartedQMenu implements QMenu {
     }
 
     @Override
-    public void handleClick(InventoryClickEvent event, MenuController controller) {
+    public boolean handleClick(InventoryClickEvent event, MenuController controller) {
         if (pagePrevLocation == event.getSlot()) {
             controller.openMenu(event.getWhoClicked(), this, currentPage - 1);
-
+            return true;
         } else if (pageNextLocation == event.getSlot()) {
             controller.openMenu(event.getWhoClicked(), this, currentPage + 1);
-
+            return true;
         } else if (event.getSlot() < pageSize && slotsToQuestIds.containsKey(event.getSlot() + ((currentPage) - 1) * pageSize)) {
 
             // repeat from above
@@ -166,10 +166,13 @@ public class StartedQMenu implements QMenu {
             Quest quest = plugin.getQuestManager().getQuestById(questid);
             if (event.getClick() == ClickType.MIDDLE && config.getBoolean("options.allow-quest-track")) {
                 MenuUtils.handleMiddleClick(plugin, this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
+                return true;
             } else if (event.getClick() == ClickType.RIGHT && config.getBoolean("options.allow-quest-cancel")
                     && owner.hasStartedQuest(quest)) {
                 MenuUtils.handleRightClick(plugin, this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
+                return true;
             }
         }
+        return false;
     }
 }

@@ -8,6 +8,6 @@ public interface QMenu {
 
     QPlayer getOwner();
     Inventory toInventory(int page);
-    void handleClick(InventoryClickEvent event, MenuController controller);
+    boolean handleClick(InventoryClickEvent event, MenuController controller);
 
 }
