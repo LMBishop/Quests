@@ -2,9 +2,6 @@ package com.leonardobishop.quests.bukkit.config;
 
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
 import com.leonardobishop.quests.common.config.QuestsConfig;
-import com.leonardobishop.quests.common.plugin.Quests;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 

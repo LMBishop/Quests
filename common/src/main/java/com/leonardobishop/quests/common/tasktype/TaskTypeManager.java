@@ -3,8 +3,13 @@ package com.leonardobishop.quests.common.tasktype;
 import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * The task type manager stores all registered task types and registers individual quests to each task type.
@@ -30,17 +35,30 @@ public abstract class TaskTypeManager {
         return allowRegistrations;
     }
 
-    public ArrayList<TaskType> getTaskTypes() {
-        return taskTypes;
+    /**
+     * @return immutable {@link List} containing all registered {@link TaskType}
+     */
+    public @NotNull List<TaskType> getTaskTypes() {
+        return Collections.unmodifiableList(taskTypes);
     }
 
+    /**
+     * Resets all quest to task type registrations. This does not clear the task types registered to the task type manager.
+     */
     public void resetTaskTypes() {
         for (TaskType taskType : taskTypes) {
-            taskType.getRegisteredQuests().clear();
+            taskType.unregisterAll();
         }
     }
 
-    public void registerTaskType(TaskType taskType) {
+    /**
+     * Register a task type with the task type manager.
+     *
+     * @param taskType the task type to register
+     */
+    public void registerTaskType(@NotNull TaskType taskType) {
+        Objects.requireNonNull(taskType, "taskType cannot be null");
+
         if (!allowRegistrations) {
             throw new IllegalStateException("No longer accepting new task types (must be done before quests are loaded)");
         }
@@ -48,7 +66,14 @@ public abstract class TaskTypeManager {
         taskTypes.add(taskType);
     }
 
-    public void registerQuestTasksWithTaskTypes(Quest quest) {
+    /**
+     * Register a quest with its task types. This will register the quest to each task type it contains.
+     *
+     * @param quest the quest to register
+     */
+    public void registerQuestTasksWithTaskTypes(@NotNull Quest quest) {
+        Objects.requireNonNull(quest, "quest cannot be null");
+
         if (allowRegistrations) {
             throw new IllegalStateException("Still accepting new task types (type registrations must be closed before registering quests)");
         }
@@ -60,9 +85,17 @@ public abstract class TaskTypeManager {
         }
     }
 
-    public TaskType getTaskType(String string) {
+    /**
+     * Get a registered task type by type
+     *
+     * @param type the type to check
+     * @return {@link TaskType}
+     */
+    public @Nullable TaskType getTaskType(@NotNull String type) {
+        Objects.requireNonNull(type, "type cannot be null");
+
         for (TaskType taskType : taskTypes) {
-            if (taskType.getType().equalsIgnoreCase(string)) {
+            if (taskType.getType().equalsIgnoreCase(type)) {
                 return taskType;
             }
         }

@@ -5,9 +5,13 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFi
 import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.questcontroller.QuestController;
 import com.leonardobishop.quests.common.storage.StorageProvider;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,9 +36,11 @@ public class QPlayerManager {
      * Gets the QPlayer from a given UUID.
      *
      * @param uuid the uuid
-     * @return {@link QPlayer} if they are loaded
+     * @return {@link QPlayer} if they are loaded, otherwise null
      */
-    public QPlayer getPlayer(UUID uuid) {
+    public @Nullable QPlayer getPlayer(@NotNull UUID uuid) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
+
         QPlayer qPlayer = qPlayers.get(uuid);
         if (qPlayer == null) {
             plugin.getQuestsLogger().debug("QPlayer of " + uuid + " is null, but was requested:");
@@ -50,7 +56,9 @@ public class QPlayerManager {
      *
      * @param uuid the uuid of the player
      */
-    public void removePlayer(UUID uuid) {
+    public void removePlayer(@NotNull UUID uuid) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
+
         plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + ".");
         qPlayers.computeIfPresent(uuid, (mapUUID, qPlayer) -> {
             savePlayer(uuid);
@@ -64,7 +72,9 @@ public class QPlayerManager {
      *
      * @param uuid the uuid of the player
      */
-    public void savePlayer(UUID uuid) {
+    public void savePlayer(@NotNull UUID uuid) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
+
         QPlayer qPlayer = getPlayer(uuid);
         if (qPlayer == null) return;
         savePlayer(uuid, qPlayer.getQuestProgressFile());
@@ -77,7 +87,10 @@ public class QPlayerManager {
      * @param uuid the uuid of the player
      * @param originalProgressFile the quest progress file to associate with and save
      */
-    public void savePlayer(UUID uuid, QuestProgressFile originalProgressFile) {
+    public void savePlayer(@NotNull UUID uuid, @NotNull QuestProgressFile originalProgressFile) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
+        Objects.requireNonNull(originalProgressFile, "originalProgressFile cannot be null");
+
         QuestProgressFile clonedProgressFile = new QuestProgressFile(originalProgressFile);
         originalProgressFile.resetModified();
         plugin.getScheduler().doAsync(() -> save(uuid, clonedProgressFile));
@@ -89,7 +102,9 @@ public class QPlayerManager {
      *
      * @param uuid the uuid of the player
      */
-    public void savePlayerSync(UUID uuid) {
+    public void savePlayerSync(@NotNull UUID uuid) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
+
         QPlayer qPlayer = getPlayer(uuid);
         if (qPlayer == null) return;
         savePlayerSync(uuid, qPlayer.getQuestProgressFile());
@@ -102,11 +117,14 @@ public class QPlayerManager {
      * @param uuid the uuid of the player
      * @param questProgressFile the quest progress file to associate with and save
      */
-    public void savePlayerSync(UUID uuid, QuestProgressFile questProgressFile) {
+    public void savePlayerSync(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile) {
         save(uuid, questProgressFile);
     }
 
-    private void save(UUID uuid, QuestProgressFile questProgressFile) {
+    private void save(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
+        Objects.requireNonNull(questProgressFile, "questProgressFile cannot be null");
+
         plugin.getQuestsLogger().debug("Saving player " + uuid + ".");
         storageProvider.saveProgressFile(uuid, questProgressFile);
     }
@@ -116,13 +134,20 @@ public class QPlayerManager {
      *
      * @param uuid the uuid of the player
      */
-    public void dropPlayer(UUID uuid) {
+    public void dropPlayer(@NotNull UUID uuid) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
+
         plugin.getQuestsLogger().debug("Dropping player " + uuid + ".");
         qPlayers.remove(uuid);
     }
 
+    /**
+     * Gets all QPlayers loaded on the server
+     *
+     * @return immutable map of quest players
+     */
     public Collection<QPlayer> getQPlayers() {
-        return qPlayers.values();
+        return Collections.unmodifiableCollection(qPlayers.values());
     }
 
     /**

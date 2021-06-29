@@ -59,16 +59,16 @@ public enum Messages {
     COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS("messages.command-quest-admin-complete-success"),
     COMMAND_QUEST_ADMIN_RESET_SUCCESS("messages.command-quest-admin-reset-success");
 
-    private static BukkitQuestsPlugin plugin;
+    static {
+        plugin = BukkitQuestsPlugin.getPlugin(BukkitQuestsPlugin.class);
+    }
+
+    private static final BukkitQuestsPlugin plugin;
 
     private final String path;
 
     Messages(String path) {
         this.path = path;
-    }
-
-    public static void setPlugin(BukkitQuestsPlugin plugin) {
-        Messages.plugin = plugin;
     }
 
     public String getMessage() {

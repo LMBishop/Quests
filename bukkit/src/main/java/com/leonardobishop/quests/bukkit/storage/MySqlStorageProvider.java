@@ -10,6 +10,8 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -126,7 +129,10 @@ public class MySqlStorageProvider implements StorageProvider {
     }
 
     @Override
-    public QuestProgressFile loadProgressFile(UUID uuid) {
+    @Nullable
+    public QuestProgressFile loadProgressFile(@NotNull UUID uuid) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
+
         if (fault) return null;
         Map<String, Quest> presentQuests = new HashMap<>(plugin.getQuestManager().getQuests());
         boolean validateQuests = plugin.getQuestsConfig().getBoolean("options.verify-quest-exists-on-load", true);
@@ -214,7 +220,10 @@ public class MySqlStorageProvider implements StorageProvider {
     }
 
     @Override
-    public void saveProgressFile(UUID uuid, QuestProgressFile questProgressFile) {
+    public void saveProgressFile(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
+        Objects.requireNonNull(questProgressFile, "questProgressFile cannot be null");
+
         if (fault) return;
         try (Connection connection = hikari.getConnection()) {
             try (PreparedStatement writeQuestProgress = connection.prepareStatement(this.statementProcessor.apply(WRITE_PLAYER_QUEST_PROGRESS));

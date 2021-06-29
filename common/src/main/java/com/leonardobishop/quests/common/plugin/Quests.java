@@ -10,6 +10,7 @@ import com.leonardobishop.quests.common.scheduler.ServerScheduler;
 import com.leonardobishop.quests.common.storage.StorageProvider;
 import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
 import com.leonardobishop.quests.common.updater.Updater;
+import org.jetbrains.annotations.NotNull;
 
 public interface Quests {
 
@@ -19,7 +20,7 @@ public interface Quests {
      * @see QuestsLogger
      * @return quests logger
      */
-    QuestsLogger getQuestsLogger();
+    @NotNull QuestsLogger getQuestsLogger();
 
     /**
      * Obtain an instance of the QuestManager.
@@ -27,7 +28,7 @@ public interface Quests {
      * @see QuestManager
      * @return quest manager
      */
-    QuestManager getQuestManager();
+    @NotNull QuestManager getQuestManager();
 
     /**
      * Obtain an instance of the QPlayerManager.
@@ -35,7 +36,7 @@ public interface Quests {
      * @see QPlayerManager
      * @return quest player manager
      */
-    QPlayerManager getPlayerManager();
+    @NotNull QPlayerManager getPlayerManager();
 
     /**
      * Obtain an instance of the QuestController.
@@ -43,7 +44,7 @@ public interface Quests {
      * @see QuestController
      * @return quest controller
      */
-    QuestController getQuestController();
+    @NotNull QuestController getQuestController();
 
     /**
      * Obtain an instance of the TaskTypeManager.
@@ -51,7 +52,7 @@ public interface Quests {
      * @see TaskTypeManager
      * @return task type manager
      */
-    TaskTypeManager getTaskTypeManager();
+    @NotNull TaskTypeManager getTaskTypeManager();
 
     /**
      * Obtain an instance of the QuestCompleter.
@@ -59,7 +60,7 @@ public interface Quests {
      * @see QuestCompleter
      * @return quest completer
      */
-    QuestCompleter getQuestCompleter();
+    @NotNull QuestCompleter getQuestCompleter();
 
     /**
      * Obtain an instance of the QuestConfig.
@@ -67,7 +68,7 @@ public interface Quests {
      * @see QuestsConfig
      * @return quest config
      */
-    QuestsConfig getQuestsConfig();
+    @NotNull QuestsConfig getQuestsConfig();
 
     /**
      * Obtain an instance of the Updater.
@@ -75,7 +76,7 @@ public interface Quests {
      * @see Updater
      * @return updater
      */
-    Updater getUpdater();
+    @NotNull Updater getUpdater();
 
     /**
      * Obtain an instance of the ServerScheduler.
@@ -83,7 +84,7 @@ public interface Quests {
      * @see ServerScheduler
      * @return server scheduler
      */
-    ServerScheduler getScheduler();
+    @NotNull ServerScheduler getScheduler();
 
     /**
      * Obtain an instance of the StorageProvider.
@@ -91,7 +92,7 @@ public interface Quests {
      * @see StorageProvider
      * @return storage provider
      */
-    StorageProvider getStorageProvider();
+    @NotNull StorageProvider getStorageProvider();
 
     /**
      * Performs a full reload of the plugin, unloading and re-registering quests to their task types.

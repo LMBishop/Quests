@@ -11,8 +11,10 @@ import com.leonardobishop.quests.common.quest.QuestCompleter;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Queue;
 
 //TODO move complete effects here ?
@@ -95,12 +97,16 @@ public class BukkitQuestCompleter implements QuestCompleter, Runnable {
     }
 
     @Override
-    public void queueSingular(QuestProgress questProgress) {
+    public void queueSingular(@NotNull QuestProgress questProgress) {
+        Objects.requireNonNull(questProgress, "questProgress cannot be null");
+
         completionQueue.add(questProgress);
     }
 
     @Override
-    public void queueFullCheck(QuestProgressFile questProgressFile) {
+    public void queueFullCheck(@NotNull QuestProgressFile questProgressFile) {
+        Objects.requireNonNull(questProgressFile, "questProgressFile cannot be null");
+
         fullCheckQueue.add(questProgressFile);
     }
 }
