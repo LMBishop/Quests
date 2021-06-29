@@ -11,6 +11,7 @@ public class HexColorAdapter implements ColorAdapter {
 
     @Override
     public String color(String s) {
+        if (s == null) return null;
         Matcher matcher = HEX_PATTERN.matcher(s);
         while (matcher.find()) {
             final ChatColor hexColor;
@@ -29,6 +30,7 @@ public class HexColorAdapter implements ColorAdapter {
 
     @Override
     public String strip(String s) {
+        if (s == null) return null;
         return ChatColor.stripColor(s);
     }
 

@@ -80,6 +80,8 @@ dependencies {
     compileOnly ('net.coreprotect:coreprotect:2.18.2') {
         exclude group: 'com.sk89q.worldedit', module: 'worldedit-bukkit'
     }
+    // JetBrains Annotations
+    compileOnly 'org.jetbrains:annotations:16.0.2'
     // bStats
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
     // HikariCP

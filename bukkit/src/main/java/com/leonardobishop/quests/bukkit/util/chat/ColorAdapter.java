@@ -1,9 +1,12 @@
 package com.leonardobishop.quests.bukkit.util.chat;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
+
 public interface ColorAdapter {
 
-    String color(String s);
+    @Contract("null -> null") String color(@Nullable String s);
 
-    String strip(String s);
+    @Contract("null -> null") String strip(@Nullable String s);
 
 }
