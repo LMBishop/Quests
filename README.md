@@ -69,6 +69,17 @@ Quests is split into separate modules:
 
 For instructions on building Quests, see [Downloads / Building](#💾-Downloads-/-Building).
 
+## 📖 Wiki
+Quests provides a highly detailed and well maintained [wiki](https://github.com/LMBishop/Quests/wiki/). The information there is very useful to new users of the plugin.
+
+#### 🌟 Highlighted Articles
+- [FAQs](https://github.com/LMBishop/Quests/wiki)
+- [Tips](https://github.com/LMBishop/Quests/wiki/Tips)
+- [Creating a Quest or Category](https://github.com/LMBishop/Quests/wiki/Creating-A-Quest-Or-Category)
+- [Custom GUI Items](https://github.com/LMBishop/Quests/wiki/Custom-GUI-Items)
+- [Task Types](https://github.com/LMBishop/Quests/wiki/Task-Types)
+- [PlaceholderAPI](https://github.com/LMBishop/Quests/wiki/PlaceholderAPI)
+
 ## 💡 Support
 For support please open a [GitHub issue](https://github.com/LMBishop/Quests/issues) or join our [Discord server](https://discord.gg/mQ2RcJC). Please provide information of the issue, any errors that may come up and make sure you are using the latest version of the plugin.
 
@@ -85,14 +96,3 @@ Please speak English and do not use any vulgar or harmful language. We work on t
 The **source code** for Quests is licensed under the GNU General Public License v3.0, to view the license click [here](https://github.com/LMBishop/Quests/blob/master/LICENSE.txt).
 
 The **artwork** for Quests is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License ![](https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png), to learn more click [here](https://creativecommons.org/licenses/by-nc-sa/4.0/).
-
-## 📖 Wiki
-Quests provides a highly detailed and well maintained [wiki](https://github.com/LMBishop/Quests/wiki/). The information there is very useful to new users of the plugin.
-
-#### 🌟 Highlighted Articles
-- [FAQs](https://github.com/LMBishop/Quests/wiki)
-- [Tips](https://github.com/LMBishop/Quests/wiki/Tips)
-- [Creating a Quest or Category](https://github.com/LMBishop/Quests/wiki/Creating-A-Quest-Or-Category)  
-- [Custom GUI Items](https://github.com/LMBishop/Quests/wiki/Custom-GUI-Items)  
-- [Task Types](https://github.com/LMBishop/Quests/wiki/Task-Types)
-- [PlaceholderAPI](https://github.com/LMBishop/Quests/wiki/PlaceholderAPI)

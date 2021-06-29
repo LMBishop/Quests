@@ -1,0 +1,22 @@
+name: Documentation
+description: Suggest changes to the documentation/wiki
+labels: ['docs', 'status: needs investigating']
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type of Change
+      multiple: false
+      options:
+        - Fix typo
+        - Clarify ambigious information
+        - Add new information
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Description of Change
+      description: |
+        Describe the change in full.
+    validations:
+      required: false
