@@ -160,10 +160,10 @@ public class QuestQMenu implements QMenu {
         pageplaceholders.put("{prevpage}", String.valueOf(page - 1));
         pageplaceholders.put("{nextpage}", String.valueOf(page + 1));
         pageplaceholders.put("{page}", String.valueOf(page));
-        pageIs = replaceItemStack(config.getItem("gui.page-desc"), pageplaceholders);
+        pageIs = MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.page-desc"), pageplaceholders);
         pageIs.setAmount(Math.min(page, 64));
-        pagePrevIs = replaceItemStack(config.getItem("gui.page-prev"), pageplaceholders);
-        pageNextIs = replaceItemStack(config.getItem("gui.page-next"), pageplaceholders);
+        pagePrevIs = MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.page-prev"), pageplaceholders);
+        pageNextIs = MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.page-next"), pageplaceholders);
 
         if (config.getBoolean("options.categories-enabled") && backButtonEnabled) {
             inventory.setItem(45, back);
@@ -258,35 +258,4 @@ public class QuestQMenu implements QMenu {
         return superMenu;
     }
 
-    public ItemStack replaceItemStack(ItemStack is) {
-        return replaceItemStack(is, Collections.emptyMap());
-    }
-
-    public ItemStack replaceItemStack(ItemStack is, Map<String, String> placeholders) {
-        ItemStack newItemStack = is.clone();
-        List<String> lore = newItemStack.getItemMeta().getLore();
-        List<String> newLore = new ArrayList<>();
-        ItemMeta ism = newItemStack.getItemMeta();
-        Player player = Bukkit.getPlayer(owner.getPlayerUUID());
-        if (lore != null) {
-            for (String s : lore) {
-                for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-                    s = s.replace(entry.getKey(), entry.getValue());
-                    if (plugin.getPlaceholderAPIHook() != null && plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
-                        s = plugin.getPlaceholderAPIHook().replacePlaceholders(player, s);
-                    }
-                }
-                newLore.add(s);
-            }
-        }
-        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-            ism.setDisplayName(ism.getDisplayName().replace(entry.getKey(), entry.getValue()));
-            if (plugin.getPlaceholderAPIHook() != null && plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
-                ism.setDisplayName(plugin.getPlaceholderAPIHook().replacePlaceholders(player, ism.getDisplayName()));
-            }
-        }
-        ism.setLore(newLore);
-        newItemStack.setItemMeta(ism);
-        return newItemStack;
-    }
 }

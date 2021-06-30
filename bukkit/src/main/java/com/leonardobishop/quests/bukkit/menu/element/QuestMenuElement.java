@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.util.Format;
+import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -55,6 +56,7 @@ public class QuestMenuElement extends MenuElement {
             List<String> quests = new ArrayList<>();
             for (String requirement : quest.getRequirements()) {
                 Quest requirementQuest = plugin.getQuestManager().getQuestById(requirement);
+                if (requirementQuest == null) continue;
                 if (!owner.getQuestProgressFile().hasQuestProgress(requirementQuest) ||
                         !owner.getQuestProgressFile().getQuestProgress(requirementQuest).isCompletedBefore()) {
                     quests.add(Chat.strip(plugin.getQItemStackRegistry().getQuestItemStack(requirementQuest).getName()));
@@ -63,58 +65,23 @@ public class QuestMenuElement extends MenuElement {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
             placeholders.put("{requirements}", String.join(", ", quests));
-            ItemStack is = replaceItemStack(config.getItem("gui.quest-locked-display"), placeholders);
-            return is;
+            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.quest-locked-display"), placeholders);
         } else if (status == QuestStartResult.QUEST_ALREADY_COMPLETED) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
-            ItemStack is = replaceItemStack(config.getItem("gui.quest-completed-display"), placeholders);
-            return is;
+            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.quest-completed-display"), placeholders);
         } else if (status == QuestStartResult.QUEST_NO_PERMISSION) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
-            ItemStack is = replaceItemStack(config.getItem("gui.quest-permission-display"), placeholders);
-            return is;
+            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.quest-permission-display"), placeholders);
         } else if (cooldown > 0) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{time}", Format.formatTime(TimeUnit.SECONDS.convert(cooldown, TimeUnit.MILLISECONDS)));
             placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
-            ItemStack is = replaceItemStack(config.getItem("gui.quest-cooldown-display"), placeholders);
-            return is;
+            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.quest-cooldown-display"), placeholders);
         } else {
-            return replaceItemStack(qItemStack.toItemStack(quest, owner, questProgress));
+            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), qItemStack.toItemStack(quest, owner, questProgress));
         }
     }
 
-    private ItemStack replaceItemStack(ItemStack is) {
-        return replaceItemStack(is, Collections.emptyMap());
-    }
-
-    private ItemStack replaceItemStack(ItemStack is, Map<String, String> placeholders) {
-        ItemStack newItemStack = is.clone();
-        List<String> lore = newItemStack.getItemMeta().getLore();
-        List<String> newLore = new ArrayList<>();
-        ItemMeta ism = newItemStack.getItemMeta();
-        Player player = Bukkit.getPlayer(owner.getPlayerUUID());
-        if (lore != null) {
-            for (String s : lore) {
-                for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-                    s = s.replace(entry.getKey(), entry.getValue());
-                    if (plugin.getPlaceholderAPIHook() != null && plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
-                        s = plugin.getPlaceholderAPIHook().replacePlaceholders(player, s);
-                    }
-                }
-                newLore.add(s);
-            }
-        }
-        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-            ism.setDisplayName(ism.getDisplayName().replace(entry.getKey(), entry.getValue()));
-            if (plugin.getPlaceholderAPIHook() != null && plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
-                ism.setDisplayName(plugin.getPlaceholderAPIHook().replacePlaceholders(player, ism.getDisplayName()));
-            }
-        }
-        ism.setLore(newLore);
-        newItemStack.setItemMeta(ism);
-        return newItemStack;
-    }
 }

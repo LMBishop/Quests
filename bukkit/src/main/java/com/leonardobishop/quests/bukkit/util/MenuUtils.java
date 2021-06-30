@@ -32,18 +32,18 @@ public class MenuUtils {
             for (String s : lore) {
                 for (Map.Entry<String, String> entry : placeholders.entrySet()) {
                     s = s.replace(entry.getKey(), entry.getValue());
-                    if (plugin.getPlaceholderAPIHook() != null && plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
-                        s = plugin.getPlaceholderAPIHook().replacePlaceholders(player, s);
-                    }
+                }
+                if (plugin.getPlaceholderAPIHook() != null && plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
+                    s = plugin.getPlaceholderAPIHook().replacePlaceholders(player, s);
                 }
                 newLore.add(s);
             }
         }
         for (Map.Entry<String, String> entry : placeholders.entrySet()) {
             ism.setDisplayName(ism.getDisplayName().replace(entry.getKey(), entry.getValue()));
-            if (plugin.getPlaceholderAPIHook() != null && plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
-                ism.setDisplayName(plugin.getPlaceholderAPIHook().replacePlaceholders(player, ism.getDisplayName()));
-            }
+        }
+        if (plugin.getPlaceholderAPIHook() != null && plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
+            ism.setDisplayName(plugin.getPlaceholderAPIHook().replacePlaceholders(player, ism.getDisplayName()));
         }
         ism.setLore(newLore);
         newItemStack.setItemMeta(ism);

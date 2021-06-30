@@ -4,7 +4,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class CustomMenuElement extends MenuElement{
 
-    private ItemStack itemStack;
+    private final ItemStack itemStack;
 
     public CustomMenuElement(ItemStack itemStack) {
         this.itemStack = itemStack;
