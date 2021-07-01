@@ -13,6 +13,7 @@ import com.leonardobishop.quests.common.quest.Task;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public final class CitizensInteractTaskType extends BukkitTaskType {
     }
 
     @Override
-    public List<ConfigProblem> validateConfig(String root, HashMap<String, Object> config) {
+    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
         TaskUtils.configValidateExists(root + ".npc-name", config.get("npc-name"), problems, "npc-name", super.getType());
         TaskUtils.configValidateBoolean(root + ".remove-items-when-complete", config.get("remove-items-when-complete"), problems, true, "remove-items-when-complete", super.getType());

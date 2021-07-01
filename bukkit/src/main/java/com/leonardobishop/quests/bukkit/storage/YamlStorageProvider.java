@@ -7,6 +7,8 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.storage.StorageProvider;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -45,7 +48,9 @@ public class YamlStorageProvider implements StorageProvider {
         // no impl
     }
 
-    public QuestProgressFile loadProgressFile(UUID uuid) {
+    public @Nullable QuestProgressFile loadProgressFile(@NotNull UUID uuid) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
+
         ReentrantLock lock = lock(uuid);
         Map<String, Quest> presentQuests = new HashMap<>(plugin.getQuestManager().getQuests());
         boolean validateQuests = plugin.getQuestsConfig().getBoolean("options.verify-quest-exists-on-load", true);
@@ -89,9 +94,9 @@ public class YamlStorageProvider implements StorageProvider {
                 }
             }
         } catch (Exception ex) {
-            plugin.getQuestsLogger().severe("Failed to load player: " + uuid + "! This WILL cause errors.");
+            plugin.getQuestsLogger().severe("Failed to load player: " + uuid + "!");
             ex.printStackTrace();
-            // fuck
+            return null;
         } finally {
             lock.unlock();
         }
@@ -99,7 +104,10 @@ public class YamlStorageProvider implements StorageProvider {
         return questProgressFile;
     }
 
-    public void saveProgressFile(UUID uuid, QuestProgressFile questProgressFile) {
+    public void saveProgressFile(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
+        Objects.requireNonNull(questProgressFile, "questProgressFile cannot be null");
+
         ReentrantLock lock = lock(uuid);
         try {
             List<QuestProgress> questProgressValues = new ArrayList<>(questProgressFile.getAllQuestProgress());

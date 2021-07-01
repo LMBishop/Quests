@@ -3,6 +3,8 @@ package com.leonardobishop.quests.bukkit.util.chat;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +24,13 @@ public class Chat {
         }
     }
 
-    public static String color(String s) {
+    @Contract("null -> null")
+    public static String color(@Nullable String s) {
         return colorAdapter.color(s);
     }
 
-    public static List<String> color(List<String> s) {
+    @Contract("null -> null")
+    public static List<String> color(@Nullable List<String> s) {
         if (s == null || s.size() == 0) return s;
 
         List<String> colored = new ArrayList<>();
@@ -36,7 +40,8 @@ public class Chat {
         return colored;
     }
 
-    public static String strip(String s) {
+    @Contract("null -> null")
+    public static String strip(@Nullable String s) {
         return colorAdapter.strip(s);
     }
 

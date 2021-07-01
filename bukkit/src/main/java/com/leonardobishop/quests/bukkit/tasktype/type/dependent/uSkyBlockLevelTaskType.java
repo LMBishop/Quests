@@ -11,6 +11,7 @@ import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.jetbrains.annotations.NotNull;
 import us.talabrek.ultimateskyblock.api.event.uSkyBlockScoreChangedEvent;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public final class uSkyBlockLevelTaskType extends BukkitTaskType {
     }
 
     @Override
-    public List<ConfigProblem> validateConfig(String root, HashMap<String, Object> config) {
+    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
         if (TaskUtils.configValidateExists(root + ".level", config.get("level"), problems, "level", super.getType()))
             TaskUtils.configValidateInt(root + ".level", config.get("level"), problems, false, false, "level");

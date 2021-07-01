@@ -68,14 +68,17 @@ public class CancelQMenu implements QMenu {
     }
 
     @Override
-    public void handleClick(InventoryClickEvent event, MenuController controller) {
+    public boolean handleClick(InventoryClickEvent event, MenuController controller) {
         if (event.getSlot() == 10 || event.getSlot() == 11 || event.getSlot() == 12) {
             controller.openMenu(event.getWhoClicked(), superMenu, 1);
+            return true;
         } else if (event.getSlot() == 14 || event.getSlot() == 15 || event.getSlot() == 16) {
             if (owner.cancelQuest(quest)) {
                 event.getWhoClicked().closeInventory();
+                return true;
             }
         }
+        return false;
     }
 
     public QMenu getSuperMenu() {

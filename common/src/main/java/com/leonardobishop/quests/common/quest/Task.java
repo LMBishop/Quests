@@ -1,7 +1,12 @@
 package com.leonardobishop.quests.common.quest;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Task {
 
@@ -14,27 +19,62 @@ public class Task {
         this.type = type;
     }
 
-    public String getId() {
+    /**
+     * @return the id of this task
+     */
+    public @NotNull String getId() {
         return id;
     }
 
-    public String getType() {
+    /**
+     * @return the configured task type for this task
+     */
+    public @NotNull String getType() {
         return type;
     }
 
-    public Object getConfigValue(String key) {
+    /**
+     * Get a specific configuration value for this task
+     *
+     * @param key key of config value to get
+     * @return config value, or null
+     */
+    public @Nullable Object getConfigValue(@NotNull String key) {
+        Objects.requireNonNull(key, "key cannot be null");
+
         return configValues.getOrDefault(key, null); //??? this will return null without the need of `OrDefault(key, null)`
     }
 
-    public Object getConfigValue(String key, Object def) {
+    /**
+     * Get a specific configuration value for this task
+     *
+     * @param key key of config value to get
+     * @param def default value if null
+     * @return config value, or null
+     */
+    public @Nullable Object getConfigValue(@NotNull String key, @Nullable Object def) {
+        Objects.requireNonNull(key, "key cannot be null");
+
         return configValues.getOrDefault(key, def);
     }
 
-    public Map<String, Object> getConfigValues() {
-        return configValues;
+    /**
+     * @return immutable list containing all config values
+     */
+    public @NotNull Map<String, Object> getConfigValues() {
+        return Collections.unmodifiableMap(configValues);
     }
 
-    public void addConfigValue(String key, Object value) {
+    /**
+     * Add a key-value pair to this tasks configuration
+     *
+     * @param key key
+     * @param value value
+     */
+    public void addConfigValue(@NotNull String key, @NotNull Object value) {
+        Objects.requireNonNull(key, "key cannot be null");
+        Objects.requireNonNull(value, "value cannot be null");
+
         configValues.put(key, value);
     }
 

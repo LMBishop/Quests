@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public final class CommandTaskType extends BukkitTaskType {
     }
 
     @Override
-    public List<ConfigProblem> validateConfig(String root, HashMap<String, Object> config) {
+    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
         TaskUtils.configValidateExists(root + ".command", config.get("command"), problems, "command", super.getType());
         TaskUtils.configValidateBoolean(root + ".ignore-case", config.get("ignore-case"), problems, true, "ignore-case", super.getType());

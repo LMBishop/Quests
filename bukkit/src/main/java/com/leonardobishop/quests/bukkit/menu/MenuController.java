@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.bukkit.menu;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.util.SoundUtils;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.quest.Category;
 import com.leonardobishop.quests.common.quest.Quest;
@@ -29,6 +30,8 @@ public class MenuController implements Listener {
     }
 
     public void openMenu(HumanEntity player, QMenu qMenu, int page) {
+        SoundUtils.playSoundForPlayer((Player) player, plugin.getQuestsConfig().getString("options.sounds.gui.open"));
+//        Bukkit.getScheduler().runTaskLater(plugin, () -> SoundUtils.playSoundForPlayer((Player) player, plugin.getQuestsConfig().getString("options.sounds.gui.open")), 1L);
         player.openInventory(qMenu.toInventory(page));
         tracker.put(player.getUniqueId(), qMenu);
     }
@@ -41,15 +44,19 @@ public class MenuController implements Listener {
     @EventHandler
     private void onClick(InventoryClickEvent event) {
         // check if the player has a quest menu open
-        if (tracker.containsKey(event.getWhoClicked().getUniqueId())) {
+        Player player = (Player) event.getWhoClicked();
+        if (tracker.containsKey(player.getUniqueId())) {
             event.setCancelled(true);
             if (event.getClickedInventory() == null)
                 return; //The player clicked outside the inventory
             if (event.getClickedInventory().getType() == InventoryType.PLAYER)
                 return; //The clicked inventory is a player inventory type
 
-            QMenu qMenu = tracker.get(event.getWhoClicked().getUniqueId());
-            qMenu.handleClick(event, this);
+            QMenu qMenu = tracker.get(player.getUniqueId());
+            if (qMenu.handleClick(event, this)) {
+                SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.gui.interact"));
+//                Bukkit.getScheduler().runTaskLater(plugin, () -> SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.gui.interact")), 1L);
+            }
         }
     }
 
@@ -132,7 +139,7 @@ public class MenuController implements Listener {
                 }
                 categoryQMenu.populate(questMenus);
 
-                plugin.getMenuController().openMenu(player, categoryQMenu, 1);
+                openMenu(player, categoryQMenu, 1);
             } else {
                 QuestQMenu questQMenu = new QuestQMenu(plugin, qPlayer, "", null);
                 List<Quest> quests = new ArrayList<>();
@@ -142,7 +149,7 @@ public class MenuController implements Listener {
                 questQMenu.populate(quests);
                 questQMenu.setBackButtonEnabled(false);
 
-                plugin.getMenuController().openMenu(player, questQMenu, 1);
+                openMenu(player, questQMenu, 1);
             }
         }
 //        } else {
@@ -170,7 +177,7 @@ public class MenuController implements Listener {
         }
         startedQMenu.populate(quests);
 
-        plugin.getMenuController().openMenu(player, startedQMenu, 1);
+        openMenu(player, startedQMenu, 1);
     }
 
 }

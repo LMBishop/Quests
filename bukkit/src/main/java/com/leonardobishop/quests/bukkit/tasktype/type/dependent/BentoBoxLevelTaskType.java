@@ -11,6 +11,7 @@ import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
 import org.bukkit.event.EventHandler;
+import org.jetbrains.annotations.NotNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.BentoBoxEvent;
 import world.bentobox.bentobox.database.objects.Island;
@@ -34,7 +35,7 @@ public final class BentoBoxLevelTaskType extends BukkitTaskType {
     }
 
     @Override
-    public List<ConfigProblem> validateConfig(String root, HashMap<String, Object> config) {
+    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
         if (TaskUtils.configValidateExists(root + ".level", config.get("level"), problems, "level", super.getType()))
             TaskUtils.configValidateInt(root + ".level", config.get("level"), problems, false, false, "level");

@@ -2,13 +2,13 @@ package com.leonardobishop.quests.bukkit.hook.papi;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
+import com.leonardobishop.quests.bukkit.util.Format;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.quest.Category;
 import com.leonardobishop.quests.common.quest.Quest;
-import com.leonardobishop.quests.bukkit.util.Format;
 import me.clip.placeholderapi.expansion.Cacheable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -139,14 +139,15 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                         quest = plugin.getQuestManager().getQuestById(key[1]);
                         if (quest == null) return key[1] + " is not a quest";
                     } else {
-                        quest = plugin.getQuestManager().getQuestById(qPlayer.getPlayerPreferences().getTrackedQuestId());
-                        if (quest == null) {
+                        if (qPlayer.getPlayerPreferences().getTrackedQuestId() == null ||
+                                plugin.getQuestManager().getQuestById(qPlayer.getPlayerPreferences().getTrackedQuestId()) == null) {
                             if (args.length == 1) {
                                 return "No tracked quest";
                             } else {
                                 return "";
                             }
                         }
+                        quest = plugin.getQuestManager().getQuestById(qPlayer.getPlayerPreferences().getTrackedQuestId());
                     }
 
                     if (args.length == 1) {
@@ -278,7 +279,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
             final Map<String, String> map = new HashMap<>();
             map.put(params, result);
             cache.put(player, map);
-            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> cache.get(player).remove(params), plugin.getConfig().getInt("options.placeholder-cache-time", 10) * 20);
+            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> cache.get(player).remove(params), plugin.getConfig().getInt("options.placeholder-cache-time", 10) * 20L);
         }
         return result;
     }

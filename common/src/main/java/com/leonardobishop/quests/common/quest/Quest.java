@@ -1,15 +1,20 @@
 package com.leonardobishop.quests.common.quest;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Quest implements Comparable<Quest> {
 
     private final Map<String, Task> tasks = new HashMap<>();
+    private final Map<String, List<Task>> tasksByType = new HashMap<>();
     private String id;
     private List<String> rewards;
     private List<String> requirements;
@@ -26,83 +31,196 @@ public class Quest implements Comparable<Quest> {
 
     private Quest() { }
 
-    public void registerTask(Task task) {
+    /**
+     * Register a task to this quest.
+     *
+     * @param task the task to register
+     */
+    public void registerTask(@NotNull Task task) {
+        Objects.requireNonNull(task, "task cannot be null");
+
         tasks.put(task.getId(), task);
+        tasksByType.compute(task.getType(), (type, list) -> {
+            if (list == null) {
+                return new ArrayList<>(Collections.singletonList(task));
+            } else {
+                list.add(task);
+                return list;
+            }
+        });
     }
 
-    public Collection<Task> getTasks() {
-        return tasks.values();
+    /**
+     * Get all tasks registered to this quest.
+     *
+     * @return immutable list containing all {@link Task}
+     */
+    public @NotNull Collection<Task> getTasks() {
+        return Collections.unmodifiableCollection(tasks.values());
     }
 
-    public Task getTaskById(String id) {
+    /**
+     * Get a specific task registered to this quest.
+     *
+     * @param id task id
+     * @return {@link Task}, or null if not exists
+     */
+    public @Nullable Task getTaskById(@NotNull String id) {
+        Objects.requireNonNull(id, "id cannot be null");
+
         return tasks.get(id);
     }
 
-    public List<Task> getTasksOfType(String type) {
-        List<Task> tasks = new ArrayList<>();
-        for (Task task : getTasks()) {
-            if (task.getType().equals(type)) {
-                tasks.add(task);
-            }
-        }
-        return tasks;
+    /**
+     * Get a list of all task of a specific task type.
+     *
+     * @param type the task type
+     * @return list containing all tasks of type
+     */
+    public @NotNull List<Task> getTasksOfType(String type) {
+        Objects.requireNonNull(type, "type cannot be null");
+
+        List<Task> list = tasksByType.get(type);
+        return list == null ? Collections.emptyList() : Collections.unmodifiableList(list);
     }
 
 
+    /**
+     * Get if a specific permission is required to start this quest.
+     * This permission will be in the form of "quests.quest.[quest id]".
+     *
+     * @return boolean
+     */
     public boolean isPermissionRequired() {
         return permissionRequired;
     }
 
-    public List<String> getRewardString() {
-        return rewardString;
+    /**
+     * Get the reward string of the quest.
+     * The reward string is a series of messages sent to the player upon completing the quest.
+     *
+     * @return immutable list of messages to send
+     */
+    public @NotNull List<String> getRewardString() {
+        return Collections.unmodifiableList(rewardString);
     }
 
-    public List<String> getStartString() {
-        return startString;
+    /**
+     * Get the start string of the quest.
+     * The start string is a series of messages sent to the player upon starting the quest.
+     *
+     * @return immutable list of messages to send
+     */
+    public @NotNull List<String> getStartString() {
+        return Collections.unmodifiableList(startString);
     }
 
-    public String getId() {
+    /**
+     * Get the id of this quest.
+     *
+     * @return id
+     */
+    public @NotNull String getId() {
         return id;
     }
 
-    public List<String> getRewards() {
-        return rewards;
+    /**
+     * Get the rewards for this quest.
+     * The rewards is a list of commands to be executed upon completing the quest.
+     *
+     * @return immutable list of rewards
+     */
+    public @NotNull List<String> getRewards() {
+        return Collections.unmodifiableList(rewards);
     }
 
-    public List<String> getRequirements() {
-        return requirements;
+    /**
+     * Get the requirements for this quest.
+     * The requirements is a list of quests ids the player must have completed at least once to start this quest.
+     * The quest ids may or may not represent actual quests and are only validated by the plugin with a warning.
+     *
+     * @return immutable list of quest requirements
+     */
+    public @NotNull List<String> getRequirements() {
+        return Collections.unmodifiableList(requirements);
     }
 
+    /**
+     * Get if this quest can be repeated after completion.
+     *
+     * @return boolean
+     */
     public boolean isRepeatable() {
         return repeatEnabled;
     }
 
+    /**
+     * Get if this quest has a cooldown enabled after completion.
+     * Whether or not the quest enters a cooldown phase for the player depends
+     * on if it is repeatable in the first place: {@link Quest#isRepeatable()}
+     *
+     * @return boolean
+     */
     public boolean isCooldownEnabled() {
         return cooldownEnabled;
     }
 
+    /**
+     * Get the cooldown for this quest between completing and restarting the quest.
+     * Whether or not this cooldown is in use depends on {@link Quest#isCooldownEnabled()}.
+     *
+     * @return the cooldown, in seconds
+     */
     public int getCooldown() {
         return cooldown;
     }
 
-    public String getCategoryId() {
+    /**
+     * Get the category id this quest is in.
+     *
+     * @return the category id, or null
+     */
+    public @Nullable String getCategoryId() {
         return categoryid;
     }
 
-    public Map<String, String> getPlaceholders() {
-        return placeholders;
+    /**
+     * Get the local placeholders for this quest, which is exposed to PlaceholderAPI.
+     *
+     * @return immutable map of placeholders
+     */
+    public @NotNull Map<String, String> getPlaceholders() {
+        return Collections.unmodifiableMap(placeholders);
     }
 
+    /**
+     * Get the sort order for this quest in the GUI.
+     * Numbers closer to Integer.MIN_VALUE have greater priority.
+     *
+     * @return any integer, both negative or positive
+     */
     public int getSortOrder() {
         return sortOrder;
     }
 
+    /**
+     * Get if quest-specific autostart is enabled for this quest.
+     *
+     * @return boolean
+     */
     public boolean isAutoStartEnabled() {
         return autoStartEnabled;
     }
 
+    /**
+     * Compare the sort orders for this quest with another quest.
+     *
+     * @see Comparable#compareTo(Object)
+     * @param quest the quest to compare with
+     * @return a negative integer, zero, or a positive integer
+     */
     @Override
-    public int compareTo(Quest quest) {
+    public int compareTo(@NotNull Quest quest) {
         return (sortOrder - quest.sortOrder);
     }
 

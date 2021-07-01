@@ -1,5 +1,7 @@
 package com.leonardobishop.quests.common.player;
 
+import org.jetbrains.annotations.Nullable;
+
 public class QPlayerPreferences {
 
     private String trackedQuestId;
@@ -8,11 +10,11 @@ public class QPlayerPreferences {
         this.trackedQuestId = trackedQuestId;
     }
 
-    public String getTrackedQuestId() {
+    public @Nullable String getTrackedQuestId() {
         return trackedQuestId;
     }
 
-    public void setTrackedQuestId(String trackedQuestId) {
+    public void setTrackedQuestId(@Nullable String trackedQuestId) {
         this.trackedQuestId = trackedQuestId;
     }
 }

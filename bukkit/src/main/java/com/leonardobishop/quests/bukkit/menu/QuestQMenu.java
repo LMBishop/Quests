@@ -6,8 +6,8 @@ import com.leonardobishop.quests.bukkit.menu.element.CustomMenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.MenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.QuestMenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.SpacerMenuElement;
-import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
+import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
@@ -225,40 +225,42 @@ public class QuestQMenu implements QMenu {
     }
 
     @Override
-    public void handleClick(InventoryClickEvent event, MenuController controller) {
+    public boolean handleClick(InventoryClickEvent event, MenuController controller) {
         //TODO maybe redo this maybe
         if (pagePrevLocation == event.getSlot()) {
             controller.openMenu(event.getWhoClicked(), this, currentPage - 1);
-
+            return true;
         } else if (pageNextLocation == event.getSlot()) {
             controller.openMenu(event.getWhoClicked(), this, currentPage + 1);
-
+            return true;
         } else if (config.getBoolean("options.categories-enabled") && backButtonLocation == event.getSlot()) {
             controller.openMenu(event.getWhoClicked(), superMenu, 1);
-
+            return true;
         } else if (event.getSlot() < pageSize && menuElements.containsKey(event.getSlot() + (((currentPage) - 1) * pageSize))) {
             MenuElement menuElement = menuElements.get(event.getSlot() + ((currentPage - 1) * pageSize));
             if (menuElement instanceof QuestMenuElement) {
                 QuestMenuElement questMenuElement = (QuestMenuElement) menuElement;
                 Quest quest = plugin.getQuestManager().getQuestById(questMenuElement.getQuestId());
                 if (event.getClick() == ClickType.LEFT) {
-                    if (config.getBoolean("options.quest-autostart")) {
-                        return;
-                    }
+                    if (config.getBoolean("options.quest-autostart")) return false;
                     if (owner.startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
                         QMenu currMenu = this;
                         event.getWhoClicked().closeInventory();
                         controller.openMenu(event.getWhoClicked(), currMenu, 1);
                         
                     }
+                    return true;
                 } else if (event.getClick() == ClickType.MIDDLE && config.getBoolean("options.quest-autostart")) {
                     MenuUtils.handleMiddleClick(plugin, this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
+                    return true;
                 } else if (event.getClick() == ClickType.RIGHT && config.getBoolean("options.allow-quest-cancel")
                         && owner.hasStartedQuest(quest)) {
                     MenuUtils.handleRightClick(plugin, this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     public boolean isBackButtonEnabled() {

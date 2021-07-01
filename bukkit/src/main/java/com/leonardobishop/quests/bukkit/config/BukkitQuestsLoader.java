@@ -17,7 +17,6 @@ import com.leonardobishop.quests.common.questcontroller.QuestController;
 import com.leonardobishop.quests.common.tasktype.TaskType;
 import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -62,8 +61,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
     @Override
     public Map<String, List<ConfigProblem>> loadQuests(File root) {
         qItemStackRegistry.clearRegistry();
-        questManager.getQuests().clear();
-        questManager.getCategories().clear();
+        questManager.clear();
         taskTypeManager.resetTaskTypes();
 
         Map<String, List<ConfigProblem>> configProblems = new HashMap<>();

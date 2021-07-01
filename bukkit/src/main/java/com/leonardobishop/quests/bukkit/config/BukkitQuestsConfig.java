@@ -2,11 +2,9 @@ package com.leonardobishop.quests.bukkit.config;
 
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
 import com.leonardobishop.quests.common.config.QuestsConfig;
-import com.leonardobishop.quests.common.plugin.Quests;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.HashMap;
@@ -49,47 +47,48 @@ public class BukkitQuestsConfig implements QuestsConfig {
     }
 
     @Override
-    public String getString(String path) {
-        return config.getString(path);
+    public @NotNull String getString(@NotNull String path) {
+        String value = config.getString(path);
+        return value == null ? path : value;
     }
 
     @Override
-    public String getString(String path, String def) {
+    public String getString(@NotNull String path, String def) {
         return config.getString(path, def);
     }
 
     @Override
-    public boolean getBoolean(String path) {
+    public boolean getBoolean(@NotNull String path) {
         return cachedBooleans.computeIfAbsent(path, s -> config.getBoolean(path));
     }
 
     @Override
-    public boolean getBoolean(String path, boolean def) {
+    public boolean getBoolean(@NotNull String path, boolean def) {
         return cachedBooleans.computeIfAbsent(path, s -> config.getBoolean(path, def));
     }
 
     @Override
-    public int getInt(String path) {
+    public int getInt(@NotNull String path) {
         return config.getInt(path);
     }
 
     @Override
-    public int getInt(String path, int def) {
+    public int getInt(@NotNull String path, int def) {
         return config.getInt(path, def);
     }
 
     @Override
-    public List<String> getStringList(String path) {
+    public List<String> getStringList(@NotNull String path) {
         return config.getStringList(path);
     }
 
     @Override
-    public List<String> getStringList(String path, List<String> def) {
+    public List<String> getStringList(@NotNull String path, List<String> def) {
         List<String> list = config.getStringList(path);
         return list.isEmpty() ? def : list;
     }
 
-    public ItemStack getItem(String path) {
+    public ItemStack getItem(@NotNull String path) {
         return new ItemStack(cachedItemStacks.computeIfAbsent(path, s -> itemGetter.getItem(path, config)));
     }
 }

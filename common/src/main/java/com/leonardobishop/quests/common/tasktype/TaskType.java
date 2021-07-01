@@ -3,11 +3,14 @@ package com.leonardobishop.quests.common.tasktype;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -28,8 +31,8 @@ public abstract class TaskType {
      * @param author the name of the person (or people) who wrote it
      * @param description a short, simple description of the task type
      */
-    public TaskType(String type, String author, String description) {
-        this.type = type;
+    public TaskType(@NotNull String type, String author, String description) {
+        this(type);
         this.author = author;
         this.description = description;
     }
@@ -37,7 +40,9 @@ public abstract class TaskType {
     /**
      * @param type the name of the task type, should not contain spaces
      */
-    public TaskType(String type) {
+    public TaskType(@NotNull String type) {
+        Objects.requireNonNull(type, "type cannot be null");
+
         this.type = type;
     }
 
@@ -47,7 +52,9 @@ public abstract class TaskType {
      *
      * @param quest the {@link Quest} to register.
      */
-    public final void registerQuest(Quest quest) {
+    public final void registerQuest(@NotNull Quest quest) {
+        Objects.requireNonNull(quest, "quest cannot be null");
+
         if (!quests.contains(quest)) {
             quests.add(quest);
         }
@@ -56,39 +63,39 @@ public abstract class TaskType {
     /**
      * Clears the list which contains the registered quests.
      */
-    public final void unregisterAll() {
+    protected final void unregisterAll() {
         quests.clear();
     }
 
     /**
-     * @return {@link List} of type {@link Quest} of all registered quests.
+     * @return immutable {@link List} of type {@link Quest} of all registered quests.
      */
-    public final List<Quest> getRegisteredQuests() {
-        return quests;
+    public final @NotNull List<Quest> getRegisteredQuests() {
+        return Collections.unmodifiableList(quests);
     }
 
-    public final String getType() {
+    public final @NotNull String getType() {
         return type;
     }
 
-    public String getAuthor() {
+    public @Nullable String getAuthor() {
         return author;
     }
 
-    public String getDescription() {
+    public @Nullable String getDescription() {
         return description;
     }
 
     /**
-     * Called when Quests has finished registering all quests to the task type
-     * May be called several times if an operator uses /quests admin reload
+     * Called when Quests has finished registering all quests to the task type.
+     * May be called several times if an operator uses /quests admin reload.
      */
     public void onReady() {
         // not implemented here
     }
 
     /**
-     * Called when a player starts a quest containing a task of this type
+     * Called when a player starts a quest containing a task of this type.
      */
     public void onStart(Quest quest, Task task, UUID playerUUID) {
         // not implemented here
@@ -99,9 +106,12 @@ public abstract class TaskType {
     }
 
     /**
-     * Called when Quests reloads the configuration - used to detect errors in the configuration of your task type
+     * Called when Quests reloads the configuration - used to detect errors in the configuration of your task type.
+     *
+     * @param root the root path for the config
+     * @param config the config itself
      */
-    public List<ConfigProblem> validateConfig(String root, HashMap<String, Object> config) {
+    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         // not implemented here
         return Collections.emptyList();
     }

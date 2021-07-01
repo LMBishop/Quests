@@ -62,7 +62,6 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PlaceholderAPIEv
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ShopGUIPlusBuyCertainTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ShopGUIPlusSellCertainTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.uSkyBlockLevelTaskType;
-import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.config.QuestsConfig;
@@ -125,57 +124,58 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private BukkitTask questQueuePollTask;
 
     @Override
-    public QuestsLogger getQuestsLogger() {
+    public @NotNull QuestsLogger getQuestsLogger() {
         return questsLogger;
     }
 
     @Override
-    public QuestManager getQuestManager() {
+    public @NotNull QuestManager getQuestManager() {
         return questManager;
     }
 
     @Override
-    public TaskTypeManager getTaskTypeManager() {
+    public @NotNull TaskTypeManager getTaskTypeManager() {
         return taskTypeManager;
     }
 
     @Override
-    public QPlayerManager getPlayerManager() {
+    public @NotNull QPlayerManager getPlayerManager() {
         return qPlayerManager;
     }
 
     @Override
-    public QuestController getQuestController() {
+    public @NotNull QuestController getQuestController() {
         return questController;
     }
 
     @Override
-    public QuestCompleter getQuestCompleter() {
+    public @NotNull QuestCompleter getQuestCompleter() {
         return questCompleter;
     }
 
     @Override
-    public QuestsConfig getQuestsConfig() {
+    public @NotNull QuestsConfig getQuestsConfig() {
         return questsConfig;
     }
 
     @Override
-    public Updater getUpdater() {
+    public @NotNull Updater getUpdater() {
         return updater;
     }
 
     @Override
-    public StorageProvider getStorageProvider() {
+    public @NotNull StorageProvider getStorageProvider() {
         return storageProvider;
     }
 
     @Override
-    public ServerScheduler getScheduler() {
+    public @NotNull ServerScheduler getScheduler() {
         return serverScheduler;
     }
 
     @Override
     public void onEnable() {
+        // Initial module initialization
         this.questsLogger = new BukkitQuestsLogger(this);
         this.generateConfigurations();
         this.questsConfig = new BukkitQuestsConfig(new File(super.getDataFolder() + File.separator + "config.yml"));
@@ -183,12 +183,14 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         this.taskTypeManager = new BukkitTaskTypeManager(this);
         this.serverScheduler = new BukkitServerSchedulerAdapter(this);
 
+        // Load base configuration for use during rest of startup procedure
         if (!this.reloadBaseConfiguration()) {
             questsLogger.severe("Plugin cannot start into a stable state as the configuration is broken!");
             super.getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
+        // Initialise storage provider
         String configuredProvider = questsConfig.getString("options.storage.provider", "yaml");
         switch (configuredProvider.toLowerCase()) {
             default:
@@ -207,9 +209,35 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             e.printStackTrace();
         }
 
-        this.setupVersionSpecific();
+        // Setup version specific compatibility layers
+        int version;
+        try {
+            version = Integer.parseInt(Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3].split("_")[1]);
+        } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+            questsLogger.warning("Failed to resolve server version - some features may not work!");
+            version = 0;
+        }
+        questsLogger.info("Your server is running version 1." + version);
+        // (titles)
+        if (version < 8) {
+            titleHandle = new Title_Other();
+        } else if (version <= 10) {
+            titleHandle = new Title_BukkitNoTimings();
+        } else {
+            titleHandle = new Title_Bukkit();
+        }
+        // (itemstacks)
+        if (version <= 12) {
+            itemGetter = new ItemGetter_Late_1_8();
+        } else if (version == 13) {
+            itemGetter = new ItemGetter_1_13();
+        } else {
+            itemGetter = new ItemGetterLatest();
+        }
 
-        Messages.setPlugin(this);
+        questsConfig.setItemGetter(itemGetter);
+
+        // Finish module initialisation
         this.qPlayerManager = new QPlayerManager(this, storageProvider, questController);
         this.menuController = new MenuController(this);
         this.qItemStackRegistry = new QItemStackRegistry();
@@ -219,25 +247,25 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             this.placeholderAPIHook = new PlaceholderAPIHook();
             this.placeholderAPIHook.registerExpansion(this);
         }
-
         if (Bukkit.getPluginManager().isPluginEnabled("CoreProtect")) {
             this.coreProtectHook = new CoreProtectHook();
         } else {
             this.coreProtectHook = new CoreProtectNoHook();
         }
 
+        // Start quests update checker
         boolean ignoreUpdates = false;
         try {
             ignoreUpdates = new File(this.getDataFolder() + File.separator + "stfuQuestsUpdate").exists();
         } catch (Throwable ignored) { }
-
         super.getCommand("quests").setExecutor(new QuestsCommand(this));
 
+        // Register events
         super.getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
         super.getServer().getPluginManager().registerEvents(menuController, this);
         super.getServer().getPluginManager().registerEvents(new PlayerLeaveListener(this), this);
 
-        // register task types after the server has fully started
+        // Register task types after the server has fully started
         Bukkit.getScheduler().runTask(this, () -> {
             taskTypeManager.registerTaskType(new MiningTaskType(this));
             taskTypeManager.registerTaskType(new MiningCertainTaskType(this));
@@ -299,6 +327,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.closeRegistrations();
             reloadQuests();
 
+            // Load players who were present during startup (i.e some idiot reloaded the server instead of restarted)
             for (Player player : Bukkit.getOnlinePlayers()) {
                 qPlayerManager.loadPlayer(player.getUniqueId());
             }
@@ -386,47 +415,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
         }
         return validConfiguration;
-    }
-
-    private void setupVersionSpecific() {
-        String version;
-        try {
-            version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            getQuestsLogger().warning("Failed to resolve server version - some features will not work!");
-            titleHandle = new Title_Other();
-            itemGetter = new ItemGetter_Late_1_8();
-            return;
-        }
-
-        getQuestsLogger().info("Your server is running version " + version + ".");
-
-        if (version.startsWith("v1_7")) {
-            titleHandle = new Title_Other();
-        } else if (version.startsWith("v1_8") || version.startsWith("v1_9") || version.startsWith("v1_10")) {
-            titleHandle = new Title_BukkitNoTimings();
-        } else {
-            titleHandle = new Title_Bukkit();
-        }
-
-        if (version.startsWith("v1_7") || version.startsWith("v1_8") || version.startsWith("v1_9")
-                || version.startsWith("v1_10") || version.startsWith("v1_11") || version.startsWith("v1_12")) {
-            itemGetter = new ItemGetter_Late_1_8();
-        } else if (version.startsWith("v1_13")) {
-            itemGetter = new ItemGetter_1_13();
-        } else {
-            itemGetter = new ItemGetterLatest();
-        }
-
-        questsConfig.setItemGetter(itemGetter);
-
-        if (titleHandle instanceof Title_Bukkit) {
-            getQuestsLogger().info("Titles have been enabled.");
-        } else if (titleHandle instanceof Title_BukkitNoTimings) {
-            getQuestsLogger().info("Titles have been enabled, although they have limited timings.");
-        } else {
-            getQuestsLogger().info("Titles are not supported for this version.");
-        }
     }
 
     private void generateConfigurations() {

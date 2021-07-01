@@ -6,9 +6,9 @@ import com.leonardobishop.quests.bukkit.menu.element.CategoryMenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.CustomMenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.MenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.SpacerMenuElement;
-import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import com.leonardobishop.quests.bukkit.util.Messages;
+import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.player.QPlayer;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -149,12 +149,14 @@ public class CategoryQMenu implements QMenu {
     }
 
     @Override
-    public void handleClick(InventoryClickEvent event, MenuController controller) {
+    public boolean handleClick(InventoryClickEvent event, MenuController controller) {
         if (pagePrevLocation == event.getSlot()) {
             controller.openMenu(event.getWhoClicked(), this, currentPage - 1);
+            return true;
 
         } else if (pageNextLocation == event.getSlot()) {
             controller.openMenu(event.getWhoClicked(), this, currentPage + 1);
+            return true;
 
         } else if (event.getSlot() < pageSize && menuElements.containsKey(event.getSlot() + (((currentPage) - 1) * pageSize))) {
             MenuElement element = menuElements.get(event.getSlot() + ((currentPage - 1) * pageSize));
@@ -164,8 +166,11 @@ public class CategoryQMenu implements QMenu {
                 if (plugin.getMenuController().openQuestCategory(owner,
                         plugin.getQuestManager().getCategoryById(questQMenu.getCategoryName()), questQMenu) != 0) {
                     event.getWhoClicked().sendMessage(Messages.QUEST_CATEGORY_PERMISSION.getMessage());
+                } else {
+                    return true;
                 }
             }
         }
+        return false;
     }
 }
