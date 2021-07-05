@@ -52,6 +52,8 @@ public class MenuUtils {
 
     public static void handleMiddleClick(BukkitQuestsPlugin plugin, QMenu menu, Quest quest, Player player, MenuController controller) {
         if (menu.getOwner().hasStartedQuest(quest)) {
+            if (!plugin.getQuestsConfig().getBoolean("options.allow-quest-track")) return;
+
             String tracked = menu.getOwner().getPlayerPreferences().getTrackedQuestId();
 
             if (quest.getId().equals(tracked)) {
@@ -66,8 +68,14 @@ public class MenuUtils {
     public static void handleRightClick(BukkitQuestsPlugin plugin, QMenu menu, Quest quest, Player player, MenuController controller) {
         if (menu.getOwner().hasStartedQuest(quest)) {
             if (!plugin.getQuestsConfig().getBoolean("options.allow-quest-cancel")) return;
-            CancelQMenu cancelQMenu = new CancelQMenu(plugin, menu, menu.getOwner(), quest);
-            controller.openMenu(player, cancelQMenu, 1);
+            if (plugin.getQuestsConfig().getBoolean("options.gui-confirm-cancel", true)) {
+                CancelQMenu cancelQMenu = new CancelQMenu(plugin, menu, menu.getOwner(), quest);
+                controller.openMenu(player, cancelQMenu, 1);
+            } else {
+                if (menu.getOwner().cancelQuest(quest)) {
+                    player.closeInventory();
+                }
+            }
         }
     }
 

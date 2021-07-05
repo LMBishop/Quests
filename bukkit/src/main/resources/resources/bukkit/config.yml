@@ -209,6 +209,8 @@ options:
   show-quest-registrations: true
   # Hide locked quests, quests on cooldown and completed (but not repeatable) quests
   gui-hide-locked: false
+  # Confirm quest cancellation with a separate menu
+  gui-confirm-cancel: true
   # Hide quests which a player cannot start due to permissions.
   gui-hide-quests-nopermission: false
   # Hide categories which a player cannot open due to permissions.

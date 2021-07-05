@@ -167,8 +167,7 @@ public class StartedQMenu implements QMenu {
             if (event.getClick() == ClickType.MIDDLE && config.getBoolean("options.allow-quest-track")) {
                 MenuUtils.handleMiddleClick(plugin, this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
                 return true;
-            } else if (event.getClick() == ClickType.RIGHT && config.getBoolean("options.allow-quest-cancel")
-                    && owner.hasStartedQuest(quest)) {
+            } else if (event.getClick() == ClickType.RIGHT) {
                 MenuUtils.handleRightClick(plugin, this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
                 return true;
             }
