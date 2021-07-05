@@ -1,6 +1,5 @@
 package com.leonardobishop.quests.common.tasktype;
 
-import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.jetbrains.annotations.NotNull;
@@ -19,11 +18,9 @@ import java.util.Objects;
 public abstract class TaskTypeManager {
 
     private final ArrayList<TaskType> taskTypes = new ArrayList<>();
-    private final Quests plugin;
     private boolean allowRegistrations;
 
-    public TaskTypeManager(Quests plugin) {
-        this.plugin = plugin;
+    public TaskTypeManager() {
         allowRegistrations = true;
     }
 
@@ -62,7 +59,6 @@ public abstract class TaskTypeManager {
         if (!allowRegistrations) {
             throw new IllegalStateException("No longer accepting new task types (must be done before quests are loaded)");
         }
-        plugin.getQuestsLogger().info("Task type " + taskType.getType() + " has been registered.");
         taskTypes.add(taskType);
     }
 

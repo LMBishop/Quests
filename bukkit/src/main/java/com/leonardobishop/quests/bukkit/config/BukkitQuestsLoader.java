@@ -250,9 +250,6 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 findInvalidTaskReferences(quest, config.getString("placeholders." + p), problems, "placeholders." + p);
                             }
                         }
-                        if (questsConfig.getBoolean("options.show-quest-registrations")) {
-                            questsLogger.info("Registering quest " + quest.getId() + " with " + quest.getTasks().size() + " tasks.");
-                        }
                         questManager.registerQuest(quest);
                         taskTypeManager.registerQuestTasksWithTaskTypes(quest);
                         qItemStackRegistry.register(quest, displayItem);
@@ -274,6 +271,8 @@ public class BukkitQuestsLoader implements QuestsLoader {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        questsLogger.info(questManager.getQuests().size() + " quests have been registered.");
 
         // post-load checks
         for (Map.Entry<String, Quest> loadedQuest : pathToQuest.entrySet()) {

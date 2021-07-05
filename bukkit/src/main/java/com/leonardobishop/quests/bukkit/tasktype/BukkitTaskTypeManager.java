@@ -10,13 +10,12 @@ public class BukkitTaskTypeManager extends TaskTypeManager {
     private final BukkitQuestsPlugin plugin;
 
     public BukkitTaskTypeManager(BukkitQuestsPlugin plugin) {
-        super(plugin);
         this.plugin = plugin;
     }
 
     @Override
     public void registerTaskType(@NotNull TaskType taskType) {
-        if (!(taskType instanceof BukkitTaskType)) throw new RuntimeException("task type must be instance of BukkitTaskType!");
+        if (!(taskType instanceof BukkitTaskType)) throw new RuntimeException("BukkitTaskTypeManager implementation can only accept instances of BukkitTaskType!");
 
         BukkitTaskType bukkitTaskType = (BukkitTaskType) taskType;
         super.registerTaskType(taskType);

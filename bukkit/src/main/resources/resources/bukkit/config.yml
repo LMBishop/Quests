@@ -205,8 +205,6 @@ options:
     gui:
       open: "ITEM_BOOK_PAGE_TURN:1:3"
       interact: ""
-  # Show when quests register in console - will only show if verbose-logging-level=2. Disable if you want less console spam at startup.
-  show-quest-registrations: true
   # Hide locked quests, quests on cooldown and completed (but not repeatable) quests
   gui-hide-locked: false
   # Confirm quest cancellation with a separate menu

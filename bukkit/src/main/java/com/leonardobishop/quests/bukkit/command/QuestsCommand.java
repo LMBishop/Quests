@@ -114,14 +114,22 @@ public class QuestsCommand implements TabExecutor {
                         for (TaskType taskType : plugin.getTaskTypeManager().getTaskTypes()) {
                             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + taskType.getType());
                         }
+                        sender.sendMessage(ChatColor.GRAY.toString() + plugin.getTaskTypeManager().getTaskTypes().size() + " registered.");
                         sender.sendMessage(ChatColor.DARK_GRAY + "View info using /q a types [type].");
                         return true;
                     } else if (args[1].equalsIgnoreCase("info")) {
-                        sender.sendMessage(ChatColor.RED + "Quest controller: " + plugin.getQuestController().getName());
                         sender.sendMessage(ChatColor.GRAY + "Loaded quests:");
+                        int i = 0;
                         for (Quest quest : plugin.getQuestManager().getQuests().values()) {
                             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + quest.getId() + ChatColor.GRAY + " [" + quest.getTasks().size() + " tasks]");
+                            i++;
+                            if (i == 25 && plugin.getQuestManager().getQuests().size() > 25) {
+                                sender.sendMessage(ChatColor.DARK_GRAY + " ... and " + (plugin.getQuestManager().getQuests().size() - 25) + " more ...");
+                                break;
+                            }
                         }
+                        sender.sendMessage(ChatColor.GRAY + "Quest controller: " + ChatColor.RED + plugin.getQuestController().getName());
+                        sender.sendMessage(ChatColor.GRAY.toString() + plugin.getQuestManager().getQuests().size() + " registered.");
                         sender.sendMessage(ChatColor.DARK_GRAY + "View info using /q a info [quest].");
                         return true;
                     } else if (args[1].equalsIgnoreCase("update")) {

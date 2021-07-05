@@ -315,7 +315,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 BentoBoxLevelTaskType.register(this, taskTypeManager);
             }
             //TODO FIX
-            if (Bukkit.getPluginManager().isPluginEnabled("IridiumSkyblock")) {
+            if (Bukkit.getPluginManager().isPluginEnabled("IridiumSkyblock")
+                    && Bukkit.getPluginManager().getPlugin("IridiumSkyblock").getDescription().getVersion().startsWith("2")) {
                 taskTypeManager.registerTaskType(new IridiumSkyblockValueTaskType(this));
             }
             if (Bukkit.getPluginManager().isPluginEnabled("uSkyBlock")) {
@@ -342,6 +343,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
 
             taskTypeManager.closeRegistrations();
+            questsLogger.info(taskTypeManager.getTaskTypes().size() + " task types have been registered.");
+
             reloadQuests();
 
             // Load players who were present during startup (i.e some idiot reloaded the server instead of restarted)
