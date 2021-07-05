@@ -186,8 +186,6 @@ options:
   titles-enabled: true
   # Players cannot start any more quests than this at a single time
   quest-started-limit: 2
-  # Hide locked quests, quests on cooldown and completed (but not repeatable) quests
-  gui-hide-locked: false
   # Allow players to cancel a quest (you may want to remove the cancel instructions in the global item lore)
   allow-quest-cancel: true
   # Allow players to track a quest (you may want to remove the tracking instructions in the global item lore)
@@ -206,15 +204,19 @@ options:
     quest-complete: "UI_TOAST_CHALLENGE_COMPLETE:1.25:3"
     gui:
       open: "ITEM_BOOK_PAGE_TURN:1:3"
-      interact: "ITEM_BOOK_PAGE_TURN1:3"
+      interact: ""
   # Show when quests register in console - will only show if verbose-logging-level=2. Disable if you want less console spam at startup.
   show-quest-registrations: true
+  # Hide locked quests, quests on cooldown and completed (but not repeatable) quests
+  gui-hide-locked: false
   # Hide quests which a player cannot start due to permissions.
   gui-hide-quests-nopermission: false
   # Hide categories which a player cannot open due to permissions.
   gui-hide-categories-nopermission: false
   # Replace placeholders from PlaceholderAPI in Quests GUI items
   gui-use-placeholderapi: false
+  # Truncate quest requirements when there are multiple requirements to prevent enormous display items
+  gui-truncate-requirements: true
   # Make it so players do not have to start quest themselves
   quest-autostart: false
   # Automatically track quests on start, and stop tracking on completion
@@ -364,4 +366,6 @@ messages:
   command-quest-admin-category-permission: "&7Category &c{category} &7 could not be opened for player &c{player}&7. They do not have permission to view it."
   command-quest-admin-complete-success: "&7Quest &c{quest} &7completed for player &c{player}&7."
   command-quest-admin-reset-success: "&7Successfully reset quest '&c{quest}&7' for player &c{player}&7."
-
+  ui-placeholder-completed-true: "true"
+  ui-placeholder-completed-false: "false"
+  ui-placeholder-truncated: " +{amount} more"

@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.bukkit.menu.itemstack;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
@@ -103,9 +104,7 @@ public class QItemStack {
             try {
                 ism.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 ism.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-            } catch (Exception ignored) {
-
-            }
+            } catch (Exception ignored) { }
         } else {
             tempLore.addAll(globalLoreAppendNotStarted);
         }
@@ -139,7 +138,12 @@ public class QItemStack {
                     s = s.replace("{" + m.group(1) + "}", (str.equals("null") ? String.valueOf(0) : str));
                 }
                 if (parts[1].equals("complete")) {
-                    String str = String.valueOf(questProgress.getTaskProgress(parts[0]).isCompleted());
+                    String str;
+                    if (questProgress.getTaskProgress(parts[0]).isCompleted()) {
+                        str = Messages.UI_PLACEHOLDERS_TRUE.getMessage();
+                    } else {
+                        str = Messages.UI_PLACEHOLDERS_FALSE.getMessage();
+                    }
                     s = s.replace("{" + m.group(1) + "}", str);
                 }
             }

@@ -5,6 +5,7 @@ import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.util.Format;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
+import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -64,7 +65,11 @@ public class QuestMenuElement extends MenuElement {
             }
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
-            placeholders.put("{requirements}", String.join(", ", quests));
+            if (quests.size() > 1 && plugin.getConfig().getBoolean("options.gui-truncate-requirements", true)) {
+                placeholders.put("{requirements}", quests.get(0) + Messages.UI_PLACEHOLDERS_TRUNCATED.getMessage().replace("{amount}", String.valueOf(quests.size() - 1)));
+            } else {
+                placeholders.put("{requirements}", String.join(", ", quests));
+            }
             return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.quest-locked-display"), placeholders);
         } else if (status == QuestStartResult.QUEST_ALREADY_COMPLETED) {
             Map<String, String> placeholders = new HashMap<>();

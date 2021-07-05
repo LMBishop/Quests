@@ -57,7 +57,10 @@ public enum Messages {
     COMMAND_QUEST_ADMIN_START_SUCCESS("messages.command-quest-admin-start-success"),
     COMMAND_QUEST_ADMIN_CATEGORY_PERMISSION("messages.command-quest-admin-category-permission"),
     COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS("messages.command-quest-admin-complete-success"),
-    COMMAND_QUEST_ADMIN_RESET_SUCCESS("messages.command-quest-admin-reset-success");
+    COMMAND_QUEST_ADMIN_RESET_SUCCESS("messages.command-quest-admin-reset-success"),
+    UI_PLACEHOLDERS_TRUE("messages.ui-placeholders-completed-true", "true"),
+    UI_PLACEHOLDERS_FALSE("messages.ui-placeholders-completed-false", "false"),
+    UI_PLACEHOLDERS_TRUNCATED("messages.ui-placeholders-truncated", " +{amount} more");
 
     static {
         plugin = BukkitQuestsPlugin.getPlugin(BukkitQuestsPlugin.class);
@@ -66,18 +69,22 @@ public enum Messages {
     private static final BukkitQuestsPlugin plugin;
 
     private final String path;
+    private final String def;
 
     Messages(String path) {
         this.path = path;
+        this.def = path;
+    }
+
+    Messages(String path, String def) {
+        this.path = path;
+        this.def = def;
     }
 
     public String getMessage() {
-        if (plugin.getConfig().contains(path)) {
-            String message = plugin.getQuestsConfig().getString(path);
-            if (message != null) {
-                return Chat.color(message);
-            }
-        }
-        return path;
+        String message = plugin.getQuestsConfig().getString(path);
+        if (message.equals(path)) message = def;
+
+        return Chat.color(message);
     }
 }

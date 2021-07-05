@@ -100,8 +100,7 @@ public class NormalQuestController implements QuestController {
                 taskProgress.setCompleted(false);
                 taskProgress.setProgress(null);
             }
-            if (config.getBoolean("options.allow-quest-track")
-                    && config.getBoolean("options.quest-autotrack")) {
+            if (config.getBoolean("options.allow-quest-track") && config.getBoolean("options.quest-autotrack")) {
                 qPlayer.trackQuest(quest);
             }
             questProgress.setCompleted(false);
@@ -191,9 +190,8 @@ public class NormalQuestController implements QuestController {
         questProgress.setCompleted(true);
         questProgress.setCompletedBefore(true);
         questProgress.setCompletionDate(System.currentTimeMillis());
-        if (config.getBoolean("options.allow-quest-track") && config.getBoolean("options.quest-autotrack")
-                && !(quest.isRepeatable() && !quest.isCooldownEnabled())) {
-            qPlayer.trackQuest(null);
+        if (config.getBoolean("options.allow-quest-track")) {
+            trackNextQuest(qPlayer, quest);
         }
         Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
         if (player != null) {
@@ -219,14 +217,6 @@ public class NormalQuestController implements QuestController {
                 player.sendMessage(Chat.color(s));
             }
             SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-complete"));
-        }
-        if ((config.getBoolean("options.allow-quest-track") && config.getBoolean("options.quest-autotrack") && !(quest.isRepeatable() && !quest.isCooldownEnabled()))
-                || (!config.getBoolean("options.allow-quest-track") && config.getBoolean("options.quest-autotrack"))) {
-            Quest nextQuest;
-            if (qPlayer.getQuestProgressFile().getStartedQuests().size() > 0) {
-                nextQuest = qPlayer.getQuestProgressFile().getStartedQuests().get(0);
-                qPlayer.trackQuest(nextQuest);
-            }
         }
         return true;
     }
@@ -270,6 +260,11 @@ public class NormalQuestController implements QuestController {
                 player.sendMessage(questCancelEvent.getQuestCancelMessage());
             }
             SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-cancel"));
+        }
+        if (config.getBoolean("options.allow-quest-track")
+                && config.getBoolean("options.quest-autotrack")
+                && quest.getId().equals(qPlayer.getPlayerPreferences().getTrackedQuestId())) {
+            trackNextQuest(qPlayer, null);
         }
         return true;
     }
@@ -320,6 +315,21 @@ public class NormalQuestController implements QuestController {
             }
         }
         return startedQuests;
+    }
+
+    private void trackNextQuest(QPlayer qPlayer, Quest previousQuest) {
+        if (config.getBoolean("options.quest-autotrack")
+                && (previousQuest == null || !(previousQuest.isRepeatable() && !previousQuest.isCooldownEnabled()))) {
+            Quest nextQuest;
+            if (qPlayer.getQuestProgressFile().getStartedQuests().size() > 0) {
+                nextQuest = qPlayer.getQuestProgressFile().getStartedQuests().get(0);
+                qPlayer.trackQuest(nextQuest);
+            } else {
+                qPlayer.trackQuest(null);
+            }
+        } else if (!config.getBoolean("options.quest-autotrack")) {
+            qPlayer.trackQuest(null);
+        }
     }
 
 }
