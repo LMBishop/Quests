@@ -13,21 +13,17 @@ import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
 import org.bukkit.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.events.BentoBoxEvent;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
 
 public final class BentoBoxLevelTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
-    private Field levelField = null;
 
     public BentoBoxLevelTaskType(BukkitQuestsPlugin plugin) {
         super("bentobox_level", TaskUtils.TASK_ATTRIBUTION_STRING, "Reach a certain island level in the level addon for BentoBox.");
@@ -49,12 +45,11 @@ public final class BentoBoxLevelTaskType extends BukkitTaskType {
         }
     }
 
+    // https://github.com/BentoBoxWorld/bentobox/issues/352
     @EventHandler
-    public void onBentoBoxIslandLevelCalculated(BentoBoxEvent event) {
-        Map<String, Object> keyValues = event.getKeyValues();
-
-        if ("IslandLevelCalculatedEvent".equalsIgnoreCase(event.getEventName())) {
-            Island island = (Island) keyValues.get("island");
+    public void onBentoBoxIslandLevelCalculated(IslandBaseEvent event) {
+        if ("IslandLevelCalculatedEvent".equals(event.getEventName())) {
+            Island island = (Island) event.getKeyValues().get("island");
 
             for (UUID member : island.getMemberSet()) {
                 QPlayer qPlayer = plugin.getPlayerManager().getPlayer(member);
@@ -73,23 +68,12 @@ public final class BentoBoxLevelTaskType extends BukkitTaskType {
                                 continue;
                             }
 
-                            long islandLevelNeeded = (long) (int) task.getConfigValue("level");
+                            long islandLevelNeeded = (long) task.getConfigValue("level");
+                            long newLevel = (long) event.getKeyValues().get("level");
 
-                            Object results = keyValues.get("results");
+                            taskProgress.setProgress(event.getKeyValues().get("level"));
 
-                            try {
-                                if (levelField == null) {
-                                    levelField = results.getClass().getDeclaredField("level");
-                                    levelField.setAccessible(true);
-                                }
-
-                                AtomicLong level = (AtomicLong) levelField.get(results);
-                                taskProgress.setProgress(level.get());
-                            } catch (NoSuchFieldException | IllegalAccessException e) {
-                                e.printStackTrace();
-                            }
-
-                            if (((long) taskProgress.getProgress()) >= islandLevelNeeded) {
+                            if (newLevel >= islandLevelNeeded) {
                                 taskProgress.setCompleted(true);
                             }
                         }
