@@ -32,6 +32,8 @@ repositories {
     maven { url = 'https://maven.playpro.com/' }
     // bStats
     maven { url = uri('https://repo.codemc.org/repository/maven-public') }
+    // AuthLib
+    maven { url = 'https://libraries.minecraft.net/' }
     mavenCentral()
 }
 
@@ -82,6 +84,8 @@ dependencies {
     }
     // JetBrains Annotations
     compileOnly 'org.jetbrains:annotations:16.0.2'
+    // AuthLib
+    compileOnly 'com.mojang:authlib:1.5.21'
     // bStats
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
     // HikariCP

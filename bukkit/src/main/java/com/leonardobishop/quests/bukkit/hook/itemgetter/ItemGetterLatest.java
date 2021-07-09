@@ -1,6 +1,9 @@
 package com.leonardobishop.quests.bukkit.hook.itemgetter;
 
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -10,13 +13,17 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class ItemGetterLatest implements ItemGetter {
+
+    private Field profileField;
 
     /*
      supporting:
@@ -55,6 +62,39 @@ public class ItemGetterLatest implements ItemGetter {
         // material
         ItemStack is = getItemStack(cType);
         ItemMeta ism = is.getItemMeta();
+
+        // skull
+        if (is.getType() == Material.PLAYER_HEAD) {
+            SkullMeta sm = (SkullMeta) ism;
+            String cOwnerBase64 = config.getString(path + "owner-base64");
+            String cOwnerUsername = config.getString(path + "owner-username");
+            String cOwnerUuid = config.getString(path + "owner-uuid");
+            if (cOwnerBase64 != null || cOwnerUsername != null || cOwnerUuid != null) {
+                if (cOwnerUsername != null) {
+                    sm.setOwner(cOwnerUsername);
+                } else if (cOwnerUuid != null) {
+                    try {
+                        sm.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(cOwnerUuid)));
+                    } catch (IllegalArgumentException ignored) { }
+                } else {
+                    GameProfile profile = new GameProfile(UUID.randomUUID(), "");
+                    profile.getProperties().put("textures", new Property("textures", cOwnerBase64));
+                    if (profileField == null) {
+                        try {
+                            profileField = sm.getClass().getDeclaredField("profile");
+                            profileField.setAccessible(true);
+                        } catch (NoSuchFieldException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    try {
+                        profileField.set(sm, profile);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
 
         // name
         if (!filters.contains(Filter.DISPLAY_NAME)) {
