@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit.hook.papi;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.util.Format;
+import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -72,7 +73,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
         if (save) args = Arrays.copyOf(args, args.length - 1);
 
         final QPlayer qPlayer = plugin.getPlayerManager().getPlayer(p.getUniqueId());
-        if (qPlayer == null) return "Data not loaded";
+        if (qPlayer == null) return Messages.PLACEHOLDERAPI_DATA_NOT_LOADED.getMessage();
         String split = args[args.length - 1];
 
         String result = "null";
@@ -142,7 +143,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                         if (qPlayer.getPlayerPreferences().getTrackedQuestId() == null ||
                                 plugin.getQuestManager().getQuestById(qPlayer.getPlayerPreferences().getTrackedQuestId()) == null) {
                             if (args.length == 1) {
-                                return "No tracked quest";
+                                return Messages.PLACEHOLDERAPI_NO_TRACKED_QUEST.getMessage();
                             } else {
                                 return "";
                             }
@@ -156,15 +157,15 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                         switch (args[1].toLowerCase()) {
                             case "started":
                             case "s":
-                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted() ? "true" : "false");
+                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted() ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
                                 break;
                             case "completed":
                             case "c":
-                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompleted() ? "true" : "false");
+                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompleted() ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
                                 break;
                             case "completedbefore":
                             case "cb":
-                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompletedBefore() ? "true" : "false");
+                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompletedBefore() ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
                                 break;
                             case "completiondate":
                             case "cd":
@@ -183,10 +184,10 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                 }
                                 break;
                             case "canaccept":
-                                result = (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS ? "true" : "false");
+                                result = (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
                                 break;
                             case "meetsrequirements":
-                                result = (qPlayer.getQuestProgressFile().hasMetRequirements(quest) ? "true" : "false");
+                                result = (qPlayer.getQuestProgressFile().hasMetRequirements(quest) ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
                                 break;
                             default:
                                 if (!args[1].contains(":"))

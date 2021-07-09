@@ -60,7 +60,11 @@ public enum Messages {
     COMMAND_QUEST_ADMIN_RESET_SUCCESS("messages.command-quest-admin-reset-success"),
     UI_PLACEHOLDERS_TRUE("messages.ui-placeholders-completed-true", "true"),
     UI_PLACEHOLDERS_FALSE("messages.ui-placeholders-completed-false", "false"),
-    UI_PLACEHOLDERS_TRUNCATED("messages.ui-placeholders-truncated", " +{amount} more");
+    UI_PLACEHOLDERS_TRUNCATED("messages.ui-placeholders-truncated", " +{amount} more"),
+    PLACEHOLDERAPI_TRUE("messages.placeholderapi-true", "true"),
+    PLACEHOLDERAPI_FALSE("messages.placeholderapi-false", "false"),
+    PLACEHOLDERAPI_NO_TRACKED_QUEST("messages.placeholderapi-no-tracked-quest", "No tracked quest"),
+    PLACEHOLDERAPI_DATA_NOT_LOADED("messages.placeholderapi-data-not-loaded", "Data not loaded");
 
     static {
         plugin = BukkitQuestsPlugin.getPlugin(BukkitQuestsPlugin.class);
