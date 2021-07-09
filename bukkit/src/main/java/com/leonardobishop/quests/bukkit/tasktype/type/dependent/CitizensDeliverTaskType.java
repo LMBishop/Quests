@@ -1,5 +1,7 @@
 package com.leonardobishop.quests.bukkit.tasktype.type.dependent;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
@@ -28,6 +30,7 @@ import java.util.List;
 public final class CitizensDeliverTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
+    private final Table<String, String, ItemStack> fixedItemStackCache = HashBasedTable.create();
 
     public CitizensDeliverTaskType(BukkitQuestsPlugin plugin) {
         super("citizens_deliver", TaskUtils.TASK_ATTRIBUTION_STRING, "Deliver a set of items to a NPC.");
@@ -69,6 +72,11 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
         return problems;
     }
 
+    @Override
+    public void onReady() {
+        fixedItemStackCache.clear();
+    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onNPCClick(NPCRightClickEvent event) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(event.getClicker(), event.getNPC().getName()), 1L);
@@ -108,19 +116,22 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
                     Object remove = task.getConfigValue("remove-items-when-complete");
 
                     ItemStack is;
-                    if (configBlock instanceof ConfigurationSection) {
-                        is = plugin.getItemStack("", (ConfigurationSection) configBlock);
-                    } else {
-                        material = Material.getMaterial(String.valueOf(configBlock));
-
-                        if (material == null) {
-                            continue;
-                        }
-                        if (configData != null) {
-                            is = new ItemStack(material, 1, ((Integer) configData).shortValue());
+                    if ((is = fixedItemStackCache.get(quest.getId(), task.getId())) == null) {
+                        if (configBlock instanceof ConfigurationSection) {
+                            is = plugin.getItemStack("", (ConfigurationSection) configBlock);
                         } else {
-                            is = new ItemStack(material, 1);
+                            material = Material.getMaterial(String.valueOf(configBlock));
+
+                            if (material == null) {
+                                continue;
+                            }
+                            if (configData != null) {
+                                is = new ItemStack(material, 1, ((Integer) configData).shortValue());
+                            } else {
+                                is = new ItemStack(material, 1);
+                            }
                         }
+                        fixedItemStackCache.put(quest.getId(), task.getId(), is);
                     }
 
                     if (player.getInventory().containsAtLeast(is, amount)) {

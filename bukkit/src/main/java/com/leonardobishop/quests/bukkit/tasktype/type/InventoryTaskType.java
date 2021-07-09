@@ -1,5 +1,7 @@
 package com.leonardobishop.quests.bukkit.tasktype.type;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
@@ -28,6 +30,7 @@ import java.util.List;
 public final class InventoryTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
+    private final Table<String, String, ItemStack> fixedItemStackCache = HashBasedTable.create();
     
     public InventoryTaskType(BukkitQuestsPlugin plugin) {
         super("inventory", TaskUtils.TASK_ATTRIBUTION_STRING, "Obtain a set of items.");
@@ -68,6 +71,11 @@ public final class InventoryTaskType extends BukkitTaskType {
         TaskUtils.configValidateBoolean(root + ".remove-items-when-complete", config.get("remove-items-when-complete"), problems, true, "remove-items-when-complete", super.getType());
         TaskUtils.configValidateBoolean(root + ".update-progress", config.get("update-progress"), problems, true, "update-progress", super.getType());
         return problems;
+    }
+
+    @Override
+    public void onReady() {
+        fixedItemStackCache.clear();
     }
 
     @SuppressWarnings("deprecation")
@@ -114,19 +122,22 @@ public final class InventoryTaskType extends BukkitTaskType {
                     Object remove = task.getConfigValue("remove-items-when-complete");
 
                     ItemStack is;
-                    if (configBlock instanceof ConfigurationSection) {
-                        is = plugin.getItemStack("", (ConfigurationSection) configBlock);
-                    } else {
-                        material = Material.getMaterial(String.valueOf(configBlock));
-
-                        if (material == null) {
-                            continue;
-                        }
-                        if (configData != null) {
-                            is = new ItemStack(material, 1, ((Integer) configData).shortValue());
+                    if ((is = fixedItemStackCache.get(quest.getId(), task.getId())) == null) {
+                        if (configBlock instanceof ConfigurationSection) {
+                            is = plugin.getItemStack("", (ConfigurationSection) configBlock);
                         } else {
-                            is = new ItemStack(material, 1);
+                            material = Material.getMaterial(String.valueOf(configBlock));
+
+                            if (material == null) {
+                                continue;
+                            }
+                            if (configData != null) {
+                                is = new ItemStack(material, 1, ((Integer) configData).shortValue());
+                            } else {
+                                is = new ItemStack(material, 1);
+                            }
                         }
+                        fixedItemStackCache.put(quest.getId(), task.getId(), is);
                     }
 
                     if (task.getConfigValue("update-progress") != null
