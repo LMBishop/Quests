@@ -89,7 +89,9 @@ dependencies {
     // AuthLib
     compileOnly 'com.mojang:authlib:1.5.21'
     // FabledSkyblock
-    compileOnly 'com.songoda:skyblock:2.2.13'
+    compileOnly ('com.songoda:skyblock:2.2.13') {
+        transitive = false
+    }
     // bStats
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
     // HikariCP
