@@ -34,6 +34,8 @@ repositories {
     maven { url = uri('https://repo.codemc.org/repository/maven-public') }
     // AuthLib
     maven { url = 'https://libraries.minecraft.net/' }
+    // FabledSkyblock
+    maven { url = 'https://repo.songoda.com/repository/public/' }
     mavenCentral()
 }
 
@@ -86,6 +88,8 @@ dependencies {
     compileOnly 'org.jetbrains:annotations:16.0.2'
     // AuthLib
     compileOnly 'com.mojang:authlib:1.5.21'
+    // FabledSkyblock
+    compileOnly 'com.songoda:skyblock:2.2.13'
     // bStats
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
     // HikariCP

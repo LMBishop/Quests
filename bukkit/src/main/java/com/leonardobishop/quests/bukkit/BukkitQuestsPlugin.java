@@ -57,6 +57,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensDeliverT
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensInteractTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsBalanceTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsMoneyEarnTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FabledSkyblockLevelTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.IridiumSkyblockValueTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.MythicMobsKillingType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PlaceholderAPIEvaluateTaskType;
@@ -340,6 +341,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 // not tested
                 taskTypeManager.registerTaskType(new ShopGUIPlusBuyCertainTaskType(this));
                 taskTypeManager.registerTaskType(new ShopGUIPlusSellCertainTaskType(this));
+            }
+            if (Bukkit.getPluginManager().isPluginEnabled("FabledSkyblock")) {
+                // not tested
+                taskTypeManager.registerTaskType(new FabledSkyblockLevelTaskType(this));
             }
 
             taskTypeManager.closeRegistrations();
