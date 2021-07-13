@@ -1,0 +1,49 @@
+package com.leonardobishop.quests.bukkit.command;
+
+import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.util.Messages;
+import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.quest.Category;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
+
+public class CategoryCommandHandler implements CommandHandler {
+
+    private final BukkitQuestsPlugin plugin;
+
+    public CategoryCommandHandler(BukkitQuestsPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    @Override
+    public void handle(CommandSender sender, String[] args) {
+        if (!plugin.getQuestsConfig().getBoolean("options.categories-enabled")) {
+            sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DISABLED.getMessage());
+            return;
+        }
+        Player player = (Player) sender;
+        if (args.length >= 2) {
+            Category category = plugin.getQuestManager().getCategoryById(args[1]);
+            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+            if (qPlayer == null) {
+                player.sendMessage(Messages.COMMAND_DATA_NOT_LOADED.getMessage());
+                return;
+            }
+            if (category == null) {
+                sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.getMessage().replace("{category}", args[1]));
+            } else {
+                plugin.getMenuController().openQuestCategory(qPlayer, category, null, false);
+            }
+            return;
+        }
+        sender.sendMessage(ChatColor.RED + "/quests c/category <categoryid>");
+    }
+
+    @Override
+    public @Nullable String getPermission() {
+        return null;
+    }
+
+}
