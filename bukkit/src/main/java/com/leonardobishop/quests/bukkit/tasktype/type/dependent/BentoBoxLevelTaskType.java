@@ -68,7 +68,7 @@ public final class BentoBoxLevelTaskType extends BukkitTaskType {
                                 continue;
                             }
 
-                            long islandLevelNeeded = (long) task.getConfigValue("level");
+                            long islandLevelNeeded = (long) (int) task.getConfigValue("level");
                             long newLevel = (long) event.getKeyValues().get("level");
 
                             taskProgress.setProgress(event.getKeyValues().get("level"));
