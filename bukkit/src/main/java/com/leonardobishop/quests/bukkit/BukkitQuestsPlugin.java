@@ -37,6 +37,8 @@ import com.leonardobishop.quests.bukkit.tasktype.type.DealDamageTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.DistancefromTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.EnchantingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.ExpEarnTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.FarmingCertainTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.FarmingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.FishingCertainTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.FishingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.InventoryTaskType;
@@ -311,6 +313,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new CraftingTaskType(this));
             // TODO: FIX
             // taskTypeManager.registerTaskType(new BrewingCertainTaskType());
+            try {
+                Class.forName("org.bukkit.block.data.Ageable");
+                taskTypeManager.registerTaskType(new FarmingTaskType(this));
+                taskTypeManager.registerTaskType(new FarmingCertainTaskType(this));
+            } catch (ClassNotFoundException ignored) { } // server version cannot support task type
             if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
                 taskTypeManager.registerTaskType(new ASkyBlockLevelTaskType(this));
             }
