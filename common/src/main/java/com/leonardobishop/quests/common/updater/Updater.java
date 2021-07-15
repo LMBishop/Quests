@@ -38,7 +38,8 @@ public class Updater {
     }
 
     public String getUpdateLink() {
-        return "https://www.spigotmc.org/resources/" + PROJECT_ID;
+//        return "https://www.spigotmc.org/resources/" + PROJECT_ID;
+        return "https://get.leonardobishop.com/quests";
     }
 
     public String getApiUrl() {
