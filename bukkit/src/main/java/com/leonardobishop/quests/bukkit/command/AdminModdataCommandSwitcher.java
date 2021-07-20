@@ -14,8 +14,8 @@ public class AdminModdataCommandSwitcher extends CommandSwitcher {
         this.plugin = plugin;
 
         super.subcommands.put("fullreset", new AdminModdataFullresetCommandHandler(plugin));
-        super.subcommands.put("reset", new AdminModdataResetCommandHandler(plugin));
         super.subcommands.put("start", new AdminModdataStartCommandHandler(plugin));
+        super.subcommands.put("reset", new AdminModdataResetCommandHandler(plugin));
         super.subcommands.put("complete", new AdminModdataCompleteCommandHandler(plugin));
     }
 
