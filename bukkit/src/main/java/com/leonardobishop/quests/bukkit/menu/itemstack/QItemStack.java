@@ -140,9 +140,9 @@ public class QItemStack {
                 if (parts[1].equals("complete")) {
                     String str;
                     if (questProgress.getTaskProgress(parts[0]).isCompleted()) {
-                        str = Messages.UI_PLACEHOLDERS_TRUE.getMessage();
+                        str = Chat.color(Messages.UI_PLACEHOLDERS_TRUE.getMessage());
                     } else {
-                        str = Messages.UI_PLACEHOLDERS_FALSE.getMessage();
+                        str = Chat.color(Messages.UI_PLACEHOLDERS_FALSE.getMessage());
                     }
                     s = s.replace("{" + m.group(1) + "}", str);
                 }
