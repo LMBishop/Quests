@@ -75,9 +75,10 @@ Quests provides a highly detailed and well maintained [wiki](https://github.com/
 #### 🌟 Highlighted Articles
 - [FAQs](https://github.com/LMBishop/Quests/wiki)
 - [Tips](https://github.com/LMBishop/Quests/wiki/Tips)
-- [Creating a Quest or Category](https://github.com/LMBishop/Quests/wiki/Creating-A-Quest-Or-Category)
-- [Custom GUI Items](https://github.com/LMBishop/Quests/wiki/Custom-GUI-Items)
-- [Task Types](https://github.com/LMBishop/Quests/wiki/Task-Types)
+- [Basic options](https://github.com/LMBishop/Quests/wiki/Basic-Options)
+- [Creating a quest or category](https://github.com/LMBishop/Quests/wiki/Creating-A-Quest-Or-Category)
+- [Custom GUI items](https://github.com/LMBishop/Quests/wiki/Custom-GUI-Items)
+- [Task types](https://github.com/LMBishop/Quests/wiki/Task-Types)
 - [PlaceholderAPI](https://github.com/LMBishop/Quests/wiki/PlaceholderAPI)
 
 ## 💡 Support
