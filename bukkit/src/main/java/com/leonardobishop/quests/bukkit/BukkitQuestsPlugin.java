@@ -185,7 +185,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         this.generateConfigurations();
         this.questsConfig = new BukkitQuestsConfig(new File(super.getDataFolder() + File.separator + "config.yml"));
         this.questManager = new QuestManager(this);
-        this.taskTypeManager = new BukkitTaskTypeManager(this);
         this.serverScheduler = new BukkitServerSchedulerAdapter(this);
 
         // Load base configuration for use during rest of startup procedure
@@ -243,6 +242,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         questsConfig.setItemGetter(itemGetter);
 
         // Finish module initialisation
+        this.taskTypeManager = new BukkitTaskTypeManager(this, questsConfig.getStringList("options.task-type-exclusions"));
         this.qPlayerManager = new QPlayerManager(this, storageProvider, questController);
         this.menuController = new MenuController(this);
         this.qItemStackRegistry = new QItemStackRegistry();
@@ -357,7 +357,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
 
             taskTypeManager.closeRegistrations();
-            questsLogger.info(taskTypeManager.getTaskTypes().size() + " task types have been registered.");
+            questsLogger.info(taskTypeManager.getTaskTypes().size() + " task types have been registered"
+                    + (taskTypeManager.getSkipped() > 0 ? " (" + taskTypeManager.getSkipped() + " skipped due to exclusions or conflicting names)." : "."));
 
             reloadQuests();
 

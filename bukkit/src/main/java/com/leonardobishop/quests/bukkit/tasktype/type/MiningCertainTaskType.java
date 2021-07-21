@@ -62,6 +62,7 @@ public final class MiningCertainTaskType extends BukkitTaskType {
                 }
             }
         }
+        //TODO this is wrong
         TaskUtils.configValidateBoolean(root + ".reverse-if-broken", config.get("reverse-if-broken"), problems, true,"reverse-if-broken");
         TaskUtils.configValidateBoolean(root + ".check-coreprotect", config.get("check-coreprotect"), problems, true,"check-coreprotect");
         TaskUtils.configValidateInt(root + ".check-coreprotect-time", config.get("check-coreprotect-time"), problems, true,true, "check-coreprotect-time");

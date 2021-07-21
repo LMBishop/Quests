@@ -6,9 +6,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * The task type manager stores all registered task types and registers individual quests to each task type.
@@ -17,11 +22,19 @@ import java.util.Objects;
  */
 public abstract class TaskTypeManager {
 
-    private final ArrayList<TaskType> taskTypes = new ArrayList<>();
+    private final Map<String, TaskType> taskTypes = new HashMap<>();
+    private final List<String> exclusions;
+    private int skipped;
     private boolean allowRegistrations;
 
     public TaskTypeManager() {
         allowRegistrations = true;
+        exclusions = new ArrayList<>();
+    }
+
+    public TaskTypeManager(List<String> exclusions) {
+        allowRegistrations = true;
+        this.exclusions = exclusions;
     }
 
     public void closeRegistrations() {
@@ -33,17 +46,17 @@ public abstract class TaskTypeManager {
     }
 
     /**
-     * @return immutable {@link List} containing all registered {@link TaskType}
+     * @return immutable {@link Set} containing all registered {@link TaskType}
      */
-    public @NotNull List<TaskType> getTaskTypes() {
-        return Collections.unmodifiableList(taskTypes);
+    public @NotNull Collection<TaskType> getTaskTypes() {
+        return Collections.unmodifiableCollection(taskTypes.values());
     }
 
     /**
      * Resets all quest to task type registrations. This does not clear the task types registered to the task type manager.
      */
     public void resetTaskTypes() {
-        for (TaskType taskType : taskTypes) {
+        for (TaskType taskType : taskTypes.values()) {
             taskType.unregisterAll();
         }
     }
@@ -53,13 +66,18 @@ public abstract class TaskTypeManager {
      *
      * @param taskType the task type to register
      */
-    public void registerTaskType(@NotNull TaskType taskType) {
+    public boolean registerTaskType(@NotNull TaskType taskType) {
         Objects.requireNonNull(taskType, "taskType cannot be null");
 
         if (!allowRegistrations) {
             throw new IllegalStateException("No longer accepting new task types (must be done before quests are loaded)");
         }
-        taskTypes.add(taskType);
+        if (exclusions.contains(taskType.getType()) || taskTypes.containsKey(taskType.getType())) {
+            skipped++;
+            return false;
+        }
+        taskTypes.put(taskType.getType(), taskType);
+        return true;
     }
 
     /**
@@ -90,11 +108,20 @@ public abstract class TaskTypeManager {
     public @Nullable TaskType getTaskType(@NotNull String type) {
         Objects.requireNonNull(type, "type cannot be null");
 
-        for (TaskType taskType : taskTypes) {
-            if (taskType.getType().equalsIgnoreCase(type)) {
-                return taskType;
-            }
-        }
-        return null;
+        return taskTypes.get(type);
+    }
+
+    /**
+     * @return immutable {@link List} containing all task type exclusions
+     */
+    public @NotNull List<String> getExclusions() {
+        return Collections.unmodifiableList(exclusions);
+    }
+
+    /**
+     * @return number of task types skipped due to exclusions / name conflicts
+     */
+    public int getSkipped() {
+        return skipped;
     }
 }

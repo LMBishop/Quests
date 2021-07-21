@@ -190,6 +190,8 @@ options:
   allow-quest-cancel: true
   # Allow players to track a quest (you may want to remove the tracking instructions in the global item lore)
   allow-quest-track: true
+  # Task type exclusions - include task IDs in this list which you don't want registering
+  task-type-exclusions: []
   # Titles for the GUIs
   guinames:
     quests-category: "Quests Categories"
