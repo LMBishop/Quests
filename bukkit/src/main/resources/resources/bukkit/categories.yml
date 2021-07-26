@@ -1,0 +1,34 @@
+# Categories are a way of grouping up quests.
+# When a player uses /quests, a menu of categories will be presented to them.
+# When a player clicks ona category, a list of quests under that category will show.
+# If categories are disabled, all quests will be shown under one big GUI.
+# Players can access specific categories by command using /quests c [category].
+# If a quest does not have a category, it will not be shown.
+categories:
+  examples:
+    display:
+      name: "&cExample Quests"
+      lore:
+        - "&7This category contains example quests"
+        - "&7which are commented in the config."
+        - "&7The comments should guide you with"
+        - "&7how the config works."
+        - ""
+        - "&cIt is highly recommended you read this"
+        - "&csection and all the comments so you can"
+        - "&cmake the most of this plugin."
+      type: "WATER_BUCKET"
+  permissionexample:
+    display:
+      name: "&cPermission Example"
+      lore:
+        - "&7This category is an example of one which"
+        - "&7requires a permission to open."
+        - ""
+        - "&cIt is highly recommended you read this"
+        - "&csection and all the comments so you can"
+        - "&cmake the most of this plugin."
+      type: "WATER_BUCKET"
+    # This category needs the permission "quests.category.permissionexample", because the category ID is 'permissionexample'.
+    # The permission for other categories is: "quests.category.<id>".
+    permission-required: true

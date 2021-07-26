@@ -464,22 +464,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
         File config = new File(this.getDataFolder() + File.separator + "config.yml");
         if (!config.exists()) {
-            try {
-                config.createNewFile();
-                try (InputStream in = BukkitQuestsPlugin.class.getClassLoader().getResourceAsStream("resources/bukkit/config.yml");
-                     OutputStream out = new FileOutputStream(config)) {
-                    byte[] buffer = new byte[1024];
-                    int lenght = in.read(buffer);
-                    while (lenght != -1) {
-                        out.write(buffer, 0, lenght);
-                        lenght = in.read(buffer);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            writeResourceToFile("resources/bukkit/config.yml", config);
         }
 
         File questsDirectory = new File(this.getDataFolder() + File.separator + "quests");
@@ -498,23 +483,27 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
             for (String name : examples) {
                 File file = new File(this.getDataFolder() + File.separator + "quests" + File.separator + name);
-                try {
-                    file.createNewFile();
-                    try (InputStream in = BukkitQuestsPlugin.class.getClassLoader().getResourceAsStream("resources/bukkit/quests/" + name);
-                         OutputStream out = new FileOutputStream(file)) {
-                        byte[] buffer = new byte[1024];
-                        int lenght = in.read(buffer);
-                        while (lenght != -1) {
-                            out.write(buffer, 0, lenght);
-                            lenght = in.read(buffer);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                writeResourceToFile("resources/bukkit/quests/" + name, file);
             }
+        }
+    }
+
+    private void writeResourceToFile(String resource, File file) {
+        try {
+            file.createNewFile();
+            try (InputStream in = BukkitQuestsPlugin.class.getClassLoader().getResourceAsStream(resource);
+                 OutputStream out = new FileOutputStream(file)) {
+                byte[] buffer = new byte[1024];
+                int length = in.read(buffer);
+                while (length != -1) {
+                    out.write(buffer, 0, length);
+                    length = in.read(buffer);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

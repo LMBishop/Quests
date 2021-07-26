@@ -17,6 +17,8 @@ import com.leonardobishop.quests.common.questcontroller.QuestController;
 import com.leonardobishop.quests.common.tasktype.TaskType;
 import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -78,9 +80,26 @@ public class BukkitQuestsLoader implements QuestsLoader {
             }
         }
 
-        for (String id : plugin.getConfig().getConfigurationSection("categories").getKeys(false)) {
-            ItemStack displayItem = plugin.getItemStack("categories." + id + ".display", plugin.getConfig());
-            boolean permissionRequired = plugin.getConfig().getBoolean("categories." + id + ".permission-required", false);
+        ConfigurationSection categories;
+        File categoriesFile = new File(plugin.getDataFolder() + File.separator + "categories.yml");
+        if (categoriesFile.exists()) {
+            YamlConfiguration categoriesConfiguration = YamlConfiguration.loadConfiguration(categoriesFile);
+            if (categoriesConfiguration.isConfigurationSection("categories")) {
+                categories = categoriesConfiguration.getConfigurationSection("categories");
+            } else {
+                categories = new YamlConfiguration();
+            }
+        } else {
+            if (plugin.getConfig().isConfigurationSection("categories")) {
+                categories = plugin.getConfig().getConfigurationSection("categories");
+            } else {
+                categories = new YamlConfiguration();
+            }
+        }
+
+        for (String id : categories.getKeys(false)) {
+            ItemStack displayItem = plugin.getItemStack(id + ".display", categories);
+            boolean permissionRequired = categories.getBoolean(id + ".permission-required", false);
 
             Category category = new Category(id, permissionRequired);
             questManager.registerCategory(category);
