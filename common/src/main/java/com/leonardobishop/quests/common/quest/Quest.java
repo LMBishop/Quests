@@ -20,6 +20,7 @@ public class Quest implements Comparable<Quest> {
     private List<String> requirements;
     private List<String> rewardString;
     private List<String> startString;
+    private List<String> startCommands;
     private boolean repeatEnabled;
     private boolean cooldownEnabled;
     private int cooldown;
@@ -146,6 +147,16 @@ public class Quest implements Comparable<Quest> {
     }
 
     /**
+     * Get the start commands for this quest.
+     * The start commands is a list of commands to be executed upon starting the quest.
+     *
+     * @return immutable list of commands
+     */
+    public List<String> getStartCommands() {
+        return Collections.unmodifiableList(startCommands);
+    }
+
+    /**
      * Get if this quest can be repeated after completion.
      *
      * @return boolean
@@ -231,6 +242,7 @@ public class Quest implements Comparable<Quest> {
         private List<String> requirements = Collections.emptyList();
         private List<String> rewardString = Collections.emptyList();
         private List<String> startString = Collections.emptyList();
+        private List<String> startCommands = Collections.emptyList();
         private boolean repeatEnabled = false;
         private boolean cooldownEnabled = false;
         private int cooldown = 0;
@@ -261,6 +273,11 @@ public class Quest implements Comparable<Quest> {
 
         public Builder withStartString(List<String> startString) {
             this.startString = startString;
+            return this;
+        }
+
+        public Builder withStartCommands(List<String> startCommands) {
+            this.startCommands = startCommands;
             return this;
         }
 
@@ -311,6 +328,7 @@ public class Quest implements Comparable<Quest> {
             quest.requirements = this.requirements;
             quest.rewardString = this.rewardString;
             quest.startString = this.startString;
+            quest.startCommands = this.startCommands;
             quest.repeatEnabled = this.repeatEnabled;
             quest.cooldownEnabled = this.cooldownEnabled;
             quest.cooldown = this.cooldown;

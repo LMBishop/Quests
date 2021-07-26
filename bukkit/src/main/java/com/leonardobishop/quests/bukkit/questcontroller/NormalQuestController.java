@@ -118,6 +118,14 @@ public class NormalQuestController implements QuestController {
                     plugin.getTitleHandle().sendTitle(player, Messages.TITLE_QUEST_START_TITLE.getMessage().replace("{quest}", displayName),
                             Messages.TITLE_QUEST_START_SUBTITLE.getMessage().replace("{quest}", displayName));
                 }
+                for (String s : quest.getStartCommands()) {
+                    s = s.replace("{player}", player.getName());
+                    if (plugin.getConfig().getBoolean("quests-use-placeholderapi")) {
+                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), plugin.getPlaceholderAPIProcessor().apply(player, s));
+                    } else {
+                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), s);
+                    }
+                }
                 for (String s : quest.getStartString()) {
                     if (plugin.getConfig().getBoolean("quests-use-placeholderapi")) {
                         s = plugin.getPlaceholderAPIProcessor().apply(player, s);

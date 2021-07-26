@@ -172,6 +172,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         List<String> requirements = config.getStringList("options.requires");
                         List<String> rewardString = config.getStringList("rewardstring");
                         List<String> startString = config.getStringList("startstring");
+                        List<String> startCommands = config.getStringList("startcommands");
                         boolean repeatable = config.getBoolean("options.repeatable", false);
                         boolean cooldown = config.getBoolean("options.cooldown.enabled", false);
                         boolean permissionRequired = config.getBoolean("options.permission-required", false);
@@ -196,6 +197,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 .withRequirements(requirements)
                                 .withRewardString(rewardString)
                                 .withStartString(startString)
+                                .withStartCommands(startCommands)
                                 .withPlaceholders(placeholders)
                                 .withCooldown(cooldownTime)
                                 .withSortOrder(sortOrder)
