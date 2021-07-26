@@ -78,6 +78,8 @@ public class Updater {
                 if (tokenizedReturnedVersion[i] > tokenizedInstalledVersion[i]) {
                     newVersion = true;
                     break;
+                } else if (tokenizedReturnedVersion[i] < tokenizedInstalledVersion[i]) {
+                    break;
                 }
             }
 
