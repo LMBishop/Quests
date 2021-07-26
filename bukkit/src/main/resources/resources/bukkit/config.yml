@@ -225,6 +225,8 @@ options:
   quest-autotrack: true
   # How much quests should log, 0 = errors only, 1 = warnings, 2 = info, 3 = debug
   verbose-logging-level: 2
+  # Replace placeholders from PlaceholderAPI in rewards, rewardstrings and start strings
+  quests-use-placeholderapi: false
   # Verify quests exist when a player's data is loaded - inconsistencies may arise when
   # players progress on specific quests and those quests are later removed. The problem is that their progress
   # is still kept in the quest progress file, which may lead to issues such as players reaching a quest started

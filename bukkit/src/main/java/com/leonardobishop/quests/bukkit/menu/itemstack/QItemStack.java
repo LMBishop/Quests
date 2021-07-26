@@ -108,14 +108,14 @@ public class QItemStack {
         } else {
             tempLore.addAll(globalLoreAppendNotStarted);
         }
-        if (plugin.getPlaceholderAPIHook() != null && plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
-            ism.setDisplayName(plugin.getPlaceholderAPIHook().replacePlaceholders(player, ism.getDisplayName()));
+        if (plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
+            ism.setDisplayName(plugin.getPlaceholderAPIProcessor().apply(player, ism.getDisplayName()));
         }
         if (questProgress != null) {
             for (String s : tempLore) {
                 s = processPlaceholders(s, questProgress);
-                if (plugin.getPlaceholderAPIHook() != null && plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
-                    s = plugin.getPlaceholderAPIHook().replacePlaceholders(player, s);
+                if (plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
+                    s = plugin.getPlaceholderAPIProcessor().apply(player, s);
                 }
                 formattedLore.add(s);
             }

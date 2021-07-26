@@ -97,7 +97,9 @@ public final class MiningCertainTaskType extends BukkitTaskType {
                         boolean coreProtectEnabled = (boolean) task.getConfigValue("check-coreprotect", false);
                         int coreProtectTime = (int) task.getConfigValue("check-coreprotect-time", 3600);
 
-                        if (coreProtectEnabled && plugin.getCoreProtectHook().checkBlock(event.getBlock(), coreProtectTime)) {
+                        if (coreProtectEnabled
+                                && plugin.getCoreProtectHook() != null
+                                && plugin.getCoreProtectHook().checkBlock(event.getBlock(), coreProtectTime)) {
                             continue;
                         }
                         increment(task, taskProgress, 1);

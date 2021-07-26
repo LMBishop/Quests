@@ -6,7 +6,6 @@ import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsLoader;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.AbstractCoreProtectHook;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.CoreProtectHook;
-import com.leonardobishop.quests.bukkit.hook.coreprotect.CoreProtectNoHook;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetterLatest;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter_1_13;
@@ -91,6 +90,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -101,6 +101,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
@@ -127,6 +128,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     private BukkitTask questAutoSaveTask;
     private BukkitTask questQueuePollTask;
+    private BiFunction<Player, String, String> placeholderAPIProcessor;
 
     @Override
     public @NotNull QuestsLogger getQuestsLogger() {
@@ -258,11 +260,13 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             this.placeholderAPIHook = new PlaceholderAPIHook();
             this.placeholderAPIHook.registerExpansion(this);
+            this.placeholderAPIProcessor = (player, s) -> placeholderAPIHook.replacePlaceholders(player, s);
+        } else {
+            this.placeholderAPIProcessor = (player, s) -> s;
         }
+
         if (Bukkit.getPluginManager().isPluginEnabled("CoreProtect")) {
             this.coreProtectHook = new CoreProtectHook();
-        } else {
-            this.coreProtectHook = new CoreProtectNoHook();
         }
 
         // Start quests update checker
@@ -522,11 +526,15 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return configProblems;
     }
 
-    public AbstractPlaceholderAPIHook getPlaceholderAPIHook() {
+    public @NotNull BiFunction<Player, String, String> getPlaceholderAPIProcessor() {
+        return placeholderAPIProcessor;
+    }
+
+    public @Nullable AbstractPlaceholderAPIHook getPlaceholderAPIHook() {
         return placeholderAPIHook;
     }
 
-    public AbstractCoreProtectHook getCoreProtectHook() {
+    public @Nullable AbstractCoreProtectHook getCoreProtectHook() {
         return coreProtectHook;
     }
 

@@ -119,6 +119,9 @@ public class NormalQuestController implements QuestController {
                             Messages.TITLE_QUEST_START_SUBTITLE.getMessage().replace("{quest}", displayName));
                 }
                 for (String s : quest.getStartString()) {
+                    if (plugin.getConfig().getBoolean("quests-use-placeholderapi")) {
+                        s = plugin.getPlaceholderAPIProcessor().apply(player, s);
+                    }
                     player.sendMessage(Chat.color(s));
                 }
                 SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-start"));
@@ -204,7 +207,12 @@ public class NormalQuestController implements QuestController {
             // PlayerFinishQuestEvent -- end
             Bukkit.getServer().getScheduler().runTask(plugin, () -> {
                 for (String s : quest.getRewards()) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), s.replace("{player}", player.getName())); //TODO PlaceholderAPI support
+                    s = s.replace("{player}", player.getName());
+                    if (plugin.getConfig().getBoolean("quests-use-placeholderapi")) {
+                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), plugin.getPlaceholderAPIProcessor().apply(player, s));
+                    } else {
+                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), s);
+                    }
                 }
             });
             if (questFinishEvent.getQuestFinishMessage() != null)
@@ -214,6 +222,9 @@ public class NormalQuestController implements QuestController {
                         Messages.TITLE_QUEST_COMPLETE_SUBTITLE.getMessage().replace("{quest}", displayName));
             }
             for (String s : quest.getRewardString()) {
+                if (plugin.getConfig().getBoolean("quests-use-placeholderapi")) {
+                    s = plugin.getPlaceholderAPIProcessor().apply(player, s);
+                }
                 player.sendMessage(Chat.color(s));
             }
             SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-complete"));
