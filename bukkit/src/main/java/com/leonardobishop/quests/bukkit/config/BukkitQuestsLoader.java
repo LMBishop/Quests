@@ -82,16 +82,16 @@ public class BukkitQuestsLoader implements QuestsLoader {
 
         ConfigurationSection categories;
         File categoriesFile = new File(plugin.getDataFolder() + File.separator + "categories.yml");
-        if (categoriesFile.exists()) {
-            YamlConfiguration categoriesConfiguration = YamlConfiguration.loadConfiguration(categoriesFile);
-            if (categoriesConfiguration.isConfigurationSection("categories")) {
-                categories = categoriesConfiguration.getConfigurationSection("categories");
-            } else {
-                categories = new YamlConfiguration();
-            }
+        if (plugin.getConfig().isConfigurationSection("categories")) {
+            categories = plugin.getConfig().getConfigurationSection("categories");
         } else {
-            if (plugin.getConfig().isConfigurationSection("categories")) {
-                categories = plugin.getConfig().getConfigurationSection("categories");
+            if (categoriesFile.exists()) {
+                YamlConfiguration categoriesConfiguration = YamlConfiguration.loadConfiguration(categoriesFile);
+                if (categoriesConfiguration.isConfigurationSection("categories")) {
+                    categories = categoriesConfiguration.getConfigurationSection("categories");
+                } else {
+                    categories = new YamlConfiguration();
+                }
             } else {
                 categories = new YamlConfiguration();
             }
