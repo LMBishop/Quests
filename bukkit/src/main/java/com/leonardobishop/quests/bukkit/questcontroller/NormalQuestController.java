@@ -120,14 +120,14 @@ public class NormalQuestController implements QuestController {
                 }
                 for (String s : quest.getStartCommands()) {
                     s = s.replace("{player}", player.getName());
-                    if (plugin.getConfig().getBoolean("quests-use-placeholderapi")) {
+                    if (plugin.getConfig().getBoolean("options.quests-use-placeholderapi")) {
                         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), plugin.getPlaceholderAPIProcessor().apply(player, s));
                     } else {
                         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), s);
                     }
                 }
                 for (String s : quest.getStartString()) {
-                    if (plugin.getConfig().getBoolean("quests-use-placeholderapi")) {
+                    if (plugin.getConfig().getBoolean("options.quests-use-placeholderapi")) {
                         s = plugin.getPlaceholderAPIProcessor().apply(player, s);
                     }
                     player.sendMessage(Chat.color(s));
@@ -216,7 +216,7 @@ public class NormalQuestController implements QuestController {
             Bukkit.getServer().getScheduler().runTask(plugin, () -> {
                 for (String s : quest.getRewards()) {
                     s = s.replace("{player}", player.getName());
-                    if (plugin.getConfig().getBoolean("quests-use-placeholderapi")) {
+                    if (plugin.getConfig().getBoolean("options.quests-use-placeholderapi")) {
                         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), plugin.getPlaceholderAPIProcessor().apply(player, s));
                     } else {
                         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), s);
@@ -230,7 +230,7 @@ public class NormalQuestController implements QuestController {
                         Messages.TITLE_QUEST_COMPLETE_SUBTITLE.getMessage().replace("{quest}", displayName));
             }
             for (String s : quest.getRewardString()) {
-                if (plugin.getConfig().getBoolean("quests-use-placeholderapi")) {
+                if (plugin.getConfig().getBoolean("options.quests-use-placeholderapi")) {
                     s = plugin.getPlaceholderAPIProcessor().apply(player, s);
                 }
                 player.sendMessage(Chat.color(s));
