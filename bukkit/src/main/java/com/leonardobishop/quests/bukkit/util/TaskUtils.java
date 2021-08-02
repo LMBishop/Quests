@@ -41,6 +41,27 @@ public class TaskUtils {
         return true;
     }
 
+    public static void configValidateNumber(String path, Object object, List<ConfigProblem> problems, boolean allowNull, boolean greaterThanZero, String... args) {
+        if (object == null) {
+            if (!allowNull) {
+                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                        String.format("Expected a number for '%s', but got null instead", (Object[]) args), path));
+            }
+            return;
+        }
+
+        try {
+            double d = Double.parseDouble(String.valueOf(object));
+            if (greaterThanZero && d <= 0) {
+                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                        String.format("Value for field '%s' must be greater than 0", (Object[]) args), path));
+            }
+        } catch (ClassCastException ex) {
+            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                    String.format("Expected a number for '%s', but got '" + object + "' instead", (Object[]) args), path));
+        }
+    }
+
     public static void configValidateInt(String path, Object object, List<ConfigProblem> problems, boolean allowNull, boolean greaterThanZero, String... args) {
         if (object == null) {
             if (!allowNull) {

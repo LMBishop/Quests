@@ -65,6 +65,8 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.MythicMobsKillin
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PlaceholderAPIEvaluateTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ShopGUIPlusBuyCertainTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ShopGUIPlusSellCertainTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.SuperiorSkyblockLevelType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.SuperiorSkyblockWorthType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.uSkyBlockLevelTaskType;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
@@ -358,6 +360,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             if (Bukkit.getPluginManager().isPluginEnabled("FabledSkyblock")) {
                 // not tested
                 taskTypeManager.registerTaskType(new FabledSkyblockLevelTaskType(this));
+            }
+            if (Bukkit.getPluginManager().isPluginEnabled("SuperiorSkyblock2")) {
+                // not tested
+                taskTypeManager.registerTaskType(new SuperiorSkyblockLevelType(this));
+                taskTypeManager.registerTaskType(new SuperiorSkyblockWorthType(this));
             }
 
             taskTypeManager.closeRegistrations();

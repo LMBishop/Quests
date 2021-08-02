@@ -36,6 +36,8 @@ repositories {
     maven { url = 'https://libraries.minecraft.net/' }
     // FabledSkyblock
     maven { url = 'https://repo.songoda.com/repository/public/' }
+    // SuperiorSkyblock
+    maven { url = 'https://repo.bg-software.com/repository/api/' }
     mavenCentral()
 }
 
@@ -92,6 +94,8 @@ dependencies {
     compileOnly ('com.songoda:skyblock:2.2.13') {
         transitive = false
     }
+    // SuperiorSkyblock
+    compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:latest'
     // bStats
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
     // HikariCP
