@@ -56,6 +56,10 @@ public enum Messages {
     COMMAND_QUEST_ADMIN_CATEGORY_PERMISSION("messages.command-quest-admin-category-permission", "&7Category &c{category} &7 could not be opened for player &c{player}&7. They do not have permission to view it."),
     COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS("messages.command-quest-admin-complete-success", "&7Quest &c{quest} &7completed for player &c{player}&7."),
     COMMAND_QUEST_ADMIN_RESET_SUCCESS("messages.command-quest-admin-reset-success", "&7Successfully reset quest '&c{quest}&7' for player &c{player}&7."),
+    COMMAND_QUEST_ADMIN_RANDOM_NONE("messages.command-quest-admin-random-none", "&7Player &c{player}&7 has no quests which they can start."),
+    COMMAND_QUEST_ADMIN_RANDOM_SUCCESS("messages.command-quest-admin-random-success", "&7Successfully started random quest '&c{quest}&7' for player &c{player}&7."),
+    COMMAND_QUEST_ADMIN_RANDOM_CATEGORY_NONE("messages.command-quest-admin-random-category-none", "&7Player &c{player}&7 has no quests in category '&c{category}&7' which they can start."),
+    COMMAND_QUEST_ADMIN_RANDOM_CATEGORY_SUCCESS("messages.command-quest-admin-random-category-success", "&7Successfully started random quest '&c{quest}&7' from category '&c{category}&7' for player &c{player}&7."),
 
     // Other
     UI_PLACEHOLDERS_TRUE("messages.ui-placeholder-completed-true", "true"),

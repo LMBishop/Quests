@@ -62,7 +62,7 @@ public class QuestsCommandTabCompleter implements TabCompleter {
                 }
                 return matchTabComplete(args[0], options);
             } else if (args.length == 2) {
-                if (args[0].equalsIgnoreCase("c") || args[0].equalsIgnoreCase("category")) {
+                if (args[0].equalsIgnoreCase("c") || args[0].equalsIgnoreCase("category") || (args[0].equalsIgnoreCase("random") && sender.hasPermission("quests.command.random"))) {
                     return tabCompleteCategory(args[1]);
                 } else if (args[0].equalsIgnoreCase("q") || args[0].equalsIgnoreCase("quest")) {
                     return tabCompleteQuests(args[1]);
@@ -91,7 +91,7 @@ public class QuestsCommandTabCompleter implements TabCompleter {
                         List<String> options = Arrays.asList("quests", "category");
                         return matchTabComplete(args[2], options);
                     } else if (args[1].equalsIgnoreCase("moddata")) {
-                        List<String> options = Arrays.asList("fullreset", "reset", "start", "complete");
+                        List<String> options = Arrays.asList("fullreset", "reset", "start", "complete", "random");
                         return matchTabComplete(args[2], options);
                     } else if (args[1].equalsIgnoreCase("info")) {
                         return tabCompleteQuests(args[2]);
@@ -103,7 +103,7 @@ public class QuestsCommandTabCompleter implements TabCompleter {
                 if (args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin")
                         && sender.hasPermission("quests.admin")) {
                     if (args[1].equalsIgnoreCase("opengui")) {
-                        if (args[2].equalsIgnoreCase("c") || args[2].equalsIgnoreCase("category")) {
+                        if (args[2].equalsIgnoreCase("c") || args[2].equalsIgnoreCase("category") || args[2].equalsIgnoreCase("random")) {
                             return tabCompleteCategory(args[4]);
                         }
                     } else if (args[1].equalsIgnoreCase("moddata")) {

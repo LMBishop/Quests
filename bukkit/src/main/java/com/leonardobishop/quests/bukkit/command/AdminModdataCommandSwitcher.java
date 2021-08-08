@@ -17,6 +17,7 @@ public class AdminModdataCommandSwitcher extends CommandSwitcher {
         super.subcommands.put("start", new AdminModdataStartCommandHandler(plugin));
         super.subcommands.put("reset", new AdminModdataResetCommandHandler(plugin));
         super.subcommands.put("complete", new AdminModdataCompleteCommandHandler(plugin));
+        super.subcommands.put("random", new AdminModdataRandomCommandHandler(plugin));
     }
 
     @Override
@@ -32,6 +33,8 @@ public class AdminModdataCommandSwitcher extends CommandSwitcher {
                 "quest for a player");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata complete <player> <questid> " + ChatColor.DARK_GRAY + ": " +
                 "complete a quest for a player");
+        sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a moddata random <player> [category] " + ChatColor.DARK_GRAY + ": " +
+                "start a random quest for a player [in a specific category]");
         sender.sendMessage(ChatColor.GRAY + "These commands modify quest progress for players. Use them cautiously. Changes are irreversible.");
     }
 

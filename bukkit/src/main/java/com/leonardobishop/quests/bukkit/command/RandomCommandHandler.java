@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.quest.Category;
 import com.leonardobishop.quests.common.quest.Quest;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,9 +31,24 @@ public class RandomCommandHandler implements CommandHandler {
             return;
         }
         List<Quest> validQuests = new ArrayList<>();
-        for (Quest quest : plugin.getQuestManager().getQuests().values()) {
-            if (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
-                validQuests.add(quest);
+        if (args.length == 1) {
+            for (Quest quest : plugin.getQuestManager().getQuests().values()) {
+                if (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
+                    validQuests.add(quest);
+                }
+            }
+        } else {
+            Category category = plugin.getQuestManager().getCategoryById(args[1]);
+            if (category == null) {
+                sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.getMessage().replace("{category}", args[1]));
+            } else {
+                for (String questId : category.getRegisteredQuestIds()) {
+                    Quest quest = plugin.getQuestManager().getQuestById(questId);
+                    if (quest == null) continue;
+                    if (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
+                        validQuests.add(quest);
+                    }
+                }
             }
         }
 
