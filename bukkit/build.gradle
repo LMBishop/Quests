@@ -38,6 +38,8 @@ repositories {
     maven { url = 'https://repo.songoda.com/repository/public/' }
     // SuperiorSkyblock
     maven { url = 'https://repo.bg-software.com/repository/api/' }
+    // VotingPlugin
+    maven { url = 'https://nexus.bencodez.com/repository/maven-public/'}
     mavenCentral()
 }
 
@@ -96,6 +98,8 @@ dependencies {
     }
     // SuperiorSkyblock
     compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:latest'
+    // VotingPlugin
+    compileOnly 'com.bencodez:votingplugin:6.5.2'
     // bStats
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
     // HikariCP

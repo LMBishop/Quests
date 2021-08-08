@@ -53,21 +53,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.PositionTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.ShearingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.TamingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.WalkingTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ASkyBlockLevelTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BentoBoxLevelTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensDeliverTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensInteractTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsBalanceTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsMoneyEarnTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FabledSkyblockLevelTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.IridiumSkyblockValueTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.MythicMobsKillingType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PlaceholderAPIEvaluateTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ShopGUIPlusBuyCertainTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ShopGUIPlusSellCertainTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.SuperiorSkyblockLevelType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.SuperiorSkyblockWorthType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.uSkyBlockLevelTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.*;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.config.QuestsConfig;
@@ -365,6 +351,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 // not tested
                 taskTypeManager.registerTaskType(new SuperiorSkyblockLevelType(this));
                 taskTypeManager.registerTaskType(new SuperiorSkyblockWorthType(this));
+            }
+            if (Bukkit.getPluginManager().isPluginEnabled("VotingPlugin")) {
+                // not tested
+                taskTypeManager.registerTaskType(new VotingPluginVoteType(this));
             }
 
             taskTypeManager.closeRegistrations();
