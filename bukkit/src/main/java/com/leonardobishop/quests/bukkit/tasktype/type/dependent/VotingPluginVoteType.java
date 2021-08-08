@@ -71,7 +71,7 @@ public final class VotingPluginVoteType extends BukkitTaskType {
                         progressVotes = (int) taskProgress.getProgress();
                     }
 
-                    taskProgress.setProgress(votesNeeded + 1);
+                    taskProgress.setProgress(progressVotes + 1);
 
                     if (((int) taskProgress.getProgress()) >= votesNeeded) {
                         taskProgress.setCompleted(true);
