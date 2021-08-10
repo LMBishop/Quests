@@ -63,7 +63,7 @@ public class NormalQuestController implements QuestController {
                     // This one is hacky
                     break;
                 case QUEST_LIMIT_REACHED:
-                    questResultMessage = Messages.QUEST_START_LIMIT.getMessage().replace("{limit}", String.valueOf(config.getInt("options.quest-started-limit")));
+                    questResultMessage = Messages.QUEST_START_LIMIT.getMessage().replace("{limit}", String.valueOf(config.getQuestLimit(player)));
                     break;
                 case QUEST_ALREADY_COMPLETED:
                     questResultMessage = Messages.QUEST_START_DISABLED.getMessage();
@@ -184,7 +184,7 @@ public class NormalQuestController implements QuestController {
                 return QuestStartResult.NO_PERMISSION_FOR_CATEGORY;
             }
         }
-        if (!config.getBoolean("options.quest-autostart") && getStartedQuestsForPlayer(qPlayer).size() >= config.getInt("options.quest-started-limit")) {
+        if (!config.getBoolean("options.quest-autostart") && getStartedQuestsForPlayer(qPlayer).size() >= config.getQuestLimit(p)) {
             return QuestStartResult.QUEST_LIMIT_REACHED;
         }
         return QuestStartResult.QUEST_SUCCESS;

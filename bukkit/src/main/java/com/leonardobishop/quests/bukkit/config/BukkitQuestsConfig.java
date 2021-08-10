@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit.config;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
 import com.leonardobishop.quests.common.config.QuestsConfig;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,6 +11,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class BukkitQuestsConfig implements QuestsConfig {
 
@@ -90,5 +92,21 @@ public class BukkitQuestsConfig implements QuestsConfig {
 
     public ItemStack getItem(@NotNull String path) {
         return new ItemStack(cachedItemStacks.computeIfAbsent(path, s -> itemGetter.getItem(path, config)));
+    }
+
+    public int getQuestLimit(Player player) {
+        int limit = getQuestLimit("default");
+        if(player != null) {
+            for (String rank : config.getConfigurationSection("options.quest-limit-multiple").getKeys(false)) {
+                int newLimit = getQuestLimit(rank);
+                if (player.hasPermission("quests.limit." + rank) && (limit < newLimit))
+                    limit = newLimit;
+            }
+        }
+        return limit;
+    }
+
+    public int getQuestLimit(@NotNull String rank) {
+        return config.getInt("options.quest-limit-multiple." + rank, config.getInt("options.quest-limit-multiple.default", 2));
     }
 }
