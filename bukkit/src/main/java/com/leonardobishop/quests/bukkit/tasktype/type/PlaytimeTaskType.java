@@ -1,6 +1,5 @@
 package com.leonardobishop.quests.bukkit.tasktype.type;
 
-import com.earth2me.essentials.Essentials;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
@@ -41,8 +40,6 @@ public final class PlaytimeTaskType extends BukkitTaskType {
 
     @Override
     public void onReady() {
-        boolean ignoreAFK = plugin.getQuestsConfig().getBoolean("options.playtime-ignores-afk", false);
-        Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
         if (this.poll == null) {
             this.poll = new BukkitRunnable() {
                 @Override
@@ -52,14 +49,16 @@ public final class PlaytimeTaskType extends BukkitTaskType {
                         if (qPlayer == null) {
                             continue;
                         }
-                        if (ignoreAFK && ess != null && ess.getUser(player).isAfk()) {
-                            continue; // user is AFK so we will not track progress
-                        }
 
                         for (Quest quest : PlaytimeTaskType.super.getRegisteredQuests()) {
                             if (qPlayer.hasStartedQuest(quest)) {
                                 QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
                                 for (Task task : quest.getTasksOfType(PlaytimeTaskType.super.getType())) {
+                                    if ((boolean) task.getConfigValue("ignore-afk", false)
+                                            && plugin.getEssentialsHook() != null
+                                            && plugin.getEssentialsHook().isAfk(player)) {
+                                        continue;
+                                    }
                                     if (!TaskUtils.validateWorld(player, task)) continue;
 
                                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
