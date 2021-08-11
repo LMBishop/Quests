@@ -6,6 +6,8 @@ import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsLoader;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.AbstractCoreProtectHook;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.CoreProtectHook;
+import com.leonardobishop.quests.bukkit.hook.essentials.AbstractEssentialsHook;
+import com.leonardobishop.quests.bukkit.hook.essentials.EssentialsHook;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetterLatest;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter_1_13;
@@ -111,6 +113,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private MenuController menuController;
     private AbstractPlaceholderAPIHook placeholderAPIHook;
     private AbstractCoreProtectHook coreProtectHook;
+    private AbstractEssentialsHook essentialsHook;
     private ItemGetter itemGetter;
     private Title titleHandle;
 
@@ -246,6 +249,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
         // Prepare PAPI processor
         this.placeholderAPIProcessor = (player, s) -> s;
+
+        if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
+            this.essentialsHook = new EssentialsHook();
+        }
 
         // Start quests update checker
         boolean ignoreUpdates = false;
@@ -526,6 +533,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     public @Nullable AbstractCoreProtectHook getCoreProtectHook() {
         return coreProtectHook;
+    }
+
+    public @Nullable AbstractEssentialsHook getEssentialsHook() {
+        return essentialsHook;
     }
 
     public ItemGetter getItemGetter() {
