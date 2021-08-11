@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.bukkit.tasktype.type;
 
+import com.earth2me.essentials.Essentials;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
@@ -40,6 +41,8 @@ public final class PlaytimeTaskType extends BukkitTaskType {
 
     @Override
     public void onReady() {
+        boolean ignoreAFK = plugin.getQuestsConfig().getBoolean("options.playtime-ignores-afk", false);
+        Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
         if (this.poll == null) {
             this.poll = new BukkitRunnable() {
                 @Override
@@ -48,6 +51,9 @@ public final class PlaytimeTaskType extends BukkitTaskType {
                         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                         if (qPlayer == null) {
                             continue;
+                        }
+                        if (ignoreAFK && ess != null && ess.getUser(player).isAfk()) {
+                            continue; // user is AFK so we will not track progress
                         }
 
                         for (Quest quest : PlaytimeTaskType.super.getRegisteredQuests()) {
