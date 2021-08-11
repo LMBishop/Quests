@@ -244,18 +244,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             this.getQuestsLogger().info("Metrics started. This can be disabled at /plugins/bStats/config.yml.");
         }
 
-        // Setup external plugin hooks
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            this.placeholderAPIHook = new PlaceholderAPIHook();
-            this.placeholderAPIHook.registerExpansion(this);
-            this.placeholderAPIProcessor = (player, s) -> placeholderAPIHook.replacePlaceholders(player, s);
-        } else {
-            this.placeholderAPIProcessor = (player, s) -> s;
-        }
-
-        if (Bukkit.getPluginManager().isPluginEnabled("CoreProtect")) {
-            this.coreProtectHook = new CoreProtectHook();
-        }
+        // Prepare PAPI processor
+        this.placeholderAPIProcessor = (player, s) -> s;
 
         // Start quests update checker
         boolean ignoreUpdates = false;
@@ -278,6 +268,16 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
         // Register task types after the server has fully started
         Bukkit.getScheduler().runTask(this, () -> {
+            // Setup external plugin hooks
+            if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                this.placeholderAPIHook = new PlaceholderAPIHook();
+                this.placeholderAPIHook.registerExpansion(this);
+                this.placeholderAPIProcessor = (player, s) -> placeholderAPIHook.replacePlaceholders(player, s);
+            }
+            if (Bukkit.getPluginManager().isPluginEnabled("CoreProtect")) {
+                this.coreProtectHook = new CoreProtectHook();
+            }
+
             taskTypeManager.registerTaskType(new MiningTaskType(this));
             taskTypeManager.registerTaskType(new MiningCertainTaskType(this));
             taskTypeManager.registerTaskType(new BuildingTaskType(this));
