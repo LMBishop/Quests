@@ -94,9 +94,10 @@ public class BukkitQuestsConfig implements QuestsConfig {
     }
 
     public int getQuestLimit(Player player) {
+        if (config.contains("options.quest-started-limit")) return config.getInt("options.quest-started-limit");
         int limit = getQuestLimit("default");
-        if(player != null) {
-            for (String rank : config.getConfigurationSection("options.quest-limit-multiple").getKeys(false)) {
+        if (player != null) {
+            for (String rank : config.getConfigurationSection("options.quest-limit").getKeys(false)) {
                 int newLimit = getQuestLimit(rank);
                 if (player.hasPermission("quests.limit." + rank) && (limit < newLimit))
                     limit = newLimit;
@@ -106,6 +107,6 @@ public class BukkitQuestsConfig implements QuestsConfig {
     }
 
     public int getQuestLimit(@NotNull String rank) {
-        return config.getInt("options.quest-limit-multiple." + rank, config.getInt("options.quest-limit-multiple.default", 2));
+        return config.getInt("options.quest-limit." + rank, config.getInt("options.quest-limit.default", 2));
     }
 }

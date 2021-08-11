@@ -150,16 +150,14 @@ options:
   trim-gui-size: true
   # Enable/disable titles
   titles-enabled: true
-
   # Allow players to have multiple active quests.
   # You can set the default number of quests using the 'default' rank below.
   # To grant different quest limits to different people, you can define a 'quest-rank'
   # Create the 'quest-rank' below, and give the matching permission: quests.limit.<quest-rank>
-  quest-limit-multiple:
+  quest-limit:
     default: 2
     #vip: 5
     #staff: 10
-
   # Allow players to cancel a quest (you may want to remove the cancel instructions in the global item lore)
   allow-quest-cancel: true
   # Allow players to track a quest (you may want to remove the tracking instructions in the global item lore)
