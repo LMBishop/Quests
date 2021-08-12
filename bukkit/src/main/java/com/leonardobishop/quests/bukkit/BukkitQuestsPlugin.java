@@ -1,7 +1,7 @@
 package com.leonardobishop.quests.bukkit;
 
+import com.leonardobishop.quests.bukkit.command.QuestCommandHandler;
 import com.leonardobishop.quests.bukkit.command.QuestsCommandSwitcher;
-import com.leonardobishop.quests.bukkit.command.QuestsCommandTabCompleter;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsLoader;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.AbstractCoreProtectHook;
@@ -234,8 +234,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
 
         // Set commands
-        super.getCommand("quests").setTabCompleter(new QuestsCommandTabCompleter(this));
-        super.getCommand("quests").setExecutor(new QuestsCommandSwitcher(this));
+        QuestsCommandSwitcher questsCommandSwitcher = new QuestsCommandSwitcher(this);
+        super.getCommand("quests").setTabCompleter(questsCommandSwitcher);
+        super.getCommand("quests").setExecutor(questsCommandSwitcher);
 
         // Register events
         super.getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);

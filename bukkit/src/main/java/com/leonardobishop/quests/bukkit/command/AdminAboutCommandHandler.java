@@ -5,6 +5,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 public class AdminAboutCommandHandler implements CommandHandler {
 
     private final BukkitQuestsPlugin plugin;
@@ -22,6 +25,11 @@ public class AdminAboutCommandHandler implements CommandHandler {
         sender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Licensed under the GPLv3");
         sender.sendMessage(ChatColor.GRAY + "Many contributors have written source code and task types for Quests," +
                 " please see the GitHub link for an up-to-date list of contributors.");
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return Collections.emptyList();
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -88,7 +89,17 @@ public class AdminModdataRandomCommandHandler implements CommandHandler {
             return;
         }
 
-        sender.sendMessage(ChatColor.RED + "/quests a/admin random <player> [category]");
+        sender.sendMessage(ChatColor.RED + "/quests a/admin moddata random <player> [category]");
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length == 4) {
+            return null;
+        } else if (args.length == 5) {
+            return TabHelper.tabCompleteCategory(args[4]);
+        }
+        return Collections.emptyList();
     }
 
     @Override

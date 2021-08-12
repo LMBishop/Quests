@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -58,6 +59,11 @@ public class RandomCommandHandler implements CommandHandler {
         }
         int random = ThreadLocalRandom.current().nextInt(0, validQuests.size());
         qPlayer.startQuest(validQuests.get(random));
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return Collections.emptyList();
     }
 
     @Override

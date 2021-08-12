@@ -6,6 +6,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 public class AdminReloadCommandHandler implements CommandHandler {
 
     private final BukkitQuestsPlugin plugin;
@@ -21,6 +24,11 @@ public class AdminReloadCommandHandler implements CommandHandler {
         plugin.reloadQuests();
         if (!plugin.getConfigProblems().isEmpty()) CommandUtils.showProblems(sender, plugin.getConfigProblems());
         sender.sendMessage(ChatColor.GREEN + "Quests successfully reloaded.");
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return Collections.emptyList();
     }
 
     @Override

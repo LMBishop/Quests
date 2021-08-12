@@ -7,6 +7,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 public class AdminUpdateCommandHandler implements CommandHandler {
 
     private final BukkitQuestsPlugin plugin;
@@ -30,6 +33,11 @@ public class AdminUpdateCommandHandler implements CommandHandler {
                 sender.sendMessage(ChatColor.GRAY + "No updates were found.");
             }
         });
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return Collections.emptyList();
     }
 
     @Override

@@ -7,6 +7,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class AdminTypesCommandHandler implements CommandHandler {
 
     private final BukkitQuestsPlugin plugin;
@@ -39,6 +43,18 @@ public class AdminTypesCommandHandler implements CommandHandler {
                 sender.sendMessage(ChatColor.RED + "Description: " + ChatColor.GRAY + taskType.getDescription());
             }
         }
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length == 3) {
+            List<String> options = new ArrayList<>();
+            for (TaskType taskType : plugin.getTaskTypeManager().getTaskTypes()) {
+                options.add(taskType.getType());
+            }
+            return TabHelper.matchTabComplete(args[2], options);
+        }
+        return Collections.emptyList();
     }
 
     @Override

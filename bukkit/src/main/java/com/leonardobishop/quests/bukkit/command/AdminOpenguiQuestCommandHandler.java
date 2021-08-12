@@ -9,6 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 public class AdminOpenguiQuestCommandHandler implements CommandHandler {
 
     private final BukkitQuestsPlugin plugin;
@@ -33,6 +36,14 @@ public class AdminOpenguiQuestCommandHandler implements CommandHandler {
         }
 
         sender.sendMessage(ChatColor.RED + "/quests a/admin opengui q/quest <player>");
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length == 4) {
+            return null;
+        }
+        return Collections.emptyList();
     }
 
     @Override

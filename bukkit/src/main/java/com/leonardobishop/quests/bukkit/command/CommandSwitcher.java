@@ -2,8 +2,7 @@ package com.leonardobishop.quests.bukkit.command;
 
 import org.bukkit.command.CommandSender;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public abstract class CommandSwitcher implements CommandHandler {
 
@@ -26,6 +25,25 @@ public abstract class CommandSwitcher implements CommandHandler {
             }
         }
         showHelp(sender);
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length > switchingIndex + 1) {
+            String subcommand = args[switchingIndex].toLowerCase();
+            CommandHandler handler = subcommands.getOrDefault(subcommand, subcommands.get(aliases.get(subcommand)));
+            if (handler != null && (handler.getPermission() == null || sender.hasPermission(handler.getPermission()))) {
+                return handler.tabComplete(sender, args);
+            }
+        } else if (args.length == switchingIndex + 1) {
+            List<String> availableCommands = new ArrayList<>();
+            for (Map.Entry<String, CommandHandler> command : subcommands.entrySet()) {
+                String permission = command.getValue().getPermission();
+                if (permission == null || sender.hasPermission(permission)) availableCommands.add(command.getKey());
+            }
+            return TabHelper.matchTabComplete(args[switchingIndex], availableCommands);
+        }
+        return Collections.emptyList();
     }
 
     abstract public void showHelp(CommandSender sender);

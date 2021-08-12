@@ -11,6 +11,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 public class AdminModdataCompleteCommandHandler implements CommandHandler {
 
     private final BukkitQuestsPlugin plugin;
@@ -41,6 +44,17 @@ public class AdminModdataCompleteCommandHandler implements CommandHandler {
         }
 
         sender.sendMessage(ChatColor.RED + "/quests a/admin moddata complete <player> <quest>");
+    }
+
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length == 4) {
+            return null;
+        } else if (args.length == 5) {
+            return TabHelper.tabCompleteQuests(args[4]);
+        }
+        return Collections.emptyList();
     }
 
     @Override

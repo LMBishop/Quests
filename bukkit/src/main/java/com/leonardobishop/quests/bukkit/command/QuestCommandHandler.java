@@ -9,6 +9,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class QuestCommandHandler implements CommandHandler {
 
     private final BukkitQuestsPlugin plugin;
@@ -42,6 +46,16 @@ public class QuestCommandHandler implements CommandHandler {
             return;
         }
         sender.sendMessage(ChatColor.RED + "/quests q/quest <categoryid> (start|cancel|track)");
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length == 2) {
+            return TabHelper.tabCompleteCategory(args[1]);
+        } else if (args.length == 3) {
+            return TabHelper.matchTabComplete(args[2], Arrays.asList("start", "cancel", "track"));
+        }
+        return Collections.emptyList();
     }
 
     @Override

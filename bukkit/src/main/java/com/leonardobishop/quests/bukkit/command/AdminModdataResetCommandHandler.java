@@ -11,6 +11,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 public class AdminModdataResetCommandHandler implements CommandHandler {
 
     private final BukkitQuestsPlugin plugin;
@@ -40,7 +43,17 @@ public class AdminModdataResetCommandHandler implements CommandHandler {
             return;
         }
 
-        sender.sendMessage(ChatColor.RED + "/quests a/admin moddata start <player> <quest>");
+        sender.sendMessage(ChatColor.RED + "/quests a/admin moddata reset <player> <quest>");
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length == 4) {
+            return null;
+        } else if (args.length == 5) {
+            return TabHelper.tabCompleteQuests(args[4]);
+        }
+        return Collections.emptyList();
     }
 
     @Override

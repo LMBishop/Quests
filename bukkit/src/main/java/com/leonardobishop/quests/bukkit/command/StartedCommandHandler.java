@@ -7,6 +7,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 public class StartedCommandHandler implements CommandHandler {
 
     private final BukkitQuestsPlugin plugin;
@@ -24,7 +27,11 @@ public class StartedCommandHandler implements CommandHandler {
             return;
         }
         plugin.getMenuController().openStartedQuests(qPlayer);
-        return;
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return Collections.emptyList();
     }
 
     @Override

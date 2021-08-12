@@ -9,6 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 public class CategoryCommandHandler implements CommandHandler {
 
     private final BukkitQuestsPlugin plugin;
@@ -39,6 +42,14 @@ public class CategoryCommandHandler implements CommandHandler {
             return;
         }
         sender.sendMessage(ChatColor.RED + "/quests c/category <categoryid>");
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length == 2) {
+            return TabHelper.tabCompleteCategory(args[1]);
+        }
+        return Collections.emptyList();
     }
 
     @Override

@@ -8,6 +8,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class AdminInfoCommandHandler implements CommandHandler {
@@ -68,6 +70,14 @@ public class AdminInfoCommandHandler implements CommandHandler {
                 sender.sendMessage(ChatColor.RED + "Autostart: " + ChatColor.GRAY + quest.isAutoStartEnabled());
             }
         }
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length == 3) {
+            return TabHelper.tabCompleteQuests(args[2]);
+        }
+        return Collections.emptyList();
     }
 
     @Override

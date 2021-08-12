@@ -13,6 +13,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class AdminItemsCommandHandler implements CommandHandler {
 
@@ -65,6 +68,15 @@ public class AdminItemsCommandHandler implements CommandHandler {
                 sender.sendMessage(ChatColor.RED + "Couldn't save item. See console for problem.");
             }
         }
+    }
+
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length == 3) {
+            return TabHelper.matchTabComplete(args[2], Collections.singletonList("import"));
+        }
+        return Collections.emptyList();
     }
 
     @Override
