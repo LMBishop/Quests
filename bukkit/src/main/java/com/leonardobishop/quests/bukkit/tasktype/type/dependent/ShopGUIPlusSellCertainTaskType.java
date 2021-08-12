@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ShopGUIPlusSellCertainTaskType extends BukkitTaskType {
+public final class ShopGUIPlusSellCertainTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 

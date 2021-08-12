@@ -7,7 +7,6 @@ import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.config.ConfigProblem;
-import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;

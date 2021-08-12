@@ -14,14 +14,11 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

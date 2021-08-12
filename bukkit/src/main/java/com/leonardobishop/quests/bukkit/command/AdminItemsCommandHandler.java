@@ -2,8 +2,6 @@ package com.leonardobishop.quests.bukkit.command;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
-import com.leonardobishop.quests.bukkit.util.Messages;
-import com.leonardobishop.quests.common.tasktype.TaskType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

@@ -11,13 +11,9 @@ import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.quest.Quest;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

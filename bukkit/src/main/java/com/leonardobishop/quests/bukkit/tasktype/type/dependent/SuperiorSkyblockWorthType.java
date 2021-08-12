@@ -11,7 +11,6 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;

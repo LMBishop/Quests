@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class EssentialsMoneyEarnTaskType extends BukkitTaskType {
+public final class EssentialsMoneyEarnTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 

@@ -5,12 +5,7 @@ import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**

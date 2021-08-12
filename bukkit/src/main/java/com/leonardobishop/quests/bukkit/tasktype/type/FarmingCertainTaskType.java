@@ -10,7 +10,6 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;

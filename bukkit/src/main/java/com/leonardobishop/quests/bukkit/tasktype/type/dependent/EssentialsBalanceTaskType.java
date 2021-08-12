@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class EssentialsBalanceTaskType extends BukkitTaskType {
+public final class EssentialsBalanceTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
