@@ -1,15 +1,23 @@
 package com.leonardobishop.quests.bukkit.util;
 
+import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public class TaskUtils {
 
-    public static String TASK_ATTRIBUTION_STRING = "<built-in>";
+    public static final String TASK_ATTRIBUTION_STRING = "<built-in>";
+    private static final BukkitQuestsPlugin plugin;
+
+    static {
+        plugin = BukkitQuestsPlugin.getPlugin(BukkitQuestsPlugin.class);
+    }
 
     public static boolean validateWorld(Player player, Task task) {
         return validateWorld(player.getLocation().getWorld().getName(), task.getConfigValue("worlds"));
@@ -97,6 +105,48 @@ public class TaskUtils {
         } catch (ClassCastException ex) {
             problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
                     String.format("Expected a boolean for '%s', but got '" + object + "' instead", (Object[]) args), path));
+        }
+    }
+
+    public static void configValidateItemStack(String path, Object object, List<ConfigProblem> problems, boolean allowNull, String... args) {
+        if (object == null) {
+            if (!allowNull) {
+                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                        String.format("Expected item configuration for '%s', but got null instead", (Object[]) args), path));
+            }
+            return;
+        }
+
+        if (object instanceof ConfigurationSection) {
+            ConfigurationSection section = (ConfigurationSection) object;
+
+            if (section.contains("quest-item")) {
+                String type = section.getString("quest-item");
+                if (plugin.getQuestItemRegistry().getItem(section.getString("quest-item")) == null) {
+                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                            ConfigProblemDescriptions.UNKNOWN_QUEST_ITEM.getDescription(type), path + ".item.quest-item"));
+                }
+            } else {
+                String itemloc = "item";
+                if (!section.contains("item")) {
+                    itemloc = "type";
+                }
+                if (!section.contains(itemloc)) {
+                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(""), path + ".type"));
+                } else {
+                    String type = String.valueOf(section.get(itemloc));
+                    if (!plugin.getItemGetter().isValidMaterial(type)) {
+                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(type), path + itemloc));
+                    }
+                }
+            }
+        } else {
+            if (Material.getMaterial(String.valueOf(object)) == null) {
+                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(object)), path));
+            }
         }
     }
 

@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+//TODO unfuck this: move responsibility of tab completion to individual command
 public class QuestsCommandTabCompleter implements TabCompleter {
 
     private BukkitQuestsPlugin plugin;
@@ -68,7 +69,7 @@ public class QuestsCommandTabCompleter implements TabCompleter {
                     return tabCompleteQuests(args[1]);
                 } else if (args[0].equalsIgnoreCase("a") || args[0].equalsIgnoreCase("admin")
                         && sender.hasPermission("quests.admin")) {
-                    List<String> options = Arrays.asList("opengui", "moddata", "types", "reload", "update", "config", "info", "wiki", "about");
+                    List<String> options = Arrays.asList("opengui", "moddata", "types", "reload", "update", "config", "info", "wiki", "about", "items");
                     return matchTabComplete(args[1], options);
                 }
             } else if (args.length == 3) {
@@ -95,6 +96,8 @@ public class QuestsCommandTabCompleter implements TabCompleter {
                         return matchTabComplete(args[2], options);
                     } else if (args[1].equalsIgnoreCase("info")) {
                         return tabCompleteQuests(args[2]);
+                    }  else if (args[1].equalsIgnoreCase("items")) {
+                        return matchTabComplete(args[2], Collections.singletonList("import"));
                     }
                 }
             } else if (args.length == 4) {

@@ -7,6 +7,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Used to store itemstacks for use within Quests menus.
+ */
 public class QItemStackRegistry {
 
     private final Map<String, QItemStack> questRegistry = new HashMap<>();

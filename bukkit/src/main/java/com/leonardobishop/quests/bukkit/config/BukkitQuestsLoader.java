@@ -2,6 +2,8 @@ package com.leonardobishop.quests.bukkit.config;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
+import com.leonardobishop.quests.bukkit.item.QuestItem;
+import com.leonardobishop.quests.bukkit.item.QuestItemRegistry;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStackRegistry;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
@@ -49,6 +51,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
     private final QuestController questController;
     private final QuestsLogger questsLogger;
     private final QItemStackRegistry qItemStackRegistry;
+    private final QuestItemRegistry questItemRegistry;
 
     public BukkitQuestsLoader(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -58,8 +61,16 @@ public class BukkitQuestsLoader implements QuestsLoader {
         this.questController = plugin.getQuestController();
         this.questsLogger = plugin.getQuestsLogger();
         this.qItemStackRegistry = plugin.getQItemStackRegistry();
+        this.questItemRegistry = plugin.getQuestItemRegistry();
     }
 
+    /**
+     * Load quests and categories into the respective {@link QuestManager} and register
+     * them with tasks in the respective {@link TaskTypeManager}.
+     *
+     * @param root the directory to load from
+     * @return map of configuration issues
+     */
     @Override
     public Map<String, List<ConfigProblem>> loadQuests(File root) {
         qItemStackRegistry.clearRegistry();
@@ -314,6 +325,64 @@ public class BukkitQuestsLoader implements QuestsLoader {
         }
 
         return configProblems;
+    }
+
+    /**
+     * Load quest items into the respective quest item registry.
+     *
+     * @param root the directory to load from
+     */
+    public void loadQuestItems(File root) {
+        questItemRegistry.clearRegistry();
+
+        FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) {
+                try {
+                    File itemFile = new File(path.toUri());
+                    if (!itemFile.getName().toLowerCase().endsWith(".yml")) return FileVisitResult.CONTINUE;
+
+                    YamlConfiguration config = new YamlConfiguration();
+                    // test file integrity
+                    try {
+                        config.load(itemFile);
+                    } catch (Exception ex) {
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    String id = itemFile.getName().replace(".yml", "");
+
+                    if (!StringUtils.isAlphanumeric(id)) {
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    ItemStack itemStack;
+                    switch (config.getString("type", "").toLowerCase()) {
+                        default:
+                            return FileVisitResult.CONTINUE;
+                        case "raw":
+                            itemStack = config.getItemStack("item");
+                            break;
+                        case "defined":
+                            itemStack = plugin.getItemStack("item", config);
+                    }
+
+                    questItemRegistry.registerItem(id, new QuestItem(id, itemStack));
+                } catch (Exception e) {
+                    questsLogger.severe("An exception occurred when attempting to load quest item '" + path + "' (will be ignored)");
+                    e.printStackTrace();
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        };
+
+        try {
+            Files.walkFileTree(root.toPath(), fileVisitor);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        questsLogger.info(questItemRegistry.getAllItems().size() + " quest items have been registered.");
     }
 
     private void findInvalidTaskReferences(Quest quest, String s, List<ConfigProblem> configProblems, String location) {

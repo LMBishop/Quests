@@ -18,6 +18,7 @@ import com.leonardobishop.quests.bukkit.hook.title.Title;
 import com.leonardobishop.quests.bukkit.hook.title.Title_Bukkit;
 import com.leonardobishop.quests.bukkit.hook.title.Title_BukkitNoTimings;
 import com.leonardobishop.quests.bukkit.hook.title.Title_Other;
+import com.leonardobishop.quests.bukkit.item.QuestItemRegistry;
 import com.leonardobishop.quests.bukkit.listener.PlayerJoinListener;
 import com.leonardobishop.quests.bukkit.listener.PlayerLeaveListener;
 import com.leonardobishop.quests.bukkit.menu.MenuController;
@@ -110,6 +111,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private Map<String, List<ConfigProblem>> configProblems;
 
     private QItemStackRegistry qItemStackRegistry;
+    private QuestItemRegistry questItemRegistry;
     private MenuController menuController;
     private AbstractPlaceholderAPIHook placeholderAPIHook;
     private AbstractCoreProtectHook coreProtectHook;
@@ -238,6 +240,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         this.taskTypeManager = new BukkitTaskTypeManager(this, questsConfig.getStringList("options.task-type-exclusions"));
         this.qPlayerManager = new QPlayerManager(this, storageProvider, questController);
         this.menuController = new MenuController(this);
+        this.questItemRegistry = new QuestItemRegistry();
         this.qItemStackRegistry = new QItemStackRegistry();
         this.questCompleter = new BukkitQuestCompleter(this);
 
@@ -408,6 +411,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     public void reloadQuests() {
         if (this.reloadBaseConfiguration()) {
             BukkitQuestsLoader questsLoader = new BukkitQuestsLoader(this);
+            questsLoader.loadQuestItems(new File(super.getDataFolder() + File.separator + "items"));
             configProblems = questsLoader.loadQuests(new File(super.getDataFolder() + File.separator + "quests"));
 
             for (TaskType taskType : taskTypeManager.getTaskTypes()) {
@@ -424,6 +428,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     public ItemStack getItemStack(String path, ConfigurationSection config, ItemGetter.Filter... excludes) {
+        if (config.contains(path + ".quest-item")) {
+            return questItemRegistry.getItem(config.getString(path + ".quest-item")).getItemStack();
+        }
+
         return itemGetter.getItem(path, config, excludes);
     }
 
@@ -494,6 +502,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 writeResourceToFile("resources/bukkit/quests/" + name, file);
             }
         }
+
+        File itemsDirectory = new File(this.getDataFolder() + File.separator + "items");
+        if (!itemsDirectory.exists() && !itemsDirectory.isDirectory()) {
+            itemsDirectory.mkdir();
+        }
     }
 
     private void writeResourceToFile(String resource, File file) {
@@ -545,6 +558,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     public Title getTitleHandle() {
         return titleHandle;
+    }
+
+    public QuestItemRegistry getQuestItemRegistry() {
+        return questItemRegistry;
     }
 
     public QItemStackRegistry getQItemStackRegistry() {

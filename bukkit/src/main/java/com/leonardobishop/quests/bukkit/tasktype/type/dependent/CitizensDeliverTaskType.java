@@ -40,31 +40,8 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType())) {
-            Object configBlock = config.get("item");
-            if (configBlock instanceof ConfigurationSection) {
-                ConfigurationSection section = (ConfigurationSection) configBlock;
-                String itemloc = "item";
-                if (!section.contains("item")) {
-                    itemloc = "type";
-                }
-                if (!section.contains(itemloc)) {
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(""), root + ".item.type"));
-                } else {
-                    String type = String.valueOf(section.get(itemloc));
-                    if (!plugin.getItemGetter().isValidMaterial(type)) {
-                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(type), root + ".item." + itemloc));
-                    }
-                }
-            } else {
-                if (Material.getMaterial(String.valueOf(configBlock)) == null) {
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(configBlock)), root + ".item.item"));
-                }
-            }
-        }
+        if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType()))
+            TaskUtils.configValidateItemStack(root + ".item", config.get("item"), problems, false, "item");
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
         TaskUtils.configValidateExists(root + ".npc-name", config.get("npc-name"), problems, "npc-name", super.getType());

@@ -9,6 +9,7 @@ public enum ConfigProblemDescriptions {
     UNKNOWN_TASK_TYPE("Task type '%s' does not exist"),
     NO_DISPLAY_NAME("No name specified"),
     NO_DISPLAY_MATERIAL("No material specified"),
+    UNKNOWN_QUEST_ITEM("Quest item '%s' does not exist"),
     UNKNOWN_MATERIAL("Material '%s' does not exist"),
     UNKNOWN_ENTITY_TYPE("Entity type '%s' does not exist"),
     TASK_MALFORMED_NOT_SECTION("Task '%s' is not a configuration section (has no fields)"),
