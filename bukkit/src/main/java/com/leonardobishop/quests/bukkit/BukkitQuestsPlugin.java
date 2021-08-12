@@ -253,10 +253,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         // Prepare PAPI processor
         this.placeholderAPIProcessor = (player, s) -> s;
 
-        if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
-            this.essentialsHook = new EssentialsHook();
-        }
-
         // Start quests update checker
         boolean ignoreUpdates = false;
         try {
@@ -286,6 +282,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
             if (Bukkit.getPluginManager().isPluginEnabled("CoreProtect")) {
                 this.coreProtectHook = new CoreProtectHook();
+            }
+            if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
+                this.essentialsHook = new EssentialsHook();
             }
 
             taskTypeManager.registerTaskType(new MiningTaskType(this));
