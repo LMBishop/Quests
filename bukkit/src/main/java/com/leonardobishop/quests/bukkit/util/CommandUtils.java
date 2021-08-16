@@ -73,7 +73,7 @@ public class CommandUtils {
         OfflinePlayer ofp = Bukkit.getOfflinePlayer(name);
         UUID uuid;
         String username;
-        if (ofp.hasPlayedBefore()) {
+        if (ofp.getName() != null) {
             uuid = ofp.getUniqueId();
             username = ofp.getName();
         } else {
