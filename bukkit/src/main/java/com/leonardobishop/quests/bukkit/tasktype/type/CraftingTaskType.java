@@ -3,6 +3,8 @@ package com.leonardobishop.quests.bukkit.tasktype.type;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
+import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
@@ -28,7 +30,7 @@ import java.util.List;
 public final class CraftingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
-    private final Table<String, String, ItemStack> fixedItemStackCache = HashBasedTable.create();
+    private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
 
     public CraftingTaskType(BukkitQuestsPlugin plugin) {
         super("crafting", TaskUtils.TASK_ATTRIBUTION_STRING, "Craft a specific item.");
@@ -48,7 +50,7 @@ public final class CraftingTaskType extends BukkitTaskType {
 
     @Override
     public void onReady() {
-        fixedItemStackCache.clear();
+        fixedQuestItemCache.clear();
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -87,13 +89,13 @@ public final class CraftingTaskType extends BukkitTaskType {
                     Object configBlock = task.getConfigValue("item");
                     Object configData = task.getConfigValue("data");
 
-                    ItemStack is;
-                    if ((is = fixedItemStackCache.get(quest.getId(), task.getId())) == null) {
+                    QuestItem qi;
+                    if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
                         if (configBlock instanceof ConfigurationSection) {
-                            is = plugin.getItemStack("", (ConfigurationSection) configBlock);
+                            qi = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
                         } else {
                             material = Material.getMaterial(String.valueOf(configBlock));
-
+                            ItemStack is;
                             if (material == null) {
                                 continue;
                             }
@@ -102,11 +104,12 @@ public final class CraftingTaskType extends BukkitTaskType {
                             } else {
                                 is = new ItemStack(material, 1);
                             }
+                            qi = new ParsedQuestItem("parsed", null, is);
                         }
-                        fixedItemStackCache.put(quest.getId(), task.getId(), is);
+                        fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
                     }
 
-                    if (!clickedItem.isSimilar(is)) continue;
+                    if (!qi.compareItemStack(clickedItem)) continue;
 
                     int progress;
                     if (taskProgress.getProgress() == null) {

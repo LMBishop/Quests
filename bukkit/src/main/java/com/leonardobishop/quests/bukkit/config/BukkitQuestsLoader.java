@@ -2,6 +2,8 @@ package com.leonardobishop.quests.bukkit.config;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
+import com.leonardobishop.quests.bukkit.item.MMOItemsQuestItem;
+import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItemRegistry;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
@@ -19,6 +21,7 @@ import com.leonardobishop.quests.common.questcontroller.QuestController;
 import com.leonardobishop.quests.common.tasktype.TaskType;
 import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -100,7 +103,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
         }
 
         for (String id : categories.getKeys(false)) {
-            ItemStack displayItem = plugin.getItemStack(id + ".display", categories);
+            ItemStack displayItem = plugin.getConfiguredItemStack(id + ".display", categories);
             boolean permissionRequired = categories.getBoolean(id + ".permission-required", false);
 
             Category category = new Category(id, permissionRequired);
@@ -347,18 +350,24 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         return FileVisitResult.CONTINUE;
                     }
 
-                    ItemStack itemStack;
+                    QuestItem item;
                     switch (config.getString("type", "").toLowerCase()) {
                         default:
                             return FileVisitResult.CONTINUE;
                         case "raw":
-                            itemStack = config.getItemStack("item");
+                            item = new ParsedQuestItem("raw", id, config.getItemStack("item"));
                             break;
                         case "defined":
-                            itemStack = plugin.getItemStack("item", config);
+                            item = new ParsedQuestItem("defined", id, plugin.getItemGetter().getItem("item", config));
+                            break;
+                        case "mmoitems":
+                            if (!Bukkit.getPluginManager().isPluginEnabled("MMOItems")) return FileVisitResult.CONTINUE;
+                            item = new MMOItemsQuestItem(id, config.getString("item.type"), config.getString("item.id"));
+                            break;
                     }
 
-                    questItemRegistry.registerItem(id, new QuestItem(id, itemStack));
+                    questItemRegistry.registerItem(id, item);
+
                 } catch (Exception e) {
                     questsLogger.severe("An exception occurred when attempting to load quest item '" + path + "' (will be ignored)");
                     e.printStackTrace();
@@ -406,7 +415,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
         String name;
         name = Chat.color(cName);
 
-        ItemStack is = plugin.getItemStack(path, config,
+        ItemStack is = plugin.getConfiguredItemStack(path, config,
                 ItemGetter.Filter.DISPLAY_NAME, ItemGetter.Filter.LORE, ItemGetter.Filter.ENCHANTMENTS, ItemGetter.Filter.ITEM_FLAGS);
 
         return new QItemStack(plugin, name, loreNormal, loreStarted, is);

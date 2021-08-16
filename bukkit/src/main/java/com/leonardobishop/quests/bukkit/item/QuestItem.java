@@ -5,21 +5,29 @@ import org.bukkit.inventory.ItemStack;
 /**
  * Represents a single quest item.
  */
-public class QuestItem {
+public abstract class QuestItem {
 
+    private final String type;
     private final String id;
-    private final ItemStack itemStack;
 
-    public QuestItem(String id, ItemStack itemStack) {
+    public QuestItem(String type, String id) {
+        this.type = type;
         this.id = id;
-        this.itemStack = itemStack;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getId() {
         return id;
     }
 
-    public ItemStack getItemStack() {
-        return itemStack;
+    public boolean isTemporary() {
+        return type == null;
     }
+
+    public abstract ItemStack getItemStack();
+
+    public abstract boolean compareItemStack(ItemStack other);
 }

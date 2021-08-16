@@ -1,6 +1,5 @@
 package com.leonardobishop.quests.bukkit;
 
-import com.leonardobishop.quests.bukkit.command.QuestCommandHandler;
 import com.leonardobishop.quests.bukkit.command.QuestsCommandSwitcher;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsLoader;
@@ -18,6 +17,8 @@ import com.leonardobishop.quests.bukkit.hook.title.Title;
 import com.leonardobishop.quests.bukkit.hook.title.Title_Bukkit;
 import com.leonardobishop.quests.bukkit.hook.title.Title_BukkitNoTimings;
 import com.leonardobishop.quests.bukkit.hook.title.Title_Other;
+import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
+import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItemRegistry;
 import com.leonardobishop.quests.bukkit.listener.PlayerJoinListener;
 import com.leonardobishop.quests.bukkit.listener.PlayerLeaveListener;
@@ -397,11 +398,16 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
     }
 
-    public ItemStack getItemStack(String path, ConfigurationSection config, ItemGetter.Filter... excludes) {
+    public QuestItem getConfiguredQuestItem(String path, ConfigurationSection config, ItemGetter.Filter... excludes) {
         if (config.contains(path + ".quest-item")) {
-            return questItemRegistry.getItem(config.getString(path + ".quest-item")).getItemStack();
+            return questItemRegistry.getItem(config.getString(path + ".quest-item"));
         }
 
+        return new ParsedQuestItem("defined", null, getConfiguredItemStack(path, config, excludes));
+    }
+
+
+    public ItemStack getConfiguredItemStack(String path, ConfigurationSection config, ItemGetter.Filter... excludes) {
         return itemGetter.getItem(path, config, excludes);
     }
 

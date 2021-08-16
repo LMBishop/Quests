@@ -42,8 +42,9 @@ public class TaskProgress {
     }
 
     public void setProgress(Object progress) {
+        if (this.progress != progress) this.modified = true;
+
         this.progress = progress;
-        this.modified = true;
     }
 
     public UUID getPlayer() {

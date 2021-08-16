@@ -16,6 +16,10 @@ public class QuestItemRegistry {
         Objects.requireNonNull(id, "id cannot be null");
         Objects.requireNonNull(item, "item cannot be null");
 
+        if (item.getId() == null) {
+            throw new IllegalArgumentException("null id cannot be registered");
+        }
+
         registry.put(id, item);
     }
 

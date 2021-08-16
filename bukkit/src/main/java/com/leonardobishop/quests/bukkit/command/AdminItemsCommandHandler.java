@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.bukkit.command;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -13,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class AdminItemsCommandHandler implements CommandHandler {
         if (args.length < 4) {
             sender.sendMessage(ChatColor.GRAY + "Imported items");
             for (QuestItem questItem : plugin.getQuestItemRegistry().getAllItems()) {
-                sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + questItem.getId());
+                sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + questItem.getId() + " (" + questItem.getType() + ")");
             }
             sender.sendMessage(ChatColor.GRAY.toString() + plugin.getQuestItemRegistry().getAllItems().size() + " items imported.");
             sender.sendMessage(ChatColor.DARK_GRAY + "Import a new held item using /q a items import <id>.");
@@ -61,7 +61,7 @@ public class AdminItemsCommandHandler implements CommandHandler {
             item.set("item", held);
             try {
                 item.save(file);
-                plugin.getQuestItemRegistry().registerItem(id, new QuestItem(id, held));
+                plugin.getQuestItemRegistry().registerItem(id, new ParsedQuestItem("raw", id, held));
                 sender.sendMessage(ChatColor.GRAY + "Held item saved to 'items/" + id + ".yml'. This can be referenced within tasks by the id '" + id + "'.");
             } catch (IOException e) {
                 e.printStackTrace();

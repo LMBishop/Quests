@@ -67,7 +67,7 @@ public class QuestQMenu implements QMenu {
                 int repeat = plugin.getConfig().getInt(path + "." + s + ".repeat");
                 MenuElement menuElement;
                 if (plugin.getConfig().contains(path + "." + s + ".display")) {
-                    ItemStack is = plugin.getItemStack(path + "." + s + ".display", plugin.getConfig());
+                    ItemStack is = plugin.getConfiguredItemStack(path + "." + s + ".display", plugin.getConfig());
                     menuElement = new CustomMenuElement(is);
                 } else if (plugin.getConfig().getBoolean(path + "." + s + ".spacer", false)) {
                     menuElement = new SpacerMenuElement();

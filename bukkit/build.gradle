@@ -100,6 +100,9 @@ dependencies {
     compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:latest'
     // VotingPlugin
     compileOnly 'com.bencodez:votingplugin:6.5.2'
+    // MMOItems
+    compileOnly 'net.Indyuce:MMOItems:6.5'
+    compileOnly 'io.lumine:MythicLib:1.1.1'
     // bStats
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
     // HikariCP

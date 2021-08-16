@@ -3,6 +3,8 @@ package com.leonardobishop.quests.bukkit.tasktype.type;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
+import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
@@ -29,8 +31,8 @@ import java.util.List;
 public final class InventoryTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
-    private final Table<String, String, ItemStack> fixedItemStackCache = HashBasedTable.create();
-    
+    private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
+
     public InventoryTaskType(BukkitQuestsPlugin plugin) {
         super("inventory", TaskUtils.TASK_ATTRIBUTION_STRING, "Obtain a set of items.");
         this.plugin = plugin;
@@ -51,7 +53,7 @@ public final class InventoryTaskType extends BukkitTaskType {
 
     @Override
     public void onReady() {
-        fixedItemStackCache.clear();
+        fixedQuestItemCache.clear();
     }
 
     @SuppressWarnings("deprecation")
@@ -97,13 +99,13 @@ public final class InventoryTaskType extends BukkitTaskType {
                     Object configData = task.getConfigValue("data");
                     Object remove = task.getConfigValue("remove-items-when-complete");
 
-                    ItemStack is;
-                    if ((is = fixedItemStackCache.get(quest.getId(), task.getId())) == null) {
+                    QuestItem qi;
+                    if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
                         if (configBlock instanceof ConfigurationSection) {
-                            is = plugin.getItemStack("", (ConfigurationSection) configBlock);
+                            qi = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
                         } else {
                             material = Material.getMaterial(String.valueOf(configBlock));
-
+                            ItemStack is;
                             if (material == null) {
                                 continue;
                             }
@@ -112,45 +114,50 @@ public final class InventoryTaskType extends BukkitTaskType {
                             } else {
                                 is = new ItemStack(material, 1);
                             }
+                            qi = new ParsedQuestItem("parsed", null, is);
                         }
-                        fixedItemStackCache.put(quest.getId(), task.getId(), is);
+                        fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
                     }
 
-                    if (task.getConfigValue("update-progress") != null
-                            && (Boolean) task.getConfigValue("update-progress")) {
-                        int inInv = getAmount(player, is, amount);
-                        if (taskProgress.getProgress() != null && (int) taskProgress.getProgress() != inInv) {
-                            taskProgress.setProgress(inInv);
-                        } else if (taskProgress.getProgress() == null) {
-                            taskProgress.setProgress(inInv);
-                        }
-                    }
+                    int[] amountPerSlot = getAmountsPerSlot(player, qi);
+                    int total = Math.min(amountPerSlot[36], amount);
+                    taskProgress.setProgress(total);
 
-                    if (player.getInventory().containsAtLeast(is, amount)) {
-                        is.setAmount(amount);
+                    if (total >= amount) {
                         taskProgress.setCompleted(true);
 
-                        if (remove != null && ((Boolean) remove)) {
-                            player.getInventory().removeItem(is);
-                        }
+                        if (remove != null && ((Boolean) remove)) removeItemsInSlots(player, amountPerSlot, total);
                     }
                 }
             }
         }
     }
 
-    private int getAmount(Player player, ItemStack is, int max) {
-        if (is == null) {
-            return 0;
-        }
-        int amount = 0;
+    private int[] getAmountsPerSlot(Player player, QuestItem qi) {
+        int[] slotToAmount = new int[37];
+        // idx 36 = total
         for (int i = 0; i < 36; i++) {
             ItemStack slot = player.getInventory().getItem(i);
-            if (slot == null || !slot.isSimilar(is))
+            if (slot == null || !qi.compareItemStack(slot))
                 continue;
-            amount += slot.getAmount();
+            slotToAmount[36] = slotToAmount[36] + slot.getAmount();
+            slotToAmount[i] = slot.getAmount();
         }
-        return Math.min(amount, max);
+        return slotToAmount;
     }
 
+    private void removeItemsInSlots(Player player, int[] amountPerSlot, int amountToRemove) {
+        for (int i = 0; i < 36; i++) {
+            if (amountPerSlot[i] == 0) continue;
+
+            ItemStack slot = player.getInventory().getItem(i);
+            if (slot == null) continue;
+
+            int amountInStack = slot.getAmount();
+            int min = Math.max(0, amountInStack - amountToRemove);
+            slot.setAmount(min);
+            amountToRemove = amountToRemove - amountInStack;
+            if (amountToRemove <= 0) break;
+        }
+    }
 }

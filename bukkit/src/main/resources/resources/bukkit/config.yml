@@ -299,7 +299,7 @@ titles:
 messages:
   time-format: "{hours}h {minutes}m"
   quest-start: "&7Quest &c{quest} &7started!"
-  quest-complete: "&7Quest &c{quest} &completed!"
+  quest-complete: "&7Quest &c{quest} &7completed!"
   quest-cancel: "&7Quest &c{quest} &7cancelled!"
   quest-track: "&7Tracking quest &c{quest}&7."
   quest-track-stop: "&7No longer tracking quest &c{quest}&7."
