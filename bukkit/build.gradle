@@ -103,6 +103,8 @@ dependencies {
     // MMOItems
     compileOnly 'net.Indyuce:MMOItems:6.5'
     compileOnly 'io.lumine:MythicLib:1.1.1'
+    // Slimefun4
+    compileOnly 'com.github.Slimefun:Slimefun4:RC-26'
     // bStats
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
     // HikariCP

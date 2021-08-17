@@ -2,10 +2,7 @@ package com.leonardobishop.quests.bukkit.config;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
-import com.leonardobishop.quests.bukkit.item.MMOItemsQuestItem;
-import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
-import com.leonardobishop.quests.bukkit.item.QuestItem;
-import com.leonardobishop.quests.bukkit.item.QuestItemRegistry;
+import com.leonardobishop.quests.bukkit.item.*;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStackRegistry;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
@@ -351,6 +348,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                     }
 
                     QuestItem item;
+                    //TODO convert to registry based service
                     switch (config.getString("type", "").toLowerCase()) {
                         default:
                             return FileVisitResult.CONTINUE;
@@ -363,6 +361,10 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         case "mmoitems":
                             if (!Bukkit.getPluginManager().isPluginEnabled("MMOItems")) return FileVisitResult.CONTINUE;
                             item = new MMOItemsQuestItem(id, config.getString("item.type"), config.getString("item.id"));
+                            break;
+                        case "slimefun":
+                            if (!Bukkit.getPluginManager().isPluginEnabled("Slimefun")) return FileVisitResult.CONTINUE;
+                            item = new SlimefunQuestItem(id, config.getString("item.id"));
                             break;
                     }
 
