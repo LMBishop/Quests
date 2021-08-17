@@ -10,7 +10,7 @@ allprojects {
     apply plugin: 'java'
 
     group = 'com.leonardobishop'
-    version = '3.8'
+    version = '3.9'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
