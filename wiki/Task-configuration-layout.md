@@ -621,7 +621,8 @@ Buy something from a ShopGUI+ shop.
 ```yaml
 shopguiplusbuy:
   type: "shopguiplus_buycertain"
-  id: "item_id"                         # shopgui+ id of item to buy
+  shop-id: "shop_id"                    # shopgui+ id of the shop that contains the item.
+  item-id: "item_id"                         # shopgui+ id of item to buy
   amount: 1000                          # amount of thing to buy
 ```
 ## `shopguiplus_sellcertain`
@@ -629,7 +630,8 @@ Sell something to a ShopGUI+ shop.
 ```yaml
 shopguiplussell:
   type: "shopguiplus_sellcertain"
-  id: "item_id"                         # shopgui+ id of item to sell
+  shop-id: "shop_id"                    # shopgui+ id of the shop that contains the item.
+  item-id: "item_id"                         # shopgui+ id of item to sell
   amount: 1000                          # amount of thing to sell
 ```
 ## `fabledskyblock_level`
