@@ -45,7 +45,7 @@ public class ItemGetterLatest implements ItemGetter {
         }
         List<Filter> filters = Arrays.asList(excludes);
 
-        String cName = config.getString(path + "name", path + "name");
+        String cName = config.getString(path + "name");
         String cType = config.getString(path + "item", config.getString(path + "type", path + "item"));
         boolean hasCustomModelData = config.contains(path + "custommodeldata");
         int customModelData = config.getInt(path + "custommodeldata", 0);
@@ -54,10 +54,6 @@ public class ItemGetterLatest implements ItemGetter {
         List<String> cItemFlags = config.getStringList(path + "itemflags");
         boolean hasAttributeModifiers = config.contains(path + "attributemodifiers");
         List<Map<?, ?>> cAttributeModifiers = config.getMapList(path + "attributemodifiers");
-
-        String name;
-        Material type = null;
-        int data = 0;
 
         // material
         ItemStack is = getItemStack(cType);
@@ -98,8 +94,9 @@ public class ItemGetterLatest implements ItemGetter {
 
         // name
         if (!filters.contains(Filter.DISPLAY_NAME)) {
-            name = Chat.color(cName);
-            ism.setDisplayName(name);
+            if (cName != null) {
+                ism.setDisplayName(Chat.color(cName));
+            }
         }
 
         // lore

@@ -41,14 +41,10 @@ public class ItemGetter_Late_1_8 implements ItemGetter {
         List<Filter> filters = Arrays.asList(excludes);
 
 
-        String cName = config.getString(path + "name", path + "name");
+        String cName = config.getString(path + "name");
         String cType = config.getString(path + "item", config.getString(path + "type", path + "item"));
         List<String> cLore = config.getStringList(path + "lore");
         List<String> cItemFlags = config.getStringList(path + "itemflags");
-
-        String name;
-        Material type = null;
-        int data = 0;
 
         // material
         ItemStack is = getItemStack(cType);
@@ -96,8 +92,9 @@ public class ItemGetter_Late_1_8 implements ItemGetter {
 
         // name
         if (!filters.contains(Filter.DISPLAY_NAME)) {
-            name = Chat.color(cName);
-            ism.setDisplayName(name);
+            if (cName != null) {
+                ism.setDisplayName(Chat.color(cName));
+            }
         }
 
 
