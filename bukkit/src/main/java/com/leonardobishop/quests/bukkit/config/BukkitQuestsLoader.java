@@ -418,7 +418,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
         name = Chat.color(cName);
 
         ItemStack is = plugin.getConfiguredItemStack(path, config,
-                ItemGetter.Filter.DISPLAY_NAME, ItemGetter.Filter.LORE, ItemGetter.Filter.ENCHANTMENTS, ItemGetter.Filter.ITEM_FLAGS);
+                ItemGetter.Filter.DISPLAY_NAME, ItemGetter.Filter.LORE, ItemGetter.Filter.ENCHANTMENTS);
 
         return new QItemStack(plugin, name, loreNormal, loreStarted, is);
     }
