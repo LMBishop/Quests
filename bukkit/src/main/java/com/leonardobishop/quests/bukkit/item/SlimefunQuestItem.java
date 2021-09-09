@@ -1,8 +1,6 @@
 package com.leonardobishop.quests.bukkit.item;
 
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
-import net.Indyuce.mmoitems.MMOItems;
-import net.Indyuce.mmoitems.api.Type;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import org.bukkit.inventory.ItemStack;
 
 public class SlimefunQuestItem extends QuestItem {
@@ -16,7 +14,11 @@ public class SlimefunQuestItem extends QuestItem {
 
     @Override
     public ItemStack getItemStack() {
-        return SlimefunItem.getByID(slimefunId).getItem();
+        SlimefunItem item = SlimefunItem.getById(slimefunId);
+        if (item == null) {
+            return null;
+        }
+        return item.getItem();
     }
 
     @Override
