@@ -68,7 +68,7 @@ public class QuestQMenu implements QMenu {
                 MenuElement menuElement;
                 if (plugin.getConfig().contains(path + "." + s + ".display")) {
                     ItemStack is = plugin.getConfiguredItemStack(path + "." + s + ".display", plugin.getConfig());
-                    menuElement = new CustomMenuElement(is);
+                    menuElement = new CustomMenuElement(plugin, owner.getPlayerUUID(), is);
                 } else if (plugin.getConfig().getBoolean(path + "." + s + ".spacer", false)) {
                     menuElement = new SpacerMenuElement();
                 } else continue; // user = idiot
