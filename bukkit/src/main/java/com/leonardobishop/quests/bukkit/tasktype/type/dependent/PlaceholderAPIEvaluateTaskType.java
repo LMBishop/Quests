@@ -107,6 +107,7 @@ public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
                                         } catch (NumberFormatException ex) {
                                             continue;
                                         }
+                                        taskProgress.setProgress(numericEvaluated);
                                         switch (operator) {
                                             case GREATER_THAN:
                                                 if (numericEvaluated > numericEvaluates)
