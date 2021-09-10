@@ -19,4 +19,13 @@ body:
       description: |
         Describe the change in full.
     validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Page Markup
+      description: |
+        If you are describing an edit, it would be helpful if you posted the revised markup for the **whole** page here. Please see the wiki for instructions on how to do this.
+        This field is not required.
+      render: true
+    validations:
       required: false

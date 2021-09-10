@@ -26,6 +26,7 @@ body:
       description: |
         State the Minecraft version and server software this bug is present on.
         You can identify your server software by running `/version`, and your Quests version by running `/version Quests`.
+        **Note:** simply stating "Latest version" is **not** enough! You must include an actual version string for all versions.
       value: |
           - Minecraft version:
           - Server software:
