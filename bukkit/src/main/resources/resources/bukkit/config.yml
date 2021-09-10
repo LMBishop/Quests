@@ -25,6 +25,22 @@
 
 # Trying to add new categories? This has been moved to categories.yml
 
+#Default section doesn't require any permission
+command:
+  player-help:
+    default-start:
+      - "&7&m------------=[&c Quests v%version% &7&m]=------------"
+      - "&7The following commands are available: "
+      - "&8 * &c/quests &8: show quests"
+      - "&8 * &c/quests c/category <categoryid> &8: open category by ID"
+      - "&8 * &c/quests q/quest <questid> (start|cancel|track) &8: start, cancel or track quest by ID"
+      - "&8 * &c/quests started &8: show started quests"
+    random:
+      - "&8 * &c/quests random &8: show random quests"
+    admin:
+      - "&8 * &c/quests a/admin &8: view help for admins"
+    default-end:
+      - "&7&m--------=[&c made with <3 by LMBishop &7&m]=--------"
 # The items listed below are placeholder items for quests which the player cannot start.
 # You should change these for 1.8
 gui:
