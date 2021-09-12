@@ -204,7 +204,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                                 break;
                                             case "completed":
                                             case "c":
-                                                result = String.valueOf(qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).isCompleted());
+                                                result = String.valueOf(qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).isCompleted() ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
                                                 break;
                                             default:
                                                 return args[0] + "_" + args[1] + "_" + args[2] + " is not a valid placeholder";
