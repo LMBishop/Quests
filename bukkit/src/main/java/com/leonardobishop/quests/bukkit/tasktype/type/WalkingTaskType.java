@@ -9,6 +9,8 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -64,6 +66,11 @@ public final class WalkingTaskType extends BukkitTaskType {
                         continue;
                     }
 
+                    if (task.getConfigValue("mode") != null
+                            && !validateTransportMethod(player, task.getConfigValue("mode").toString())) {
+                        continue;
+                    }
+
                     int distanceNeeded = (int) task.getConfigValue("distance");
 
                     int progressDistance;
@@ -80,6 +87,27 @@ public final class WalkingTaskType extends BukkitTaskType {
                     }
                 }
             }
+        }
+    }
+
+    private boolean validateTransportMethod(Player player, String mode) {
+        switch (mode.toLowerCase()) {
+            case "boat":
+                return player.getVehicle() != null && player.getVehicle().getType() == EntityType.BOAT;
+            case "horse":
+                return player.getVehicle() != null && player.getVehicle().getType() == EntityType.HORSE;
+            case "pig":
+                return player.getVehicle() != null && player.getVehicle().getType() == EntityType.PIG;
+            case "sneaking":
+                return player.isSneaking();
+            case "walking":
+                return !player.isSprinting();
+            case "running":
+                return player.isSprinting();
+            case "swimming":
+                return player.isSwimming();
+            default:
+                return false;
         }
     }
 
