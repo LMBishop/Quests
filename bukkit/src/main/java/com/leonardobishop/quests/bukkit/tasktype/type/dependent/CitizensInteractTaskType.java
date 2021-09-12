@@ -31,8 +31,11 @@ public final class CitizensInteractTaskType extends BukkitTaskType {
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        TaskUtils.configValidateExists(root + ".npc-name", config.get("npc-name"), problems, "npc-name", super.getType());
-        TaskUtils.configValidateBoolean(root + ".remove-items-when-complete", config.get("remove-items-when-complete"), problems, true, "remove-items-when-complete", super.getType());
+        if (!config.containsKey("npc-name")) {
+            TaskUtils.configValidateExists(root + ".npc-id", config.get("npc-id"), problems, "npc-id", super.getType());
+        } else {
+            TaskUtils.configValidateExists(root + ".npc-name", config.get("npc-name"), problems, "npc-name", super.getType());
+        }
         return problems;
     }
 
@@ -50,9 +53,13 @@ public final class CitizensInteractTaskType extends BukkitTaskType {
                 for (Task task : quest.getTasksOfType(super.getType())) {
                     if (!TaskUtils.validateWorld(event.getClicker(), task)) continue;
 
-                    if (!Chat.strip(Chat.color(String.valueOf(task.getConfigValue("npc-name"))))
-                            .equals(Chat.strip(Chat.color(event.getNPC().getName())))) {
-                        return;
+                    if (task.getConfigValue("npc-name") != null) {
+                        if (!Chat.strip(Chat.color(String.valueOf(task.getConfigValue("npc-name"))))
+                                .equals(Chat.strip(Chat.color(event.getNPC().getName())))) {
+                            continue;
+                        }
+                    } else if (!task.getConfigValue("npc-id").equals(event.getNPC().getId())) {
+                        continue;
                     }
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 

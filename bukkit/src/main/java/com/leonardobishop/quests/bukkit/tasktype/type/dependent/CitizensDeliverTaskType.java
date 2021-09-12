@@ -15,6 +15,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -45,7 +46,11 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
             TaskUtils.configValidateItemStack(root + ".item", config.get("item"), problems, false, "item");
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-        TaskUtils.configValidateExists(root + ".npc-name", config.get("npc-name"), problems, "npc-name", super.getType());
+        if (!config.containsKey("npc-name")) {
+            TaskUtils.configValidateExists(root + ".npc-id", config.get("npc-id"), problems, "npc-id", super.getType());
+        } else {
+            TaskUtils.configValidateExists(root + ".npc-name", config.get("npc-name"), problems, "npc-name", super.getType());
+        }
         TaskUtils.configValidateBoolean(root + ".remove-items-when-complete", config.get("remove-items-when-complete"), problems, true, "remove-items-when-complete", super.getType());
         return problems;
     }
@@ -57,11 +62,11 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onNPCClick(NPCRightClickEvent event) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(event.getClicker(), event.getNPC().getName()), 1L);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(event.getClicker(), event.getNPC()), 1L);
     }
 
     @SuppressWarnings("deprecation")
-    private void checkInventory(Player player, String citizenName) {
+    private void checkInventory(Player player, NPC npc) {
         if (player == null || !player.isOnline()) {
             return;
         }
@@ -75,9 +80,13 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
                 QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!Chat.strip(Chat.color(String.valueOf(task.getConfigValue("npc-name"))))
-                            .equals(Chat.strip(Chat.color(citizenName)))) {
-                        return;
+                    if (task.getConfigValue("npc-name") != null) {
+                        if (!Chat.strip(Chat.color(String.valueOf(task.getConfigValue("npc-name"))))
+                                .equals(Chat.strip(Chat.color(npc.getName())))) {
+                            continue;
+                        }
+                    } else if (!task.getConfigValue("npc-id").equals(npc.getId())) {
+                        continue;
                     }
                     if (!TaskUtils.validateWorld(player, task)) continue;
 
