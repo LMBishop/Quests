@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 
 public class QuestsCommandSwitcher extends CommandSwitcher implements TabExecutor {
 
@@ -76,21 +77,16 @@ public class QuestsCommandSwitcher extends CommandSwitcher implements TabExecuto
 
     @Override
     public void showHelp(CommandSender sender) {
-        sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "------------=[" + ChatColor.RED + " Quests v" + plugin
-                .getDescription().getVersion() + " " + ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "]=------------");
-        sender.sendMessage(ChatColor.GRAY + "The following commands are available: ");
-        sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests " + ChatColor.DARK_GRAY + ": show quests");
-        sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests c/category <categoryid> " + ChatColor.DARK_GRAY + ": open category by ID");
-        sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests q/quest <questid> (start|cancel|track) " + ChatColor.DARK_GRAY + ": start, cancel or track quest by ID");
-        sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests started " + ChatColor.DARK_GRAY + ": show started quests");
-        if (sender.hasPermission(subcommands.get("random").getPermission())) {
-            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests random " + ChatColor.DARK_GRAY + ": show random quests");
+        Set<String> permissions = plugin.getConfig().getConfigurationSection("command.player-help").getKeys(false);
+        for (String permission : permissions) {
+            if(!permission.contains("default") && !sender.hasPermission(subcommands.get(permission).getPermission())) continue;
+            for(String message : plugin.getConfig().getStringList("command.player-help."+permission)) {
+                if(message.contains("%version%")) {
+                    message = message.replace("%version%", plugin.getDescription().getVersion());
+                }
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+            }
         }
-        if (sender.hasPermission(subcommands.get("admin").getPermission())) {
-            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a/admin " + ChatColor.DARK_GRAY + ": view help for admins");
-        }
-        sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------=[" + ChatColor.RED + " made with <3 by LMBishop " + ChatColor
-                .GRAY.toString() + ChatColor.STRIKETHROUGH + "]=--------");
     }
 
     @Override
