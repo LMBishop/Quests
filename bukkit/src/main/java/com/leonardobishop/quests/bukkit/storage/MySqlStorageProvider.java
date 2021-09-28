@@ -93,6 +93,12 @@ public class MySqlStorageProvider implements StorageProvider {
         config.addDataSourceProperty("elideSetAutoCommits", true);
         config.addDataSourceProperty("maintainTimeStats", false);
 
+        if (configuration.isConfigurationSection("connection-pool-settings.data-source-properties")) {
+            for (String property : configuration.getConfigurationSection("connection-pool-settings.data-source-properties").getKeys(false)) {
+                config.addDataSourceProperty(property, configuration.get("connection-pool-settings.data-source-properties." + property));
+            }
+        }
+
         try {
             this.hikari = new HikariDataSource(config);
         } catch (Exception e) {
