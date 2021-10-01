@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit.listener;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.quest.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,6 +41,16 @@ public class PlayerJoinListener implements Listener {
                 if (qPlayer == null) return;
                 // run a full check to check for any missed quest completions
                 plugin.getQuestCompleter().queueFullCheck(qPlayer.getQuestProgressFile());
+
+                // track first quest
+                if (plugin.getConfig().getBoolean("options.allow-quest-track") && plugin.getConfig().getBoolean("options.quest-autotrack")) {
+                    for (Quest quest : plugin.getQuestManager().getQuests().values()) {
+                        if (qPlayer.hasStartedQuest(quest)) {
+                            qPlayer.trackQuest(quest);
+                            break;
+                        }
+                    }
+                }
             });
         }, plugin.getQuestsConfig().getInt("options.storage.synchronisation.delay-loading", 0));
     }
