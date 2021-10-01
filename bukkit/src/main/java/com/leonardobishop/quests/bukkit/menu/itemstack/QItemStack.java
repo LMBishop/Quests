@@ -134,8 +134,15 @@ public class QItemStack {
                     continue;
                 }
                 if (parts[1].equals("progress")) {
-                    String str = String.valueOf(questProgress.getTaskProgress(parts[0]).getProgress());
-                    s = s.replace("{" + m.group(1) + "}", (str.equals("null") ? String.valueOf(0) : str));
+                    Object progress = questProgress.getTaskProgress(parts[0]).getProgress();
+                    String str;
+                    if (progress instanceof Float || progress instanceof Double) {
+                        str = String.format(String.valueOf(progress), "%.2f");
+                    } else {
+                        str = String.valueOf(progress);
+                    }
+
+                    s = s.replace("{" + m.group(1) + "}", (progress == null ? String.valueOf(0) : str));
                 }
                 if (parts[1].equals("complete")) {
                     String str;
