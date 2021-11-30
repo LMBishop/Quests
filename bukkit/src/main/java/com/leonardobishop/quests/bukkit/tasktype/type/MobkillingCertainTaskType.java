@@ -103,7 +103,7 @@ public final class MobkillingCertainTaskType extends BukkitTaskType {
                         boolean validName = false;
                         for (String name : configNames) {
                             name = Chat.color(name);
-                            if (mob.getCustomName() == null || !mob.getCustomName().equals(name)) {
+                            if (mob.getCustomName() != null && !mob.getCustomName().equals(name)) {
                                 validName = true;
                                 break;
                             }
