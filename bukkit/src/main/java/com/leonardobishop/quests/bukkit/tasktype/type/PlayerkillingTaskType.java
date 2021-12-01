@@ -42,15 +42,12 @@ public final class PlayerkillingTaskType extends BukkitTaskType {
         Player killer = event.getEntity().getKiller();
         Entity mob = event.getEntity();
 
-        if (!(mob instanceof Player)) {
+        if (!(mob instanceof Player)
+            || killer == null
+            || killer.hasMetadata("NPC")
+            || mob == killer) {
             return;
         }
-
-        if (killer == null) {
-            return;
-        }
-
-        if (killer.hasMetadata("NPC")) return;
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(killer.getUniqueId());
         if (qPlayer == null) {
