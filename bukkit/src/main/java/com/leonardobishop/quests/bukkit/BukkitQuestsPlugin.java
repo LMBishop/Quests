@@ -340,6 +340,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 // not tested
                 taskTypeManager.registerTaskType(new VotingPluginVoteType(this));
             }
+            if (Bukkit.getPluginManager().isPluginEnabled("NuVotifier")) {
+                // not tested
+                taskTypeManager.registerTaskType(new NuVotifierVoteType(this));
+            }
 
             taskTypeManager.closeRegistrations();
             questsLogger.info(taskTypeManager.getTaskTypes().size() + " task types have been registered"

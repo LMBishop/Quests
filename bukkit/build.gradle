@@ -40,6 +40,8 @@ repositories {
     maven { url = 'https://repo.bg-software.com/repository/api/' }
     // VotingPlugin
     maven { url = 'https://nexus.bencodez.com/repository/maven-public/'}
+    // NuVotifier
+    maven { url = 'https://repo.leonardobishop.com/releases/'}
     mavenCentral()
 }
 
@@ -105,6 +107,8 @@ dependencies {
     compileOnly 'io.lumine:MythicLib:1.1.1'
     // Slimefun4
     compileOnly 'com.github.Slimefun:Slimefun4:RC-28'
+    // NuVotifier
+    compileOnly "com.vexsoftware:NuVotifier:2.7.3"
     // bStats
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
     // HikariCP
