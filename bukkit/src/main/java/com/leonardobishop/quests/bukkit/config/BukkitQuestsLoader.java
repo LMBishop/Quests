@@ -108,6 +108,9 @@ public class BukkitQuestsLoader implements QuestsLoader {
             qItemStackRegistry.register(category, displayItem);
         }
 
+        // <\$m\s*([^ ]+)\s*\$>
+        Pattern macroPattern = Pattern.compile("<\\$m\\s*([^ ]+)\\s*\\$>");
+
         FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) {
@@ -115,12 +118,35 @@ public class BukkitQuestsLoader implements QuestsLoader {
                     File questFile = new File(path.toUri());
                     URI relativeLocation = root.toURI().relativize(path.toUri());
 
-                    if (!questFile.getName().toLowerCase().endsWith(".yml")) return FileVisitResult.CONTINUE;
+                    if (!questFile.getName().toLowerCase().endsWith(".yml")) {
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    // process macros -- start
+                    String data = Files.readAllLines(path).stream().reduce("", String::concat);
+                    StringBuilder processed = new StringBuilder();
+                    Matcher matcher = macroPattern.matcher(data);
+
+                    int end = 0;
+                    while (matcher.find()) {
+                        String macro = matcher.group(1);
+                        String replacement = questsConfig.getString("global-macros." + macro, null);
+                        if (replacement == null) {
+                            replacement = matcher.group(0);
+                        }
+                        processed.append(data, end, matcher.start()).append(replacement);
+                        end = matcher.end();
+                    }
+
+                    if (end < data.length()) {
+                        processed.append(data, end, data.length());
+                    }
+                    // process macros -- end
 
                     YamlConfiguration config = new YamlConfiguration();
                     // test QUEST file integrity
                     try {
-                        config.load(questFile);
+                        config.load(processed.toString());
                     } catch (Exception ex) {
                         configProblems.put(relativeLocation.getPath(), Collections.singletonList(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR, ConfigProblemDescriptions.MALFORMED_YAML.getDescription())));
                         return FileVisitResult.CONTINUE;

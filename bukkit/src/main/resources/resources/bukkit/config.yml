@@ -285,6 +285,11 @@ global-quest-display:
       - "&eMiddle Click &7to stop tracking this quest."
       - "&eRight Click &7to cancel this quest."
 
+# Macros for faster quests configuration without having to repeat
+# yourself.
+# See wiki for more information.
+global-macros:
+  bar: "&6---&7---&6---"
 
 # Configure titles
 titles:
