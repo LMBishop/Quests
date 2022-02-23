@@ -99,9 +99,9 @@ dependencies {
         transitive = false
     }
     // SuperiorSkyblock
-    compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:latest'
+    compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:1.8.4'
     // VotingPlugin
-    compileOnly 'com.bencodez:votingplugin:6.5.2'
+    compileOnly 'com.bencodez:votingplugin:6.8.3'
     // MMOItems
     compileOnly 'net.Indyuce:MMOItems:6.5'
     compileOnly 'io.lumine:MythicLib:1.1.1'
