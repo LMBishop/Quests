@@ -18,6 +18,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
@@ -135,7 +136,7 @@ public final class CraftingTaskType extends BukkitTaskType {
 
         Player p = (Player) e.getWhoClicked();
 
-        if (e.isShiftClick()) {
+        if (e.isShiftClick() && e.getClick() != ClickType.CONTROL_DROP) {
             int itemsChecked = 0;
             int possibleCreations = 1;
 
