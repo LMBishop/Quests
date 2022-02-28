@@ -33,6 +33,7 @@ public class QuestCommandHandler implements CommandHandler {
             }
             if (quest == null) {
                 sender.sendMessage(Messages.COMMAND_QUEST_GENERAL_DOESNTEXIST.getMessage().replace("{quest}", args[1]));
+                return;
             }
             if (args[2].equalsIgnoreCase("s") || args[2].equalsIgnoreCase("start")) {
                 qPlayer.startQuest(quest);
@@ -45,13 +46,13 @@ public class QuestCommandHandler implements CommandHandler {
             }
             return;
         }
-        sender.sendMessage(ChatColor.RED + "/quests q/quest <categoryid> (start|cancel|track)");
+        sender.sendMessage(ChatColor.RED + "/quests q/quest <questid> (start|cancel|track)");
     }
 
     @Override
     public List<String> tabComplete(CommandSender sender, String[] args) {
         if (args.length == 2) {
-            return TabHelper.tabCompleteCategory(args[1]);
+            return TabHelper.tabCompleteQuests(args[1]);
         } else if (args.length == 3) {
             return TabHelper.matchTabComplete(args[2], Arrays.asList("start", "cancel", "track"));
         }
