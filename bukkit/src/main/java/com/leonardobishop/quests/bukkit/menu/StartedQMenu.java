@@ -28,6 +28,8 @@ public class StartedQMenu implements QMenu {
     private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
     private final int pageSize = 45;
     private final QPlayer owner;
+    private final ClickType trackClickType;
+    private final ClickType cancelClickType;
 
     private int pagePrevLocation = -1;
     private int pageNextLocation = -1;
@@ -37,6 +39,9 @@ public class StartedQMenu implements QMenu {
         this.plugin = plugin;
         this.config = (BukkitQuestsConfig) plugin.getQuestsConfig();
         this.owner = owner;
+
+        this.trackClickType = MenuUtils.getClickType(config, "options.gui-actions.track-quest");
+        this.cancelClickType = MenuUtils.getClickType(config, "options.gui-actions.cancel-quest");
     }
 
     public void populate(List<QuestSortWrapper> quests) {
@@ -164,10 +169,10 @@ public class StartedQMenu implements QMenu {
             // repeat from above
             String questid = slotsToQuestIds.get(event.getSlot() + (((currentPage) - 1) * pageSize));
             Quest quest = plugin.getQuestManager().getQuestById(questid);
-            if (event.getClick() == ClickType.MIDDLE && config.getBoolean("options.allow-quest-track")) {
+            if (event.getClick() == trackClickType) {
                 MenuUtils.handleMiddleClick(plugin, this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
                 return true;
-            } else if (event.getClick() == ClickType.RIGHT) {
+            } else if (event.getClick() == cancelClickType) {
                 MenuUtils.handleRightClick(plugin, this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
                 return true;
             }

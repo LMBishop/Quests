@@ -1,12 +1,14 @@
 package com.leonardobishop.quests.bukkit.util;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.menu.CancelQMenu;
 import com.leonardobishop.quests.bukkit.menu.MenuController;
 import com.leonardobishop.quests.bukkit.menu.QMenu;
 import com.leonardobishop.quests.common.quest.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -76,6 +78,15 @@ public class MenuUtils {
                     player.closeInventory();
                 }
             }
+        }
+    }
+
+    public static ClickType getClickType(BukkitQuestsConfig config, String path) {
+        String value = config.getString(path);
+        try {
+            return ClickType.valueOf(value);
+        } catch (IllegalArgumentException ignored) {
+            return null;
         }
     }
 

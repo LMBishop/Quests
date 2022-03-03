@@ -37,6 +37,9 @@ public class QuestQMenu implements QMenu {
     private final String categoryName;
     private final int pageSize = 45;
     private final QPlayer owner;
+    private final ClickType startClickType;
+    private final ClickType trackClickType;
+    private final ClickType cancelClickType;
 
     private int maxElement = 0;
     private int backButtonLocation = -1;
@@ -51,6 +54,10 @@ public class QuestQMenu implements QMenu {
         this.owner = owner;
         this.categoryName = categoryName;
         this.superMenu = superMenu;
+
+        this.startClickType = MenuUtils.getClickType(config, "options.gui-actions.start-quest");
+        this.trackClickType = MenuUtils.getClickType(config, "options.gui-actions.track-quest");
+        this.cancelClickType = MenuUtils.getClickType(config, "options.gui-actions.cancel-quest");
     }
 
     public void populate(List<Quest> quests) {
@@ -220,16 +227,16 @@ public class QuestQMenu implements QMenu {
             if (menuElement instanceof QuestMenuElement) {
                 QuestMenuElement questMenuElement = (QuestMenuElement) menuElement;
                 Quest quest = plugin.getQuestManager().getQuestById(questMenuElement.getQuestId());
-                if (event.getClick() == ClickType.LEFT) {
+                if (event.getClick() == startClickType) {
                     if (config.getBoolean("options.quest-autostart") || quest.isAutoStartEnabled()) return false;
                     if (owner.startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
                         event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
                     }
                     return true;
-                } else if (event.getClick() == ClickType.MIDDLE) {
+                } else if (event.getClick() == trackClickType) {
                     MenuUtils.handleMiddleClick(plugin, this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
                     return true;
-                } else if (event.getClick() == ClickType.RIGHT) {
+                } else if (event.getClick() == cancelClickType) {
                     MenuUtils.handleRightClick(plugin, this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
                     return true;
                 }
