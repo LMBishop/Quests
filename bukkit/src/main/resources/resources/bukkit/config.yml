@@ -193,9 +193,9 @@ options:
   gui-truncate-requirements: true
   # Set the action buttons for the GUI
   gui-actions:
-    start-quest: LEFT
-    track-quest: MIDDLE
-    cancel-quest: RIGHT
+    start-quest: "LEFT"
+    track-quest: "MIDDLE"
+    cancel-quest: "RIGHT"
   # Make it so players do not have to start quest themselves
   quest-autostart: false
   # Automatically track quests on start, and stop tracking on completion
