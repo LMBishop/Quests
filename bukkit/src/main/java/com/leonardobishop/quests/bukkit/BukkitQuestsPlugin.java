@@ -350,6 +350,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                     + (taskTypeManager.getSkipped() > 0 ? " (" + taskTypeManager.getSkipped() + " skipped due to exclusions or conflicting names)." : "."));
 
             reloadQuests();
+            if (!this.getConfigProblems().isEmpty()) {
+                questsLogger.warning("You have configuration issues preventing some quests from loading.");
+                questsLogger.warning("You can view these issues with the command: /q a config.");
+            }
 
             // Load players who were present during startup (i.e some idiot reloaded the server instead of restarted)
             for (Player player : Bukkit.getOnlinePlayers()) {
