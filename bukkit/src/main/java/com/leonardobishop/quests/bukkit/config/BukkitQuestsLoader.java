@@ -123,7 +123,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                     }
 
                     // process macros -- start
-                    String data = Files.readAllLines(path).stream().reduce("", String::concat);
+                    String data = Files.readAllLines(path).stream().reduce("", (a, b) -> a + "\n" + b);
                     StringBuilder processed = new StringBuilder();
                     Matcher matcher = macroPattern.matcher(data);
 
@@ -146,7 +146,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                     YamlConfiguration config = new YamlConfiguration();
                     // test QUEST file integrity
                     try {
-                        config.load(processed.toString());
+                        config.loadFromString(processed.toString());
                     } catch (Exception ex) {
                         configProblems.put(relativeLocation.getPath(), Collections.singletonList(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR, ConfigProblemDescriptions.MALFORMED_YAML.getDescription())));
                         return FileVisitResult.CONTINUE;
