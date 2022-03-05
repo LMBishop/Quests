@@ -1,7 +1,7 @@
 name: Quests
 
 # This will be replaced with the property "version" in build.gradle
-version: ${version}
+version: "${version}"
 
 main: com.leonardobishop.quests.bukkit.BukkitQuestsPlugin
 website: https://github.com/LMBishop/Quests
