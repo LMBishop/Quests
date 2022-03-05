@@ -55,9 +55,9 @@ public class QuestQMenu implements QMenu {
         this.categoryName = categoryName;
         this.superMenu = superMenu;
 
-        this.startClickType = MenuUtils.getClickType(config, "options.gui-actions.start-quest");
-        this.trackClickType = MenuUtils.getClickType(config, "options.gui-actions.track-quest");
-        this.cancelClickType = MenuUtils.getClickType(config, "options.gui-actions.cancel-quest");
+        this.startClickType = MenuUtils.getClickType(config, "options.gui-actions.start-quest", "LEFT");
+        this.trackClickType = MenuUtils.getClickType(config, "options.gui-actions.track-quest", "MIDDLE");
+        this.cancelClickType = MenuUtils.getClickType(config, "options.gui-actions.cancel-quest", "RIGHT");
     }
 
     public void populate(List<Quest> quests) {

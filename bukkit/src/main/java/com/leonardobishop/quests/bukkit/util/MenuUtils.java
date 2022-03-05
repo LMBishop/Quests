@@ -81,8 +81,8 @@ public class MenuUtils {
         }
     }
 
-    public static ClickType getClickType(BukkitQuestsConfig config, String path) {
-        String value = config.getString(path);
+    public static ClickType getClickType(BukkitQuestsConfig config, String path, String def) {
+        String value = config.getString(path, def);
         try {
             return ClickType.valueOf(value);
         } catch (IllegalArgumentException ignored) {

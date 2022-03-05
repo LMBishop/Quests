@@ -40,8 +40,8 @@ public class StartedQMenu implements QMenu {
         this.config = (BukkitQuestsConfig) plugin.getQuestsConfig();
         this.owner = owner;
 
-        this.trackClickType = MenuUtils.getClickType(config, "options.gui-actions.track-quest");
-        this.cancelClickType = MenuUtils.getClickType(config, "options.gui-actions.cancel-quest");
+        this.trackClickType = MenuUtils.getClickType(config, "options.gui-actions.track-quest", "MIDDLE");
+        this.cancelClickType = MenuUtils.getClickType(config, "options.gui-actions.cancel-quest", "RIGHT");
     }
 
     public void populate(List<QuestSortWrapper> quests) {
