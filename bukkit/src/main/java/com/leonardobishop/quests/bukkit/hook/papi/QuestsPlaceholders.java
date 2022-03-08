@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheable {
 
@@ -94,7 +95,8 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                     break;
                 case "started":
                 case "s":
-                    final List<Quest> listStarted = qPlayer.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.STARTED);
+                    //TODO cache started quests somewhere, or make a effective started method
+                    final List<Quest> listStarted = plugin.getQuestManager().getQuests().values().stream().filter(qPlayer::hasStartedQuest).collect(Collectors.toList());
                     result = (args.length == 1 ? String.valueOf(listStarted.size()) : parseList(listStarted, args[1], split));
                     break;
                 case "categories":
