@@ -39,9 +39,10 @@ public class QuestProgressFile {
     }
 
     /**
-     * Gets all started quests.
+     * Gets all manually started quests.
      * Note: if quest autostart is enabled then this may produce unexpected results as quests are
-     * not "started" by the player if autostart is true. Consider {@link QPlayer#hasStartedQuest(Quest)} instead.
+     * not "started" by the player if autostart is true. Consider {@link QPlayer#hasStartedQuest(Quest)}
+     * or {@link QPlayer#getEffectiveStartedQuests()} instead.
      *
      * @return list of started quests
      */

@@ -8,8 +8,10 @@ import com.leonardobishop.quests.common.questcontroller.QuestController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Represents a player.
@@ -71,6 +73,16 @@ public class QPlayer {
         Objects.requireNonNull(quest, "quest cannot be null");
 
         return questController.hasPlayerStartedQuest(this, quest);
+    }
+
+    /**
+     * Gets a list of quests which the player has effectively started. This includes quests started automatically.
+     *
+     * @return list of effectively started quests
+     */
+    public List<Quest> getEffectiveStartedQuests() {
+        // TODO this can be better
+        return plugin.getQuestManager().getQuests().values().stream().filter(q -> questController.hasPlayerStartedQuest(this, q)).collect(Collectors.toList());
     }
 
     /**

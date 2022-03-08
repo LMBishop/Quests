@@ -96,7 +96,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                 case "started":
                 case "s":
                     //TODO cache started quests somewhere, or make a effective started method
-                    final List<Quest> listStarted = plugin.getQuestManager().getQuests().values().stream().filter(qPlayer::hasStartedQuest).collect(Collectors.toList());
+                    final List<Quest> listStarted = qPlayer.getEffectiveStartedQuests();
                     result = (args.length == 1 ? String.valueOf(listStarted.size()) : parseList(listStarted, args[1], split));
                     break;
                 case "categories":
