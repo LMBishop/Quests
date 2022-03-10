@@ -81,7 +81,7 @@ dependencies {
         exclude group: 'net.citizensnpcs', module: 'citizens-v1_16_R3'
     }
     // PlaceholderAPI
-    compileOnly 'me.clip:placeholderapi:2.11.1'
+    compileOnly 'me.clip:placeholderapi:2.10.9'
     // EssentialsX
     compileOnly "net.ess3:EssentialsX:2.18.2"
     // ShopGUI+
