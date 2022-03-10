@@ -9,6 +9,10 @@ public class PlaceholderAPIHook implements AbstractPlaceholderAPIHook {
     private QuestsPlaceholders placeholder;
 
     public String replacePlaceholders(Player player, String text) {
+        if (text == null) {
+            return null;
+        }
+
         return PlaceholderAPI.setPlaceholders(player, text);
     }
 
