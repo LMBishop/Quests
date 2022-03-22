@@ -32,6 +32,12 @@ public class CancelCommandHandler implements CommandHandler {
         if (qPlayer.getQuestProgressFile().getStartedQuests().size() == 1) {
             quest = qPlayer.getQuestProgressFile().getStartedQuests().get(0);
         } else if (args.length >= 2) {
+            if (args[1].equals("*")) {
+                for (Quest startedQuest : qPlayer.getQuestProgressFile().getStartedQuests()) {
+                    qPlayer.cancelQuest(startedQuest);
+                }
+                return;
+            }
             quest = plugin.getQuestManager().getQuestById(args[1]);
             if (quest == null) {
                 Messages.COMMAND_QUEST_GENERAL_DOESNTEXIST.send(sender, "{quest}", args[1]);
