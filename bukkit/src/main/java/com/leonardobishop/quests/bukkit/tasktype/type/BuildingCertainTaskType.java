@@ -119,7 +119,7 @@ public final class BuildingCertainTaskType extends BukkitTaskType {
                         continue;
                     }
 
-                    if (task.getConfigValue("reverse-if-placed") != null && ((boolean) task.getConfigValue("reverse-if-placed"))) {
+                    if (task.getConfigValue("reverse-if-broken") != null && ((boolean) task.getConfigValue("reverse-if-broken"))) {
                         if (matchBlock(task, event.getBlock())) {
                             increment(task, taskProgress, -1);
                         }
