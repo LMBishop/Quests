@@ -23,7 +23,7 @@ public class CategoryCommandHandler implements CommandHandler {
     @Override
     public void handle(CommandSender sender, String[] args) {
         if (!plugin.getQuestsConfig().getBoolean("options.categories-enabled")) {
-            sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DISABLED.getMessage());
+            Messages.COMMAND_CATEGORY_OPEN_DISABLED.send(sender);
             return;
         }
         Player player = (Player) sender;
@@ -31,11 +31,11 @@ public class CategoryCommandHandler implements CommandHandler {
             Category category = plugin.getQuestManager().getCategoryById(args[1]);
             QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
             if (qPlayer == null) {
-                player.sendMessage(Messages.COMMAND_DATA_NOT_LOADED.getMessage());
+                Messages.COMMAND_DATA_NOT_LOADED.send(player);
                 return;
             }
             if (category == null) {
-                sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.getMessage().replace("{category}", args[1]));
+                Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.send(sender, "{category}", args[1]);
             } else {
                 plugin.getMenuController().openQuestCategory(qPlayer, category, null, false);
             }

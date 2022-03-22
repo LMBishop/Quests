@@ -1,7 +1,9 @@
 package com.leonardobishop.quests.bukkit.util;
 
+import com.google.common.base.Preconditions;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
+import org.bukkit.command.CommandSender;
 
 //TODO refactor this
 public enum Messages {
@@ -95,5 +97,27 @@ public enum Messages {
         if (message.equals(path)) message = def;
 
         return Chat.color(message);
+    }
+
+    public boolean send(CommandSender target, String... substitutions) {
+        return send(getMessage(), target, substitutions);
+    }
+
+    public static boolean send(String message, CommandSender target, String... substitutions) {
+        if (substitutions.length % 2 != 0) {
+            throw new IllegalArgumentException("uneven substitutions passed");
+        }
+
+        if (message == null || message.isEmpty()) {
+            return false;
+        }
+
+        String substitutedMessage = message;
+        for (int i = 0; i < substitutions.length ; i += 2) {
+            substitutedMessage = substitutedMessage.replace(substitutions[i], substitutions[i+1]);
+        }
+
+        target.sendMessage(substitutedMessage);
+        return true;
     }
 }

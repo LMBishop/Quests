@@ -28,7 +28,7 @@ public class RandomCommandHandler implements CommandHandler {
         Player player = (Player) sender;
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
-            player.sendMessage(Messages.COMMAND_DATA_NOT_LOADED.getMessage());
+            Messages.COMMAND_DATA_NOT_LOADED.send(player);
             return;
         }
         List<Quest> validQuests = new ArrayList<>();
@@ -41,7 +41,7 @@ public class RandomCommandHandler implements CommandHandler {
         } else {
             Category category = plugin.getQuestManager().getCategoryById(args[1]);
             if (category == null) {
-                sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.getMessage().replace("{category}", args[1]));
+                Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.send(sender, "{category}", args[1]);
             } else {
                 for (String questId : category.getRegisteredQuestIds()) {
                     Quest quest = plugin.getQuestManager().getQuestById(questId);
@@ -54,7 +54,7 @@ public class RandomCommandHandler implements CommandHandler {
         }
 
         if (validQuests.isEmpty()) {
-            player.sendMessage(Messages.QUEST_RANDOM_NONE.getMessage());
+            Messages.QUEST_RANDOM_NONE.send(player);
             return;
         }
         int random = ThreadLocalRandom.current().nextInt(0, validQuests.size());

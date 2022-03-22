@@ -44,7 +44,7 @@ public class AdminModdataRandomCommandHandler implements CommandHandler {
             } else {
                 Category category = plugin.getQuestManager().getCategoryById(args[4]);
                 if (category == null) {
-                    sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.getMessage().replace("{category}", args[1]));
+                    Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.send(sender, "{category}", args[1]);
                 } else {
                     for (String questId : category.getRegisteredQuestIds()) {
                         Quest quest = plugin.getQuestManager().getQuestById(questId);
@@ -58,12 +58,11 @@ public class AdminModdataRandomCommandHandler implements CommandHandler {
 
             if (validQuests.isEmpty()) {
                 if (fromCategory) {
-                    sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RANDOM_CATEGORY_NONE.getMessage()
-                            .replace("{player}", args[3])
-                            .replace("{category}", args[4]));
+                    Messages.COMMAND_QUEST_ADMIN_RANDOM_CATEGORY_NONE.send(sender,
+                            "{player}", args[3],
+                            "{category}", args[4]);
                 } else {
-                    sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RANDOM_NONE.getMessage()
-                            .replace("{player}", args[3]));
+                    Messages.COMMAND_QUEST_ADMIN_RANDOM_NONE.send(sender, "{player}", args[3]);
                 }
                 return;
             }
@@ -73,14 +72,14 @@ public class AdminModdataRandomCommandHandler implements CommandHandler {
 
             plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
             if (fromCategory) {
-                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RANDOM_CATEGORY_SUCCESS.getMessage()
-                        .replace("{player}", args[3])
-                        .replace("{category}", args[4])
-                        .replace("{quest}", quest.getId()));
+                Messages.COMMAND_QUEST_ADMIN_RANDOM_CATEGORY_SUCCESS.send(sender,
+                        "{player}", args[3],
+                        "{category}", args[4],
+                        "{quest}", quest.getId());
             } else {
-                sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RANDOM_SUCCESS.getMessage()
-                        .replace("{player}", args[3])
-                        .replace("{quest}", quest.getId()));
+                Messages.COMMAND_QUEST_ADMIN_RANDOM_SUCCESS.send(sender,
+                        "{player}", args[3],
+                        "{quest}", quest.getId());
             }
 
             if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {

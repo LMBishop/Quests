@@ -32,7 +32,7 @@ public class AdminModdataFullresetCommandHandler implements CommandHandler {
             if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
                 plugin.getPlayerManager().dropPlayer(qPlayer.getPlayerUUID());
             }
-            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_FULLRESET.getMessage().replace("{player}", args[3]));
+            Messages.COMMAND_QUEST_ADMIN_FULLRESET.send(sender, "{player}", args[3]);
 
             if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
                 plugin.getPlayerManager().dropPlayer(qPlayer.getPlayerUUID());

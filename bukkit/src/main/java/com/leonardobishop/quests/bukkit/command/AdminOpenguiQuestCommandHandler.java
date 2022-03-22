@@ -28,11 +28,12 @@ public class AdminOpenguiQuestCommandHandler implements CommandHandler {
                 QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                 if (qPlayer != null) {
                     plugin.getMenuController().openMainMenu(qPlayer);
-                    sender.sendMessage(Messages.COMMAND_QUEST_OPENQUESTS_ADMIN_SUCCESS.getMessage().replace("{player}", player.getName()));
+                    Messages.COMMAND_QUEST_OPENQUESTS_ADMIN_SUCCESS.send(sender,
+                            "{player}", player.getName());
                     return;
                 }
             }
-            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.getMessage().replace("{player}", args[3]));
+            Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.send(sender, "{player}", args[3]);
         }
 
         sender.sendMessage(ChatColor.RED + "/quests a/admin opengui q/quest <player>");

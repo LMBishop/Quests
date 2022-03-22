@@ -25,12 +25,12 @@ public class AdminOpenguiCategoryCommandHandler implements CommandHandler {
     public void handle(CommandSender sender, String[] args) {
         if (args.length > 4) {
             if (!plugin.getQuestsConfig().getBoolean("options.categories-enabled")) {
-                sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DISABLED.getMessage());
+                Messages.COMMAND_CATEGORY_OPEN_DISABLED.send(sender);
                 return;
             }
             Category category = plugin.getQuestManager().getCategoryById(args[4]);
             if (category == null) {
-                sender.sendMessage(Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.getMessage().replace("{category}", args[4]));
+                Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.send(sender, "{category}", args[4]);
                 return;
             }
             Player player = Bukkit.getPlayer(args[3]);
@@ -38,16 +38,16 @@ public class AdminOpenguiCategoryCommandHandler implements CommandHandler {
                 QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                 if (qPlayer != null) {
                     if (plugin.getMenuController().openQuestCategory(qPlayer, category, null, false) == 0) {
-                        sender.sendMessage(Messages.COMMAND_QUEST_OPENCATEGORY_ADMIN_SUCCESS.getMessage().replace("{player}", player.getName())
-                                .replace("{category}", category.getId()));
+                        Messages.COMMAND_QUEST_OPENCATEGORY_ADMIN_SUCCESS.send(sender,
+                                "{player}", player.getName(),
+                                "{category}", category.getId());
                     } else {
-                        sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_CATEGORY_PERMISSION.getMessage().replace("{player}", player.getName())
-                                .replace("{category}", category.getId()));
+                        Messages.COMMAND_QUEST_ADMIN_CATEGORY_PERMISSION.send(sender, "{player}", player.getName(), "{category}", category.getId());
                     }
                     return;
                 }
             }
-            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.getMessage().replace("{player}", args[3]));
+            Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.send(sender, "{player}", args[3]);
             return;
         }
 

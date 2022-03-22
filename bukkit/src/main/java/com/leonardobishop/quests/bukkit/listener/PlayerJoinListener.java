@@ -21,7 +21,7 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onEvent(PlayerJoinEvent event) {
         if (plugin.getDescription().getVersion().contains("beta") && event.getPlayer().hasPermission("quests.admin")) {
-            event.getPlayer().sendMessage(Messages.BETA_REMINDER.getMessage());
+            Messages.BETA_REMINDER.send(event.getPlayer());
         }
         if (plugin.getUpdater().isUpdateReady() && event.getPlayer().hasPermission("quests.admin")) {
             // delay for a bit so they actually see the message

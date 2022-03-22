@@ -36,7 +36,7 @@ public class AdminTypesCommandHandler implements CommandHandler {
                 }
             }
             if (taskType == null) {
-                sender.sendMessage(Messages.COMMAND_TASKVIEW_ADMIN_FAIL.getMessage().replace("{task}", args[2]));
+                Messages.COMMAND_TASKVIEW_ADMIN_FAIL.send(sender, "{task}", args[2]);
             } else {
                 sender.sendMessage(ChatColor.RED + "Task type: " + ChatColor.GRAY + taskType.getType());
                 sender.sendMessage(ChatColor.RED + "Author: " + ChatColor.GRAY + taskType.getAuthor());

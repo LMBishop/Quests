@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,11 +25,10 @@ public class AdminUpdateCommandHandler implements CommandHandler {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
             plugin.getUpdater().check();
             if (plugin.getUpdater().isUpdateReady()) {
-                String updateMessage = Messages.QUEST_UPDATER.getMessage()
-                        .replace("{newver}", plugin.getUpdater().getReturnedVersion())
-                        .replace("{oldver}", plugin.getUpdater().getInstalledVersion())
-                        .replace("{link}", plugin.getUpdater().getUpdateLink());
-                sender.sendMessage(updateMessage);
+                Messages.QUEST_UPDATER.send(sender,
+                        "{newver}", plugin.getUpdater().getReturnedVersion(),
+                        "{oldver}", plugin.getUpdater().getInstalledVersion(),
+                        "{link}", plugin.getUpdater().getUpdateLink());
             } else {
                 sender.sendMessage(ChatColor.GRAY + "No updates were found.");
             }

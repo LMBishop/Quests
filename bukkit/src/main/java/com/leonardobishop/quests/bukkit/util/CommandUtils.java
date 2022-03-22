@@ -77,17 +77,17 @@ public class CommandUtils {
             uuid = ofp.getUniqueId();
             username = ofp.getName();
         } else {
-            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.getMessage().replace("{player}", name));
+            Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.send(sender, "{player}", name);
             return null;
         }
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
         if (qPlayer == null) {
-            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_LOADDATA.getMessage().replace("{player}", username));
+            Messages.COMMAND_QUEST_ADMIN_LOADDATA.send(sender, "{player}", username);
             plugin.getPlayerManager().loadPlayer(uuid);
             qPlayer = plugin.getPlayerManager().getPlayer(uuid);
         }
         if (qPlayer == null) {
-            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_NODATA.getMessage().replace("{player}", username));
+            Messages.COMMAND_QUEST_ADMIN_NODATA.send(sender, "{player}", username);
             return null;
         }
         return qPlayer;

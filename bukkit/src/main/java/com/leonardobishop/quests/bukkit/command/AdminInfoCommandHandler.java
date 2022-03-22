@@ -39,7 +39,7 @@ public class AdminInfoCommandHandler implements CommandHandler {
         } else {
             Quest quest = plugin.getQuestManager().getQuestById(args[2]);
             if (quest == null) {
-                sender.sendMessage(Messages.COMMAND_QUEST_GENERAL_DOESNTEXIST.getMessage().replace("{quest}", args[2]));
+                Messages.COMMAND_QUEST_GENERAL_DOESNTEXIST.send(sender, "{quest}", args[2]);
             } else {
                 sender.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "Information for quest '" + quest.getId() + "'");
                 sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE + "Task configurations (" + quest.getTasks().size() + ")");

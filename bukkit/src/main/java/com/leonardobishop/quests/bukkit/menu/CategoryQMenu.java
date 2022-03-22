@@ -165,7 +165,7 @@ public class CategoryQMenu implements QMenu {
                 QuestQMenu questQMenu = categoryMenuElement.getQuestMenu();
                 if (plugin.getMenuController().openQuestCategory(owner,
                         plugin.getQuestManager().getCategoryById(questQMenu.getCategoryName()), questQMenu) != 0) {
-                    event.getWhoClicked().sendMessage(Messages.QUEST_CATEGORY_PERMISSION.getMessage());
+                    Messages.QUEST_CATEGORY_QUEST_PERMISSION.send(event.getWhoClicked());
                 } else {
                     return true;
                 }

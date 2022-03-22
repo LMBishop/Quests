@@ -85,8 +85,9 @@ public class NormalQuestController implements QuestController {
             PreStartQuestEvent preStartQuestEvent = new PreStartQuestEvent(player, qPlayer, questResultMessage, code);
             Bukkit.getPluginManager().callEvent(preStartQuestEvent);
             // PreStartQuestEvent -- end
-            if (preStartQuestEvent.getQuestResultMessage() != null && code != QuestStartResult.QUEST_SUCCESS)
-                player.sendMessage(preStartQuestEvent.getQuestResultMessage());
+            if (code != QuestStartResult.QUEST_SUCCESS) {
+                Messages.send(preStartQuestEvent.getQuestResultMessage(), player);
+            }
         }
         if (code == QuestStartResult.QUEST_SUCCESS) {
             QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
@@ -107,8 +108,7 @@ public class NormalQuestController implements QuestController {
                 PlayerStartQuestEvent questStartEvent = new PlayerStartQuestEvent(player, qPlayer, questProgress, questStartMessage);
                 Bukkit.getPluginManager().callEvent(questStartEvent);
                 // PlayerStartQuestEvent -- end
-                if (questStartEvent.getQuestStartMessage() != null)
-                    player.sendMessage(questStartEvent.getQuestStartMessage()); //Don't send a message if the event message is null
+                Messages.send(questStartEvent.getQuestStartMessage(), player);
                 if (config.getBoolean("options.titles-enabled")) {
                     plugin.getTitleHandle().sendTitle(player, Messages.TITLE_QUEST_START_TITLE.getMessage().replace("{quest}", displayName),
                             Messages.TITLE_QUEST_START_SUBTITLE.getMessage().replace("{quest}", displayName));
@@ -218,8 +218,7 @@ public class NormalQuestController implements QuestController {
                     }
                 }
             });
-            if (questFinishEvent.getQuestFinishMessage() != null)
-                player.sendMessage(questFinishEvent.getQuestFinishMessage());
+            Messages.send(questFinishEvent.getQuestFinishMessage(), player);
             if (config.getBoolean("options.titles-enabled")) {
                 plugin.getTitleHandle().sendTitle(player, Messages.TITLE_QUEST_COMPLETE_TITLE.getMessage().replace("{quest}", displayName),
                         Messages.TITLE_QUEST_COMPLETE_SUBTITLE.getMessage().replace("{quest}", displayName));
@@ -254,7 +253,7 @@ public class NormalQuestController implements QuestController {
         Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
         if (!questProgress.isStarted()) {
             if (player != null) {
-                player.sendMessage(Messages.QUEST_CANCEL_NOTSTARTED.getMessage());
+                Messages.QUEST_CANCEL_NOTSTARTED.send(player);
             }
             return false;
         }
@@ -270,9 +269,7 @@ public class NormalQuestController implements QuestController {
             PlayerCancelQuestEvent questCancelEvent = new PlayerCancelQuestEvent(player, qPlayer, questProgress, questCancelMessage);
             Bukkit.getPluginManager().callEvent(questCancelEvent);
             // PlayerCancelQuestEvent -- end
-            if (questCancelEvent.getQuestCancelMessage() != null) {
-                player.sendMessage(questCancelEvent.getQuestCancelMessage());
-            }
+            Messages.send(questCancelEvent.getQuestCancelMessage(), player);
             SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-cancel"));
         }
         if (config.getBoolean("options.allow-quest-track")
@@ -296,7 +293,7 @@ public class NormalQuestController implements QuestController {
                 if (currentTrackedQuestId != null && (currentTrackedQuest = plugin.getQuestManager().getQuestById(currentTrackedQuestId)) != null) {
                     QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(currentTrackedQuest);
                     String displayName = Chat.strip(qItemStack.getName());
-                    player.sendMessage(Messages.QUEST_TRACK_STOP.getMessage().replace("{quest}", displayName));
+                    Messages.QUEST_TRACK_STOP.send(player, "{quest}", displayName);
                 }
             }
         } else if (qPlayer.hasStartedQuest(quest)) {
@@ -305,7 +302,7 @@ public class NormalQuestController implements QuestController {
             qPlayer.getPlayerPreferences().setTrackedQuestId(quest.getId());
             if (player != null) {
                 Bukkit.getPluginManager().callEvent(new PlayerStartTrackQuestEvent(player, qPlayer));
-                player.sendMessage(Messages.QUEST_TRACK.getMessage().replace("{quest}", displayName));
+                Messages.QUEST_TRACK.send(player, "{quest}", displayName);
             }
         }
     }

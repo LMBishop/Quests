@@ -23,7 +23,7 @@ public class StartedCommandHandler implements CommandHandler {
         Player player = (Player) sender;
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
-            player.sendMessage(Messages.COMMAND_DATA_NOT_LOADED.getMessage());
+            Messages.COMMAND_DATA_NOT_LOADED.send(player);
             return;
         }
         plugin.getMenuController().openStartedQuests(qPlayer);

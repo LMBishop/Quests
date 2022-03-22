@@ -24,7 +24,7 @@ public class CancelCommandHandler implements CommandHandler {
         Player player = (Player) sender;
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
-            player.sendMessage(Messages.COMMAND_DATA_NOT_LOADED.getMessage());
+            Messages.COMMAND_DATA_NOT_LOADED.send(player);
             return;
         }
 
@@ -34,11 +34,11 @@ public class CancelCommandHandler implements CommandHandler {
         } else if (args.length >= 2) {
             quest = plugin.getQuestManager().getQuestById(args[1]);
             if (quest == null) {
-                sender.sendMessage(Messages.COMMAND_QUEST_GENERAL_DOESNTEXIST.getMessage().replace("{quest}", args[1]));
+                Messages.COMMAND_QUEST_GENERAL_DOESNTEXIST.send(sender, "{quest}", args[1]);
                 return;
             }
         } else {
-            sender.sendMessage(Messages.COMMAND_QUEST_CANCEL_SPECIFY.getMessage());
+            Messages.COMMAND_QUEST_CANCEL_SPECIFY.send(sender);
             return;
         }
         qPlayer.cancelQuest(quest);

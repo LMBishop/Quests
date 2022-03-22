@@ -29,13 +29,13 @@ public class AdminModdataResetCommandHandler implements CommandHandler {
             if (qPlayer == null) return;
             Quest quest = plugin.getQuestManager().getQuestById(args[4]);
             if (quest == null) {
-                sender.sendMessage(Messages.COMMAND_QUEST_START_DOESNTEXIST.getMessage().replace("{quest}", args[4]));
+                Messages.COMMAND_QUEST_START_DOESNTEXIST.send(sender, "{quest}", args[4]);
                 return;
             }
             QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
             questProgressFile.generateBlankQuestProgress(quest);
             plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
-            sender.sendMessage(Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.getMessage().replace("{player}", args[3]).replace("{quest}", quest.getId()));
+            Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.send(sender, "{player}", args[3], "{quest}", quest.getId());
 
             if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
                 plugin.getPlayerManager().dropPlayer(qPlayer.getPlayerUUID());
