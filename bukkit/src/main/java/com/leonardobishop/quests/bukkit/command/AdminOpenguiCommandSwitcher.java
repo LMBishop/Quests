@@ -15,11 +15,13 @@ public class AdminOpenguiCommandSwitcher extends CommandSwitcher {
 
         super.subcommands.put("quest", new AdminOpenguiQuestCommandHandler(plugin));
         super.subcommands.put("category", new AdminOpenguiCategoryCommandHandler(plugin));
+        super.subcommands.put("started", new AdminOpenguiStartedCommandHandler(plugin));
 
         super.aliases.put("q", "quest");
         super.aliases.put("quests", "quest");
         super.aliases.put("c", "category");
         super.aliases.put("categories", "category");
+        super.aliases.put("s", "started");
     }
 
     @Override
@@ -29,6 +31,8 @@ public class AdminOpenguiCommandSwitcher extends CommandSwitcher {
         sender.sendMessage(ChatColor.GRAY + "The following commands are available: ");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a opengui q/quest <player> " + ChatColor.DARK_GRAY + ": forcefully show" +
                 " quests for player");
+        sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a opengui s/started <player> " + ChatColor.DARK_GRAY + ": forcefully show" +
+                " started quests for player");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a opengui c/category <player> <category> " + ChatColor.DARK_GRAY + ": " +
                 "forcefully " +
                 "open category by ID for player");

@@ -39,6 +39,7 @@ public enum Messages {
     COMMAND_QUEST_GENERAL_DOESNTEXIST("messages.command-quest-general-doesntexist", "&7The specified quest '&c{quest}&7' does not exist."),
     COMMAND_QUEST_OPENCATEGORY_ADMIN_SUCCESS("messages.command-quest-opencategory-admin-success", "&7Opened category &c{category} &7for player &c{player}&7."),
     COMMAND_QUEST_OPENQUESTS_ADMIN_SUCCESS("messages.command-quest-openquests-admin-success", "&7Opened Quest GUI for player &c{player}&7."),
+    COMMAND_QUEST_OPENSTARTED_ADMIN_SUCCESS("messages.command-quest-openstarted-admin-success", "&7Opened started Quest GUI for player &c{player}&7."),
     COMMAND_QUEST_ADMIN_PLAYERNOTFOUND("messages.command-quest-admin-playernotfound", "&7Player '&c{player}&7' could not be found."),
     COMMAND_CATEGORY_OPEN_DOESNTEXIST("messages.command-category-open-doesntexist", "&7The specified category '&c{category}&7' does not exist."),
     COMMAND_CATEGORY_OPEN_DISABLED("messages.command-category-open-disabled", "&7Categories are disabled."),

@@ -333,6 +333,7 @@ messages:
   command-category-open-doesntexist: "&7The specified category '&c{category}&7' does not exist."
   command-quest-admin-playernotfound: "&7Player '&c{player}&7' could not be found."
   command-quest-openquests-admin-success: "&7Opened Quest GUI for player &c{player}&7."
+  command-quest-openstarted-admin-success: "&7Opened started Quest GUI for player &c{player}&7."
   command-quest-opencategory-admin-success: "&7Opened category &c{category} &7for player &c{player}&7."
   command-taskview-admin-fail: "&7Task type '&c{task}&7' does not exist."
   beta-reminder: "&cQuests > &7Reminder: you are currently using a &cbeta &7version of Quests. Please send bug reports to https://github.com/LMBishop/Quests/issues and check for updates regularly using &c/quests admin update&7!"
