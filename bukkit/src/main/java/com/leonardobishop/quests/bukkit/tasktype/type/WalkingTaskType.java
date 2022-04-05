@@ -98,7 +98,7 @@ public final class WalkingTaskType extends BukkitTaskType {
                 return player.getVehicle() != null && player.getVehicle().getType() == EntityType.HORSE;
             case "pig":
                 return player.getVehicle() != null && player.getVehicle().getType() == EntityType.PIG;
-            case "minecard":
+            case "minecart":
                 return player.getVehicle() != null && player.getVehicle().getType() == EntityType.MINECART;
             case "sneaking":
                 return player.isSneaking();
