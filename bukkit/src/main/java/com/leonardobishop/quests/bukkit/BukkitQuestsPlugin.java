@@ -17,6 +17,10 @@ import com.leonardobishop.quests.bukkit.hook.title.Title;
 import com.leonardobishop.quests.bukkit.hook.title.Title_Bukkit;
 import com.leonardobishop.quests.bukkit.hook.title.Title_BukkitNoTimings;
 import com.leonardobishop.quests.bukkit.hook.title.Title_Other;
+import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler;
+import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler16;
+import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler8;
+import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler9;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItemRegistry;
@@ -89,6 +93,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private AbstractEssentialsHook essentialsHook;
     private ItemGetter itemGetter;
     private Title titleHandle;
+    private VersionSpecificHandler versionSpecificHandler;
 
     private BukkitTask questAutoSaveTask;
     private BukkitTask questQueuePollTask;
@@ -203,6 +208,15 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             itemGetter = new ItemGetter_1_13();
         } else {
             itemGetter = new ItemGetterLatest();
+        }
+        // (version specific handler)
+        // TODO move above to version specific handlers
+        if (version <= 8) {
+            versionSpecificHandler = new VersionSpecificHandler8();
+        } else if (version <= 16) {
+            versionSpecificHandler = new VersionSpecificHandler9();
+        } else {
+            versionSpecificHandler = new VersionSpecificHandler16();
         }
 
         questsConfig.setItemGetter(itemGetter);
@@ -545,6 +559,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     public Title getTitleHandle() {
         return titleHandle;
+    }
+
+    public VersionSpecificHandler getVersionSpecificHandler() {
+        return versionSpecificHandler;
     }
 
     public QuestItemRegistry getQuestItemRegistry() {

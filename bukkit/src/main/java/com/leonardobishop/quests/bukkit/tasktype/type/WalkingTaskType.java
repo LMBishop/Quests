@@ -98,6 +98,8 @@ public final class WalkingTaskType extends BukkitTaskType {
                 return player.getVehicle() != null && player.getVehicle().getType() == EntityType.HORSE;
             case "pig":
                 return player.getVehicle() != null && player.getVehicle().getType() == EntityType.PIG;
+            case "minecard":
+                return player.getVehicle() != null && player.getVehicle().getType() == EntityType.MINECART;
             case "sneaking":
                 return player.isSneaking();
             case "walking":
@@ -106,6 +108,10 @@ public final class WalkingTaskType extends BukkitTaskType {
                 return player.isSprinting();
             case "swimming":
                 return player.isSwimming();
+            case "elytra":
+                return plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case "strider":
+                return plugin.getVersionSpecificHandler().isPlayerOnStrider(player);
             default:
                 return false;
         }
