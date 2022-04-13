@@ -1,6 +1,6 @@
 <p align="center">
-<img src="https://github.com/LMBishop/Quests/actions/workflows/build.yml/badge.svg">
 <img src="https://leonardobishop.com/~/artwork/questcompass2-256.png" width="200" height="200"><br>
+<img src="https://github.com/LMBishop/Quests/actions/workflows/build.yml/badge.svg">
 <img src="http://isitmaintained.com/badge/resolution/LMBishop/Quests.svg">
 <img src="http://isitmaintained.com/badge/open/LMBishop/Quests.svg">
 <img src="https://mc-download-badges.herokuapp.com/services/spigotsongoda/downloads.php?spigot=23696&songoda=quests-quests">
