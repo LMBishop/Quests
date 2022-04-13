@@ -24,13 +24,13 @@ public class QuestMenuElement extends MenuElement {
     private final BukkitQuestsPlugin plugin;
     private final BukkitQuestsConfig config;
     private final QPlayer owner;
-    private final String questId;
+    private final Quest quest;
 
-    public QuestMenuElement(BukkitQuestsPlugin plugin, QPlayer owner, String questId) {
+    public QuestMenuElement(BukkitQuestsPlugin plugin, QPlayer owner, Quest quest) {
         this.plugin = plugin;
         this.config = (BukkitQuestsConfig) plugin.getQuestsConfig();
         this.owner = owner;
-        this.questId = questId;
+        this.quest = quest;
     }
 
     public QPlayer getOwner() {
@@ -38,12 +38,15 @@ public class QuestMenuElement extends MenuElement {
     }
 
     public String getQuestId() {
-        return questId;
+        return quest.getId();
+    }
+
+    public Quest getQuest() {
+        return quest;
     }
 
     @Override
     public ItemStack asItemStack() {
-        Quest quest = plugin.getQuestManager().getQuestById(questId);
         QuestProgress questProgress = owner.getQuestProgressFile().getQuestProgress(quest);
         QuestStartResult status = owner.canStartQuest(quest);
         long cooldown = owner.getQuestProgressFile().getCooldownFor(quest);
@@ -61,28 +64,53 @@ public class QuestMenuElement extends MenuElement {
             }
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
+            placeholders.put("{questid}", quest.getId());
             if (quests.size() > 1 && plugin.getConfig().getBoolean("options.gui-truncate-requirements", true)) {
                 placeholders.put("{requirements}", quests.get(0) + Messages.UI_PLACEHOLDERS_TRUNCATED.getMessage().replace("{amount}", String.valueOf(quests.size() - 1)));
             } else {
                 placeholders.put("{requirements}", String.join(", ", quests));
             }
-            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.quest-locked-display"), placeholders);
+            ItemStack display;
+            if (plugin.getQItemStackRegistry().hasQuestLockedItemStack(quest)) {
+                display = plugin.getQItemStackRegistry().getQuestLockedItemStack(quest);
+            } else {
+                display = config.getItem("gui.quest-locked-display");
+            }
+            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), display, placeholders);
         } else if (status == QuestStartResult.QUEST_ALREADY_COMPLETED) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
-            placeholders.put("{questid}", questId);
-            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.quest-completed-display"), placeholders);
+            placeholders.put("{questid}", quest.getId());
+            ItemStack display;
+            if (plugin.getQItemStackRegistry().hasQuestCompletedItemStack(quest)) {
+                display = plugin.getQItemStackRegistry().getQuestCompletedItemStack(quest);
+            } else {
+                display = config.getItem("gui.quest-completed-display");
+            }
+            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), display, placeholders);
         } else if (status == QuestStartResult.QUEST_NO_PERMISSION) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
-            placeholders.put("{questid}", questId);
-            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.quest-permission-display"), placeholders);
+            placeholders.put("{questid}", quest.getId());
+            ItemStack display;
+            if (plugin.getQItemStackRegistry().hasQuestPermissionItemStack(quest)) {
+                display = plugin.getQItemStackRegistry().getQuestPermissionItemStack(quest);
+            } else {
+                display = config.getItem("gui.quest-permission-display");
+            }
+            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), display, placeholders);
         } else if (cooldown > 0) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{time}", Format.formatTime(TimeUnit.SECONDS.convert(cooldown, TimeUnit.MILLISECONDS)));
             placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
-            placeholders.put("{questid}", questId);
-            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.quest-cooldown-display"), placeholders);
+            placeholders.put("{questid}", quest.getId());
+            ItemStack display;
+            if (plugin.getQItemStackRegistry().hasQuestCooldownItemStack(quest)) {
+                display = plugin.getQItemStackRegistry().getQuestCooldownItemStack(quest);
+            } else {
+                display = config.getItem("gui.quest-cooldown-display");
+            }
+            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), display, placeholders);
         } else {
             return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), qItemStack.toItemStack(quest, owner, questProgress));
         }

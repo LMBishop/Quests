@@ -103,7 +103,7 @@ public class QuestQMenu implements QMenu {
                     continue;
                 }
             }
-            menuElements.put(slot, new QuestMenuElement(plugin, owner, quest.getId()));
+            menuElements.put(slot, new QuestMenuElement(plugin, owner, quest));
             slot++;
         }
 
@@ -227,7 +227,7 @@ public class QuestQMenu implements QMenu {
             MenuElement menuElement = menuElements.get(event.getSlot() + ((currentPage - 1) * pageSize));
             if (menuElement instanceof QuestMenuElement) {
                 QuestMenuElement questMenuElement = (QuestMenuElement) menuElement;
-                Quest quest = plugin.getQuestManager().getQuestById(questMenuElement.getQuestId());
+                Quest quest = questMenuElement.getQuest();
                 if (event.getClick() == startClickType) {
                     if (config.getBoolean("options.quest-autostart") || quest.isAutoStartEnabled()) return false;
                     if (owner.startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {

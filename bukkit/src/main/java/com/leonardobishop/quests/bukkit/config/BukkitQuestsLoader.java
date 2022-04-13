@@ -302,6 +302,22 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         questManager.registerQuest(quest);
                         taskTypeManager.registerQuestTasksWithTaskTypes(quest);
                         qItemStackRegistry.register(quest, displayItem);
+                        if (config.isConfigurationSection("options.started-display")) {
+                            qItemStackRegistry.registerQuestLocked(quest,
+                                    plugin.getItemGetter().getItem("options.locked-display", config));
+                        }
+                        if (config.isConfigurationSection("options.completed-display")) {
+                            qItemStackRegistry.registerQuestCompleted(quest,
+                                    plugin.getItemGetter().getItem("options.completed-display", config));
+                        }
+                        if (config.isConfigurationSection("options.cooldown-display")) {
+                            qItemStackRegistry.registerQuestCooldown(quest,
+                                    plugin.getItemGetter().getItem("options.cooldown-display", config));
+                        }
+                        if (config.isConfigurationSection("options.permission-display")) {
+                            qItemStackRegistry.registerQuestPermission(quest,
+                                    plugin.getItemGetter().getItem("options.permission-display", config));
+                        }
                         pathToQuest.put(relativeLocation.getPath(), quest);
                     }
                     if (!problems.isEmpty()) {
