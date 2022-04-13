@@ -18,9 +18,9 @@ allprojects {
 
 task versionGit() {
     ext.gitCommitHash = 'git rev-parse --verify --short HEAD'.execute().text.trim()
-    project.version = "${version}-${gitCommitHash}"
+    project.version = "${project.version}-${gitCommitHash}"
     subprojects.each {
-        it.version = "${version}-${gitCommitHash}"
+        it.version = "${it.version}-${gitCommitHash}"
     }
 }
 
