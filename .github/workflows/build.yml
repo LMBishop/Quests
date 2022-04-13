@@ -32,7 +32,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
-        run: ./gradlew allJar
+        run: ./gradlew
       - name: Upload Plugin
         uses: actions/upload-artifact@master
         with:

@@ -4,7 +4,7 @@ plugins {
     id 'maven-publish'
 }
 
-defaultTasks 'allJar'
+defaultTasks 'allJarSnapshot'
 
 allprojects {
     apply plugin: 'java'
@@ -15,6 +15,15 @@ allprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 }
+
+task versionGit() {
+    ext.gitCommitHash = 'git rev-parse --verify --short HEAD'.execute().text.trim()
+    project.version = "${version}-${gitCommitHash}"
+    subprojects.each {
+        it.version = "${version}-${gitCommitHash}"
+    }
+}
+
 task allJar( type: Jar, dependsOn: subprojects.tasks['build'] ) {
     subprojects.each { subproject ->
         from subproject.configurations.archives.allArtifacts.files.collect {
@@ -22,6 +31,10 @@ task allJar( type: Jar, dependsOn: subprojects.tasks['build'] ) {
         }
     }
     archiveBaseName = 'Quests'
+}
+
+task allJarSnapshot( dependsOn: [ 'versionGit', 'allJar' ] ) {
+    allJar.mustRunAfter( 'versionGit' )
 }
 
 artifacts {
