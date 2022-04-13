@@ -51,7 +51,8 @@ public class CategoryQMenu implements QMenu {
                 MenuElement menuElement;
                 if (config.getConfig().contains("custom-elements.categories." + s + ".display")) {
                     ItemStack is = config.getItem("custom-elements.categories." + s + ".display");
-                    menuElement = new CustomMenuElement(plugin, owner.getPlayerUUID(), is);
+                    List<String> commands = plugin.getQuestsConfig().getStringList( "custom-elements." + s + ".commands");
+                    menuElement = new CustomMenuElement(plugin, owner.getPlayerUUID(), is, commands);
                 } else if (config.getBoolean("custom-elements.categories." + s + ".spacer", false)) {
                     menuElement = new SpacerMenuElement();
                 } else continue; // user = idiot
@@ -168,6 +169,12 @@ public class CategoryQMenu implements QMenu {
                     Messages.QUEST_CATEGORY_QUEST_PERMISSION.send(event.getWhoClicked());
                 } else {
                     return true;
+                }
+            } else if (element instanceof CustomMenuElement) {
+                CustomMenuElement customMenuElement = (CustomMenuElement) element;
+                for (String command : customMenuElement.getCommands()) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                            command.replace("{player}", event.getWhoClicked().getName()));
                 }
             }
         }

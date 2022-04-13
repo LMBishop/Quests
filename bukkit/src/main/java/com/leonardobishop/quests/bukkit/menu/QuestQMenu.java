@@ -75,7 +75,8 @@ public class QuestQMenu implements QMenu {
                 MenuElement menuElement;
                 if (plugin.getConfig().contains(path + "." + s + ".display")) {
                     ItemStack is = plugin.getConfiguredItemStack(path + "." + s + ".display", plugin.getConfig());
-                    menuElement = new CustomMenuElement(plugin, owner.getPlayerUUID(), is);
+                    List<String> commands = plugin.getQuestsConfig().getStringList(path + "." + s + ".commands");
+                    menuElement = new CustomMenuElement(plugin, owner.getPlayerUUID(), is, commands);
                 } else if (plugin.getConfig().getBoolean(path + "." + s + ".spacer", false)) {
                     menuElement = new SpacerMenuElement();
                 } else continue; // user = idiot
@@ -239,6 +240,12 @@ public class QuestQMenu implements QMenu {
                 } else if (event.getClick() == cancelClickType) {
                     MenuUtils.handleRightClick(plugin, this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
                     return true;
+                }
+            } else if (menuElement instanceof CustomMenuElement) {
+                CustomMenuElement customMenuElement = (CustomMenuElement) menuElement;
+                for (String command : customMenuElement.getCommands()) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                            command.replace("{player}", event.getWhoClicked().getName()));
                 }
             }
         }
