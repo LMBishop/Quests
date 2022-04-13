@@ -70,15 +70,18 @@ public class QuestMenuElement extends MenuElement {
         } else if (status == QuestStartResult.QUEST_ALREADY_COMPLETED) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
+            placeholders.put("{questid}", questId);
             return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.quest-completed-display"), placeholders);
         } else if (status == QuestStartResult.QUEST_NO_PERMISSION) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
+            placeholders.put("{questid}", questId);
             return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.quest-permission-display"), placeholders);
         } else if (cooldown > 0) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{time}", Format.formatTime(TimeUnit.SECONDS.convert(cooldown, TimeUnit.MILLISECONDS)));
             placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
+            placeholders.put("{questid}", questId);
             return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), config.getItem("gui.quest-cooldown-display"), placeholders);
         } else {
             return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), qItemStack.toItemStack(quest, owner, questProgress));
