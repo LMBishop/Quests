@@ -48,7 +48,7 @@ repositories {
 dependencies {
     compileOnly project(':common')
     // Spigot
-    compileOnly ('org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT') {
+    compileOnly ('org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT') {
         exclude group: 'net.md-5', module: 'bungeecord-chat'
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.yaml', module: 'snakeyaml'
