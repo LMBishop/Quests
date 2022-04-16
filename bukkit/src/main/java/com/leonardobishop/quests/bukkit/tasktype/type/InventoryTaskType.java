@@ -20,6 +20,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerBucketEntityEvent;
+import org.bukkit.event.player.PlayerBucketEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -65,8 +67,18 @@ public final class InventoryTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onInventoryClick(InventoryCloseEvent event) {
+    public void onInventoryClose(InventoryCloseEvent event) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory((Player) event.getPlayer()), 1L); //Still some work to do as it doesn't really work
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBucket(final PlayerBucketEvent event) {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(event.getPlayer()), 1L);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBucketEntity(final PlayerBucketEntityEvent event) {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(event.getPlayer()), 1L);
     }
 
     @SuppressWarnings("deprecation")
