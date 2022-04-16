@@ -19,8 +19,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.event.player.PlayerBucketEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -38,6 +38,11 @@ public final class InventoryTaskType extends BukkitTaskType {
     public InventoryTaskType(BukkitQuestsPlugin plugin) {
         super("inventory", TaskUtils.TASK_ATTRIBUTION_STRING, "Obtain a set of items.");
         this.plugin = plugin;
+
+        try {
+            Class.forName("org.bukkit.event.player.PlayerBucketEntityEvent");
+            plugin.getServer().getPluginManager().registerEvents(new BucketEntityListener(), plugin);
+        } catch (ClassNotFoundException ignored) { } // server version cannot support event
     }
 
     @Override
@@ -72,13 +77,15 @@ public final class InventoryTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onBucket(final PlayerBucketEvent event) {
+    public void onBucket(PlayerBucketEvent event) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(event.getPlayer()), 1L);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onBucketEntity(final PlayerBucketEntityEvent event) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(event.getPlayer()), 1L);
+    private final class BucketEntityListener implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        public void onBucketEntity(org.bukkit.event.player.PlayerBucketEntityEvent event) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(event.getPlayer()), 1L);
+        }
     }
 
     @SuppressWarnings("deprecation")
