@@ -21,7 +21,7 @@ import java.util.List;
 
 public final class FarmingTaskType extends BukkitTaskType {
 
-    public static BukkitQuestsPlugin plugin;
+    private final BukkitQuestsPlugin plugin;
 
     public FarmingTaskType(BukkitQuestsPlugin plugin) {
         super("farming", TaskUtils.TASK_ATTRIBUTION_STRING, "Break a set amount of any crop.");
