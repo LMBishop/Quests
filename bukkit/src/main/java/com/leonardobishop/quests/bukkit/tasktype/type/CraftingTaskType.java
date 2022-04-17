@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +60,8 @@ public final class CraftingTaskType extends BukkitTaskType {
         if (event.getClickedInventory() == null
                 || (event.getClickedInventory().getType() != InventoryType.CRAFTING && event.getClickedInventory().getType() != InventoryType.WORKBENCH)
                 || event.getSlotType() != InventoryType.SlotType.RESULT
-                || event.getCurrentItem() == null) {
+                || event.getCurrentItem() == null
+                || event.getAction() == InventoryAction.NOTHING) {
             return;
         }
 
