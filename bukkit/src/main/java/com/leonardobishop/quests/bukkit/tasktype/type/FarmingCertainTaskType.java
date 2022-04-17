@@ -13,8 +13,10 @@ import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,13 +29,17 @@ public final class FarmingCertainTaskType extends BukkitTaskType {
     private final BukkitQuestsPlugin plugin;
 
     public FarmingCertainTaskType(BukkitQuestsPlugin plugin) {
-        super("farmingcertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Break a set amount of a certain crop.");
+        super("farmingcertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Break or harvest a set amount of a certain crop.");
         this.plugin = plugin;
+
+        try {
+            Class.forName("org.bukkit.event.player.PlayerHarvestBlockEvent");
+            plugin.getServer().getPluginManager().registerEvents(new FarmingCertainTaskType.HarvestBlockListener(), plugin);
+        } catch (ClassNotFoundException ignored) { } // server version cannot support event
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
-        //TODO add world validation
         ArrayList<ConfigProblem> problems = new ArrayList<>();
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
@@ -67,17 +73,28 @@ public final class FarmingCertainTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (!(event.getBlock().getState().getBlockData() instanceof Ageable)) {
+        handle(event.getPlayer(), event.getBlock(), "break");
+    }
+
+    private final class HarvestBlockListener implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        public void onHarvestBlock(org.bukkit.event.player.PlayerHarvestBlockEvent event) {
+            handle(event.getPlayer(), event.getHarvestedBlock(), "harvest");
+        }
+    }
+
+    private void handle(Player player, Block block, String mode) {
+        if (!(block.getState().getBlockData() instanceof Ageable)) {
             return;
         }
 
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
-        if (qPlayer == null) {
-            return;
-        }
-
-        Ageable crop = (Ageable) event.getBlock().getState().getBlockData();
+        Ageable crop = (Ageable) block.getState().getBlockData();
         if (crop.getAge() != crop.getMaximumAge()) {
+            return;
+        }
+
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+        if (qPlayer == null) {
             return;
         }
 
@@ -86,7 +103,7 @@ public final class FarmingCertainTaskType extends BukkitTaskType {
                 QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;
+                    if (!TaskUtils.validateWorld(player, task)) continue;
 
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
@@ -94,7 +111,12 @@ public final class FarmingCertainTaskType extends BukkitTaskType {
                         continue;
                     }
 
-                    if (matchBlock(task, event.getBlock())) {
+                    if (task.getConfigValue("mode") != null
+                            && !mode.equalsIgnoreCase(task.getConfigValue("mode").toString())) {
+                        continue;
+                    }
+
+                    if (matchBlock(task, block)) {
                         int brokenBlocksNeeded = (int) task.getConfigValue("amount");
 
                         int progressBlocksBroken;
