@@ -63,6 +63,7 @@ public class MySqlStorageProvider implements StorageProvider {
             configuration = new YamlConfiguration();
         }
         this.configuration = configuration;
+        this.fault = true;
     }
 
     @Override
@@ -99,12 +100,7 @@ public class MySqlStorageProvider implements StorageProvider {
             }
         }
 
-        try {
-            this.hikari = new HikariDataSource(config);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fault = true;
-        }
+        this.hikari = new HikariDataSource(config);
         this.prefix = configuration.getString("database-settings.table-prefix", "quests_");
         this.statementProcessor = s -> s.replace("{prefix}", prefix);
         try (Connection connection = hikari.getConnection()) {
@@ -116,8 +112,9 @@ public class MySqlStorageProvider implements StorageProvider {
                 s.executeBatch();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
+        this.fault = false;
     }
 
     @Override

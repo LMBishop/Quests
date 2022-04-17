@@ -174,7 +174,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 this.storageProvider = new YamlStorageProvider(this);
                 break;
             case "mysql":
-                this.storageProvider = new MySqlStorageProvider(this, this.getConfig().getConfigurationSection("options.storage.database-settings"));
+                ConfigurationSection section = this.getConfig().getConfigurationSection("options.storage.database-settings");
+                if (section == null) {
+                    questsLogger.warning("No database settings are configured - default values will be used");
+                }
+                this.storageProvider = new MySqlStorageProvider(this, section);
         }
 
         try {
