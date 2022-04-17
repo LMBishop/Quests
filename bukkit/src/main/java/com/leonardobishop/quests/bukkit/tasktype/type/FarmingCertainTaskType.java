@@ -65,7 +65,6 @@ public final class FarmingCertainTaskType extends BukkitTaskType {
         return problems;
     }
 
-    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         if (!(event.getBlock().getState().getBlockData() instanceof Ageable)) {
