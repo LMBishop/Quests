@@ -56,13 +56,17 @@ public final class FarmingTaskType extends BukkitTaskType {
         }
     }
 
-    private void handle(Player player, Block block, String mode) {
+    private boolean validateCrop(Block block) {
         if (!(block.getState().getBlockData() instanceof Ageable)) {
-            return;
+            return false;
         }
 
         Ageable crop = (Ageable) block.getState().getBlockData();
-        if (crop.getAge() != crop.getMaximumAge()) {
+        return crop.getAge() == crop.getMaximumAge();
+    }
+
+    private void handle(Player player, Block block, String mode) {
+        if (!validateCrop(block)) {
             return;
         }
 
