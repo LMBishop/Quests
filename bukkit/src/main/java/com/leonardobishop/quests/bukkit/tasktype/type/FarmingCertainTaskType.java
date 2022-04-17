@@ -117,18 +117,18 @@ public final class FarmingCertainTaskType extends BukkitTaskType {
                     }
 
                     if (matchBlock(task, block)) {
-                        int brokenBlocksNeeded = (int) task.getConfigValue("amount");
+                        int blocksNeeded = (int) task.getConfigValue("amount");
 
-                        int progressBlocksBroken;
+                        int progressBlocks;
                         if (taskProgress.getProgress() == null) {
-                            progressBlocksBroken = 0;
+                            progressBlocks = 0;
                         } else {
-                            progressBlocksBroken = (int) taskProgress.getProgress();
+                            progressBlocks = (int) taskProgress.getProgress();
                         }
 
-                        taskProgress.setProgress(progressBlocksBroken + 1);
+                        taskProgress.setProgress(progressBlocks + 1);
 
-                        if (((int) taskProgress.getProgress()) >= brokenBlocksNeeded) {
+                        if (((int) taskProgress.getProgress()) >= blocksNeeded) {
                             taskProgress.setCompleted(true);
                         }
                     }
