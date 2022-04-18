@@ -331,7 +331,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 taskTypeManager.registerTaskType(new CitizensInteractTaskType(this));
             }
             if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
-                taskTypeManager.registerTaskType(new MythicMobsKillingType(this));
+                if (Bukkit.getPluginManager().getPlugin("MythicMobs").getDescription().getVersion().startsWith("5")) {
+                    taskTypeManager.registerTaskType(new MythicMobsKillingType(this));
+                }
             }
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 taskTypeManager.registerTaskType(new PlaceholderAPIEvaluateTaskType(this));

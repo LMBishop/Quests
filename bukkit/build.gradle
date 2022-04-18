@@ -69,7 +69,7 @@ dependencies {
     // uSkyBlock
     compileOnly 'com.github.rlf:uSkyBlock-API:2.6.4'
     // MythicMobs
-    compileOnly 'io.lumine.xikage:MythicMobs:4.11.0-BETA'
+    compileOnly 'io.lumine:Mythic-Dist:5.0.2'
     // Citizens
     compileOnly ('net.citizensnpcs:citizens:2.0.27-SNAPSHOT') {
         exclude group: 'net.citizensnpcs', module: 'citizens-main'
