@@ -27,7 +27,7 @@ public class AdminModdataFullresetCommandHandler implements CommandHandler {
             QPlayer qPlayer = CommandUtils.getOtherPlayer(sender, args[3], plugin);
             if (qPlayer == null) return;
             QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-            questProgressFile.clear();
+            questProgressFile.reset();
             plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
             if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
                 plugin.getPlayerManager().dropPlayer(qPlayer.getPlayerUUID());

@@ -33,7 +33,7 @@ public class AdminModdataResetCommandHandler implements CommandHandler {
                 return;
             }
             QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-            questProgressFile.generateBlankQuestProgress(quest);
+            questProgressFile.generateBlankQuestProgress(quest, true);
             plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
             Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.send(sender, "{player}", args[3], "{quest}", quest.getId());
 

@@ -130,6 +130,16 @@ public class QuestProgress {
         }
     }
 
+    public boolean hasNonDefaultValues() {
+        if (this.started || this.completed || this.completedBefore || this.completionDate != 0) return true;
+        else {
+            for (TaskProgress progress : this.taskProgress.values()) {
+                if (progress.getProgress() != null || progress.isCompleted()) return true;
+            }
+            return false;
+        }
+    }
+
     public void queueForCompletionTest() {
         plugin.getQuestCompleter().queueSingular(this);
     }

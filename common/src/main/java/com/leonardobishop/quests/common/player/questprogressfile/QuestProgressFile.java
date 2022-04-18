@@ -168,7 +168,7 @@ public class QuestProgressFile {
     }
 
     /**
-     * Get the {@link UUID} of the player this QuestProgressFile represents
+     * Get the {@link UUID} of the player this QuestProgressFile represents.
      *
      * @return UUID
      */
@@ -177,7 +177,7 @@ public class QuestProgressFile {
     }
 
     /**
-     * Get the {@link QuestProgress} for a specified {@link Quest}, and generates a new one if it does not exist
+     * Get the {@link QuestProgress} for a specified {@link Quest}, and generates a new one if it does not exist.
      *
      * @param quest the quest to get progress for
      * @return {@link QuestProgress} or null if the quest does not exist
@@ -192,14 +192,23 @@ public class QuestProgressFile {
 
     /**
      * Generate a new blank {@link QuestProgress} for a specified {@code quest}.
-     * Has no effect if there is already an existing {@link QuestProgress} for {@code quest}.
      *
      * @param quest the quest to generate progress for
      */
     public void generateBlankQuestProgress(Quest quest) {
-        QuestProgress questProgress = new QuestProgress(plugin, quest.getId(), false, false, 0, playerUUID, false, false);
+        generateBlankQuestProgress(quest, false);
+    }
+
+    /**
+     * Generate a new blank {@link QuestProgress} for a specified {@code quest}.
+     *
+     * @param quest the quest to generate progress for
+     * @param modified the modified state of the quest
+     */
+    public void generateBlankQuestProgress(Quest quest, boolean modified) {
+        QuestProgress questProgress = new QuestProgress(plugin, quest.getId(), false, false, 0, playerUUID, false, modified);
         for (Task task : quest.getTasks()) {
-            TaskProgress taskProgress = new TaskProgress(questProgress, task.getId(), null, playerUUID, false, false);
+            TaskProgress taskProgress = new TaskProgress(questProgress, task.getId(), null, playerUUID, false, modified);
             questProgress.addTaskProgress(taskProgress);
         }
 
@@ -208,6 +217,24 @@ public class QuestProgressFile {
 
     public void clear() {
         questProgress.clear();
+    }
+
+    /**
+     * Reset quests to their default state. More specifically, this will reset all
+     * quest progress with non-default parameters back to default and only
+     * set the modified flag in that case.
+     */
+    public void reset() {
+        for (QuestProgress questProgress : questProgress.values()) {
+            if (!questProgress.hasNonDefaultValues()) {
+                continue;
+            }
+            Quest quest = plugin.getQuestManager().getQuestById(questProgress.getQuestId());
+            if (quest == null) {
+                continue;
+            }
+            generateBlankQuestProgress(quest, true);
+        }
     }
 
     /**
