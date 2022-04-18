@@ -9,9 +9,12 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,8 +27,13 @@ public final class FarmingTaskType extends BukkitTaskType {
     private final BukkitQuestsPlugin plugin;
 
     public FarmingTaskType(BukkitQuestsPlugin plugin) {
-        super("farming", TaskUtils.TASK_ATTRIBUTION_STRING, "Break a set amount of any crop.");
+        super("farming", TaskUtils.TASK_ATTRIBUTION_STRING, "Break or harvest a set amount of any crop.");
         this.plugin = plugin;
+
+        try {
+            Class.forName("org.bukkit.event.player.PlayerHarvestBlockEvent");
+            plugin.getServer().getPluginManager().registerEvents(new FarmingTaskType.HarvestBlockListener(), plugin);
+        } catch (ClassNotFoundException ignored) { } // server version cannot support event
     }
 
     @Override
@@ -38,17 +46,28 @@ public final class FarmingTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (!(event.getBlock().getState().getBlockData() instanceof Ageable)) {
+        handle(event.getPlayer(), event.getBlock(), "break");
+    }
+
+    private final class HarvestBlockListener implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        public void onHarvestBlock(org.bukkit.event.player.PlayerHarvestBlockEvent event) {
+            handle(event.getPlayer(), event.getHarvestedBlock(), "harvest");
+        }
+    }
+
+    private void handle(Player player, Block block, String mode) {
+        if (!(block.getState().getBlockData() instanceof Ageable)) {
             return;
         }
 
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
-        if (qPlayer == null) {
-            return;
-        }
-
-        Ageable crop = (Ageable) event.getBlock().getState().getBlockData();
+        Ageable crop = (Ageable) block.getState().getBlockData();
         if (crop.getAge() != crop.getMaximumAge()) {
+            return;
+        }
+
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+        if (qPlayer == null) {
             return;
         }
 
@@ -57,7 +76,7 @@ public final class FarmingTaskType extends BukkitTaskType {
                 QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;
+                    if (!TaskUtils.validateWorld(player, task)) continue;
 
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
@@ -65,18 +84,23 @@ public final class FarmingTaskType extends BukkitTaskType {
                         continue;
                     }
 
-                    int brokenBlocksNeeded = (int) task.getConfigValue("amount");
-
-                    int progressBlocksBroken;
-                    if (taskProgress.getProgress() == null) {
-                        progressBlocksBroken = 0;
-                    } else {
-                        progressBlocksBroken = (int) taskProgress.getProgress();
+                    if (task.getConfigValue("mode") != null
+                            && !mode.equalsIgnoreCase(task.getConfigValue("mode").toString())) {
+                        continue;
                     }
 
-                    taskProgress.setProgress(progressBlocksBroken + 1);
+                    int blocksNeeded = (int) task.getConfigValue("amount");
 
-                    if (((int) taskProgress.getProgress()) >= brokenBlocksNeeded) {
+                    int progressBlocks;
+                    if (taskProgress.getProgress() == null) {
+                        progressBlocks = 0;
+                    } else {
+                        progressBlocks = (int) taskProgress.getProgress();
+                    }
+
+                    taskProgress.setProgress(progressBlocks + 1);
+
+                    if (((int) taskProgress.getProgress()) >= blocksNeeded) {
                         taskProgress.setCompleted(true);
                     }
                 }
