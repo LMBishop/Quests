@@ -122,6 +122,10 @@ public class MenuController implements Listener {
                 CategoryQMenu categoryQMenu = new CategoryQMenu(plugin, qPlayer);
                 List<QuestQMenu> questMenus = new ArrayList<>();
                 for (Category category : plugin.getQuestManager().getCategories()) {
+                    if (category.isHidden()) {
+                        continue;
+                    }
+
                     QuestQMenu questQMenu = new QuestQMenu(plugin, qPlayer, category.getId(), categoryQMenu);
                     List<Quest> quests = new ArrayList<>();
                     for (String questid : category.getRegisteredQuestIds()) {

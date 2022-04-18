@@ -12,10 +12,16 @@ public class Category {
     private final String id;
     private final boolean permissionRequired;
     private final List<String> registeredQuestIds = new ArrayList<>();
+    private final boolean hidden;
 
     public Category(String id, boolean permissionRequired) {
+        this(id, permissionRequired, false);
+    }
+
+    public Category(String id, boolean permissionRequired, boolean hidden) {
         this.id = id;
         this.permissionRequired = permissionRequired;
+        this.hidden = hidden;
     }
 
     /**
@@ -56,4 +62,12 @@ public class Category {
         return Collections.unmodifiableList(registeredQuestIds);
     }
 
+    /**
+     * Get if this category is hidden
+     *
+     * @return true if hidden
+     */
+    public boolean isHidden() {
+        return hidden;
+    }
 }
