@@ -4,37 +4,33 @@ plugins {
     id 'maven-publish'
 }
 
-defaultTasks 'allJarSnapshot'
+defaultTasks 'allJar'
 
 allprojects {
     apply plugin: 'java'
 
     group = 'com.leonardobishop'
-    version = '3.10.1'
+    version = '3.11'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 }
 
-task versionGit() {
-    ext.gitCommitHash = 'git rev-parse --verify --short HEAD'.execute().text.trim()
-    project.version = "${project.version}-${gitCommitHash}"
-    subprojects.each {
-        it.version = "${it.version}-${gitCommitHash}"
-    }
-}
-
 task allJar( type: Jar, dependsOn: subprojects.tasks['build'] ) {
+    if (project.findProperty('gitversion') == null || project.findProperty('gitversion') == 'true') {
+        ext.gitCommitHash = 'git rev-parse --verify --short HEAD'.execute().text.trim()
+        project.version = "${project.version}-${gitCommitHash}"
+        subprojects.each {
+            it.version = "${it.version}-${gitCommitHash}"
+        }
+    }
+
     subprojects.each { subproject ->
         from subproject.configurations.archives.allArtifacts.files.collect {
             zipTree(it)
         }
     }
     archiveBaseName = 'Quests'
-}
-
-task allJarSnapshot( dependsOn: [ 'versionGit', 'allJar' ] ) {
-    allJar.mustRunAfter( 'versionGit' )
 }
 
 artifacts {
