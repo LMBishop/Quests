@@ -51,7 +51,7 @@ public class CategoryQMenu implements QMenu {
                 MenuElement menuElement;
                 if (config.getConfig().contains("custom-elements.categories." + s + ".display")) {
                     ItemStack is = config.getItem("custom-elements.categories." + s + ".display");
-                    List<String> commands = plugin.getQuestsConfig().getStringList( "custom-elements." + s + ".commands");
+                    List<String> commands = plugin.getQuestsConfig().getStringList( "custom-elements.categories." + s + ".commands");
                     menuElement = new CustomMenuElement(plugin, owner.getPlayerUUID(), is, commands);
                 } else if (config.getBoolean("custom-elements.categories." + s + ".spacer", false)) {
                     menuElement = new SpacerMenuElement();
