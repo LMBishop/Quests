@@ -9,7 +9,6 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -100,18 +99,23 @@ public final class WalkingTaskType extends BukkitTaskType {
                 return player.getVehicle() != null && player.getVehicle().getType() == EntityType.PIG;
             case "minecart":
                 return player.getVehicle() != null && player.getVehicle().getType() == EntityType.MINECART;
-            case "sneaking":
-                return player.isSneaking();
-            case "walking":
-                return !player.isSprinting();
-            case "running":
-                return player.isSprinting();
-            case "swimming":
-                return player.isSwimming();
-            case "elytra":
-                return plugin.getVersionSpecificHandler().isPlayerGliding(player);
             case "strider":
                 return plugin.getVersionSpecificHandler().isPlayerOnStrider(player);
+            case "sneaking": // sprinting does not matter
+                return player.isSneaking() && !player.isSwimming() && !player.isFlying()
+                        && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case "walking":
+                return !player.isSneaking() && !player.isSwimming() && !player.isSprinting() && !player.isFlying()
+                        && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case "running":
+                return !player.isSneaking() && !player.isSwimming() && player.isSprinting() && !player.isFlying()
+                        && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case "swimming": // sprinting and sneaking do not matter, flying is not possible
+                return player.isSwimming() && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case "flying": // if the player is flying then the player is flying
+                return player.isFlying();
+            case "elytra": // if the player is gliding then the player is gliding
+                return plugin.getVersionSpecificHandler().isPlayerGliding(player);
             default:
                 return false;
         }
