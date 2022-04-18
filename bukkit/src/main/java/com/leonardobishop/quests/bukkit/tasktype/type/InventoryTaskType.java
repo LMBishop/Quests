@@ -122,8 +122,9 @@ public final class InventoryTaskType extends BukkitTaskType {
                     int amount = (int) task.getConfigValue("amount");
                     Object configBlock = task.getConfigValue("item");
                     Object configData = task.getConfigValue("data");
-                    Object remove = task.getConfigValue("remove-items-when-complete");
-
+                    boolean remove = (boolean) task.getConfigValue("remove-items-when-complete", false);
+                    boolean allowPartial = (boolean) task.getConfigValue("allow-partial-completion", false);
+                    
                     QuestItem qi;
                     if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
                         if (configBlock instanceof ConfigurationSection) {
@@ -144,14 +145,32 @@ public final class InventoryTaskType extends BukkitTaskType {
                         fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
                     }
 
+                    int progress;
+                    if (taskProgress.getProgress() == null) {
+                        progress = 0;
+                    } else {
+                        progress = (int) taskProgress.getProgress();
+                    }
+
+                    int deficit = amount - progress;
+
                     int[] amountPerSlot = getAmountsPerSlot(player, qi);
-                    int total = Math.min(amountPerSlot[36], amount);
-                    taskProgress.setProgress(total);
+                    int total = Math.min(amountPerSlot[36], deficit);
 
-                    if (total >= amount) {
+                    if (total == 0) {
+                        continue;
+                    }
+
+                    progress += total;
+                    taskProgress.setProgress(progress);
+
+                    if (progress >= amount) {
                         taskProgress.setCompleted(true);
-
-                        if (remove != null && ((Boolean) remove)) removeItemsInSlots(player, amountPerSlot, total);
+                        if (remove) {
+                            removeItemsInSlots(player, amountPerSlot, total);
+                        }
+                    } else if (remove && allowPartial) {
+                        removeItemsInSlots(player, amountPerSlot, total);
                     }
                 }
             }
