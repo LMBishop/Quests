@@ -17,10 +17,7 @@ import com.leonardobishop.quests.bukkit.hook.title.Title;
 import com.leonardobishop.quests.bukkit.hook.title.Title_Bukkit;
 import com.leonardobishop.quests.bukkit.hook.title.Title_BukkitNoTimings;
 import com.leonardobishop.quests.bukkit.hook.title.Title_Other;
-import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler;
-import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler16;
-import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler8;
-import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler9;
+import com.leonardobishop.quests.bukkit.hook.versionspecific.*;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItemRegistry;
@@ -217,10 +214,21 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         // TODO move above to version specific handlers
         if (version <= 8) {
             versionSpecificHandler = new VersionSpecificHandler8();
-        } else if (version <= 16) {
-            versionSpecificHandler = new VersionSpecificHandler9();
-        } else {
-            versionSpecificHandler = new VersionSpecificHandler16();
+        } else switch (version) {
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+                versionSpecificHandler = new VersionSpecificHandler9();
+                break;
+            case 14:
+            case 15:
+                versionSpecificHandler = new VersionSpecificHandler14();
+                break;
+            default:
+                versionSpecificHandler = new VersionSpecificHandler16();
+                break;
         }
 
         questsConfig.setItemGetter(itemGetter);
@@ -286,6 +294,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new PlayerkillingTaskType(this));
             taskTypeManager.registerTaskType(new FishingTaskType(this));
             taskTypeManager.registerTaskType(new FishingCertainTaskType(this));
+            taskTypeManager.registerTaskType(new SmeltingTaskType(this));
+            taskTypeManager.registerTaskType(new SmeltingCertainTaskType(this));
             taskTypeManager.registerTaskType(new InventoryTaskType(this));
             taskTypeManager.registerTaskType(new ConsumeTaskType(this));
             taskTypeManager.registerTaskType(new WalkingTaskType(this));

@@ -3,7 +3,7 @@ package com.leonardobishop.quests.bukkit.hook.versionspecific;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-public class VersionSpecificHandler16 extends VersionSpecificHandler9 implements VersionSpecificHandler {
+public class VersionSpecificHandler16 extends VersionSpecificHandler14 implements VersionSpecificHandler {
 
     @Override
     public int getMinecraftVersion() {
