@@ -56,6 +56,7 @@ public final class InventoryTaskType extends BukkitTaskType {
         TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true, false, "data");
         TaskUtils.configValidateBoolean(root + ".remove-items-when-complete", config.get("remove-items-when-complete"), problems, true, "remove-items-when-complete", super.getType());
         TaskUtils.configValidateBoolean(root + ".update-progress", config.get("update-progress"), problems, true, "update-progress", super.getType());
+        TaskUtils.configValidateBoolean(root + ".allow-partial-completion", config.get("allow-partial-completion"), problems, true, "allow-partial-completion", super.getType());
         return problems;
     }
 
@@ -118,32 +119,36 @@ public final class InventoryTaskType extends BukkitTaskType {
                         continue;
                     }
 
-                    Material material;
                     int amount = (int) task.getConfigValue("amount");
                     Object configBlock = task.getConfigValue("item");
                     Object configData = task.getConfigValue("data");
                     boolean remove = (boolean) task.getConfigValue("remove-items-when-complete", false);
                     boolean allowPartial = (boolean) task.getConfigValue("allow-partial-completion", false);
-                    
+
                     QuestItem qi;
                     if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
                         if (configBlock instanceof ConfigurationSection) {
                             qi = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
                         } else {
-                            material = Material.getMaterial(String.valueOf(configBlock));
-                            ItemStack is;
+                            Material material = Material.getMaterial(String.valueOf(configBlock));
                             if (material == null) {
                                 continue;
                             }
+
+                            ItemStack is;
                             if (configData != null) {
                                 is = new ItemStack(material, 1, ((Integer) configData).shortValue());
                             } else {
                                 is = new ItemStack(material, 1);
                             }
+
                             qi = new ParsedQuestItem("parsed", null, is);
                         }
                         fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
                     }
+
+                    int[] amountPerSlot = getAmountsPerSlot(player, qi);
+                    int total = Math.min(amountPerSlot[36], amount);
 
                     int progress;
                     if (taskProgress.getProgress() == null) {
@@ -152,25 +157,30 @@ public final class InventoryTaskType extends BukkitTaskType {
                         progress = (int) taskProgress.getProgress();
                     }
 
-                    int deficit = amount - progress;
-
-                    int[] amountPerSlot = getAmountsPerSlot(player, qi);
-                    int total = Math.min(amountPerSlot[36], deficit);
-
-                    if (total == 0) {
-                        continue;
-                    }
-
-                    progress += total;
-                    taskProgress.setProgress(progress);
-
-                    if (progress >= amount) {
-                        taskProgress.setCompleted(true);
-                        if (remove) {
-                            removeItemsInSlots(player, amountPerSlot, total);
+                    if (allowPartial) {
+                        if (total == 0) {
+                            continue;
                         }
-                    } else if (remove && allowPartial) {
+
+                        progress += total;
+
+                        // We must ALWAYS remove items if partial completion is allowed
+                        // https://github.com/LMBishop/Quests/issues/375
                         removeItemsInSlots(player, amountPerSlot, total);
+
+                        taskProgress.setProgress(progress);
+                        if (progress >= amount) {
+                            taskProgress.setCompleted(true);
+                        }
+                    } else {
+                        taskProgress.setProgress(total);
+                        if (total >= amount) {
+                            taskProgress.setCompleted(true);
+
+                            if (remove) {
+                                removeItemsInSlots(player, amountPerSlot, total);
+                            }
+                        }
                     }
                 }
             }
