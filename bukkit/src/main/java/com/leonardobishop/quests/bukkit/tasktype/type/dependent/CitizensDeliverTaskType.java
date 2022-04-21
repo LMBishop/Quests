@@ -123,6 +123,9 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
                         fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
                     }
 
+                    int[] amountPerSlot = getAmountsPerSlot(player, qi);
+                    int total = Math.min(amountPerSlot[36], amount);
+
                     int progress;
                     if (taskProgress.getProgress() == null) {
                         progress = 0;
@@ -130,25 +133,30 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
                         progress = (int) taskProgress.getProgress();
                     }
 
-                    int deficit = amount - progress;
-
-                    int[] amountPerSlot = getAmountsPerSlot(player, qi);
-                    int total = Math.min(amountPerSlot[36], deficit);
-
-                    if (total == 0) {
-                        continue;
-                    }
-
-                    progress += total;
-                    taskProgress.setProgress(progress);
-
-                    if (progress >= amount) {
-                        taskProgress.setCompleted(true);
-                        if (remove) {
-                            removeItemsInSlots(player, amountPerSlot, total);
+                    if (allowPartial) {
+                        if (total == 0) {
+                            continue;
                         }
-                    } else if (remove && allowPartial) {
+
+                        progress += total;
+
+                        // We must ALWAYS remove items if partial completion is allowed
+                        // https://github.com/LMBishop/Quests/issues/375
                         removeItemsInSlots(player, amountPerSlot, total);
+
+                        taskProgress.setProgress(progress);
+                        if (progress >= amount) {
+                            taskProgress.setCompleted(true);
+                        }
+                    } else {
+                        taskProgress.setProgress(total);
+                        if (total >= amount) {
+                            taskProgress.setCompleted(true);
+
+                            if (remove) {
+                                removeItemsInSlots(player, amountPerSlot, total);
+                            }
+                        }
                     }
                 }
             }
