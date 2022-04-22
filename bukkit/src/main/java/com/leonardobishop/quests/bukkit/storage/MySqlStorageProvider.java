@@ -41,6 +41,8 @@ public class MySqlStorageProvider implements StorageProvider {
             "SELECT quest_id, started, completed, completed_before, completion_date FROM `{prefix}quest_progress` WHERE uuid=?;";
     private static final String SELECT_PLAYER_TASK_PROGRESS =
             "SELECT quest_id, task_id, completed, progress, data_type FROM `{prefix}task_progress` WHERE uuid=?;";
+    private static final String SELECT_UUID_LIST =
+            "SELECT DISTINCT uuid FROM `{prefix}quest_progress`;";
     private static final String SELECT_KNOWN_PLAYER_QUEST_PROGRESS =
             "SELECT quest_id FROM `{prefix}quest_progress` WHERE uuid=?;";
     private static final String SELECT_KNOWN_PLAYER_TASK_PROGRESS =
@@ -64,6 +66,11 @@ public class MySqlStorageProvider implements StorageProvider {
         }
         this.configuration = configuration;
         this.fault = true;
+    }
+
+    @Override
+    public String getName() {
+        return "mysql";
     }
 
     @Override
@@ -283,6 +290,49 @@ public class MySqlStorageProvider implements StorageProvider {
         } catch (SQLException e) {
             plugin.getQuestsLogger().severe("Failed to save player: " + uuid + "!");
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public @NotNull List<QuestProgressFile> loadAllProgressFiles() {
+        if (fault) return Collections.emptyList();
+
+        Set<UUID> uuids = new HashSet<>();
+
+        try (Connection connection = hikari.getConnection()) {
+            try (PreparedStatement ps = connection.prepareStatement(this.statementProcessor.apply(SELECT_UUID_LIST))) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String uuidString = rs.getString(1);
+                        try {
+                            UUID uuid = UUID.fromString(uuidString);
+                            uuids.add(uuid);
+                        } catch (IllegalArgumentException ignored) { }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
+
+        List<QuestProgressFile> files = new ArrayList<>();
+        for (UUID uuid : uuids) {
+            QuestProgressFile file = loadProgressFile(uuid);
+            if (file != null) {
+                files.add(file);
+            }
+        }
+
+        return files;
+    }
+
+    @Override
+    public void saveAllProgressFiles(List<QuestProgressFile> files) {
+        if (fault) return;
+
+        for (QuestProgressFile file : files) {
+            saveProgressFile(file.getPlayerUUID(), file);
         }
     }
 }

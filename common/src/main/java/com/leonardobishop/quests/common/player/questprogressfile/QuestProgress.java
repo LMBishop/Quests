@@ -150,4 +150,11 @@ public class QuestProgress {
             progress.resetModified();
         }
     }
+
+    public void setModified(boolean modified) {
+        this.modified = modified;
+        for (TaskProgress progress : this.taskProgress.values()) {
+            progress.setModified(modified);
+        }
+    }
 }

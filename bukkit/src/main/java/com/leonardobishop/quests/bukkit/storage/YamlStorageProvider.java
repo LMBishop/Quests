@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -30,6 +32,11 @@ public class YamlStorageProvider implements StorageProvider {
         ReentrantLock lock = locks.get(uuid);
         lock.lock();
         return lock;
+    }
+
+    @Override
+    public String getName() {
+        return "yaml";
     }
 
     @Override
@@ -145,6 +152,46 @@ public class YamlStorageProvider implements StorageProvider {
             }
         } finally {
             lock.unlock();
+        }
+    }
+
+    public @NotNull List<QuestProgressFile> loadAllProgressFiles() {
+        List<QuestProgressFile> files = new ArrayList<>();
+
+        File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");
+        FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) {
+                if (path.toString().endsWith(".yml")) {
+                    UUID uuid;
+                    try {
+                        uuid = UUID.fromString(path.getFileName().toString().replace(".yml", ""));
+                    } catch (IllegalArgumentException e) {
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    QuestProgressFile file = loadProgressFile(uuid);
+                    if (file != null) {
+                        files.add(file);
+                    }
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        };
+
+        try {
+            Files.walkFileTree(directory.toPath(), fileVisitor);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return files;
+    }
+
+    @Override
+    public void saveAllProgressFiles(List<QuestProgressFile> files) {
+        for (QuestProgressFile file : files) {
+            saveProgressFile(file.getPlayerUUID(), file);
         }
     }
 }

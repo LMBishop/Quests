@@ -273,4 +273,10 @@ public class QuestProgressFile {
         }
     }
 
+    public void setModified(boolean modified) {
+        for (QuestProgress questProgress : questProgress.values()) {
+            questProgress.setModified(modified);
+        }
+    }
+
 }

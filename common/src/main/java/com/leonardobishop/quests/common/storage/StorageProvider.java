@@ -4,6 +4,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFi
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -11,6 +12,8 @@ import java.util.UUID;
  * writing a QuestProgressFile.
  */
 public interface StorageProvider {
+
+    String getName();
 
     void init();
 
@@ -26,9 +29,24 @@ public interface StorageProvider {
 
     /**
      * Save a QuestProgressFile to the data source with a specific UUID
+     *
      * @param uuid the uuid to match the file to
      * @param questProgressFile the file to save
      */
     void saveProgressFile(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile);
+
+    /**
+     * Load all QuestProgressFiles
+     *
+     * @return {@link List<QuestProgressFile>}
+     */
+    @NotNull List<QuestProgressFile> loadAllProgressFiles();
+
+    /**
+     * Save a list of QuestProgressFiles
+     *
+     * @param files the list of QuestProgressFile to save
+     **/
+    void saveAllProgressFiles(List<QuestProgressFile> files);
 
 }

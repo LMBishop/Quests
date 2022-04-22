@@ -526,7 +526,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
     }
 
-    private void writeResourceToFile(String resource, File file) {
+    public void writeResourceToFile(String resource, File file) {
         try {
             file.createNewFile();
             try (InputStream in = BukkitQuestsPlugin.class.getClassLoader().getResourceAsStream(resource);

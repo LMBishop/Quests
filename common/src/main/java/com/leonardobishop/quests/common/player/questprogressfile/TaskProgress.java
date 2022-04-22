@@ -71,4 +71,8 @@ public class TaskProgress {
     public void resetModified() {
         this.modified = false;
     }
+
+    public void setModified(boolean modified) {
+        this.modified = modified;
+    }
 }
