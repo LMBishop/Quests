@@ -24,19 +24,14 @@ public class AdminModdataFullresetCommandHandler implements CommandHandler {
     @Override
     public void handle(CommandSender sender, String[] args) {
         if (args.length > 3) {
-            QPlayer qPlayer = CommandUtils.getOtherPlayer(sender, args[3], plugin);
-            if (qPlayer == null) return;
-            QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-            questProgressFile.reset();
-            plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
-            if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
-                plugin.getPlayerManager().dropPlayer(qPlayer.getPlayerUUID());
-            }
-            Messages.COMMAND_QUEST_ADMIN_FULLRESET.send(sender, "{player}", args[3]);
+            CommandUtils.useOtherPlayer(sender, args[3], plugin, (qPlayer) -> {
+                QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+                questProgressFile.reset();
+                Messages.COMMAND_QUEST_ADMIN_FULLRESET.send(sender, "{player}", args[3]);
 
-            if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
-                plugin.getPlayerManager().dropPlayer(qPlayer.getPlayerUUID());
-            }
+                CommandUtils.doSafeSave(qPlayer, questProgressFile, plugin);
+            });
+
             return;
         }
 

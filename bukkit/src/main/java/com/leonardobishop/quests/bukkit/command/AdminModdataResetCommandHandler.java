@@ -25,7 +25,7 @@ public class AdminModdataResetCommandHandler implements CommandHandler {
     @Override
     public void handle(CommandSender sender, String[] args) {
         if (args.length > 4) {
-            QPlayer qPlayer = CommandUtils.getOtherPlayer(sender, args[3], plugin);
+            QPlayer qPlayer = CommandUtils.getOtherPlayerSync(sender, args[3], plugin);
             if (qPlayer == null) return;
             Quest quest = plugin.getQuestManager().getQuestById(args[4]);
             if (quest == null) {
@@ -34,12 +34,9 @@ public class AdminModdataResetCommandHandler implements CommandHandler {
             }
             QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
             questProgressFile.generateBlankQuestProgress(quest, true);
-            plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
             Messages.COMMAND_QUEST_ADMIN_RESET_SUCCESS.send(sender, "{player}", args[3], "{quest}", quest.getId());
 
-            if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
-                plugin.getPlayerManager().dropPlayer(qPlayer.getPlayerUUID());
-            }
+            CommandUtils.doSafeSave(qPlayer, questProgressFile, plugin);
             return;
         }
 

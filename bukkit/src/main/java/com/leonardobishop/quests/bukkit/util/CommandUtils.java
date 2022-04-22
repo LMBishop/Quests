@@ -4,12 +4,14 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class CommandUtils {
 
@@ -69,7 +71,7 @@ public class CommandUtils {
         }
     }
 
-    public static QPlayer getOtherPlayer(CommandSender sender, String name, BukkitQuestsPlugin plugin) {
+    public static QPlayer getOtherPlayerSync(CommandSender sender, String name, BukkitQuestsPlugin plugin) {
         OfflinePlayer ofp = Bukkit.getOfflinePlayer(name);
         UUID uuid;
         String username;
@@ -91,6 +93,56 @@ public class CommandUtils {
             return null;
         }
         return qPlayer;
+    }
+
+    public static void useOtherPlayer(CommandSender sender, String name, BukkitQuestsPlugin plugin, Consumer<QPlayer> callback) {
+        OfflinePlayer ofp = Bukkit.getOfflinePlayer(name);
+        UUID uuid;
+        String username;
+        if (ofp.getName() != null) {
+            uuid = ofp.getUniqueId();
+            username = ofp.getName();
+        } else {
+            Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.send(sender, "{player}", name);
+            return;
+        }
+
+        {
+            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
+            if (qPlayer != null) {
+                callback.accept(qPlayer);
+                return;
+            }
+        }
+
+        plugin.getScheduler().doAsync(() -> {
+            if (plugin.getPlayerManager().getPlayer(uuid) == null) {
+                Messages.COMMAND_QUEST_ADMIN_LOADDATA.send(sender, "{player}", username);
+                plugin.getPlayerManager().loadPlayer(uuid);
+            }
+
+            final QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
+
+            if (qPlayer == null) {
+                Messages.COMMAND_QUEST_ADMIN_NODATA.send(sender, "{player}", username);
+                return;
+            }
+
+            plugin.getScheduler().doSync(() -> callback.accept(qPlayer));
+        });
+    }
+
+    public static void doSafeSave(QPlayer qPlayer, QuestProgressFile questProgressFile, BukkitQuestsPlugin plugin) {
+        if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
+            plugin.getScheduler().doAsync(() -> {
+                plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
+                plugin.getScheduler().doSync(() -> {
+                    if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
+                        plugin.getPlayerManager().dropPlayer(qPlayer.getPlayerUUID());
+                    }
+                });
+            });
+        }
     }
 
 }

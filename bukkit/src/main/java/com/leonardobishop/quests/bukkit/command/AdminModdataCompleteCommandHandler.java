@@ -25,21 +25,19 @@ public class AdminModdataCompleteCommandHandler implements CommandHandler {
     @Override
     public void handle(CommandSender sender, String[] args) {
         if (args.length > 4) {
-            QPlayer qPlayer = CommandUtils.getOtherPlayer(sender, args[3], plugin);
-            if (qPlayer == null) return;
-            QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
             Quest quest = plugin.getQuestManager().getQuestById(args[4]);
             if (quest == null) {
                 Messages.COMMAND_QUEST_START_DOESNTEXIST.send(sender, "{quest}", args[4]);
                 return;
             }
-            qPlayer.completeQuest(quest);
-            plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
-            Messages.COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS.send(sender, "{player}", args[3], "{quest}", quest.getId());
 
-            if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
-                plugin.getPlayerManager().dropPlayer(qPlayer.getPlayerUUID());
-            }
+            CommandUtils.useOtherPlayer(sender, args[3], plugin, (qPlayer) -> {
+                QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+                qPlayer.completeQuest(quest);
+                Messages.COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS.send(sender, "{player}", args[3], "{quest}", quest.getId());
+
+                CommandUtils.doSafeSave(qPlayer, questProgressFile, plugin);
+            });
             return;
         }
 

@@ -29,63 +29,59 @@ public class AdminModdataRandomCommandHandler implements CommandHandler {
     @Override
     public void handle(CommandSender sender, String[] args) {
         if (args.length >= 4) {
-            QPlayer qPlayer = CommandUtils.getOtherPlayer(sender, args[3], plugin);
-            if (qPlayer == null) return;
-            QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+            CommandUtils.useOtherPlayer(sender, args[3], plugin, (qPlayer) -> {
+                QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
 
-            List<Quest> validQuests = new ArrayList<>();
-            boolean fromCategory = args.length != 4;
-            if (!fromCategory) {
-                for (Quest quest : plugin.getQuestManager().getQuests().values()) {
-                    if (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
-                        validQuests.add(quest);
-                    }
-                }
-            } else {
-                Category category = plugin.getQuestManager().getCategoryById(args[4]);
-                if (category == null) {
-                    Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.send(sender, "{category}", args[1]);
-                } else {
-                    for (String questId : category.getRegisteredQuestIds()) {
-                        Quest quest = plugin.getQuestManager().getQuestById(questId);
-                        if (quest == null) continue;
+                List<Quest> validQuests = new ArrayList<>();
+                boolean fromCategory = args.length != 4;
+                if (!fromCategory) {
+                    for (Quest quest : plugin.getQuestManager().getQuests().values()) {
                         if (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
                             validQuests.add(quest);
                         }
                     }
-                }
-            }
-
-            if (validQuests.isEmpty()) {
-                if (fromCategory) {
-                    Messages.COMMAND_QUEST_ADMIN_RANDOM_CATEGORY_NONE.send(sender,
-                            "{player}", args[3],
-                            "{category}", args[4]);
                 } else {
-                    Messages.COMMAND_QUEST_ADMIN_RANDOM_NONE.send(sender, "{player}", args[3]);
+                    Category category = plugin.getQuestManager().getCategoryById(args[4]);
+                    if (category == null) {
+                        Messages.COMMAND_CATEGORY_OPEN_DOESNTEXIST.send(sender, "{category}", args[1]);
+                    } else {
+                        for (String questId : category.getRegisteredQuestIds()) {
+                            Quest quest = plugin.getQuestManager().getQuestById(questId);
+                            if (quest == null) continue;
+                            if (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
+                                validQuests.add(quest);
+                            }
+                        }
+                    }
                 }
-                return;
-            }
-            int random = ThreadLocalRandom.current().nextInt(0, validQuests.size());
-            Quest quest = validQuests.get(random);
-            qPlayer.startQuest(quest);
 
-            plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
-            if (fromCategory) {
-                Messages.COMMAND_QUEST_ADMIN_RANDOM_CATEGORY_SUCCESS.send(sender,
-                        "{player}", args[3],
-                        "{category}", args[4],
-                        "{quest}", quest.getId());
-            } else {
-                Messages.COMMAND_QUEST_ADMIN_RANDOM_SUCCESS.send(sender,
-                        "{player}", args[3],
-                        "{quest}", quest.getId());
-            }
+                if (validQuests.isEmpty()) {
+                    if (fromCategory) {
+                        Messages.COMMAND_QUEST_ADMIN_RANDOM_CATEGORY_NONE.send(sender,
+                                "{player}", args[3],
+                                "{category}", args[4]);
+                    } else {
+                        Messages.COMMAND_QUEST_ADMIN_RANDOM_NONE.send(sender, "{player}", args[3]);
+                    }
+                    return;
+                }
+                int random = ThreadLocalRandom.current().nextInt(0, validQuests.size());
+                Quest quest = validQuests.get(random);
+                qPlayer.startQuest(quest);
 
-            if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
-                plugin.getPlayerManager().dropPlayer(qPlayer.getPlayerUUID());
-            }
-            return;
+                if (fromCategory) {
+                    Messages.COMMAND_QUEST_ADMIN_RANDOM_CATEGORY_SUCCESS.send(sender,
+                            "{player}", args[3],
+                            "{category}", args[4],
+                            "{quest}", quest.getId());
+                } else {
+                    Messages.COMMAND_QUEST_ADMIN_RANDOM_SUCCESS.send(sender,
+                            "{player}", args[3],
+                            "{quest}", quest.getId());
+                }
+
+                CommandUtils.doSafeSave(qPlayer, questProgressFile, plugin);
+            });
         }
 
         sender.sendMessage(ChatColor.RED + "/quests a/admin moddata random <player> [category]");
