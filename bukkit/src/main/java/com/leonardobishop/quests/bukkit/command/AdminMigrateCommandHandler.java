@@ -34,6 +34,7 @@ public class AdminMigrateCommandHandler implements CommandHandler {
 
         if (migrationInProgress.get()) {
             sender.sendMessage(ChatColor.RED + "A migration is already in progress.");
+            return;
         }
 
         if (args.length == 3 && args[2].equalsIgnoreCase("execute")) {
