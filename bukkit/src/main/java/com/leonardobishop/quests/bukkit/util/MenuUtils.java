@@ -67,7 +67,8 @@ public class MenuUtils {
         if (menu.getOwner().hasStartedQuest(quest)) {
             if (!plugin.getQuestsConfig().getBoolean("options.allow-quest-cancel")
                     || plugin.getConfig().getBoolean("options.quest-autostart")
-                    || quest.isAutoStartEnabled()) {
+                    || quest.isAutoStartEnabled()
+                    || !quest.isCancellable()) {
                 return;
             }
             if (plugin.getQuestsConfig().getBoolean("options.gui-confirm-cancel", true)) {

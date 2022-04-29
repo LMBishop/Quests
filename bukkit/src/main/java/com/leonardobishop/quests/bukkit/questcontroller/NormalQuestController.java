@@ -179,8 +179,17 @@ public class NormalQuestController implements QuestController {
                 return QuestStartResult.NO_PERMISSION_FOR_CATEGORY;
             }
         }
-        if (!config.getBoolean("options.quest-autostart") && getStartedQuestsForPlayer(qPlayer).size() >= config.getQuestLimit(p)) {
-            return QuestStartResult.QUEST_LIMIT_REACHED;
+        if (!config.getBoolean("options.quest-autostart")) {
+            Set<Quest> startedQuests = getStartedQuestsForPlayer(qPlayer);
+            int questLimitCount = 0;
+            for (Quest q : startedQuests) {
+                if (q.doesCountTowardsLimit()) {
+                    questLimitCount++;
+                }
+            }
+            if (questLimitCount >= config.getQuestLimit(p)) {
+                return QuestStartResult.QUEST_LIMIT_REACHED;
+            }
         }
         return QuestStartResult.QUEST_SUCCESS;
     }
@@ -255,6 +264,10 @@ public class NormalQuestController implements QuestController {
             if (player != null) {
                 Messages.QUEST_CANCEL_NOTSTARTED.send(player);
             }
+            return false;
+        }
+        if (!quest.isCancellable()) {
+            Messages.QUEST_CANCEL_NOTCANCELLABLE.send(player);
             return false;
         }
         questProgress.setStarted(false);

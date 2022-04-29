@@ -323,6 +323,7 @@ messages:
   quest-category-permission: "&7You do not have permission to view this category."
   quest-category-quest-permission: "&7You do not have permission to start this quest since it is in a category you do not have permission to view."
   quest-cancel-notstarted: "&7You have not started this quest."
+  quest-cancel-notcancellable: "&7You cannot cancel this quest."
   quest-updater: "&cQuests > &7A new version &c{newver} &7was found on Spigot (your version: &c{oldver}&7). Please update me! <3 - Link: {link}"
   command-data-not-loaded: "&4Your quests progress file has not been loaded; you cannot use quests. If this issue persists, contact an admin."
   command-sub-doesntexist: "&7The specified subcommand '&c{sub}' &7does not exist."

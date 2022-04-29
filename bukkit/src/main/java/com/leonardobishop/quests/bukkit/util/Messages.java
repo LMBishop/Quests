@@ -31,6 +31,7 @@ public enum Messages {
     QUEST_CATEGORY_QUEST_PERMISSION("messages.quest-category-quest-permission", "&7You do not have permission to view this category."),
     QUEST_CATEGORY_PERMISSION("messages.quest-category-permission", "&7You do not have permission to start this quest since it is in a category you do not have permission to view."),
     QUEST_CANCEL_NOTSTARTED("messages.quest-cancel-notstarted", "&7You have not started this quest."),
+    QUEST_CANCEL_NOTCANCELLABLE("messages.quest-cancel-notcancellable", "&7You cannot cancel this quest."),
     QUEST_UPDATER("messages.quest-updater", "&cQuests > &7A new version &c{newver} &7was found on Spigot (your version: &c{oldver}&7). Please update me! <3 - Link: {link}"),
     COMMAND_DATA_NOT_LOADED("messages.command-data-not-loaded", "&4Your quests progress file has not been loaded; you cannot use quests. If this issue persists, contact an admin."),
     COMMAND_SUB_DOESNTEXIST("messages.command-sub-doesntexist", "&7The specified subcommand '&c{sub}' &7does not exist."),
