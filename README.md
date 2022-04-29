@@ -3,7 +3,7 @@
 <img src="https://github.com/LMBishop/Quests/actions/workflows/build.yml/badge.svg">
 <img src="http://isitmaintained.com/badge/resolution/LMBishop/Quests.svg">
 <img src="http://isitmaintained.com/badge/open/LMBishop/Quests.svg">
-<img src="https://mc-download-badges.herokuapp.com/services/spigotsongoda/downloads.php?spigot=23696&songoda=quests-quests">
+<img src="https://mcbadges.leonardobishop.com/all/downloads?spigot=23696&songoda=quests-quests&polymart=938">
 <br>
 <h1 align="center">Quests</h1>
 </p>
