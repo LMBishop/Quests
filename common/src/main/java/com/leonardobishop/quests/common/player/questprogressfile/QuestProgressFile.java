@@ -206,7 +206,7 @@ public class QuestProgressFile {
      * @param modified the modified state of the quest
      */
     public void generateBlankQuestProgress(Quest quest, boolean modified) {
-        QuestProgress questProgress = new QuestProgress(plugin, quest.getId(), false, false, 0, playerUUID, false, modified);
+        QuestProgress questProgress = new QuestProgress(plugin, quest.getId(), false, false, 0, playerUUID, false, 0, modified);
         for (Task task : quest.getTasks()) {
             TaskProgress taskProgress = new TaskProgress(questProgress, task.getId(), null, playerUUID, false, modified);
             questProgress.addTaskProgress(taskProgress);

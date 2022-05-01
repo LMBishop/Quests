@@ -68,13 +68,14 @@ public class YamlStorageProvider implements StorageProvider {
                     if (data.isConfigurationSection("quest-progress")) { //Same job as "isSet" + it checks if is CfgSection
                         for (String id : data.getConfigurationSection("quest-progress").getKeys(false)) {
                             boolean started = data.getBoolean("quest-progress." + id + ".started");
+                            long startedDate = data.getLong("quest-progress." + id + ".started-date");
                             boolean completed = data.getBoolean("quest-progress." + id + ".completed");
                             boolean completedBefore = data.getBoolean("quest-progress." + id + ".completed-before");
                             long completionDate = data.getLong("quest-progress." + id + ".completion-date");
 
                             if (validateQuests && !presentQuests.containsKey(id)) continue;
 
-                            QuestProgress questProgress = new QuestProgress(plugin, id, completed, completedBefore, completionDate, uuid, started, true);
+                            QuestProgress questProgress = new QuestProgress(plugin, id, completed, completedBefore, completionDate, uuid, started, startedDate, true);
 
                             if (data.isConfigurationSection("quest-progress." + id + ".task-progress")) {
                                 for (String taskid : data.getConfigurationSection("quest-progress." + id + ".task-progress").getKeys(false)) {
@@ -131,6 +132,7 @@ public class YamlStorageProvider implements StorageProvider {
             for (QuestProgress questProgress : questProgressValues) {
                 if (!questProgress.isModified()) continue;
                 data.set("quest-progress." + questProgress.getQuestId() + ".started", questProgress.isStarted());
+                data.set("quest-progress." + questProgress.getQuestId() + ".started-date", questProgress.getStartedDate());
                 data.set("quest-progress." + questProgress.getQuestId() + ".completed", questProgress.isCompleted());
                 data.set("quest-progress." + questProgress.getQuestId() + ".completed-before", questProgress.isCompletedBefore());
                 data.set("quest-progress." + questProgress.getQuestId() + ".completion-date", questProgress.getCompletionDate());

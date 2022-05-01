@@ -16,12 +16,13 @@ public class QuestProgress {
     private final UUID player;
 
     private boolean started;
+    private long startedDate;
     private boolean completed;
     private boolean completedBefore;
     private long completionDate;
     private boolean modified;
 
-    public QuestProgress(Quests plugin, String questid, boolean completed, boolean completedBefore, long completionDate, UUID player, boolean started) {
+    public QuestProgress(Quests plugin, String questid, boolean completed, boolean completedBefore, long completionDate, UUID player, boolean started, long startedDate) {
         this.plugin = plugin;
         this.questid = questid;
         this.completed = completed;
@@ -29,10 +30,11 @@ public class QuestProgress {
         this.completionDate = completionDate;
         this.player = player;
         this.started = started;
+        this.startedDate = startedDate;
     }
 
-    public QuestProgress(Quests plugin, String questid, boolean completed, boolean completedBefore, long completionDate, UUID player, boolean started, boolean modified) {
-        this(plugin, questid, completed, completedBefore, completionDate, player, started);
+    public QuestProgress(Quests plugin, String questid, boolean completed, boolean completedBefore, long completionDate, UUID player, boolean started, long startedDate, boolean modified) {
+        this(plugin, questid, completed, completedBefore, completionDate, player, started, startedDate);
         this.modified = modified;
     }
 
@@ -44,6 +46,7 @@ public class QuestProgress {
         this.questid = questProgress.questid;
         this.player = questProgress.player;
         this.started = questProgress.started;
+        this.startedDate = questProgress.startedDate;
         this.completed = questProgress.completed;
         this.completedBefore = questProgress.completedBefore;
         this.completionDate = questProgress.completionDate;
@@ -69,6 +72,15 @@ public class QuestProgress {
 
     public void setStarted(boolean started) {
         this.started = started;
+        this.modified = true;
+    }
+
+    public long getStartedDate() {
+        return startedDate;
+    }
+
+    public void setStartedDate(long startedDate) {
+        this.startedDate = startedDate;
         this.modified = true;
     }
 
@@ -131,7 +143,7 @@ public class QuestProgress {
     }
 
     public boolean hasNonDefaultValues() {
-        if (this.started || this.completed || this.completedBefore || this.completionDate != 0) return true;
+        if (this.started || this.startedDate != 0 || this.completed || this.completedBefore || this.completionDate != 0) return true;
         else {
             for (TaskProgress progress : this.taskProgress.values()) {
                 if (progress.getProgress() != null || progress.isCompleted()) return true;

@@ -24,6 +24,7 @@ public class MySqlStorageProvider implements StorageProvider {
                     " `uuid`              VARCHAR(36)  NOT NULL," +
                     " `quest_id`          VARCHAR(50)  NOT NULL," +
                     " `started`           BOOL         NOT NULL," +
+                    " `started_date`      BIGINT       NOT NULL," +
                     " `completed`         BOOL         NOT NULL," +
                     " `completed_before`  BOOL         NOT NULL," +
                     " `completion_date`   BIGINT       NOT NULL," +
@@ -37,6 +38,11 @@ public class MySqlStorageProvider implements StorageProvider {
                     " `progress`   VARCHAR(64)  NULL," +
                     " `data_type`  VARCHAR(10)  NULL," +
                     " PRIMARY KEY (`uuid`, `quest_id`, `task_id`));";
+    private static final String CREATE_TABLE_DATABASE_INFORMATION =
+            "CREATE TABLE IF NOT EXISTS `{prefix}database_information` (" +
+                    " `key`   VARCHAR(255) NOT NULL," +
+                    " `value` VARCHAR(255) NOT NULL," +
+                    " PRIMARY KEY (`key`));";
     private static final String SELECT_PLAYER_QUEST_PROGRESS =
             "SELECT quest_id, started, completed, completed_before, completion_date FROM `{prefix}quest_progress` WHERE uuid=?;";
     private static final String SELECT_PLAYER_TASK_PROGRESS =
@@ -48,7 +54,7 @@ public class MySqlStorageProvider implements StorageProvider {
     private static final String SELECT_KNOWN_PLAYER_TASK_PROGRESS =
             "SELECT quest_id, task_id FROM `{prefix}task_progress` WHERE uuid=?;";
     private static final String WRITE_PLAYER_QUEST_PROGRESS =
-            "INSERT INTO `{prefix}quest_progress` (uuid, quest_id, started, completed, completed_before, completion_date) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE started=?, completed=?, completed_before=?, completion_date=?";
+            "INSERT INTO `{prefix}quest_progress` (uuid, quest_id, started, started_date, completed, completed_before, completion_date) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE started=?, started_date=?, completed=?, completed_before=?, completion_date=?";
     private static final String WRITE_PLAYER_TASK_PROGRESS =
             "INSERT INTO `{prefix}task_progress` (uuid, quest_id, task_id, completed, progress, data_type) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE completed=?, progress=?, data_type=?";
 
@@ -115,8 +121,16 @@ public class MySqlStorageProvider implements StorageProvider {
                 plugin.getQuestsLogger().debug("Creating default tables");
                 s.addBatch(this.statementProcessor.apply(CREATE_TABLE_QUEST_PROGRESS));
                 s.addBatch(this.statementProcessor.apply(CREATE_TABLE_TASK_PROGRESS));
+                s.addBatch(this.statementProcessor.apply(CREATE_TABLE_DATABASE_INFORMATION));
 
                 s.executeBatch();
+            }
+            DatabaseMigrator migrator = new DatabaseMigrator(connection);
+
+            int currentVersion = migrator.getCurrentSchemaVersion();
+            if (currentVersion < DatabaseMigrator.CURRENT_SCHEMA_VERSION) {
+                plugin.getQuestsLogger().info("Automatically upgrading database schema from version " + currentVersion + " to " + DatabaseMigrator.CURRENT_SCHEMA_VERSION);
+                migrator.upgrade(currentVersion);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -149,12 +163,13 @@ public class MySqlStorageProvider implements StorageProvider {
                     while (rs.next()) {
                         String questId = rs.getString(1);
                         boolean started = rs.getBoolean(2);
-                        boolean completed = rs.getBoolean(3);
-                        boolean completedBefore = rs.getBoolean(4);
-                        long completionDate = rs.getLong(5);
+                        long startedDate = rs.getLong(3);
+                        boolean completed = rs.getBoolean(4);
+                        boolean completedBefore = rs.getBoolean(5);
+                        long completionDate = rs.getLong(6);
 
                         if (validateQuests && !presentQuests.containsKey(questId)) continue;
-                        QuestProgress questProgress = new QuestProgress(plugin, questId, completed, completedBefore, completionDate, uuid, started);
+                        QuestProgress questProgress = new QuestProgress(plugin, questId, completed, completedBefore, completionDate, uuid, started, startedDate);
                         questProgressMap.put(questId, questProgress);
                     }
                 }
@@ -238,13 +253,15 @@ public class MySqlStorageProvider implements StorageProvider {
                     writeQuestProgress.setString(1, uuid.toString());
                     writeQuestProgress.setString(2, questProgress.getQuestId());
                     writeQuestProgress.setBoolean(3, questProgress.isStarted());
-                    writeQuestProgress.setBoolean(4, questProgress.isCompleted());
-                    writeQuestProgress.setBoolean(5, questProgress.isCompletedBefore());
-                    writeQuestProgress.setLong(6, questProgress.getCompletionDate());
-                    writeQuestProgress.setBoolean(7, questProgress.isStarted());
-                    writeQuestProgress.setBoolean(8, questProgress.isCompleted());
-                    writeQuestProgress.setBoolean(9, questProgress.isCompletedBefore());
-                    writeQuestProgress.setLong(10, questProgress.getCompletionDate());
+                    writeQuestProgress.setLong(4, questProgress.getStartedDate());
+                    writeQuestProgress.setBoolean(5, questProgress.isCompleted());
+                    writeQuestProgress.setBoolean(6, questProgress.isCompletedBefore());
+                    writeQuestProgress.setLong(7, questProgress.getCompletionDate());
+                    writeQuestProgress.setBoolean(8, questProgress.isStarted());
+                    writeQuestProgress.setLong(9, questProgress.getStartedDate());
+                    writeQuestProgress.setBoolean(10, questProgress.isCompleted());
+                    writeQuestProgress.setBoolean(11, questProgress.isCompletedBefore());
+                    writeQuestProgress.setLong(12, questProgress.getCompletionDate());
                     writeQuestProgress.addBatch();
 
                     for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
@@ -333,6 +350,87 @@ public class MySqlStorageProvider implements StorageProvider {
 
         for (QuestProgressFile file : files) {
             saveProgressFile(file.getPlayerUUID(), file);
+        }
+    }
+
+    private class DatabaseMigrator {
+        private static final String GET_STARTED_DATE_COLUMN =
+                "SHOW COLUMNS from `{prefix}quest_progress` LIKE 'started_date';";
+        private static final String SELECT_SCHEMA_VERSION =
+                "SELECT value FROM `{prefix}database_information` WHERE `key`='schema_version';";
+        private static final String UPDATE_DATABASE_INFORMATION =
+                "INSERT INTO `{prefix}database_information` (`key`, `value`) VALUES (?,?) ON DUPLICATE KEY UPDATE `value`=?;";
+        private static final int CURRENT_SCHEMA_VERSION = 2;
+
+        private final Map<Integer, String> migrationStatements = new HashMap<>();
+
+        private final Connection connection;
+
+        public DatabaseMigrator(Connection connection) {
+            this.connection = connection;
+
+            this.migrationStatements.put(1,
+                    "ALTER TABLE `{prefix}quest_progress` ADD COLUMN `started_date` BIGINT NOT NULL DEFAULT 0 AFTER `started`;");
+        }
+
+        public int getInitialSchemaVersion() {
+            try (Statement statement = connection.createStatement()) {
+                plugin.getQuestsLogger().debug("Getting initial schema version for new database");
+                ResultSet rs = statement.executeQuery(statementProcessor.apply(GET_STARTED_DATE_COLUMN));
+                boolean hasStartedDateColumn = rs.next();
+
+                return hasStartedDateColumn ? CURRENT_SCHEMA_VERSION : 1;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public int getCurrentSchemaVersion() {
+            try (Statement statement = connection.createStatement()) {
+                plugin.getQuestsLogger().debug("Getting current schema version");
+                ResultSet rs = statement.executeQuery(statementProcessor.apply(SELECT_SCHEMA_VERSION));
+                if (rs.next()) {
+                    int version = Integer.parseInt(rs.getString(1));
+                    plugin.getQuestsLogger().debug("Current schema version: " + version);
+                    return version;
+                } else {
+                    int initialVersion = getInitialSchemaVersion();
+                    updateSchemaVersion(initialVersion);
+                    return initialVersion;
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public void upgrade(int initialSchemaVersion) {
+            plugin.getQuestsLogger().debug("Starting upgrade from version " + initialSchemaVersion + " to " + CURRENT_SCHEMA_VERSION);
+            for (int i = initialSchemaVersion; i < CURRENT_SCHEMA_VERSION; i++) {
+                String statement = statementProcessor.apply(migrationStatements.get(i));
+                plugin.getQuestsLogger().debug("Running migration statement: " + statement);
+                try (Statement stmt = connection.createStatement()) {
+                    stmt.execute(statementProcessor.apply(statement));
+                } catch (SQLException e) {
+                    plugin.getQuestsLogger().severe("Failed to run migration statement (" + i + " -> " + (i + 1) + "): " + statement);
+                    plugin.getQuestsLogger().severe("Quests will attempt to save current migration progress to prevent database corruption, but may not be able to do so");
+                    updateSchemaVersion(i);
+                    throw new RuntimeException(e);
+                }
+            }
+            updateSchemaVersion(CURRENT_SCHEMA_VERSION);
+        }
+
+        public void updateSchemaVersion(int version) {
+            plugin.getQuestsLogger().debug("Updating schema version to " + version);
+            try (PreparedStatement stmt = connection.prepareStatement(statementProcessor.apply(UPDATE_DATABASE_INFORMATION))) {
+                stmt.setString(1, "schema_version");
+                stmt.setString(2, String.valueOf(version));
+                stmt.setString(3, String.valueOf(version));
+
+                stmt.execute();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

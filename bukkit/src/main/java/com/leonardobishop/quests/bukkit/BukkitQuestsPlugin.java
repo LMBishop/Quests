@@ -179,6 +179,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
 
         try {
+            questsLogger.info("Initialising storage provider '" + storageProvider.getName());
             storageProvider.init();
         } catch (Exception e) {
             questsLogger.severe("An error occurred initialising the storage provider.");

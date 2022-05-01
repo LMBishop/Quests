@@ -92,6 +92,7 @@ public class NormalQuestController implements QuestController {
         if (code == QuestStartResult.QUEST_SUCCESS) {
             QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
             questProgress.setStarted(true);
+            questProgress.setStartedDate(System.currentTimeMillis());
             for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
                 taskProgress.setCompleted(false);
                 taskProgress.setProgress(null);
@@ -198,6 +199,7 @@ public class NormalQuestController implements QuestController {
     public boolean completeQuestForPlayer(QPlayer qPlayer, Quest quest) {
         QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
         questProgress.setStarted(false);
+        questProgress.setStartedDate(System.currentTimeMillis());
         for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
             taskProgress.setCompleted(false);
             taskProgress.setProgress(null);
@@ -271,7 +273,9 @@ public class NormalQuestController implements QuestController {
             return false;
         }
         questProgress.setStarted(false);
+        questProgress.setStartedDate(System.currentTimeMillis());
         for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
+            taskProgress.setCompleted(false);
             taskProgress.setProgress(null);
         }
         if (player != null) {
