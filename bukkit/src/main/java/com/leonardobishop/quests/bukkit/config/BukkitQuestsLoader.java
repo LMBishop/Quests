@@ -223,11 +223,13 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         List<String> startCommands = config.getStringList("startcommands");
                         boolean repeatable = config.getBoolean("options.repeatable", false);
                         boolean cooldown = config.getBoolean("options.cooldown.enabled", false);
+                        boolean timeLimit = config.getBoolean("options.time-limit.enabled", false);
                         boolean permissionRequired = config.getBoolean("options.permission-required", false);
                         boolean autostart = config.getBoolean("options.autostart", false);
                         boolean cancellable = config.getBoolean("options.cancellable", true);
                         boolean countsTowardsLimit = config.getBoolean("options.counts-towards-limit", true);
                         int cooldownTime = config.getInt("options.cooldown.time", 10);
+                        int timeLimtTime = config.getInt("options.time-limit.time", 10);
                         int sortOrder = config.getInt("options.sort-order", 1);
                         String category = config.getString("options.category");
                         Map<String, String> placeholders = new HashMap<>();
@@ -250,12 +252,14 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 .withStartCommands(startCommands)
                                 .withPlaceholders(placeholders)
                                 .withCooldown(cooldownTime)
+                                .withTimeLimit(timeLimtTime)
                                 .withSortOrder(sortOrder)
                                 .withCooldownEnabled(cooldown)
+                                .withTimeLimitEnabled(timeLimit)
                                 .withPermissionRequired(permissionRequired)
                                 .withRepeatEnabled(repeatable)
                                 .withCancellable(cancellable)
-                                .withCancellable(countsTowardsLimit)
+                                .withCountsTowardsLimit(countsTowardsLimit)
                                 .withAutoStartEnabled(autostart)
                                 .inCategory(category)
                                 .build();

@@ -113,6 +113,18 @@ public class QPlayer {
     }
 
     /**
+     * Attempt to expire a quest for the player. This will also play all effects (such as titles, messages etc.)
+     *
+     * @param quest the quest to start
+     * @return true if the quest was expired, false otherwise
+     */
+    public boolean expireQuest(@NotNull Quest quest) {
+        Objects.requireNonNull(quest, "quest cannot be null");
+
+        return questController.expireQuestForPlayer(this, quest);
+    }
+
+    /**
      * Check if the player can start a quest.
      *
      * Warning: will fail if the player is not online.

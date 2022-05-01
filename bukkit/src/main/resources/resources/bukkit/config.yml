@@ -311,6 +311,7 @@ messages:
   quest-start: "&7Quest &c{quest} &7started!"
   quest-complete: "&7Quest &c{quest} &7completed!"
   quest-cancel: "&7Quest &c{quest} &7cancelled!"
+  quest-expire: "&7Quest &c{quest} &7has expired."
   quest-track: "&7Tracking quest &c{quest}&7."
   quest-track-stop: "&7No longer tracking quest &c{quest}&7."
   quest-random-none: "&cYou have no quests which you can start."

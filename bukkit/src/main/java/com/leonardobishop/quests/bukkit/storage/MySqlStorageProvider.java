@@ -44,7 +44,7 @@ public class MySqlStorageProvider implements StorageProvider {
                     " `value` VARCHAR(255) NOT NULL," +
                     " PRIMARY KEY (`key`));";
     private static final String SELECT_PLAYER_QUEST_PROGRESS =
-            "SELECT quest_id, started, completed, completed_before, completion_date FROM `{prefix}quest_progress` WHERE uuid=?;";
+            "SELECT quest_id, started, started_date, completed, completed_before, completion_date FROM `{prefix}quest_progress` WHERE uuid=?;";
     private static final String SELECT_PLAYER_TASK_PROGRESS =
             "SELECT quest_id, task_id, completed, progress, data_type FROM `{prefix}task_progress` WHERE uuid=?;";
     private static final String SELECT_UUID_LIST =
@@ -54,7 +54,7 @@ public class MySqlStorageProvider implements StorageProvider {
     private static final String SELECT_KNOWN_PLAYER_TASK_PROGRESS =
             "SELECT quest_id, task_id FROM `{prefix}task_progress` WHERE uuid=?;";
     private static final String WRITE_PLAYER_QUEST_PROGRESS =
-            "INSERT INTO `{prefix}quest_progress` (uuid, quest_id, started, started_date, completed, completed_before, completion_date) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE started=?, started_date=?, completed=?, completed_before=?, completion_date=?";
+            "INSERT INTO `{prefix}quest_progress` (uuid, quest_id, started, started_date, completed, completed_before, completion_date) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE started=?, started_date=?, completed=?, completed_before=?, completion_date=?";
     private static final String WRITE_PLAYER_TASK_PROGRESS =
             "INSERT INTO `{prefix}task_progress` (uuid, quest_id, task_id, completed, progress, data_type) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE completed=?, progress=?, data_type=?";
 

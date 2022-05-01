@@ -19,6 +19,7 @@ public enum Messages {
     QUEST_START("messages.quest-start", "&7Quest &c{quest} &7started!"),
     QUEST_COMPLETE("messages.quest-complete", "&7Quest &c{quest} &completed!"),
     QUEST_CANCEL("messages.quest-cancel", "&7Quest &c{quest} &7cancelled!"),
+    QUEST_EXPIRE("messages.quest-expire", "&7Quest &c{quest} &7has expired."),
     QUEST_TRACK("messages.quest-track", "&7Tracking quest &c{quest}&7."),
     QUEST_TRACK_STOP("messages.quest-track-stop", "&7No longer tracking quest &c{quest}&7."),
     QUEST_RANDOM_NONE("messages.quest-random-none", "&cYou have no quests which you can start."),

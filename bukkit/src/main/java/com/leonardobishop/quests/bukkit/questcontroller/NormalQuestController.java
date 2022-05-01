@@ -258,6 +258,15 @@ public class NormalQuestController implements QuestController {
         }
     }
 
+    private void resetQuest(QuestProgress questProgress) {
+        questProgress.setStarted(false);
+        questProgress.setStartedDate(System.currentTimeMillis());
+        for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
+            taskProgress.setCompleted(false);
+            taskProgress.setProgress(null);
+        }
+    }
+
     @Override
     public boolean cancelQuestForPlayer(QPlayer qPlayer, Quest quest) {
         QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
@@ -272,12 +281,7 @@ public class NormalQuestController implements QuestController {
             Messages.QUEST_CANCEL_NOTCANCELLABLE.send(player);
             return false;
         }
-        questProgress.setStarted(false);
-        questProgress.setStartedDate(System.currentTimeMillis());
-        for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
-            taskProgress.setCompleted(false);
-            taskProgress.setProgress(null);
-        }
+       resetQuest(questProgress);
         if (player != null) {
             QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(quest);
             String displayName = Chat.strip(qItemStack.getName());
@@ -288,6 +292,32 @@ public class NormalQuestController implements QuestController {
             // PlayerCancelQuestEvent -- end
             Messages.send(questCancelEvent.getQuestCancelMessage(), player);
             SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-cancel"));
+        }
+        if (config.getBoolean("options.allow-quest-track")
+                && config.getBoolean("options.quest-autotrack")
+                && quest.getId().equals(qPlayer.getPlayerPreferences().getTrackedQuestId())) {
+            trackNextQuest(qPlayer, null);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean expireQuestForPlayer(QPlayer qPlayer, Quest quest) {
+        QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
+        if (!questProgress.isStarted()) {
+            return false;
+        }
+        resetQuest(questProgress);
+        if (player != null) {
+            QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(quest);
+            String displayName = Chat.strip(qItemStack.getName());
+            String questExpireMessage = Messages.QUEST_EXPIRE.getMessage().replace("{quest}", displayName);
+            // PlayerCancelQuestEvent -- start
+            PlayerExpireQuestEvent questCancelEvent = new PlayerExpireQuestEvent(player, qPlayer, questProgress, questExpireMessage);
+            Bukkit.getPluginManager().callEvent(questCancelEvent);
+            // PlayerCancelQuestEvent -- end
+            Messages.send(questCancelEvent.getQuestExpireMessage(), player);
         }
         if (config.getBoolean("options.allow-quest-track")
                 && config.getBoolean("options.quest-autotrack")

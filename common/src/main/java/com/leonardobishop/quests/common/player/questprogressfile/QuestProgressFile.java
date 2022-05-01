@@ -146,6 +146,25 @@ public class QuestProgressFile {
     }
 
     /**
+     * Gets the time remaining before a quest will have expired.
+     *
+     * @param quest the quest to test for
+     * @return 0 if no time remaining, -1 if the time limit is disabled or the quest is not started,
+     * otherwise the time left in milliseconds
+     */
+    public long getTimeRemainingFor(Quest quest) {
+        QuestProgress questProgress = getQuestProgress(quest);
+        if (quest.isTimeLimitEnabled() && questProgress.isStarted()) {
+            return Math.max(
+                    questProgress.getStartedDate()
+                            + TimeUnit.MILLISECONDS.convert(quest.getTimeLimit(), TimeUnit.MINUTES)
+                            - System.currentTimeMillis()
+                    , 0);
+        }
+        return -1;
+    }
+
+    /**
      * Tests whether or not the player meets the requirements to start a specific quest.
      *
      * @param quest the quest to test for

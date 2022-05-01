@@ -18,6 +18,8 @@ public class Quest implements Comparable<Quest> {
     private boolean repeatEnabled;
     private boolean cooldownEnabled;
     private int cooldown;
+    private boolean timeLimitEnabled;
+    private int timeLimit;
     private int sortOrder;
     private boolean permissionRequired;
     private boolean autoStartEnabled;
@@ -176,10 +178,29 @@ public class Quest implements Comparable<Quest> {
      * Get the cooldown for this quest between completing and restarting the quest.
      * Whether or not this cooldown is in use depends on {@link Quest#isCooldownEnabled()}.
      *
-     * @return the cooldown, in seconds
+     * @return the cooldown, in minutes
      */
     public int getCooldown() {
         return cooldown;
+    }
+
+    /**
+     * Get whether this quest has a time limit.
+     *
+     * @return boolean
+     */
+    public boolean isTimeLimitEnabled() {
+        return timeLimitEnabled;
+    }
+
+    /**
+     * Get the time limit for this quest.
+     * Whether or not this time limit is in use depends on {@link Quest#isTimeLimitEnabled()}.
+     *
+     * @return the time limit, in minutes
+     */
+    public int getTimeLimit() {
+        return timeLimit;
     }
 
     /**
@@ -260,6 +281,8 @@ public class Quest implements Comparable<Quest> {
         private boolean repeatEnabled = false;
         private boolean cooldownEnabled = false;
         private int cooldown = 0;
+        private boolean timeLimitEnabled = false;
+        private int timeLimit = 0;
         private int sortOrder = 1;
         private boolean permissionRequired = false;
         private boolean autoStartEnabled = false;
@@ -307,6 +330,11 @@ public class Quest implements Comparable<Quest> {
             return this;
         }
 
+        public Builder withTimeLimit(int timeLimit) {
+            this.timeLimit = timeLimit;
+            return this;
+        }
+
         public Builder withPlaceholders(Map<String, String> placeholders) {
             this.placeholders = placeholders;
             return this;
@@ -319,6 +347,11 @@ public class Quest implements Comparable<Quest> {
 
         public Builder withCooldownEnabled(boolean cooldownEnabled) {
             this.cooldownEnabled = cooldownEnabled;
+            return this;
+        }
+
+        public Builder withTimeLimitEnabled(boolean timeLimitEnabled) {
+            this.timeLimitEnabled = timeLimitEnabled;
             return this;
         }
 
@@ -358,6 +391,8 @@ public class Quest implements Comparable<Quest> {
             quest.repeatEnabled = this.repeatEnabled;
             quest.cooldownEnabled = this.cooldownEnabled;
             quest.cooldown = this.cooldown;
+            quest.timeLimitEnabled = this.timeLimitEnabled;
+            quest.timeLimit = this.timeLimit;
             quest.sortOrder = this.sortOrder;
             quest.permissionRequired = this.permissionRequired;
             quest.autoStartEnabled = this.autoStartEnabled;

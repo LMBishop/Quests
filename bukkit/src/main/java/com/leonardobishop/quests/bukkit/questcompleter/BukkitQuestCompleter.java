@@ -16,13 +16,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 //TODO move complete effects here ?
 public class BukkitQuestCompleter implements QuestCompleter, Runnable {
 
     private final Queue<QuestProgress> completionQueue = new LinkedList<>();
     private final Queue<QuestProgressFile> fullCheckQueue = new LinkedList<>();
+    private final Queue<UUID> expiredCheckQueue = new LinkedList<>();
     private final BukkitQuestsPlugin plugin;
+    private int expiredQuestsCheckCountdown;
 
     public BukkitQuestCompleter(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -30,8 +34,45 @@ public class BukkitQuestCompleter implements QuestCompleter, Runnable {
 
     @Override
     public void run() {
+        this.processExpiredCheckQueue();
         this.processCompletionQueue();
         this.processFullCheckQueue();
+    }
+
+    private void checkExpiredQuests(QPlayer qPlayer) {
+        QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+        for (QuestProgress questProgress : questProgressFile.getAllQuestProgress()) {
+            if (!questProgress.isStarted()) {
+                continue;
+            }
+
+            Quest quest = plugin.getQuestManager().getQuestById(questProgress.getQuestId());
+            if (quest == null) {
+                continue;
+            }
+
+            if (questProgressFile.getTimeRemainingFor(quest) == 0) {
+                qPlayer.expireQuest(quest);
+            }
+        }
+    }
+
+    private void processExpiredCheckQueue() {
+        UUID who = expiredCheckQueue.poll();
+        if (who == null) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                expiredCheckQueue.add(player.getUniqueId());
+            }
+            return;
+        }
+
+        Player player = Bukkit.getPlayer(who);
+        if (player == null || !player.isOnline()) return;
+
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+        if (qPlayer == null) return;
+
+        checkExpiredQuests(qPlayer);
     }
 
     private void processCompletionQueue() {
@@ -44,6 +85,9 @@ public class BukkitQuestCompleter implements QuestCompleter, Runnable {
             if (qPlayer == null) return;
 
             plugin.getQuestsLogger().debug("Processing player (singular: " + questProgress.getQuestId() + ") " + qPlayer.getPlayerUUID());
+
+            checkExpiredQuests(qPlayer);
+
             Quest quest = plugin.getQuestManager().getQuestById(questProgress.getQuestId());
 
             if (!qPlayer.hasStartedQuest(quest)) return;
@@ -63,20 +107,15 @@ public class BukkitQuestCompleter implements QuestCompleter, Runnable {
             QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
             if (qPlayer == null) return;
             plugin.getQuestsLogger().debug("Processing player (full check) " + qPlayer.getPlayerUUID());
+
+            checkExpiredQuests(qPlayer);
+
             for (QuestProgress questProgress : questProgressFile.getAllQuestProgress()) {
                 Quest quest = plugin.getQuestManager().getQuestById(questProgress.getQuestId());
                 if (quest == null) continue;
                 if (!qPlayer.hasStartedQuest(quest)) continue;
 
-                boolean complete = true;
-                for (Task task : quest.getTasks()) {
-                    TaskProgress taskProgress;
-                    if ((taskProgress = questProgress.getTaskProgress(task.getId())) == null || !taskProgress.isCompleted()) {
-                        complete = false;
-                        break;
-                    }
-                }
-                if (complete) {
+                if (checkComplete(quest, questProgress)) {
                     qPlayer.completeQuest(quest);
                 }
             }

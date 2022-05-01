@@ -22,6 +22,8 @@ public interface QuestController {
 
     boolean cancelQuestForPlayer(QPlayer qPlayer, Quest quest);
 
+    boolean expireQuestForPlayer(QPlayer qPlayer, Quest quest);
+
     void trackQuestForPlayer(QPlayer qPlayer, Quest quest);
 
 }
