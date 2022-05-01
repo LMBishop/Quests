@@ -157,6 +157,14 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                             case "s":
                                 result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted() ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
                                 break;
+                            case "starteddate":
+                            case "sd":
+                                if (qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted()) {
+                                    result = parseDate(args, qPlayer.getQuestProgressFile().getQuestProgress(quest).getStartedDate());
+                                } else {
+                                    result = "Never";
+                                }
+                                break;
                             case "completed":
                             case "c":
                                 result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompleted() ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
