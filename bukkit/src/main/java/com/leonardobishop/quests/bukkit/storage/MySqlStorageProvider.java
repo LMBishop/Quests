@@ -370,7 +370,7 @@ public class MySqlStorageProvider implements StorageProvider {
             this.connection = connection;
 
             this.migrationStatements.put(1,
-                    "ALTER TABLE `{prefix}quest_progress` ADD COLUMN `started_date` BIGINT NOT NULL DEFAULT 0 AFTER `started`;");
+                    "ALTER TABLE `{prefix}quest_progress` ADD COLUMN `started_date` BIGINT NOT NULL AFTER `started`;");
         }
 
         public int getInitialSchemaVersion() {
