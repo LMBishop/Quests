@@ -9,6 +9,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,17 +34,18 @@ public final class DealDamageTaskType extends BukkitTaskType {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+        TaskUtils.configValidateBoolean(root + ".allow-only-creatures", config.get("allow-only-creatures"), problems, true, "allow-only-creatures");
         return problems;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onDamage(EntityDamageByEntityEvent e) {
-        if (!(e.getDamager() instanceof Player)) {
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player)) {
             return;
         }
 
-        Player player = (Player) e.getDamager();
-        double damage = e.getDamage();
+        Player player = (Player) event.getDamager();
+        double damage = event.getDamage();
 
         if (player.hasMetadata("NPC")) return;
 
@@ -62,6 +64,12 @@ public final class DealDamageTaskType extends BukkitTaskType {
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
                     if (taskProgress.isCompleted()) {
+                        continue;
+                    }
+
+                    // Do not count non-creatures damage (e.g. ArmorStands)
+                    boolean allowOnlyCreatures = (boolean) task.getConfigValue("allow-only-creatures", true);
+                    if (allowOnlyCreatures && !(event.getEntity() instanceof Creature)) {
                         continue;
                     }
 
