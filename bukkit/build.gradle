@@ -68,8 +68,10 @@ dependencies {
     // download  from spigot and add to /libs/ yourself
     // uSkyBlock
     compileOnly 'com.github.rlf:uSkyBlock-API:2.6.4'
-    // MythicMobs
-    compileOnly 'io.lumine:Mythic-Dist:5.0.2'
+    // MythicMobs 4
+    compileOnly 'io.lumine.xikage:MythicMobs:4.12.0'
+    // MythicMobs 5
+    compileOnly 'io.lumine:Mythic-Dist:5.0.3'
     // Citizens
     compileOnly ('net.citizensnpcs:citizens:2.0.27-SNAPSHOT') {
         exclude group: 'net.citizensnpcs', module: 'citizens-main'
