@@ -52,6 +52,7 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
             TaskUtils.configValidateExists(root + ".npc-name", config.get("npc-name"), problems, "npc-name", super.getType());
         }
         TaskUtils.configValidateBoolean(root + ".remove-items-when-complete", config.get("remove-items-when-complete"), problems, true, "remove-items-when-complete", super.getType());
+        TaskUtils.configValidateBoolean(root + ".allow-partial-completion", config.get("allow-partial-completion"), problems, true, "allow-partial-completion", super.getType());
         return problems;
     }
 
@@ -97,7 +98,7 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
                     }
 
                     Material material;
-                    int amount = (int) task.getConfigValue("amount");
+                    int itemsNeeded = (int) task.getConfigValue("amount");
                     Object configBlock = task.getConfigValue("item");
                     Object configData = task.getConfigValue("data");
                     boolean remove = (boolean) task.getConfigValue("remove-items-when-complete", false);
@@ -123,9 +124,6 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
                         fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
                     }
 
-                    int[] amountPerSlot = getAmountsPerSlot(player, qi);
-                    int total = Math.min(amountPerSlot[36], amount);
-
                     int progress;
                     if (taskProgress.getProgress() == null) {
                         progress = 0;
@@ -133,24 +131,31 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
                         progress = (int) taskProgress.getProgress();
                     }
 
+                    int total;
+                    int[] amountPerSlot = getAmountsPerSlot(player, qi);
+
                     if (allowPartial) {
+                        total = Math.min(amountPerSlot[36], itemsNeeded - progress);
+
                         if (total == 0) {
                             continue;
                         }
-
-                        progress += total;
 
                         // We must ALWAYS remove items if partial completion is allowed
                         // https://github.com/LMBishop/Quests/issues/375
                         removeItemsInSlots(player, amountPerSlot, total);
 
+                        progress += total;
                         taskProgress.setProgress(progress);
-                        if (progress >= amount) {
+
+                        if (progress >= itemsNeeded) {
                             taskProgress.setCompleted(true);
                         }
                     } else {
+                        total = Math.min(amountPerSlot[36], itemsNeeded);
+
                         taskProgress.setProgress(total);
-                        if (total >= amount) {
+                        if (total >= itemsNeeded) {
                             taskProgress.setCompleted(true);
 
                             if (remove) {
