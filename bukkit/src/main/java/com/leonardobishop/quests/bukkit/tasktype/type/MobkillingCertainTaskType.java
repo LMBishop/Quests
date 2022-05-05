@@ -11,6 +11,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -35,13 +36,32 @@ public final class MobkillingCertainTaskType extends BukkitTaskType {
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".mob", config.get("mob"), problems, "mob", super.getType())) {
-            try {
-                EntityType.valueOf(String.valueOf(config.get("mob")));
-            } catch (IllegalArgumentException ex) {
-                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(String.valueOf(config.get("mob"))), root + ".mob"));
+        if (config.get("mob") == null && config.get("mobs") == null) {
+            TaskUtils.configValidateExists(root + ".mob", config.get("mob"), problems, "mob", super.getType());
+        } else {
+            Object configMob;
+            String source;
+            if (config.containsKey("mob")) {
+                source = "mob";
+            } else {
+                source = "mobs";
             }
+            configMob = config.get(source);
+            List<String> checkBlocks = new ArrayList<>();
+            if (configMob instanceof List) {
+                checkBlocks.addAll((List) configMob);
+            } else {
+                checkBlocks.add(String.valueOf(configMob));
+            }
+            for (String mobName : checkBlocks) {
+                try {
+                    EntityType.valueOf(mobName);
+                } catch (IllegalArgumentException ex) {
+                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                            ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(mobName), root + "." + source));
+                }
+            }
+
         }
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
@@ -81,14 +101,25 @@ public final class MobkillingCertainTaskType extends BukkitTaskType {
                         continue;
                     }
 
-                    String configEntity = (String) task.getConfigValue("mob");
+                    Object configEntity = task.getConfigValues().containsKey("mob") ? task.getConfigValue("mob") : task.getConfigValue("mobs");
 
-                    EntityType entity;
-                    try {
-                        entity = EntityType.valueOf(configEntity);
-                    } catch (IllegalArgumentException ex) {
-                        continue;
+                    List<String> configEntities = new ArrayList<>();
+                    if (configEntity instanceof List) {
+                        configEntities.addAll((List) configEntity);
+                    } else {
+                        configEntities.add(String.valueOf(configEntity));
                     }
+                    boolean validMob = false;
+                    for (String entry : configEntities) {
+                        try {
+                            EntityType entity = EntityType.valueOf(entry);
+                            if (mob.getType() == entity) {
+                                validMob = true;
+                            }
+                        } catch (IllegalArgumentException ignored) { }
+                    }
+
+                    if (!validMob) continue;
 
                     Object configName = task.getConfigValues().containsKey("name") ? task.getConfigValue("name") : task.getConfigValue("names");
 
@@ -110,10 +141,6 @@ public final class MobkillingCertainTaskType extends BukkitTaskType {
                         }
 
                         if (!validName) continue;
-                    }
-
-                    if (mob.getType() != entity) {
-                        continue;
                     }
 
                     int mobKillsNeeded = (int) task.getConfigValue("amount");
