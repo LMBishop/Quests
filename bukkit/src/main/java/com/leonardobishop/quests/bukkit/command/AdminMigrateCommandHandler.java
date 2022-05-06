@@ -82,19 +82,8 @@ public class AdminMigrateCommandHandler implements CommandHandler {
             sender.sendMessage(ChatColor.GRAY + "Performing migration...");
             migrationInProgress.set(true);
             plugin.getScheduler().doAsync(() -> {
-                try {
-                    sender.sendMessage(ChatColor.GRAY + "Initialising storage provider '" + fromProvider.getName() + "'...");
-                    fromProvider.init();
-                } catch (Exception e) {
-                    sender.sendMessage(ChatColor.RED + "An error occurred while initializing '" + fromProvider.getName() + "' storage provider.");
-                    return;
-                }
-
-                try {
-                    sender.sendMessage(ChatColor.GRAY + "Initialising storage provider '" + toProvider.getName() + "'...");
-                    toProvider.init();
-                } catch (Exception e) {
-                    sender.sendMessage(ChatColor.RED + "An error occurred while initializing '" + toProvider.getName() + "' storage provider.");
+                if (!initProvider(sender, fromProvider) || !initProvider(sender, toProvider)) {
+                    sender.sendMessage(ChatColor.DARK_RED + "Migration aborted.");
                     return;
                 }
 
@@ -110,19 +99,8 @@ public class AdminMigrateCommandHandler implements CommandHandler {
                 toProvider.saveAllProgressFiles(files);
                 sender.sendMessage(ChatColor.GRAY + "Done.");
 
-                try {
-                    sender.sendMessage(ChatColor.GRAY + "Shutting down storage provider '" + fromProvider.getName() + "'...");
-                    fromProvider.shutdown();
-                } catch (Exception e) {
-                    sender.sendMessage(ChatColor.RED + "An error occurred while shutting down '" + fromProvider.getName() + "' storage provider.");
-                }
-
-                try {
-                    sender.sendMessage(ChatColor.GRAY + "Shutting down storage provider '" + toProvider.getName() + "'...");
-                    toProvider.shutdown();
-                } catch (Exception e) {
-                    sender.sendMessage(ChatColor.RED + "An error occurred while shutting down '" + toProvider.getName() + "' storage provider.");
-                }
+                shutdownProvider(sender, fromProvider);
+                shutdownProvider(sender, toProvider);
 
                 long endTime = System.currentTimeMillis();
                 sender.sendMessage(ChatColor.GREEN + "Migration complete. Took " + String.format("%.3f", (endTime - startTime) / 1000f) + "s.");
@@ -141,6 +119,31 @@ public class AdminMigrateCommandHandler implements CommandHandler {
         }
         sender.sendMessage(ChatColor.GRAY + "A file has been generated at /plugins/Quests/migrate_data.yml.");
         sender.sendMessage(ChatColor.GRAY + "Please see this file, or the wiki, for further instructions.");
+    }
+
+    private void shutdownProvider(CommandSender sender, StorageProvider provider) {
+        try {
+            sender.sendMessage(ChatColor.GRAY + "Shutting down storage provider '" + provider.getName() + "'...");
+            provider.shutdown();
+        } catch (Exception e) {
+            sender.sendMessage(ChatColor.RED + "An error occurred while shutting down '" + provider.getName() + "' storage provider. " +
+                    "See server console for more details.");
+            e.printStackTrace();
+        }
+    }
+
+    private boolean initProvider(CommandSender sender, StorageProvider provider) {
+        try {
+            sender.sendMessage(ChatColor.GRAY + "Initialising storage provider '" + provider.getName() + "'...");
+            provider.init();
+            return true;
+        } catch (Exception e) {
+            migrationInProgress.set(false);
+            sender.sendMessage(ChatColor.RED + "An error occurred while initializing '" + provider.getName() + "' storage provider. " +
+                    "See server console for more details.");
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private StorageProvider getStorageProvider(ConfigurationSection configurationSection) {
