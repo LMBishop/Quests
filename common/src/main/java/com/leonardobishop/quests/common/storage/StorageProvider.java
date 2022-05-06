@@ -49,4 +49,13 @@ public interface StorageProvider {
      **/
     void saveAllProgressFiles(List<QuestProgressFile> files);
 
+    /**
+     * Whether this provider is 'similar' to another one.
+     * Similarity is determined if the provider effectively points to the same data source.
+     *
+     * @param provider the provider to compare to
+     * @return true if similar, false otherwise
+     */
+    boolean isSimilar(StorageProvider provider);
+
 }

@@ -71,10 +71,9 @@ public class AdminMigrateCommandHandler implements CommandHandler {
             StorageProvider fromProvider = getStorageProvider(fromConfiguration);
             StorageProvider toProvider = getStorageProvider(toConfiguration);
 
-            if (fromProvider.getName().equals("yaml") && toProvider.getName().equals("yaml")) {
-                //TODO check mysql databases aren't the same as well
-                sender.sendMessage(ChatColor.RED + "Refusing to migrate from 'yaml' to 'yaml'.");
-                sender.sendMessage(ChatColor.RED + "Please see the migrate_data.yml file, or the wiki, for instructions.");
+            if (fromProvider.isSimilar(toProvider)) {
+                sender.sendMessage(ChatColor.RED + "Refusing to migrate from and to identical database! " +
+                        "Your configured storage providers effectively point to the same data source.");
                 return;
             }
 

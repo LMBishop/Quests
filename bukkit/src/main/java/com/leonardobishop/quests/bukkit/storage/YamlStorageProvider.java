@@ -196,4 +196,9 @@ public class YamlStorageProvider implements StorageProvider {
             saveProgressFile(file.getPlayerUUID(), file);
         }
     }
+
+    @Override
+    public boolean isSimilar(StorageProvider provider) {
+        return provider instanceof YamlStorageProvider;
+    }
 }

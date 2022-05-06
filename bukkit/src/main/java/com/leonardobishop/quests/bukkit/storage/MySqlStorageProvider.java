@@ -353,6 +353,23 @@ public class MySqlStorageProvider implements StorageProvider {
         }
     }
 
+    @Override
+    public boolean isSimilar(StorageProvider provider) {
+        if (!(provider instanceof MySqlStorageProvider)) {
+            return false;
+        }
+
+        MySqlStorageProvider other = (MySqlStorageProvider) provider;
+
+        String address = configuration.getString("network.address", "localhost:3306");
+        String database = configuration.getString("network.database", "minecraft");
+
+        String otherAddress = other.configuration.getString("network.address", "localhost:3306");
+        String otherDatabase = other.configuration.getString("network.database", "minecraft");
+
+        return address.equalsIgnoreCase(otherAddress) && database.equalsIgnoreCase(otherDatabase);
+    }
+
     private class DatabaseMigrator {
         private static final String GET_STARTED_DATE_COLUMN =
                 "SHOW COLUMNS from `{prefix}quest_progress` LIKE 'started_date';";
