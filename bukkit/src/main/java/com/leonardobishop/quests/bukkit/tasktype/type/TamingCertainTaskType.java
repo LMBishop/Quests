@@ -4,11 +4,13 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
+import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,12 +21,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class TamingTaskType extends BukkitTaskType {
+public final class TamingCertainTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
-    public TamingTaskType(BukkitQuestsPlugin plugin) {
-        super("taming", TaskUtils.TASK_ATTRIBUTION_STRING, "Tame a set amount of any animals.");
+    public TamingCertainTaskType(BukkitQuestsPlugin plugin) {
+        super("tamingcertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Tame a set amount of certain animals.");
         this.plugin = plugin;
     }
 
@@ -33,6 +35,14 @@ public final class TamingTaskType extends BukkitTaskType {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+        if (TaskUtils.configValidateExists(root + ".mob", config.get("mob"), problems, "mob", super.getType())) {
+            try {
+                EntityType.valueOf(String.valueOf(config.get("mob")));
+            } catch (IllegalArgumentException ex) {
+                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                        ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(String.valueOf(config.get("mob"))), root + ".mob"));
+            }
+        }
         return problems;
     }
 
@@ -61,6 +71,17 @@ public final class TamingTaskType extends BukkitTaskType {
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
                     if (taskProgress.isCompleted()) {
+                        continue;
+                    }
+
+                    EntityType entityType;
+                    try {
+                        entityType = EntityType.valueOf((String) task.getConfigValue("mob"));
+                    } catch (IllegalArgumentException ex) {
+                        continue;
+                    }
+
+                    if (event.getEntity().getType() != entityType) {
                         continue;
                     }
 
