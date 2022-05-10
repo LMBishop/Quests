@@ -158,9 +158,6 @@ public class NormalQuestController implements QuestController {
         if (!qPlayer.getQuestProgressFile().hasMetRequirements(quest)) {
             return QuestStartResult.QUEST_LOCKED;
         }
-        if (questProgress.isStarted()) {
-            return QuestStartResult.QUEST_ALREADY_STARTED;
-        }
         if (quest.isPermissionRequired()) {
             if (p != null) {
                 if (!p.hasPermission("quests.quest." + quest.getId())) {
@@ -179,6 +176,9 @@ public class NormalQuestController implements QuestController {
             } else {
                 return QuestStartResult.NO_PERMISSION_FOR_CATEGORY;
             }
+        }
+        if (questProgress.isStarted() || quest.isAutoStartEnabled() || config.getBoolean("options.quest-autostart")) {
+            return QuestStartResult.QUEST_ALREADY_STARTED;
         }
         if (!config.getBoolean("options.quest-autostart")) {
             Set<Quest> startedQuests = getStartedQuestsForPlayer(qPlayer);
@@ -277,7 +277,7 @@ public class NormalQuestController implements QuestController {
             }
             return false;
         }
-        if (!quest.isCancellable()) {
+        if (!quest.isCancellable() || quest.isAutoStartEnabled() || config.getBoolean("options.quest-autostart")) {
             Messages.QUEST_CANCEL_NOTCANCELLABLE.send(player);
             return false;
         }

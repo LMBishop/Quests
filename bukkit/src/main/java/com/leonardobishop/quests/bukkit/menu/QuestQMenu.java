@@ -229,7 +229,6 @@ public class QuestQMenu implements QMenu {
                 QuestMenuElement questMenuElement = (QuestMenuElement) menuElement;
                 Quest quest = questMenuElement.getQuest();
                 if (event.getClick() == startClickType) {
-                    if (config.getBoolean("options.quest-autostart") || quest.isAutoStartEnabled()) return false;
                     if (owner.startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
                         event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
                     }
