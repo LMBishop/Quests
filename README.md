@@ -20,12 +20,14 @@
 The latest release version of Quests can be found on [Spigot](https://www.spigotmc.org/resources/▶-quests-◀-set-up-goals-for-players.23696/).
 The latest build of Quests (development version) can be found on [GitHub](https://github.com/LMBishop/Quests/actions).
 
-Alternatively, you can build Quests via Gradle. Release versions of Quests are built using **Java 8**, you can change the target version in ``build.gradle``.
-* ensure Java 8 is installed on your machine
-* clone this repository
-* run ``gradlew`` in the base directory
+Alternatively, you can build Quests via Gradle. Release versions of Quests are built using **Gradle**, targeting **Java 8**. You can change the target version in ``build.gradle``.
+* Ensure Java is installed on your machine
+* Clone this repository
+* Run ``./gradlew`` (Linux and macOS) or ``gradlew`` (Windows) in the base directory to build Quests
+    * The jar will be output in `/build/libs`
 
-The final jar will be in the `build/libs/` directory.
+*See [CONTRIBUTING.md](https://github.com/LMBishop/Quests/blob/master/CONTRIBUTING.md) for more information.*
+
 
 #### 🧰 Custom Task
 Creating new Task Types within Quests is supported, [see the wiki](https://github.com/LMBishop/Quests/wiki/New-Task-Type) for help.
@@ -64,13 +66,6 @@ See https://github.com/LMBishop/Quests/graphs/contributors
 
 #### 🤝 Contributing to Quests
 See [CONTRIBUTING.md](https://github.com/LMBishop/Quests/blob/master/CONTRIBUTING.md)
-
-Quests is split into separate modules:
-- **common** - contains abstract classes and common code used to create a Quests plugin
-- **bukkit** - an implementation of Quests for Bukkit (this is where you will most likely make changes)
-- **bungee** - for BungeeCord, this isn't a Quests plugin, see [this issue](https://github.com/LMBishop/Quests/issues/180) for more info 
-
-For instructions on building Quests, see [Downloads / Building](#💾-Downloads-/-Building).
 
 ## 📖 Wiki
 Quests provides a highly detailed and well maintained [wiki](https://github.com/LMBishop/Quests/wiki/). The information there is very useful to new users of the plugin.
