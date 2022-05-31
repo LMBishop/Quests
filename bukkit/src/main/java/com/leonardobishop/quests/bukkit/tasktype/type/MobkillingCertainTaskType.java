@@ -58,7 +58,9 @@ public final class MobkillingCertainTaskType extends BukkitTaskType {
                     EntityType.valueOf(mobName);
                 } catch (IllegalArgumentException ex) {
                     problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(mobName), root + "." + source));
+                            ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(mobName),
+                            ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getExtendedDescription(mobName),
+                            root + "." + source));
                 }
             }
 

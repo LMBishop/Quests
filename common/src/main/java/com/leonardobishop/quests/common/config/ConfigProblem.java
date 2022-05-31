@@ -4,20 +4,18 @@ public final class ConfigProblem {
 
     private final ConfigProblemType type;
     private final String description;
+    private final String extendedDescription;
     private final String location;
 
-    public ConfigProblem(ConfigProblemType type, String description, String location) {
+    public ConfigProblem(ConfigProblemType type, String description, String extendedDescription, String location) {
         this.type = type;
         this.description = description == null ? "?" : description;
-        ;
+        this.extendedDescription = extendedDescription == null ? "<dark_grey>This error has no extended description</dark_grey>" : extendedDescription;
         this.location = location == null ? "?" : location;
     }
 
-    public ConfigProblem(ConfigProblemType type, String description) {
-        this.type = type;
-        this.description = description == null ? "?" : description;
-        ;
-        this.location = "?";
+    public ConfigProblem(ConfigProblemType type, String description, String extendedDescription) {
+        this(type, description, extendedDescription, null);
     }
 
     public ConfigProblemType getType() {
@@ -26,6 +24,10 @@ public final class ConfigProblem {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getExtendedDescription() {
+        return extendedDescription;
     }
 
     public String getLocation() {

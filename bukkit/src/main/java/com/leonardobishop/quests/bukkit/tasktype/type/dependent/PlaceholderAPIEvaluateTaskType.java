@@ -43,7 +43,13 @@ public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
                 operator = Operator.valueOf(operatorStr);
             } catch (IllegalArgumentException ex) {
                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        "Operator '" + operatorStr + "' does not exist.", root + ".operator"));
+                        "Operator '" + operatorStr + "' does not exist",
+                        "Valid operators are:<br>" +
+                                "- GREATER_THAN<br>" +
+                                "- LESS_THAN<br>" +
+                                "- GREATER_THAN_OR_EQUAL_TO<br>" +
+                                "- LESS_THAN_OR_EQUAL_TO<br>",
+                        root + ".operator"));
             }
             if (operator != null && evalExists) {
                 String evalStr = String.valueOf(config.get("evaluates"));
@@ -51,7 +57,7 @@ public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
                     Double.parseDouble(evalStr);
                 } catch (IllegalArgumentException ex) {
                     problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            "Numeric operator specified, but placeholder evaluation '" + evalStr + "' is not numeric.", root + ".evaluates"));
+                            "Numeric operator specified, but placeholder evaluation '" + evalStr + "' is not numeric", null, root + ".evaluates"));
                 }
             }
         }

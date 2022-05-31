@@ -58,7 +58,9 @@ public final class MiningCertainTaskType extends BukkitTaskType {
                 String[] split = materialName.split(":");
                 if (Material.getMaterial(String.valueOf(split[0])) == null) {
                     problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(materialName), root + "." + source));
+                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(materialName),
+                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(materialName),
+                            root + "." + source));
                 }
             }
         }

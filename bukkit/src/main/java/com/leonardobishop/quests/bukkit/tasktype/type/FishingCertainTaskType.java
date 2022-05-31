@@ -38,7 +38,9 @@ public final class FishingCertainTaskType extends BukkitTaskType {
         if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType())) {
             if (Material.getMaterial(String.valueOf(config.get("item"))) == null) {
                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(config.get("item"))), root + ".item.item"));
+                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(config.get("item"))),
+                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(String.valueOf(config.get("item"))),
+                        root + ".item.item"));
             }
         }
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))

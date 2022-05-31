@@ -36,7 +36,9 @@ public abstract class BucketInteractionTaskType extends BukkitTaskType {
             String[] split = configBlock.split(":");
             if (Material.getMaterial(String.valueOf(split[0])) == null) {
                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(configBlock), root + ".bucket"));
+                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(configBlock),
+                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(configBlock),
+                        root + ".bucket"));
             }
         }
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))

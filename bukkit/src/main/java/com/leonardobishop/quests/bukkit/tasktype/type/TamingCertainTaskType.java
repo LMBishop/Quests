@@ -40,7 +40,9 @@ public final class TamingCertainTaskType extends BukkitTaskType {
                 EntityType.valueOf(String.valueOf(config.get("mob")));
             } catch (IllegalArgumentException ex) {
                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(String.valueOf(config.get("mob"))), root + ".mob"));
+                        ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(String.valueOf(config.get("mob"))),
+                        ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getExtendedDescription(String.valueOf(config.get("mob"))),
+                        root + ".mob"));
             }
         }
         return problems;

@@ -5,6 +5,7 @@ import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -48,9 +49,26 @@ public class CommandUtils {
                 for (ConfigProblem.ConfigProblemType type : ConfigProblem.ConfigProblemType.values()) {
                     if (sortedProblems.containsKey(type)) {
                         for (ConfigProblem problem : sortedProblems.get(type)) {
-                            sender.sendMessage(ChatColor.DARK_GRAY + " | - " + Chat.matchConfigProblemToColor(problem.getType())
-                                    + problem.getType().getShortened() + ChatColor.DARK_GRAY + ": "
-                                    + ChatColor.GRAY + problem.getDescription() + ChatColor.DARK_GRAY + " :" + problem.getLocation());
+                            String color = Chat.matchConfigProblemToColorName(problem.getType());
+                            String extendedDescription = String.format("<%s>%s</%s><br><gray>Problem location: </gray><white>%s</white><br><br><grey>%s</grey>",
+                                    color,
+                                    problem.getDescription(),
+                                    color,
+                                    problem.getLocation(),
+                                    problem.getExtendedDescription()
+                            );
+                            extendedDescription = extendedDescription.replace("'", "\\'");
+
+                            String message = String.format(
+                                    "<dark_gray> | - </dark_gray><%s>%s</%s><dark_gray>:</dark_gray> <hover:show_text:'%s'><gray>%s</gray></hover><dark_gray> :%s</dark_gray>",
+                                    color,
+                                    problem.getType().getShortened(),
+                                    color,
+                                    extendedDescription,
+                                    problem.getDescription(),
+                                    problem.getLocation()
+                            );
+                            Chat.send(sender, message);
                             count++;
                         }
                     }
@@ -66,6 +84,7 @@ public class CommandUtils {
             sender.sendMessage(ChatColor.DARK_GRAY.toString() + "----");
 
             sender.sendMessage(ChatColor.GRAY.toString() + count + " problem(s) | " + String.join(ChatColor.DARK_GRAY + ", ", legend));
+            sender.sendMessage(ChatColor.DARK_GRAY.toString() + "Mouse-over for more information.");
         } else {
             sender.sendMessage(ChatColor.GRAY + "Quests did not detect any problems with your configuration.");
         }

@@ -438,7 +438,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
         } else {
             configProblems = Collections.singletonMap("<MAIN CONFIG> config.yml",
-                    Collections.singletonList(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR, ConfigProblemDescriptions.MALFORMED_YAML.getDescription())));
+                    Collections.singletonList(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR, ConfigProblemDescriptions.MALFORMED_YAML.getDescription(), ConfigProblemDescriptions.MALFORMED_YAML.getExtendedDescription())));
         }
     }
 

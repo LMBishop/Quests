@@ -53,7 +53,7 @@ public class TaskUtils {
         if (object == null) {
             if (!allowNull) {
                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                        String.format("Expected a number for '%s', but got null instead", (Object[]) args), path));
+                        String.format("Expected a number for '%s', but got null instead", (Object[]) args), null, path));
             }
             return;
         }
@@ -62,11 +62,11 @@ public class TaskUtils {
             double d = Double.parseDouble(String.valueOf(object));
             if (greaterThanZero && d <= 0) {
                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                        String.format("Value for field '%s' must be greater than 0", (Object[]) args), path));
+                        String.format("Value for field '%s' must be greater than 0", (Object[]) args), null, path));
             }
         } catch (ClassCastException ex) {
             problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                    String.format("Expected a number for '%s', but got '" + object + "' instead", (Object[]) args), path));
+                    String.format("Expected a number for '%s', but got '" + object + "' instead", (Object[]) args), null, path));
         }
     }
 
@@ -74,7 +74,7 @@ public class TaskUtils {
         if (object == null) {
             if (!allowNull) {
                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                        String.format("Expected an integer for '%s', but got null instead", (Object[]) args), path));
+                        String.format("Expected an integer for '%s', but got null instead", (Object[]) args), null, path));
             }
             return;
         }
@@ -83,11 +83,11 @@ public class TaskUtils {
             Integer i = (Integer) object;
             if (greaterThanZero && i <= 0) {
                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                        String.format("Value for field '%s' must be greater than 0", (Object[]) args), path));
+                        String.format("Value for field '%s' must be greater than 0", (Object[]) args), null, path));
             }
         } catch (ClassCastException ex) {
             problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                    String.format("Expected an integer for '%s', but got '" + object + "' instead", (Object[]) args), path));
+                    String.format("Expected an integer for '%s', but got '" + object + "' instead", (Object[]) args), null, path));
         }
     }
 
@@ -95,7 +95,7 @@ public class TaskUtils {
         if (object == null) {
             if (!allowNull) {
                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                        String.format("Expected a boolean for '%s', but got null instead", (Object[]) args), path));
+                        String.format("Expected a boolean for '%s', but got null instead", (Object[]) args), null, path));
             }
             return;
         }
@@ -104,7 +104,7 @@ public class TaskUtils {
             Boolean b = (Boolean) object;
         } catch (ClassCastException ex) {
             problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                    String.format("Expected a boolean for '%s', but got '" + object + "' instead", (Object[]) args), path));
+                    String.format("Expected a boolean for '%s', but got '" + object + "' instead", (Object[]) args), null, path));
         }
     }
 
@@ -112,7 +112,7 @@ public class TaskUtils {
         if (object == null) {
             if (!allowNull) {
                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                        String.format("Expected item configuration for '%s', but got null instead", (Object[]) args), path));
+                        String.format("Expected item configuration for '%s', but got null instead", (Object[]) args), null, path));
             }
             return;
         }
@@ -124,7 +124,9 @@ public class TaskUtils {
                 String type = section.getString("quest-item");
                 if (plugin.getQuestItemRegistry().getItem(section.getString("quest-item")) == null) {
                     problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            ConfigProblemDescriptions.UNKNOWN_QUEST_ITEM.getDescription(type), path + ".item.quest-item"));
+                            ConfigProblemDescriptions.UNKNOWN_QUEST_ITEM.getDescription(type),
+                            ConfigProblemDescriptions.UNKNOWN_QUEST_ITEM.getExtendedDescription(type),
+                            path + ".item.quest-item"));
                 }
             } else {
                 String itemloc = "item";
@@ -133,19 +135,25 @@ public class TaskUtils {
                 }
                 if (!section.contains(itemloc)) {
                     problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(""), path + ".type"));
+                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(""),
+                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(""),
+                            path + ".type"));
                 } else {
                     String type = String.valueOf(section.get(itemloc));
                     if (!plugin.getItemGetter().isValidMaterial(type)) {
                         problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(type), path + itemloc));
+                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(type),
+                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(type),
+                                path + itemloc));
                     }
                 }
             }
         } else {
             if (Material.getMaterial(String.valueOf(object)) == null) {
                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(object)), path));
+                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(object)),
+                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(String.valueOf(object)),
+                        path));
             }
         }
     }
@@ -153,7 +161,9 @@ public class TaskUtils {
     public static boolean configValidateExists(String path, Object object, List<ConfigProblem> problems, String... args) {
         if (object == null) {
             problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                    String.format(ConfigProblemDescriptions.TASK_MISSING_FIELD.getDescription(args), (Object[]) args), path));
+                    ConfigProblemDescriptions.TASK_MISSING_FIELD.getDescription(args),
+                    ConfigProblemDescriptions.TASK_MISSING_FIELD.getExtendedDescription(args),
+                    path));
             return false;
         }
         return true;

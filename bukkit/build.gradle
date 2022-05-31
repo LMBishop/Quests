@@ -42,6 +42,7 @@ repositories {
     maven { url = 'https://nexus.bencodez.com/repository/maven-public/'}
     // NuVotifier
     maven { url = 'https://repo.leonardobishop.com/releases/'}
+    // Adventure
     mavenCentral()
 }
 
@@ -103,7 +104,9 @@ dependencies {
     // SuperiorSkyblock
     compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:1.8.4'
     // VotingPlugin
-    compileOnly 'com.bencodez:votingplugin:6.8.3'
+    compileOnly ('com.bencodez:votingplugin:6.8.3') {
+        exclude group: 'dev.dbassett'
+    }
     // MMOItems
     compileOnly 'net.Indyuce:MMOItems:6.5'
     compileOnly 'io.lumine:MythicLib:1.1.1'
@@ -117,6 +120,10 @@ dependencies {
     implementation 'com.zaxxer:HikariCP:4.0.3'
     // slf4j
     implementation 'org.slf4j:slf4j-simple:1.7.30'
+    // adventure
+    implementation 'net.kyori:adventure-platform-bukkit:4.1.0'
+    // mini message
+    implementation "net.kyori:adventure-text-minimessage:4.10.1"
 
     compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
 }
@@ -129,5 +136,6 @@ shadowJar {
     relocate 'org.bstats', 'com.leonardobishop.quests.libs.bstats'
     relocate 'com.zaxxer.hikari', 'com.leonardobishop.quests.libs.hikaricp'
     relocate 'org.slf4j', 'com.leonardobishop.quests.libs.slf4j'
+    relocate 'net.kyori', 'com.leonardobishop.quests.libs.adventure'
     archiveClassifier.set('')
 }

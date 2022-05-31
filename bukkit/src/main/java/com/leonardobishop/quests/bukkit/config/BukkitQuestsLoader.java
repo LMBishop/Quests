@@ -20,6 +20,7 @@ import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -148,8 +149,12 @@ public class BukkitQuestsLoader implements QuestsLoader {
                     // test QUEST file integrity
                     try {
                         config.loadFromString(processed.toString());
-                    } catch (Exception ex) {
-                        configProblems.put(relativeLocation.getPath(), Collections.singletonList(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR, ConfigProblemDescriptions.MALFORMED_YAML.getDescription())));
+                    } catch (InvalidConfigurationException ex) {
+                        configProblems.put(relativeLocation.getPath(), Collections.singletonList(new ConfigProblem(
+                                ConfigProblem.ConfigProblemType.ERROR,
+                                ConfigProblemDescriptions.MALFORMED_YAML.getDescription(),
+                                ConfigProblemDescriptions.MALFORMED_YAML.getExtendedDescription(ex.getMessage())
+                        )));
                         return FileVisitResult.CONTINUE;
                     }
 
@@ -158,13 +163,18 @@ public class BukkitQuestsLoader implements QuestsLoader {
                     List<ConfigProblem> problems = new ArrayList<>();
 
                     if (!StringUtils.isAlphanumeric(id)) {
-                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR, ConfigProblemDescriptions.INVALID_QUEST_ID.getDescription(id)));
+                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                                ConfigProblemDescriptions.INVALID_QUEST_ID.getDescription(id),
+                                ConfigProblemDescriptions.INVALID_QUEST_ID.getExtendedDescription(id)));
                     }
 
                     // CHECK EVERYTHING WRONG WITH THE QUEST FILE BEFORE ACTUALLY LOADING THE QUEST
 
                     if (!config.isConfigurationSection("tasks")) {
-                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR, ConfigProblemDescriptions.NO_TASKS.getDescription(), "tasks"));
+                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                                ConfigProblemDescriptions.NO_TASKS.getDescription(),
+                                ConfigProblemDescriptions.NO_TASKS.getExtendedDescription(),
+                                "tasks"));
                     } else { //continue
                         int validTasks = 0;
                         for (String taskId : config.getConfigurationSection("tasks").getKeys(false)) {
@@ -173,12 +183,18 @@ public class BukkitQuestsLoader implements QuestsLoader {
                             String taskType = config.getString(taskRoot + ".type");
 
                             if (!config.isConfigurationSection(taskRoot)) {
-                                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING, ConfigProblemDescriptions.TASK_MALFORMED_NOT_SECTION.getDescription(taskId), taskRoot));
+                                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                        ConfigProblemDescriptions.TASK_MALFORMED_NOT_SECTION.getDescription(taskId),
+                                        ConfigProblemDescriptions.TASK_MALFORMED_NOT_SECTION.getExtendedDescription(taskId),
+                                        taskRoot));
                                 continue;
                             }
 
                             if (taskType == null) {
-                                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING, ConfigProblemDescriptions.NO_TASK_TYPE.getDescription(), taskRoot));
+                                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                        ConfigProblemDescriptions.NO_TASK_TYPE.getDescription(),
+                                        ConfigProblemDescriptions.NO_TASK_TYPE.getExtendedDescription(),
+                                        taskRoot));
                                 continue;
                             }
 
@@ -192,7 +208,10 @@ public class BukkitQuestsLoader implements QuestsLoader {
 
                                 problems.addAll(t.validateConfig(taskRoot, configValues));
                             } else {
-                                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING, ConfigProblemDescriptions.UNKNOWN_TASK_TYPE.getDescription(taskType), taskRoot));
+                                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                        ConfigProblemDescriptions.UNKNOWN_TASK_TYPE.getDescription(taskType),
+                                        ConfigProblemDescriptions.UNKNOWN_TASK_TYPE.getExtendedDescription(taskType),
+                                        taskRoot));
                                 isValid = false;
                             }
 
@@ -201,7 +220,10 @@ public class BukkitQuestsLoader implements QuestsLoader {
                             }
                         }
                         if (validTasks == 0) {
-                            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR, ConfigProblemDescriptions.NO_TASKS.getDescription(), "tasks"));
+                            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                                    ConfigProblemDescriptions.NO_TASKS.getDescription(),
+                                    ConfigProblemDescriptions.NO_TASKS.getExtendedDescription(),
+                                    "tasks"));
                         }
                     }
 
@@ -269,7 +291,10 @@ public class BukkitQuestsLoader implements QuestsLoader {
                             if (c != null) {
                                 c.registerQuestId(id);
                             } else {
-                                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING, ConfigProblemDescriptions.UNKNOWN_CATEGORY.getDescription(category), "options.category"));
+                                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                        ConfigProblemDescriptions.UNKNOWN_CATEGORY.getDescription(category),
+                                        ConfigProblemDescriptions.UNKNOWN_CATEGORY.getExtendedDescription(category),
+                                        "options.category"));
                             }
                         }
 
@@ -353,7 +378,10 @@ public class BukkitQuestsLoader implements QuestsLoader {
             List<ConfigProblem> problems = new ArrayList<>();
             for (String req : loadedQuest.getValue().getRequirements()) {
                 if (questManager.getQuestById(req) == null) {
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING, ConfigProblemDescriptions.UNKNOWN_REQUIREMENT.getDescription(req), "options.requires"));
+                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                            ConfigProblemDescriptions.UNKNOWN_REQUIREMENT.getDescription(req),
+                            ConfigProblemDescriptions.UNKNOWN_REQUIREMENT.getExtendedDescription(req),
+                            "options.requires"));
                 }
             }
 

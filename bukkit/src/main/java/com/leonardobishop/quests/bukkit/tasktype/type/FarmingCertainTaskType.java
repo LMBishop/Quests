@@ -64,7 +64,9 @@ public final class FarmingCertainTaskType extends BukkitTaskType {
             for (String materialName : checkBlocks) {
                 if (Material.getMaterial(String.valueOf(materialName)) == null) {
                     problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(materialName), root + "." + source));
+                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(materialName),
+                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(materialName),
+                            root + "." + source));
                 }
             }
         }
