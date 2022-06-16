@@ -49,7 +49,8 @@ public class QuestProgressFile {
     public List<Quest> getStartedQuests() {
         List<Quest> startedQuests = new ArrayList<>();
         for (QuestProgress questProgress : questProgress.values()) {
-            if (questProgress.isStarted()) {
+            Quest quest = plugin.getQuestManager().getQuestById(questProgress.getQuestId());
+            if (quest != null && questProgress.isStarted()) {
                 startedQuests.add(plugin.getQuestManager().getQuestById(questProgress.getQuestId()));
             }
         }
