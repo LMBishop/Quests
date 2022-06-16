@@ -2,7 +2,6 @@ package com.leonardobishop.quests.bukkit.listener;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.Messages;
-import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.quest.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

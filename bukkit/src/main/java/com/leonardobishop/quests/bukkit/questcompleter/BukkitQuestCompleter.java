@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 //TODO move complete effects here ?
 public class BukkitQuestCompleter implements QuestCompleter, Runnable {

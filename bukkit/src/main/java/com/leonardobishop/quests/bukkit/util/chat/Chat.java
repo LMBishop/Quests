@@ -5,7 +5,6 @@ import com.leonardobishop.quests.common.plugin.Quests;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,25 +71,19 @@ public class Chat {
     }
 
     public static ChatColor matchConfigProblemToColor(ConfigProblem.ConfigProblemType configProblem) {
-        switch (configProblem) {
-            case ERROR:
-                return ChatColor.RED;
-            case WARNING:
-                return ChatColor.YELLOW;
-            default:
-                return ChatColor.WHITE;
-        }
+        return switch (configProblem) {
+            case ERROR -> ChatColor.RED;
+            case WARNING -> ChatColor.YELLOW;
+            default -> ChatColor.WHITE;
+        };
     }
 
     public static String matchConfigProblemToColorName(ConfigProblem.ConfigProblemType configProblem) {
-        switch (configProblem) {
-            case ERROR:
-                return "red";
-            case WARNING:
-                return "yellow";
-            default:
-                return "white";
-        }
+        return switch (configProblem) {
+            case ERROR -> "red";
+            case WARNING -> "yellow";
+            default -> "white";
+        };
     }
 
     /**

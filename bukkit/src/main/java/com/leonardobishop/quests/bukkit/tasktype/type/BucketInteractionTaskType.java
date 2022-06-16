@@ -12,7 +12,6 @@ import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerBucketEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
