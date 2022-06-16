@@ -33,24 +33,24 @@ public class PlayerJoinListener implements Listener {
         }
 
         final Player player = event.getPlayer();
-        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             if (!player.isOnline()) return;
-            plugin.getPlayerManager().loadPlayer(player.getUniqueId());
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+            plugin.getPlayerManager().loadPlayer(player.getUniqueId()).thenAccept(qPlayer -> {
                 if (qPlayer == null) return;
-                // run a full check to check for any missed quest completions
-                plugin.getQuestCompleter().queueFullCheck(qPlayer.getQuestProgressFile());
+                plugin.getScheduler().doSync(() -> {
+                    // run a full check to check for any missed quest completions
+                    plugin.getQuestCompleter().queueFullCheck(qPlayer.getQuestProgressFile());
 
-                // track first quest
-                if (plugin.getConfig().getBoolean("options.allow-quest-track") && plugin.getConfig().getBoolean("options.quest-autotrack")) {
-                    for (Quest quest : plugin.getQuestManager().getQuests().values()) {
-                        if (qPlayer.hasStartedQuest(quest)) {
-                            qPlayer.trackQuest(quest);
-                            break;
+                    // track first quest
+                    if (plugin.getConfig().getBoolean("options.allow-quest-track") && plugin.getConfig().getBoolean("options.quest-autotrack")) {
+                        for (Quest quest : plugin.getQuestManager().getQuests().values()) {
+                            if (qPlayer.hasStartedQuest(quest)) {
+                                qPlayer.trackQuest(quest);
+                                break;
+                            }
                         }
                     }
-                }
+                });
             });
         }, plugin.getQuestsConfig().getInt("options.storage.synchronisation.delay-loading", 0));
     }

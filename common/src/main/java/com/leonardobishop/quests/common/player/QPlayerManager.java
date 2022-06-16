@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -56,10 +57,8 @@ public class QPlayerManager {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
         plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + ".");
-        qPlayers.computeIfPresent(uuid, (mapUUID, qPlayer) -> {
-            savePlayer(uuid);
-            return null;
-        });
+        CompletableFuture<Void> future = savePlayer(uuid);
+        future.thenAccept((v) -> qPlayers.remove(uuid));
     }
 
     /**
@@ -67,13 +66,14 @@ public class QPlayerManager {
      * The modified status of the progress file will be reset.
      *
      * @param uuid the uuid of the player
+     * @return completable future
      */
-    public void savePlayer(@NotNull UUID uuid) {
+    public CompletableFuture<Void> savePlayer(@NotNull UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
         QPlayer qPlayer = getPlayer(uuid);
-        if (qPlayer == null) return;
-        savePlayer(uuid, qPlayer.getQuestProgressFile());
+        if (qPlayer == null) return CompletableFuture.completedFuture(null);
+        return savePlayer(uuid, qPlayer.getQuestProgressFile());
     }
 
     /**
@@ -82,14 +82,22 @@ public class QPlayerManager {
      *
      * @param uuid the uuid of the player
      * @param originalProgressFile the quest progress file to associate with and save
+     * @return completable future
      */
-    public void savePlayer(@NotNull UUID uuid, @NotNull QuestProgressFile originalProgressFile) {
+    public CompletableFuture<Void> savePlayer(@NotNull UUID uuid, @NotNull QuestProgressFile originalProgressFile) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
         Objects.requireNonNull(originalProgressFile, "originalProgressFile cannot be null");
 
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
         QuestProgressFile clonedProgressFile = new QuestProgressFile(originalProgressFile);
         originalProgressFile.resetModified();
-        plugin.getScheduler().doAsync(() -> save(uuid, clonedProgressFile));
+        plugin.getScheduler().doAsync(() -> {
+            save(uuid, clonedProgressFile);
+            future.complete(null);
+        });
+
+        return future;
     }
 
     /**
@@ -148,17 +156,27 @@ public class QPlayerManager {
 
     /**
      * Load the player if they exist, otherwise create a new {@link QuestProgressFile}.
-     * This will have no effect if player is already loaded. Can be invoked asynchronously.
+     * This will have no effect if player is already loaded.
      *
      * @param uuid the uuid of the player
+     * @return completable future with the loaded player, or null if there was an error
      */
-    public void loadPlayer(UUID uuid) {
+    public CompletableFuture<QPlayer> loadPlayer(UUID uuid) {
         plugin.getQuestsLogger().debug("Loading player " + uuid + ".");
-        qPlayers.computeIfAbsent(uuid, s -> {
+
+        CompletableFuture<QPlayer> future = new CompletableFuture<>();
+        plugin.getScheduler().doAsync(() -> {
             QuestProgressFile questProgressFile = storageProvider.loadProgressFile(uuid);
-            if (questProgressFile == null) return null;
-            return new QPlayer(plugin, uuid, new QPlayerPreferences(null), questProgressFile, activeQuestController);
+            if (questProgressFile == null) {
+                future.complete(null);
+                return;
+            }
+            QPlayer qPlayer = new QPlayer(plugin, uuid, new QPlayerPreferences(null), questProgressFile, activeQuestController);
+            qPlayers.computeIfAbsent(uuid, s -> qPlayer);
+            future.complete(qPlayer);
         });
+
+        return future;
     }
 
     /**

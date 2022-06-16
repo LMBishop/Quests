@@ -12,6 +12,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 public class CommandUtils {
@@ -104,8 +105,9 @@ public class CommandUtils {
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
         if (qPlayer == null) {
             Messages.COMMAND_QUEST_ADMIN_LOADDATA.send(sender, "{player}", username);
-            plugin.getPlayerManager().loadPlayer(uuid);
-            qPlayer = plugin.getPlayerManager().getPlayer(uuid);
+            try {
+                qPlayer = plugin.getPlayerManager().loadPlayer(uuid).get();
+            } catch (InterruptedException | ExecutionException ignored) {}
         }
         if (qPlayer == null) {
             Messages.COMMAND_QUEST_ADMIN_NODATA.send(sender, "{player}", username);
@@ -134,21 +136,17 @@ public class CommandUtils {
             }
         }
 
-        plugin.getScheduler().doAsync(() -> {
-            if (plugin.getPlayerManager().getPlayer(uuid) == null) {
-                Messages.COMMAND_QUEST_ADMIN_LOADDATA.send(sender, "{player}", username);
-                plugin.getPlayerManager().loadPlayer(uuid);
-            }
+        if (plugin.getPlayerManager().getPlayer(uuid) == null) {
+            Messages.COMMAND_QUEST_ADMIN_LOADDATA.send(sender, "{player}", username);
+            plugin.getPlayerManager().loadPlayer(uuid).thenAccept((qPlayer -> {
+                if (qPlayer == null) {
+                    Messages.COMMAND_QUEST_ADMIN_NODATA.send(sender, "{player}", username);
+                    return;
+                }
 
-            final QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
-
-            if (qPlayer == null) {
-                Messages.COMMAND_QUEST_ADMIN_NODATA.send(sender, "{player}", username);
-                return;
-            }
-
-            plugin.getScheduler().doSync(() -> callback.accept(qPlayer));
-        });
+                plugin.getScheduler().doSync(() -> callback.accept(qPlayer));
+            }));
+        }
     }
 
     public static void doSafeSave(QPlayer qPlayer, QuestProgressFile questProgressFile, BukkitQuestsPlugin plugin) {
