@@ -19,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheable {
 
@@ -70,7 +69,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
         if (save) args = Arrays.copyOf(args, args.length - 1);
 
         final QPlayer qPlayer = plugin.getPlayerManager().getPlayer(p.getUniqueId());
-        if (qPlayer == null) return Messages.PLACEHOLDERAPI_DATA_NOT_LOADED.getMessage();
+        if (qPlayer == null) return Messages.PLACEHOLDERAPI_DATA_NOT_LOADED.getMessageLegacyColor();
         String split = args[args.length - 1];
 
         String result = "null";
@@ -109,7 +108,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                             case "l":
                                 plugin.getQuestManager().getCategories().forEach(c -> {
                                     ItemStack itemStack = plugin.getQItemStackRegistry().getCategoryItemStack(c);
-                                    listCategories.add(Chat.strip(itemStack.getItemMeta().getDisplayName()));
+                                    listCategories.add(Chat.legacyStrip(itemStack.getItemMeta().getDisplayName()));
                                 });
                                 break;
                             case "listid":
@@ -141,7 +140,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                         if (qPlayer.getPlayerPreferences().getTrackedQuestId() == null ||
                                 plugin.getQuestManager().getQuestById(qPlayer.getPlayerPreferences().getTrackedQuestId()) == null) {
                             if (args.length == 1) {
-                                return Messages.PLACEHOLDERAPI_NO_TRACKED_QUEST.getMessage();
+                                return Messages.PLACEHOLDERAPI_NO_TRACKED_QUEST.getMessageLegacyColor();
                             } else {
                                 return "";
                             }
@@ -155,7 +154,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                         switch (args[1].toLowerCase()) {
                             case "started":
                             case "s":
-                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted() ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
+                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted() ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
                                 break;
                             case "starteddate":
                             case "sd":
@@ -167,11 +166,11 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                 break;
                             case "completed":
                             case "c":
-                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompleted() ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
+                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompleted() ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
                                 break;
                             case "completedbefore":
                             case "cb":
-                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompletedBefore() ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
+                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompletedBefore() ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
                                 break;
                             case "completiondate":
                             case "cd":
@@ -190,10 +189,10 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                 }
                                 break;
                             case "canaccept":
-                                result = (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
+                                result = (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
                                 break;
                             case "meetsrequirements":
-                                result = (qPlayer.getQuestProgressFile().hasMetRequirements(quest) ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
+                                result = (qPlayer.getQuestProgressFile().hasMetRequirements(quest) ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
                                 break;
                             default:
                                 if (!args[1].contains(":"))
@@ -214,7 +213,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                                 break;
                                             case "completed":
                                             case "c":
-                                                result = String.valueOf(qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).isCompleted() ? Messages.PLACEHOLDERAPI_TRUE.getMessage() : Messages.PLACEHOLDERAPI_FALSE.getMessage());
+                                                result = String.valueOf(qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).isCompleted() ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
                                                 break;
                                             default:
                                                 return args[0] + "_" + args[1] + "_" + args[2] + " is not a valid placeholder";
@@ -227,7 +226,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                     if (placeholder == null) {
                                         return t[1] + " is not a valid placeholder within quest " + quest.getId();
                                     }
-                                    placeholder = QItemStack.processPlaceholders(Chat.color(placeholder), qPlayer.getQuestProgressFile().getQuestProgress(quest));
+                                    placeholder = QItemStack.processPlaceholders(Chat.legacyColor(placeholder), qPlayer.getQuestProgressFile().getQuestProgress(quest));
                                     return placeholder;
                                 } else {
                                     return args[0] + "_" + args[1] + " is not a valid placeholder";
@@ -245,7 +244,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
 
                     if (args.length == 1) {
                         ItemStack itemStack = plugin.getQItemStackRegistry().getCategoryItemStack(category);
-                        result = Chat.strip(itemStack.getItemMeta().getDisplayName());
+                        result = Chat.legacyStrip(itemStack.getItemMeta().getDisplayName());
                     } else {
                         if (args.length > 2 && split.equals(args[2])) split = ",";
                         switch (args[1].toLowerCase()) {
@@ -322,7 +321,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
 
     private String getQuestDisplayNameStripped(Quest quest) {
         QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(quest);
-        if (qItemStack != null) return Chat.strip(qItemStack.getName());
+        if (qItemStack != null) return Chat.legacyStrip(qItemStack.getName());
         return null;
     }
 

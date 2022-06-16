@@ -1,21 +1,23 @@
 package com.leonardobishop.quests.bukkit.util.chat;
 
-import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.common.config.ConfigProblem;
+import com.leonardobishop.quests.common.plugin.Quests;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Chat {
 
     private static final ColorAdapter legacyColorAdapter;
-    private static final MiniMessageParser miniMessageParser;
+    private static final Pattern legacyPattern;
+    private static MiniMessageParser miniMessageParser;
 
     static {
         String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];;
@@ -26,18 +28,27 @@ public class Chat {
         } else {
             legacyColorAdapter = new HexColorAdapter();
         }
-        miniMessageParser = new MiniMessageParser(Bukkit.getPluginManager().getPlugin("Quests"));
+        Quests questsPlugin = (Quests) Bukkit.getPluginManager().getPlugin("Quests");
+        try {
+            Class.forName("net.kyori.adventure.Adventure", false, Bukkit.class.getClassLoader());
+            miniMessageParser = new MiniMessageParser();
+            questsPlugin.getQuestsLogger().debug("Modern chat is available.");
+        } catch (Throwable e) {
+            questsPlugin.getQuestsLogger().debug("Modern chat is not available, resorting to legacy chat.");
+            miniMessageParser = null;
+        }
+        legacyPattern = Pattern.compile("&(?:\\d|#|[a-f]|[k-o]|r)");
     }
 
     @Contract("null -> null")
     @Deprecated // use send instead
-    public static String color(@Nullable String s) {
+    public static String legacyColor(@Nullable String s) {
         return legacyColorAdapter.color(s);
     }
 
     @Contract("null -> null")
     @Deprecated // use send instead
-    public static List<String> color(@Nullable List<String> s) {
+    public static List<String> legacyColor(@Nullable List<String> s) {
         if (s == null || s.size() == 0) return s;
 
         List<String> colored = new ArrayList<>();
@@ -48,8 +59,16 @@ public class Chat {
     }
 
     @Contract("null -> null")
-    public static String strip(@Nullable String s) {
+    public static String legacyStrip(@Nullable String s) {
         return legacyColorAdapter.strip(s);
+    }
+
+    public static boolean usesLegacy(String s) {
+        return legacyPattern.matcher(s).find();
+    }
+
+    public static boolean isModernChatAvailable() {
+        return miniMessageParser != null;
     }
 
     public static ChatColor matchConfigProblemToColor(ConfigProblem.ConfigProblemType configProblem) {
@@ -76,14 +95,43 @@ public class Chat {
 
     /**
      * Send a message to a given command sender. The given message will be parsed for legacy
-     * colours and minimessage formatting.
+     * colour, or minimessage formatting.
      *
      * @param who the player to send to
      * @param message the message to send
+     * @param allowLegacy whether legacy colour codes should be tested and allowed
+     * @param substitutions pairs of substitutions
      */
-    public static void send(CommandSender who, String message) {
-//        String colouredMessage = legacyColorAdapter.color(message);
-        miniMessageParser.send(who, message);
+    public static void send(CommandSender who, String message, boolean allowLegacy, String... substitutions) {
+        if (substitutions.length % 2 != 0) {
+            throw new IllegalArgumentException("uneven substitutions passed");
+        }
+
+        if (message == null || message.isEmpty()) {
+            return;
+        }
+
+        String substitutedMessage = message;
+        for (int i = 0; i < substitutions.length ; i += 2) {
+            substitutedMessage = substitutedMessage.replace(substitutions[i], substitutions[i+1]);
+        }
+
+        if (miniMessageParser == null || (allowLegacy && usesLegacy(message))) {
+            who.sendMessage(legacyColor(substitutedMessage));
+        } else {
+            miniMessageParser.send(who, substitutedMessage);
+        }
+    }
+
+    /**
+     * Send a mini-message formatted message to a given command sender.
+     *
+     * @param who the player to send to
+     * @param message the message to send
+     * @param substitutions pairs of substitutions
+     */
+    public static void send(CommandSender who, String message, String... substitutions) {
+        send(who, message, false, substitutions);
     }
 
 }

@@ -11,7 +11,6 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -135,7 +134,7 @@ public final class MobkillingCertainTaskType extends BukkitTaskType {
 
                         boolean validName = false;
                         for (String name : configNames) {
-                            name = Chat.color(name);
+                            name = Chat.legacyColor(name);
                             if (mob.getCustomName() != null && !mob.getCustomName().equals(name)) {
                                 validName = true;
                                 break;

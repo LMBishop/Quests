@@ -82,8 +82,8 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
 
                 for (Task task : quest.getTasksOfType(super.getType())) {
                     if (task.getConfigValue("npc-name") != null) {
-                        if (!Chat.strip(Chat.color(String.valueOf(task.getConfigValue("npc-name"))))
-                                .equals(Chat.strip(Chat.color(npc.getName())))) {
+                        if (!Chat.legacyStrip(Chat.legacyColor(String.valueOf(task.getConfigValue("npc-name"))))
+                                .equals(Chat.legacyStrip(Chat.legacyColor(npc.getName())))) {
                             continue;
                         }
                     } else if (!task.getConfigValue("npc-id").equals(npc.getId())) {

@@ -5,6 +5,7 @@ import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
 import com.leonardobishop.quests.bukkit.item.*;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStackRegistry;
+import com.leonardobishop.quests.bukkit.util.StringUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
@@ -17,7 +18,6 @@ import com.leonardobishop.quests.common.quest.Task;
 import com.leonardobishop.quests.common.questcontroller.QuestController;
 import com.leonardobishop.quests.common.tasktype.TaskType;
 import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -490,11 +490,11 @@ public class BukkitQuestsLoader implements QuestsLoader {
         List<String> cLoreNormal = config.getStringList(path + ".lore-normal");
         List<String> cLoreStarted = config.getStringList(path + ".lore-started");
 
-        List<String> loreNormal = Chat.color(cLoreNormal);
-        List<String> loreStarted = Chat.color(cLoreStarted);
+        List<String> loreNormal = Chat.legacyColor(cLoreNormal);
+        List<String> loreStarted = Chat.legacyColor(cLoreStarted);
 
         String name;
-        name = Chat.color(cName);
+        name = Chat.legacyColor(cName);
 
         ItemStack is = plugin.getConfiguredItemStack(path, config,
                 ItemGetter.Filter.DISPLAY_NAME, ItemGetter.Filter.LORE, ItemGetter.Filter.ENCHANTMENTS);

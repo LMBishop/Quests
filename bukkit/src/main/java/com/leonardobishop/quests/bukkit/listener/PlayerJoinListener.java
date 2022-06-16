@@ -25,7 +25,7 @@ public class PlayerJoinListener implements Listener {
         }
         if (plugin.getUpdater().isUpdateReady() && event.getPlayer().hasPermission("quests.admin")) {
             // delay for a bit so they actually see the message
-            String updateMessage = Messages.QUEST_UPDATER.getMessage()
+            String updateMessage = Messages.QUEST_UPDATER.getMessageLegacyColor()
                     .replace("{newver}", plugin.getUpdater().getReturnedVersion())
                     .replace("{oldver}", plugin.getUpdater().getInstalledVersion())
                     .replace("{link}", plugin.getUpdater().getUpdateLink());

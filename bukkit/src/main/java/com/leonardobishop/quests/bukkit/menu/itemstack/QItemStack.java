@@ -38,10 +38,10 @@ public class QItemStack {
         this.loreStarted = loreStarted;
         this.startingItemStack = startingItemStack;
 
-        this.globalLoreAppendNormal = Chat.color(plugin.getQuestsConfig().getStringList("global-quest-display.lore.append-normal"));
-        this.globalLoreAppendNotStarted = Chat.color(plugin.getQuestsConfig().getStringList("global-quest-display.lore.append-not-started"));
-        this.globalLoreAppendStarted = Chat.color(plugin.getQuestsConfig().getStringList("global-quest-display.lore.append-started"));
-        this.globalLoreAppendTracked = Chat.color(plugin.getQuestsConfig().getStringList("global-quest-display.lore.append-tracked"));
+        this.globalLoreAppendNormal = Chat.legacyColor(plugin.getQuestsConfig().getStringList("global-quest-display.lore.append-normal"));
+        this.globalLoreAppendNotStarted = Chat.legacyColor(plugin.getQuestsConfig().getStringList("global-quest-display.lore.append-not-started"));
+        this.globalLoreAppendStarted = Chat.legacyColor(plugin.getQuestsConfig().getStringList("global-quest-display.lore.append-started"));
+        this.globalLoreAppendTracked = Chat.legacyColor(plugin.getQuestsConfig().getStringList("global-quest-display.lore.append-tracked"));
     }
 
     public String getName() {
@@ -147,9 +147,9 @@ public class QItemStack {
                 if (parts[1].equals("complete")) {
                     String str;
                     if (questProgress.getTaskProgress(parts[0]).isCompleted()) {
-                        str = Chat.color(Messages.UI_PLACEHOLDERS_TRUE.getMessage());
+                        str = Chat.legacyColor(Messages.UI_PLACEHOLDERS_TRUE.getMessageLegacyColor());
                     } else {
-                        str = Chat.color(Messages.UI_PLACEHOLDERS_FALSE.getMessage());
+                        str = Chat.legacyColor(Messages.UI_PLACEHOLDERS_FALSE.getMessageLegacyColor());
                     }
                     s = s.replace("{" + m.group(1) + "}", str);
                 }

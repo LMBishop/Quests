@@ -7,12 +7,12 @@ import com.leonardobishop.quests.bukkit.menu.element.MenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.QuestMenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.SpacerMenuElement;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
+import com.leonardobishop.quests.bukkit.util.StringUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.quest.Quest;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -69,7 +69,7 @@ public class QuestQMenu implements QMenu {
         }
         if (plugin.getConfig().isConfigurationSection(path)) {
             for (String s : plugin.getConfig().getConfigurationSection(path).getKeys(false)) {
-                if (!NumberUtils.isNumber(s)) continue;
+                if (!StringUtils.isNumeric(s)) continue;
                 int slot = Integer.parseInt(s);
                 int repeat = plugin.getConfig().getInt(path + "." + s + ".repeat");
                 MenuElement menuElement;
@@ -141,7 +141,7 @@ public class QuestQMenu implements QMenu {
         currentPage = page;
         int pageMin = pageSize * (page - 1);
         int pageMax = pageSize * page;
-        String title = Chat.color(config.getString("options.guinames.quests-menu"));
+        String title = Chat.legacyColor(config.getString("options.guinames.quests-menu"));
 
         ItemStack pageIs;
         ItemStack pagePrevIs;

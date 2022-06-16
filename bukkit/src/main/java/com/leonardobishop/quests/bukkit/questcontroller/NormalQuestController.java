@@ -103,7 +103,7 @@ public class NormalQuestController implements QuestController {
             questProgress.setCompleted(false);
             if (player != null) {
                 QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(quest);
-                String displayName = Chat.strip(qItemStack.getName());
+                String displayName = Chat.legacyStrip(qItemStack.getName());
                 String questStartMessage = Messages.QUEST_START.getMessage().replace("{quest}", displayName);
                 // PlayerStartQuestEvent -- start
                 PlayerStartQuestEvent questStartEvent = new PlayerStartQuestEvent(player, qPlayer, questProgress, questStartMessage);
@@ -111,8 +111,8 @@ public class NormalQuestController implements QuestController {
                 // PlayerStartQuestEvent -- end
                 Messages.send(questStartEvent.getQuestStartMessage(), player);
                 if (config.getBoolean("options.titles-enabled")) {
-                    plugin.getTitleHandle().sendTitle(player, Messages.TITLE_QUEST_START_TITLE.getMessage().replace("{quest}", displayName),
-                            Messages.TITLE_QUEST_START_SUBTITLE.getMessage().replace("{quest}", displayName));
+                    plugin.getTitleHandle().sendTitle(player, Messages.TITLE_QUEST_START_TITLE.getMessageLegacyColor().replace("{quest}", displayName),
+                            Messages.TITLE_QUEST_START_SUBTITLE.getMessageLegacyColor().replace("{quest}", displayName));
                 }
                 for (String s : quest.getStartCommands()) {
                     s = s.replace("{player}", player.getName());
@@ -126,7 +126,7 @@ public class NormalQuestController implements QuestController {
                     if (plugin.getConfig().getBoolean("options.quests-use-placeholderapi")) {
                         s = plugin.getPlaceholderAPIProcessor().apply(player, s);
                     }
-                    player.sendMessage(Chat.color(s));
+                    Chat.send(player, s, true);
                 }
                 SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-start"));
             }
@@ -213,7 +213,7 @@ public class NormalQuestController implements QuestController {
         Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
         if (player != null) {
             QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(quest);
-            String displayName = Chat.strip(qItemStack.getName());
+            String displayName = Chat.legacyStrip(qItemStack.getName());
             String questFinishMessage = Messages.QUEST_COMPLETE.getMessage().replace("{quest}", displayName);
             // PlayerFinishQuestEvent -- start
             PlayerFinishQuestEvent questFinishEvent = new PlayerFinishQuestEvent(player, qPlayer, questProgress, questFinishMessage);
@@ -231,14 +231,14 @@ public class NormalQuestController implements QuestController {
             });
             Messages.send(questFinishEvent.getQuestFinishMessage(), player);
             if (config.getBoolean("options.titles-enabled")) {
-                plugin.getTitleHandle().sendTitle(player, Messages.TITLE_QUEST_COMPLETE_TITLE.getMessage().replace("{quest}", displayName),
-                        Messages.TITLE_QUEST_COMPLETE_SUBTITLE.getMessage().replace("{quest}", displayName));
+                plugin.getTitleHandle().sendTitle(player, Messages.TITLE_QUEST_COMPLETE_TITLE.getMessageLegacyColor().replace("{quest}", displayName),
+                        Messages.TITLE_QUEST_COMPLETE_SUBTITLE.getMessageLegacyColor().replace("{quest}", displayName));
             }
             for (String s : quest.getRewardString()) {
                 if (plugin.getConfig().getBoolean("options.quests-use-placeholderapi")) {
                     s = plugin.getPlaceholderAPIProcessor().apply(player, s);
                 }
-                player.sendMessage(Chat.color(s));
+                player.sendMessage(Chat.legacyColor(s));
             }
             SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-complete"));
         }
@@ -284,7 +284,7 @@ public class NormalQuestController implements QuestController {
        resetQuest(questProgress);
         if (player != null) {
             QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(quest);
-            String displayName = Chat.strip(qItemStack.getName());
+            String displayName = Chat.legacyStrip(qItemStack.getName());
             String questCancelMessage = Messages.QUEST_CANCEL.getMessage().replace("{quest}", displayName);
             // PlayerCancelQuestEvent -- start
             PlayerCancelQuestEvent questCancelEvent = new PlayerCancelQuestEvent(player, qPlayer, questProgress, questCancelMessage);
@@ -311,7 +311,7 @@ public class NormalQuestController implements QuestController {
         resetQuest(questProgress);
         if (player != null) {
             QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(quest);
-            String displayName = Chat.strip(qItemStack.getName());
+            String displayName = Chat.legacyStrip(qItemStack.getName());
             String questExpireMessage = Messages.QUEST_EXPIRE.getMessage().replace("{quest}", displayName);
             // PlayerCancelQuestEvent -- start
             PlayerExpireQuestEvent questCancelEvent = new PlayerExpireQuestEvent(player, qPlayer, questProgress, questExpireMessage);
@@ -339,13 +339,13 @@ public class NormalQuestController implements QuestController {
                 Quest currentTrackedQuest;
                 if (currentTrackedQuestId != null && (currentTrackedQuest = plugin.getQuestManager().getQuestById(currentTrackedQuestId)) != null) {
                     QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(currentTrackedQuest);
-                    String displayName = Chat.strip(qItemStack.getName());
+                    String displayName = Chat.legacyStrip(qItemStack.getName());
                     Messages.QUEST_TRACK_STOP.send(player, "{quest}", displayName);
                 }
             }
         } else if (qPlayer.hasStartedQuest(quest)) {
             QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(quest);
-            String displayName = Chat.strip(qItemStack.getName());
+            String displayName = Chat.legacyStrip(qItemStack.getName());
             qPlayer.getPlayerPreferences().setTrackedQuestId(quest.getId());
             if (player != null) {
                 Bukkit.getPluginManager().callEvent(new PlayerStartTrackQuestEvent(player, qPlayer));

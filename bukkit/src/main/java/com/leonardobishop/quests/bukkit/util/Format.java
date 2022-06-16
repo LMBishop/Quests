@@ -7,7 +7,7 @@ public class Format {
         long minutes = (sec % 3600) / 60;
         long seconds = ((sec % 3600) % 60) % 60;
 
-        return Messages.TIME_FORMAT.getMessage()
+        return Messages.TIME_FORMAT.getMessageLegacyColor()
                 .replace("{hours}", String.format("%02d", hours))
                 .replace("{minutes}", String.format("%02d", minutes))
                 .replace("{seconds}", String.format("%02d", seconds));

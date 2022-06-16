@@ -3,7 +3,7 @@ package com.leonardobishop.quests.bukkit.command;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
-import org.apache.commons.lang.StringUtils;
+import com.leonardobishop.quests.bukkit.util.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;

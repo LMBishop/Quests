@@ -12,8 +12,8 @@ processResources {
 }
 
 repositories {
-    // Spigot
-    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    // Paper
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
     // ASkyBlock, BentoBox
     maven { url = 'https://repo.codemc.org/repository/maven-public/' }
     // uSkyBlock
@@ -48,12 +48,8 @@ repositories {
 
 dependencies {
     compileOnly project(':common')
-    // Spigot
-    compileOnly ('org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT') {
-        exclude group: 'net.md-5', module: 'bungeecord-chat'
-        exclude group: 'com.google.guava', module: 'guava'
-        exclude group: 'org.yaml', module: 'snakeyaml'
-    }
+    // Paper
+    compileOnly 'io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT'
     // ASkyBlock
     compileOnly ('com.wasteofplastic:askyblock:3.0.9.4') {
         exclude group: 'net.milkbowl.vault', module: 'VaultAPI'
@@ -86,15 +82,19 @@ dependencies {
     // PlaceholderAPI
     compileOnly 'me.clip:placeholderapi:2.11.1'
     // EssentialsX
-    compileOnly "net.ess3:EssentialsX:2.18.2"
+    compileOnly ('net.ess3:EssentialsX:2.18.2') {
+        transitive = false
+    }
     // ShopGUI+
-    compileOnly 'com.github.brcdev-minecraft:shopgui-api:master-SNAPSHOT'
+    compileOnly ('com.github.brcdev-minecraft:shopgui-api:master-SNAPSHOT') {
+        transitive = false
+    }
     // CoreProtect
     compileOnly ('net.coreprotect:coreprotect:2.18.2') {
-        exclude group: 'com.sk89q.worldedit', module: 'worldedit-bukkit'
+        transitive = false
     }
     // JetBrains Annotations
-    compileOnly 'org.jetbrains:annotations:16.0.2'
+    compileOnly 'org.jetbrains:annotations:23.0.0'
     // AuthLib
     compileOnly 'com.mojang:authlib:1.5.21'
     // FabledSkyblock
@@ -105,10 +105,13 @@ dependencies {
     compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:1.8.4'
     // VotingPlugin
     compileOnly ('com.bencodez:votingplugin:6.8.3') {
+        transitive = false
         exclude group: 'dev.dbassett'
     }
     // MMOItems
-    compileOnly 'net.Indyuce:MMOItems:6.5'
+    compileOnly ('net.Indyuce:MMOItems:6.5') {
+        transitive = false
+    }
     compileOnly 'io.lumine:MythicLib:1.1.1'
     // Slimefun4
     compileOnly 'com.github.Slimefun:Slimefun4:RC-28'
@@ -119,11 +122,7 @@ dependencies {
     // HikariCP
     implementation 'com.zaxxer:HikariCP:4.0.3'
     // slf4j
-    implementation 'org.slf4j:slf4j-simple:1.7.30'
-    // adventure
-    implementation 'net.kyori:adventure-platform-bukkit:4.1.0'
-    // mini message
-    implementation "net.kyori:adventure-text-minimessage:4.10.1"
+    implementation 'org.slf4j:slf4j-nop:1.7.36'
 
     compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
 }
@@ -136,6 +135,5 @@ shadowJar {
     relocate 'org.bstats', 'com.leonardobishop.quests.libs.bstats'
     relocate 'com.zaxxer.hikari', 'com.leonardobishop.quests.libs.hikaricp'
     relocate 'org.slf4j', 'com.leonardobishop.quests.libs.slf4j'
-    relocate 'net.kyori', 'com.leonardobishop.quests.libs.adventure'
     archiveClassifier.set('')
 }

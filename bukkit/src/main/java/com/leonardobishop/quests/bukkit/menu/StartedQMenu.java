@@ -84,7 +84,7 @@ public class StartedQMenu implements QMenu {
         currentPage = page;
         int pageMin = pageSize * (page - 1);
         int pageMax = pageSize * page;
-        String title = Chat.color(config.getString("options.guinames.quests-started-menu"));
+        String title = Chat.legacyColor(config.getString("options.guinames.quests-started-menu"));
 
         ItemStack pageIs;
         ItemStack pagePrevIs;

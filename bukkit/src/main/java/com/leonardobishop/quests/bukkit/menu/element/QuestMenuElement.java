@@ -59,14 +59,14 @@ public class QuestMenuElement extends MenuElement {
                 if (requirementQuest == null) continue;
                 if (!owner.getQuestProgressFile().hasQuestProgress(requirementQuest) ||
                         !owner.getQuestProgressFile().getQuestProgress(requirementQuest).isCompletedBefore()) {
-                    quests.add(Chat.strip(plugin.getQItemStackRegistry().getQuestItemStack(requirementQuest).getName()));
+                    quests.add(Chat.legacyStrip(plugin.getQItemStackRegistry().getQuestItemStack(requirementQuest).getName()));
                 }
             }
             Map<String, String> placeholders = new HashMap<>();
-            placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
+            placeholders.put("{quest}", Chat.legacyStrip(qItemStack.getName()));
             placeholders.put("{questid}", quest.getId());
             if (quests.size() > 1 && plugin.getConfig().getBoolean("options.gui-truncate-requirements", true)) {
-                placeholders.put("{requirements}", quests.get(0) + Messages.UI_PLACEHOLDERS_TRUNCATED.getMessage().replace("{amount}", String.valueOf(quests.size() - 1)));
+                placeholders.put("{requirements}", quests.get(0) + Messages.UI_PLACEHOLDERS_TRUNCATED.getMessageLegacyColor().replace("{amount}", String.valueOf(quests.size() - 1)));
             } else {
                 placeholders.put("{requirements}", String.join(", ", quests));
             }
@@ -79,7 +79,7 @@ public class QuestMenuElement extends MenuElement {
             return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), display, placeholders);
         } else if (status == QuestStartResult.QUEST_ALREADY_COMPLETED) {
             Map<String, String> placeholders = new HashMap<>();
-            placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
+            placeholders.put("{quest}", Chat.legacyStrip(qItemStack.getName()));
             placeholders.put("{questid}", quest.getId());
             ItemStack display;
             if (plugin.getQItemStackRegistry().hasQuestCompletedItemStack(quest)) {
@@ -90,7 +90,7 @@ public class QuestMenuElement extends MenuElement {
             return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), display, placeholders);
         } else if (status == QuestStartResult.QUEST_NO_PERMISSION) {
             Map<String, String> placeholders = new HashMap<>();
-            placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
+            placeholders.put("{quest}", Chat.legacyStrip(qItemStack.getName()));
             placeholders.put("{questid}", quest.getId());
             ItemStack display;
             if (plugin.getQItemStackRegistry().hasQuestPermissionItemStack(quest)) {
@@ -102,7 +102,7 @@ public class QuestMenuElement extends MenuElement {
         } else if (cooldown > 0) {
             Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{time}", Format.formatTime(TimeUnit.SECONDS.convert(cooldown, TimeUnit.MILLISECONDS)));
-            placeholders.put("{quest}", Chat.strip(qItemStack.getName()));
+            placeholders.put("{quest}", Chat.legacyStrip(qItemStack.getName()));
             placeholders.put("{questid}", quest.getId());
             ItemStack display;
             if (plugin.getQItemStackRegistry().hasQuestCooldownItemStack(quest)) {

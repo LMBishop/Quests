@@ -1,9 +1,9 @@
 package com.leonardobishop.quests.bukkit.hook.itemgetter;
 
+import com.leonardobishop.quests.bukkit.util.StringUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -87,13 +87,13 @@ public class ItemGetter_Late_1_8 implements ItemGetter {
 
         // lore
         if (!filters.contains(Filter.LORE)) {
-            ism.setLore(Chat.color(cLore));
+            ism.setLore(Chat.legacyColor(cLore));
         }
 
         // name
         if (!filters.contains(Filter.DISPLAY_NAME)) {
             if (cName != null) {
-                ism.setDisplayName(Chat.color(cName));
+                ism.setDisplayName(Chat.legacyColor(cName));
             }
         }
 

@@ -40,7 +40,7 @@ public class CancelQMenu implements QMenu {
     }
 
     public Inventory toInventory(int page) {
-        String title = Chat.color(config.getString("options.guinames.quest-cancel"));
+        String title = Chat.legacyColor(config.getString("options.guinames.quest-cancel"));
 
         ItemStack yes = config.getItem("gui.quest-cancel-yes");
         ItemStack no = config.getItem("gui.quest-cancel-no");

@@ -8,9 +8,9 @@ import com.leonardobishop.quests.bukkit.menu.element.MenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.SpacerMenuElement;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import com.leonardobishop.quests.bukkit.util.Messages;
+import com.leonardobishop.quests.bukkit.util.StringUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.player.QPlayer;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -45,7 +45,7 @@ public class CategoryQMenu implements QMenu {
     public void populate(List<QuestQMenu> menuQuests) {
         if (config.getConfig().isConfigurationSection("custom-elements.categories")) {
             for (String s : config.getConfig().getConfigurationSection("custom-elements.categories").getKeys(false)) {
-                if (!NumberUtils.isNumber(s)) continue;
+                if (!StringUtils.isNumeric(s)) continue;
                 int slot = Integer.parseInt(s);
                 int repeat = config.getInt("custom-elements.categories." + s + ".repeat");
                 MenuElement menuElement;
@@ -95,7 +95,7 @@ public class CategoryQMenu implements QMenu {
         currentPage = page;
         int pageMin = pageSize * (page - 1);
         int pageMax = pageSize * page;
-        String title = Chat.color(config.getString("options.guinames.quests-category"));
+        String title = Chat.legacyColor(config.getString("options.guinames.quests-category"));
 
         ItemStack pageIs;
         ItemStack pagePrevIs;

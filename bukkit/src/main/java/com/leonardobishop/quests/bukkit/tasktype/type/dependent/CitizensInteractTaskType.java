@@ -54,8 +54,8 @@ public final class CitizensInteractTaskType extends BukkitTaskType {
                     if (!TaskUtils.validateWorld(event.getClicker(), task)) continue;
 
                     if (task.getConfigValue("npc-name") != null) {
-                        if (!Chat.strip(Chat.color(String.valueOf(task.getConfigValue("npc-name"))))
-                                .equals(Chat.strip(Chat.color(event.getNPC().getName())))) {
+                        if (!Chat.legacyStrip(Chat.legacyColor(String.valueOf(task.getConfigValue("npc-name"))))
+                                .equals(Chat.legacyStrip(Chat.legacyColor(event.getNPC().getName())))) {
                             continue;
                         }
                     } else if (!task.getConfigValue("npc-id").equals(event.getNPC().getId())) {

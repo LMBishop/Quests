@@ -92,13 +92,13 @@ public class ItemGetter_1_13 implements ItemGetter {
         // name
         if (!filters.contains(Filter.DISPLAY_NAME)) {
             if (cName != null) {
-                ism.setDisplayName(Chat.color(cName));
+                ism.setDisplayName(Chat.legacyColor(cName));
             }
         }
 
         // lore
         if (!filters.contains(Filter.LORE)) {
-            ism.setLore(Chat.color(cLore));
+            ism.setLore(Chat.legacyColor(cLore));
         }
 
         // attribute modifiers
