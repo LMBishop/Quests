@@ -69,7 +69,7 @@ public class AdminItemsCommandHandler implements CommandHandler {
                 e.printStackTrace();
                 sender.sendMessage(ChatColor.RED + "Couldn't save item. See console for problem.");
             }
-        } else if (args.length >= 5 && args[2].equalsIgnoreCase("give") && sender instanceof Player) {
+        } else if (args.length >= 5 && args[2].equalsIgnoreCase("give")) {
             Player targetPlayer = plugin.getServer().getPlayer(args[3]);
 
             if (targetPlayer == null) {
