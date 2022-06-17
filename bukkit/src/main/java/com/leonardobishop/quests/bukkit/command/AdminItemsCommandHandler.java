@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class AdminItemsCommandHandler implements CommandHandler {
             }
             sender.sendMessage(ChatColor.GRAY.toString() + plugin.getQuestItemRegistry().getAllItems().size() + " items imported.");
             sender.sendMessage(ChatColor.DARK_GRAY + "Import a new held item using /q a items import <id>.");
+            sender.sendMessage(ChatColor.DARK_GRAY + "Give a quest item to a player using /q a items give <PlayerName> <id> <amount>.");
         } else if (args[2].equalsIgnoreCase("import") && sender instanceof Player) {
             Player player = (Player) sender;
             ItemStack held = new ItemStack(player.getItemInHand());
@@ -67,6 +69,31 @@ public class AdminItemsCommandHandler implements CommandHandler {
                 e.printStackTrace();
                 sender.sendMessage(ChatColor.RED + "Couldn't save item. See console for problem.");
             }
+        } else if (args.length >= 5 && args[2].equalsIgnoreCase("give") && sender instanceof Player) {
+            Player targetPlayer = plugin.getServer().getPlayer(args[3]);
+
+            if (targetPlayer == null) {
+                sender.sendMessage(ChatColor.RED + "That player is not online or is invalid!");
+                return;
+            }
+
+            ItemStack item = plugin.getQuestItemRegistry().getItem(args[4]).getItemStack();
+
+            if (item == null) {
+                sender.sendMessage(ChatColor.RED + "Item not found!");
+                return;
+            }
+
+            int amount = 1;
+            // If there's a sixth arg, it should be the amount of items to give
+            // Check it's not a value below 0
+            if (args.length == 6 && Integer.parseInt(args[5]) > 0) {
+                amount = Integer.parseInt(args[5]);
+            }
+            item.setAmount(amount);
+            // if we got this far, all was well.
+            // just give the item to the player already ;)
+            targetPlayer.getInventory().addItem(item);
         }
     }
 
@@ -74,7 +101,28 @@ public class AdminItemsCommandHandler implements CommandHandler {
     @Override
     public List<String> tabComplete(CommandSender sender, String[] args) {
         if (args.length == 3) {
-            return TabHelper.matchTabComplete(args[2], Collections.singletonList("import"));
+            ArrayList<String> suggestions = new ArrayList<>();
+            suggestions.add("import");
+            suggestions.add("give");
+            return TabHelper.matchTabComplete(args[2], suggestions);
+        }
+        // if we have 4 args and the 3rd one is give,
+        // show available playername suggestions
+        else if (args.length == 4 && args[2].equalsIgnoreCase("give")) {
+            ArrayList<String> onlinePlayerNames = new ArrayList<>();
+            for (Player player : plugin.getServer().getOnlinePlayers()) {
+                onlinePlayerNames.add(player.getName());
+            }
+            return TabHelper.matchTabComplete(args[3], onlinePlayerNames);
+        }
+        // if we have 5 args and the 4th one is give,
+        // show available quest item suggestions
+        else if (args.length == 5 && args[2].equalsIgnoreCase("give")) {
+            ArrayList<String> availableQuestItems = new ArrayList<>();
+            for (QuestItem questItem : plugin.getQuestItemRegistry().getAllItems()) {
+                availableQuestItems.add(questItem.getId());
+            }
+            return TabHelper.matchTabComplete(args[4], availableQuestItems);
         }
         return Collections.emptyList();
     }
