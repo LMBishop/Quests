@@ -35,7 +35,7 @@ public class AdminItemsCommandHandler implements CommandHandler {
             }
             sender.sendMessage(ChatColor.GRAY.toString() + plugin.getQuestItemRegistry().getAllItems().size() + " items imported.");
             sender.sendMessage(ChatColor.DARK_GRAY + "Import a new held item using /q a items import <id>.");
-            sender.sendMessage(ChatColor.DARK_GRAY + "Give a quest item to a player using /q a items give <PlayerName> <id> <amount>.");
+            sender.sendMessage(ChatColor.DARK_GRAY + "Give a quest item to a player using /q a items give <player> <id> <amount>.");
         } else if (args[2].equalsIgnoreCase("import") && sender instanceof Player) {
             Player player = (Player) sender;
             ItemStack held = new ItemStack(player.getItemInHand());
