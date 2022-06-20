@@ -228,7 +228,7 @@ public class QuestQMenu implements QMenu {
             if (menuElement instanceof QuestMenuElement) {
                 QuestMenuElement questMenuElement = (QuestMenuElement) menuElement;
                 Quest quest = questMenuElement.getQuest();
-                if (event.getClick() == startClickType) {
+                if (!owner.hasStartedQuest(quest) && event.getClick() == startClickType) {
                     if (owner.startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
                         event.getWhoClicked().closeInventory(); //TODO Option to keep the menu open
                     }
