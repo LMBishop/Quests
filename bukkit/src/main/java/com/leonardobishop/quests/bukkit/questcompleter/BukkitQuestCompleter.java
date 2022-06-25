@@ -13,17 +13,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.UUID;
+import java.util.*;
 
 //TODO move complete effects here ?
 public class BukkitQuestCompleter implements QuestCompleter, Runnable {
 
-    private final Queue<QuestProgress> completionQueue = new LinkedList<>();
-    private final Queue<QuestProgressFile> fullCheckQueue = new LinkedList<>();
-    private final Queue<UUID> expiredCheckQueue = new LinkedList<>();
+    private final LinkedList<QuestProgress> completionQueue = new LinkedList<>();
+    private final LinkedList<QuestProgressFile> fullCheckQueue = new LinkedList<>();
+    private final LinkedList<UUID> expiredCheckQueue = new LinkedList<>();
     private final BukkitQuestsPlugin plugin;
     private int expiredQuestsCheckCountdown;
 
@@ -146,5 +143,17 @@ public class BukkitQuestCompleter implements QuestCompleter, Runnable {
         Objects.requireNonNull(questProgressFile, "questProgressFile cannot be null");
 
         fullCheckQueue.add(questProgressFile);
+    }
+
+    public List<QuestProgress> getCompletionQueue() {
+        return Collections.unmodifiableList(completionQueue);
+    }
+
+    public List<QuestProgressFile> getFullCheckQueue() {
+        return Collections.unmodifiableList(fullCheckQueue);
+    }
+
+    public List<UUID> getExpiredCheckQueue() {
+        return Collections.unmodifiableList(expiredCheckQueue);
     }
 }

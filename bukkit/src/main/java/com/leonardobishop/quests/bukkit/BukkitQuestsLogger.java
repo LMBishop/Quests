@@ -24,22 +24,15 @@ public class BukkitQuestsLogger implements QuestsLogger {
 
     @Override
     public void log(String str, LoggingLevel level) {
+        plugin.getLogHistory().record(level, () -> str);
         if (serverLoggingLevel.getNumericVerbosity() < level.getNumericVerbosity()) {
             return;
         }
         switch (level) {
-            case DEBUG:
-                plugin.getLogger().info("Debug: " + str);
-                break;
-            case INFO:
-                plugin.getLogger().info(str);
-                break;
-            case ERROR:
-                plugin.getLogger().severe(str);
-                break;
-            case WARNING:
-                plugin.getLogger().warning(str);
-                break;
+            case DEBUG -> plugin.getLogger().info("DEBUG: " + str);
+            case INFO -> plugin.getLogger().info(str);
+            case ERROR -> plugin.getLogger().severe(str);
+            case WARNING -> plugin.getLogger().warning(str);
         }
     }
 

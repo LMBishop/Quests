@@ -33,6 +33,7 @@ import com.leonardobishop.quests.bukkit.storage.YamlStorageProvider;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskTypeManager;
 import com.leonardobishop.quests.bukkit.tasktype.type.*;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.*;
+import com.leonardobishop.quests.bukkit.util.LogHistory;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.config.QuestsConfig;
@@ -92,6 +93,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private Title titleHandle;
     private VersionSpecificHandler versionSpecificHandler;
 
+    private LogHistory logHistory;
     private BukkitTask questAutoSaveTask;
     private BukkitTask questQueuePollTask;
     private BiFunction<Player, String, String> placeholderAPIProcessor;
@@ -150,6 +152,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     public void onEnable() {
         // Initial module initialization
         this.questsLogger = new BukkitQuestsLogger(this);
+        this.logHistory = new LogHistory(true);
         this.generateConfigurations();
         this.questsConfig = new BukkitQuestsConfig(new File(super.getDataFolder() + File.separator + "config.yml"));
         this.questManager = new QuestManager(this);
@@ -600,6 +603,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @Override
     public FileConfiguration getConfig() {
         return questsConfig.getConfig();
+    }
+
+    public LogHistory getLogHistory() {
+        return logHistory;
     }
 
     @Override

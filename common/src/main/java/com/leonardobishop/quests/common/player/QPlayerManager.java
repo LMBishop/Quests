@@ -39,12 +39,12 @@ public class QPlayerManager {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
         QPlayer qPlayer = qPlayers.get(uuid);
-        if (qPlayer == null) {
-            plugin.getQuestsLogger().debug("QPlayer of " + uuid + " is null, but was requested:");
-            if (plugin.getQuestsLogger().getServerLoggingLevel() == QuestsLogger.LoggingLevel.DEBUG) {
-                Thread.dumpStack();
-            }
-        }
+//        if (qPlayer == null) {
+//            plugin.getQuestsLogger().debug("QPlayer of " + uuid + " is null, but was requested:");
+//            if (plugin.getQuestsLogger().getServerLoggingLevel() == QuestsLogger.LoggingLevel.DEBUG) {
+//                Thread.dumpStack();
+//            }
+//        }
         return qPlayer;
     }
 

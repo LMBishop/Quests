@@ -24,6 +24,7 @@ public class AdminCommandSwitcher extends CommandSwitcher {
         super.subcommands.put("update", new AdminUpdateCommandHandler(plugin));
         super.subcommands.put("wiki", new AdminWikiCommandHandler(plugin));
         super.subcommands.put("about", new AdminAboutCommandHandler(plugin));
+        super.subcommands.put("debug", new AdminDebugCommandHandler(plugin));
     }
 
     @Override
@@ -42,6 +43,7 @@ public class AdminCommandSwitcher extends CommandSwitcher {
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a update " + ChatColor.DARK_GRAY + ": check for updates");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a wiki " + ChatColor.DARK_GRAY + ": get a link to the Quests wiki");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a about " + ChatColor.DARK_GRAY + ": get information about Quests");
+        sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a debug " + ChatColor.DARK_GRAY + ": generate a debug report");
     }
 
     @Override
