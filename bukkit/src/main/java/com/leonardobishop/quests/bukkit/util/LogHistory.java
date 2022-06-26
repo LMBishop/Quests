@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 public class LogHistory {
 
-    private final boolean enabled;
+    private boolean enabled;
 
     private final List<LogEntry> entries = new ArrayList<>();
 
@@ -37,6 +37,10 @@ public class LogHistory {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public static class LogEntry {

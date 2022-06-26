@@ -464,6 +464,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         if (validConfiguration) {
             int loggingLevel = questsConfig.getInt("options.verbose-logging-level", 2);
             questsLogger.setServerLoggingLevel(QuestsLogger.LoggingLevel.fromNumber(loggingLevel));
+            boolean logHistoryEnabled = questsConfig.getBoolean("options.log-history", false);
+            logHistory.setEnabled(logHistoryEnabled);
 
             switch (questsConfig.getString("quest-mode.mode", "normal").toLowerCase()) {
                 default:
