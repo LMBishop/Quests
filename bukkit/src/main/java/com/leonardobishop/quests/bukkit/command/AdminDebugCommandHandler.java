@@ -28,6 +28,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 
@@ -127,7 +128,13 @@ public class AdminDebugCommandHandler implements CommandHandler {
             lines.add("");
             lines.add("Number of items: " + plugin.getQuestItemRegistry().getAllItems().size());
             lines.add("");
-            //TODO this
+            for (QuestItem questItem : plugin.getQuestItemRegistry().getAllItems()) {
+                Map<String, Object> values = getFieldValues(questItem.getClass(), questItem);
+                values.putAll(getFieldValues(questItem.getClass().getSuperclass(), questItem));
+                printMap(lines, 0, "Item " + questItem.getId() + " (" + questItem.getClass().getSimpleName() + ")", values);
+                lines.add("");
+            }
+
 
             lines.add("################################");
             lines.add("#            Quests            #");
@@ -136,7 +143,7 @@ public class AdminDebugCommandHandler implements CommandHandler {
             lines.add("Number of quests: " + plugin.getQuestManager().getQuests().size());
             lines.add("");
             for (Quest quest : plugin.getQuestManager().getQuests().values()) {
-                Map<String, Object> questValues = getFieldValues(quest, "tasks", "tasksByType");
+                Map<String, Object> questValues = getFieldValues(quest.getClass(), quest, "tasks", "tasksByType");
                 try {
                     Field tasksField = quest.getClass().getDeclaredField("tasks");
                     tasksField.setAccessible(true);
@@ -144,7 +151,7 @@ public class AdminDebugCommandHandler implements CommandHandler {
                     Map<String, Object> tasksValues = new HashMap<>();
                     for (Map.Entry<String, Task> taskEntry : tasksMap.entrySet()) {
                         Task task = taskEntry.getValue();
-                        tasksValues.put(task.getId(), getFieldValues(task));
+                        tasksValues.put(task.getId(), getFieldValues(task.getClass(), task));
                     }
                     questValues.put("tasks", tasksValues);
                 } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -167,7 +174,7 @@ public class AdminDebugCommandHandler implements CommandHandler {
             for (QPlayer qPlayer : plugin.getPlayerManager().getQPlayers()) {
                 lines.add("QPlayer " + qPlayer.getPlayerUUID() + ":");
                 QPlayerPreferences preferences = qPlayer.getPlayerPreferences();
-                printMap(lines, 1, "Preferences", getFieldValues(preferences));
+                printMap(lines, 1, "Preferences", getFieldValues(preferences.getClass(), preferences));
 
                 QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
                 try {
@@ -177,7 +184,7 @@ public class AdminDebugCommandHandler implements CommandHandler {
                     Map<String, Object> questProgressValues = new LinkedHashMap<>();
                     for (Map.Entry<String, QuestProgress> entry : questProgressMap.entrySet()) {
                         QuestProgress questProgress = entry.getValue();
-                        Map<String, Object> questProgressValue = getFieldValues(questProgress, "plugin", "taskProgress");
+                        Map<String, Object> questProgressValue = getFieldValues(questProgress.getClass(), questProgress, "plugin", "taskProgress");
 
                         Field taskProgressField = questProgress.getClass().getDeclaredField("taskProgress");
                         taskProgressField.setAccessible(true);
@@ -185,7 +192,7 @@ public class AdminDebugCommandHandler implements CommandHandler {
                         Map<String, Object> taskProgressValues = new LinkedHashMap<>();
                         for (Map.Entry<String, TaskProgress> taskEntry : taskProgressMap.entrySet()) {
                             TaskProgress taskProgress = taskEntry.getValue();
-                            taskProgressValues.put(taskEntry.getKey(), getFieldValues(taskProgress, "plugin", "linkedQuestProgress"));
+                            taskProgressValues.put(taskEntry.getKey(), getFieldValues(taskProgress.getClass(), taskProgress, "plugin", "linkedQuestProgress"));
                         }
                         questProgressValue.put("taskProgress", taskProgressValues);
 
@@ -200,16 +207,29 @@ public class AdminDebugCommandHandler implements CommandHandler {
                 lines.add("");
             }
 
-            lines.add("################################");
-            lines.add("#         Log History          #");
-            lines.add("################################");
-            lines.add("");
-            for (LogHistory.LogEntry line : plugin.getLogHistory().getEntries()) {
-                lines.add(String.format("[%s/%s/%s] %s", line.getTime(), line.getType().toString(), line.getThread(), line.getEntry()));
+            if (plugin.getLogHistory().isEnabled()) {
+                lines.add("################################");
+                lines.add("#         Log History          #");
+                lines.add("################################");
+                lines.add("");
+                int timeMaxLength = 1;
+                int typeMaxLength = 1;
+                int threadMaxLength = 1;
+                for (LogHistory.LogEntry line : plugin.getLogHistory().getEntries()) {
+                    timeMaxLength = Math.max(timeMaxLength, String.valueOf(line.getTime()).length());
+                    typeMaxLength = Math.max(typeMaxLength, line.getType().toString().length());
+                    threadMaxLength = Math.max(threadMaxLength, line.getThread().length());
+                }
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                for (LogHistory.LogEntry line : plugin.getLogHistory().getEntries()) {
+                    lines.add(String.format("%-" + timeMaxLength + "s %-" + typeMaxLength + "s %-" + threadMaxLength + "s | %s",
+                            dateFormat.format(new Date(line.getTime())), line.getType().toString(), line.getThread(), line.getEntry()));
+                }
             }
 
             List<String> errors = new ArrayList<>();
             lines.add(0, "");
+            lines.add(0, "Log history: " + plugin.getLogHistory().isEnabled());
             printList(errors, 0, "Errors generating report", this.errors, String::valueOf);
             lines.addAll(0, errors);
             lines.add(0, "Time taken: " + (System.currentTimeMillis() - start) + "ms");
@@ -233,18 +253,18 @@ public class AdminDebugCommandHandler implements CommandHandler {
         }
     }
 
-    private Map<String, Object> getFieldValues(Object object, String... excludeFields) {
-        Field[] fields = object.getClass().getDeclaredFields();
+    private Map<String, Object> getFieldValues(Class<?> clazz, Object object, String... excludeFields) {
+        Field[] fields = clazz.getDeclaredFields();
         Map<String, Object> values = new LinkedHashMap<>();
         for (Field field : fields) {
             if (Arrays.asList(excludeFields).contains(field.getName())) {
                 continue;
             }
-            field.setAccessible(true);
             try {
+                field.setAccessible(true);
                 values.put(field.getName(), field.get(object));
             } catch (IllegalAccessException e) {
-                error("Failed to get field value for " + object.getClass().getSimpleName() + "." + field.getName() + ": " + e.getClass().getSimpleName() + "(" + e.getMessage() + ")");
+                error("Failed to get field value for " + clazz.getSimpleName() + "." + field.getName() + ": " + e.getClass().getSimpleName() + "(" + e.getMessage() + ")");
                 e.printStackTrace();
             }
         }

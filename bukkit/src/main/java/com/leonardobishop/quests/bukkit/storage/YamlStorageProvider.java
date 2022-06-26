@@ -97,7 +97,6 @@ public class YamlStorageProvider implements StorageProvider {
                 }
             }
         } catch (Exception ex) {
-            plugin.getQuestsLogger().severe("Failed to load player: " + uuid + "!");
             ex.printStackTrace();
             return null;
         } finally {
@@ -107,7 +106,7 @@ public class YamlStorageProvider implements StorageProvider {
         return questProgressFile;
     }
 
-    public void saveProgressFile(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile) {
+    public boolean saveProgressFile(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
         Objects.requireNonNull(questProgressFile, "questProgressFile cannot be null");
 
@@ -147,10 +146,10 @@ public class YamlStorageProvider implements StorageProvider {
             plugin.getQuestsLogger().debug("Writing player " + uuid + " to disk.");
             try {
                 data.save(file);
-                plugin.getQuestsLogger().debug("Write of player " + uuid + " to disk complete.");
+                return true;
             } catch (IOException e) {
-                plugin.getQuestsLogger().debug("Failed to write player: " + uuid + "!.");
                 e.printStackTrace();
+                return false;
             }
         } finally {
             lock.unlock();

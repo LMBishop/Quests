@@ -32,6 +32,7 @@ public class PlayerJoinListener implements Listener {
         }
 
         final Player player = event.getPlayer();
+        plugin.getQuestsLogger().debug("PlayerJoinListener: " + player.getUniqueId() + " (" + player.getName() + ")");
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             if (!player.isOnline()) return;
             plugin.getPlayerManager().loadPlayer(player.getUniqueId()).thenAccept(qPlayer -> {

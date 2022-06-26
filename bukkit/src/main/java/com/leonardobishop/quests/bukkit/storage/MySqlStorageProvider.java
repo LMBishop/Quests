@@ -228,7 +228,6 @@ public class MySqlStorageProvider implements StorageProvider {
                 questProgressFile.addQuestProgress(questProgress);
             }
         } catch (SQLException e) {
-            plugin.getQuestsLogger().severe("Failed to load player: " + uuid + "!");
             e.printStackTrace();
             return null;
         }
@@ -236,11 +235,11 @@ public class MySqlStorageProvider implements StorageProvider {
     }
 
     @Override
-    public void saveProgressFile(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile) {
+    public boolean saveProgressFile(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
         Objects.requireNonNull(questProgressFile, "questProgressFile cannot be null");
 
-        if (fault) return;
+        if (fault) return false;
         try (Connection connection = hikari.getConnection()) {
             try (PreparedStatement writeQuestProgress = connection.prepareStatement(this.statementProcessor.apply(WRITE_PLAYER_QUEST_PROGRESS));
                  PreparedStatement writeTaskProgress = connection.prepareStatement(this.statementProcessor.apply(WRITE_PLAYER_TASK_PROGRESS))) {
@@ -304,9 +303,10 @@ public class MySqlStorageProvider implements StorageProvider {
                 writeQuestProgress.executeBatch();
                 writeTaskProgress.executeBatch();
             }
+            return true;
         } catch (SQLException e) {
-            plugin.getQuestsLogger().severe("Failed to save player: " + uuid + "!");
             e.printStackTrace();
+            return false;
         }
     }
 

@@ -33,7 +33,7 @@ public interface StorageProvider {
      * @param uuid the uuid to match the file to
      * @param questProgressFile the file to save
      */
-    void saveProgressFile(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile);
+    boolean saveProgressFile(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile);
 
     /**
      * Load all QuestProgressFiles

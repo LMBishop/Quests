@@ -56,7 +56,7 @@ public class QPlayerManager {
     public void removePlayer(@NotNull UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
-        plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + ".");
+        plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + "...");
         CompletableFuture<Void> future = savePlayer(uuid);
         future.thenAccept((v) -> qPlayers.remove(uuid));
     }
@@ -129,8 +129,12 @@ public class QPlayerManager {
         Objects.requireNonNull(uuid, "uuid cannot be null");
         Objects.requireNonNull(questProgressFile, "questProgressFile cannot be null");
 
-        plugin.getQuestsLogger().debug("Saving player " + uuid + ".");
-        storageProvider.saveProgressFile(uuid, questProgressFile);
+        plugin.getQuestsLogger().debug("Saving player " + uuid + "...");
+        if (storageProvider.saveProgressFile(uuid, questProgressFile)) {
+            plugin.getQuestsLogger().debug("Quest progress file saved for player " + uuid + ".");
+        } else {
+            plugin.getQuestsLogger().severe("Failed to save player " + uuid + "!");
+        }
     }
 
     /**
@@ -162,17 +166,19 @@ public class QPlayerManager {
      * @return completable future with the loaded player, or null if there was an error
      */
     public CompletableFuture<QPlayer> loadPlayer(UUID uuid) {
-        plugin.getQuestsLogger().debug("Loading player " + uuid + ".");
+        plugin.getQuestsLogger().debug("Loading player " + uuid + "...");
 
         CompletableFuture<QPlayer> future = new CompletableFuture<>();
         plugin.getScheduler().doAsync(() -> {
             QuestProgressFile questProgressFile = storageProvider.loadProgressFile(uuid);
             if (questProgressFile == null) {
+                plugin.getQuestsLogger().debug("A problem occurred trying loading player " + uuid + "; quest progress file is null.");
                 future.complete(null);
                 return;
             }
             QPlayer qPlayer = new QPlayer(plugin, uuid, new QPlayerPreferences(null), questProgressFile, activeQuestController);
             qPlayers.computeIfAbsent(uuid, s -> qPlayer);
+            plugin.getQuestsLogger().debug("Quest progress file loaded for player " + uuid + ".");
             future.complete(qPlayer);
         });
 

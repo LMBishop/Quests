@@ -182,7 +182,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
 
         try {
-            questsLogger.info("Initialising storage provider '" + storageProvider.getName());
+            questsLogger.info("Initialising storage provider '" + storageProvider.getName() + "'");
             storageProvider.init();
         } catch (Exception e) {
             questsLogger.severe("An error occurred initialising the storage provider.");
@@ -464,7 +464,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         if (validConfiguration) {
             int loggingLevel = questsConfig.getInt("options.verbose-logging-level", 2);
             questsLogger.setServerLoggingLevel(QuestsLogger.LoggingLevel.fromNumber(loggingLevel));
-            boolean logHistoryEnabled = questsConfig.getBoolean("options.log-history", false);
+            boolean logHistoryEnabled = questsConfig.getBoolean("options.record-log-history", true);
             logHistory.setEnabled(logHistoryEnabled);
 
             switch (questsConfig.getString("quest-mode.mode", "normal").toLowerCase()) {
