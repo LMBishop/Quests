@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.questcompleter.BukkitQuestCompleter;
 import com.leonardobishop.quests.bukkit.util.LogHistory;
+import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.QPlayerPreferences;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
@@ -88,6 +89,7 @@ public class AdminDebugCommandHandler implements CommandHandler {
             lines.add("################################");
             lines.add("");
             lines.add("Quests version: " + plugin.getDescription().getVersion());
+            lines.add("Valid configuration: " + plugin.isValidConfiguration());
             lines.add("");
             printList(lines, 0, "Task types available", plugin.getTaskTypeManager().getTaskTypes(), TaskType::getType);
             lines.add("");
@@ -123,6 +125,26 @@ public class AdminDebugCommandHandler implements CommandHandler {
             lines.add("");
 
             lines.add("################################");
+            lines.add("#           Options            #");
+            lines.add("################################");
+            lines.add("");
+            if (plugin.isValidConfiguration()) {
+                lines.add("GUI use placeholder API: " + plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi", false));
+                lines.add("Quests use placeholder API: " + plugin.getQuestsConfig().getBoolean("options.quests-use-placeholderapi", false));
+                lines.add("Quests autostart: " + plugin.getQuestsConfig().getBoolean("options.quest-autostart", false));
+                lines.add("Quests autotrack: " + plugin.getQuestsConfig().getBoolean("options.quest-autotrack", true));
+                lines.add("Verify quests exist on load: " + plugin.getQuestsConfig().getBoolean("options.verify-quest-exists-on-load", true));
+                lines.add("Queue executor interval: " + plugin.getQuestsConfig().getInt("options.performance-tweaking.quest-queue-executor-interval", 1) + " ticks");
+                lines.add("Autosave interval: " + plugin.getQuestsConfig().getInt("options.performance-tweaking.quest-autosave-interval", 12000) + " ticks");
+                lines.add("Override errors: " + plugin.getQuestsConfig().getBoolean("options.error-checking.override-errors", false));
+                lines.add("Placeholder cache time: " + plugin.getQuestsConfig().getInt("options.placeholder-cache-time") + " seconds");
+                lines.add("Quest mode: " + plugin.getQuestsConfig().getInt("quest-mode.mode"));
+            } else {
+                lines.add("Configuration unavailable.");
+            }
+            lines.add("");
+
+            lines.add("################################");
             lines.add("#            Items             #");
             lines.add("################################");
             lines.add("");
@@ -135,6 +157,20 @@ public class AdminDebugCommandHandler implements CommandHandler {
                 lines.add("");
             }
 
+            lines.add("################################");
+            lines.add("#    Configuration Problems    #");
+            lines.add("################################");
+            lines.add("");
+            lines.add("Number of problems: " + plugin.getConfigProblems().size());
+            lines.add("");
+            for (Map.Entry<String, List<ConfigProblem>> entry : plugin.getConfigProblems().entrySet()) {
+                String id = entry.getKey();
+                List<ConfigProblem> problems = entry.getValue();
+
+                printList(lines, 0, "Problems for '" + id + "'", problems,
+                        (ConfigProblem problem) -> String.format("%s: %s (:%s)", problem.getType(), problem.getDescription(), problem.getLocation()));
+                lines.add("");
+            }
 
             lines.add("################################");
             lines.add("#            Quests            #");
