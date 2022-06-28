@@ -123,11 +123,11 @@ public final class MythicMobsKillingType extends BukkitTaskType {
                     int requiredLevel = (int) task.getConfigValue("level", -1);
 
                     if (!mobName.equals(configName) || level < minMobLevel) {
-                        return;
+                        continue;
                     }
 
                     if (requiredLevel != -1 && level != requiredLevel) {
-                        return;
+                        continue;
                     }
 
                     int mobKillsNeeded = (int) task.getConfigValue("amount");
