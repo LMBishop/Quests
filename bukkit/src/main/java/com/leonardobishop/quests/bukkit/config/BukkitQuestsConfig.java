@@ -8,15 +8,15 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BukkitQuestsConfig implements QuestsConfig {
 
-    private final Map<String, ItemStack> cachedItemStacks = new HashMap<>();
+    private final Map<String, ItemStack> cachedItemStacks = new ConcurrentHashMap<>();
     // this is faster than just relying on the YamlConfiguration to cache it for some reason
-    private final Map<String, Boolean> cachedBooleans = new HashMap<>();
+    private final Map<String, Boolean> cachedBooleans = new ConcurrentHashMap<>();
     private final File file;
     private YamlConfiguration config;
     private ItemGetter itemGetter;
