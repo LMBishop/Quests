@@ -17,30 +17,26 @@ import com.leonardobishop.quests.common.tasktype.TaskType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileAttribute;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 
-public class AdminDebugCommandHandler implements CommandHandler {
+public class AdminDebugReportCommandHandler implements CommandHandler {
 
     private final BukkitQuestsPlugin plugin;
 
     private List<String> errors;
     private CommandSender currentReportGenerator;
 
-    public AdminDebugCommandHandler(BukkitQuestsPlugin plugin) {
+    public AdminDebugReportCommandHandler(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
