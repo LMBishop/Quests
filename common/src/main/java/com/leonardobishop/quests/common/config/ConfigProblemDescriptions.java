@@ -59,6 +59,13 @@ public enum ConfigProblemDescriptions {
                     "you can find the material list by searching for your<br>" +
                     "server version + 'Material ENUM'."
     ),
+    UNKNOWN_ENCHANTMENT("Enchantment '%s' does not exist",
+            "Enchantment '%s' does not exist on the server.<br>" +
+                    "Please refer to the wiki for a list of javadocs<br>" +
+                    "corresponding to your server version. Alternatively,<br>" +
+                    "you can find the material list by searching for your<br>" +
+                    "server version + 'Enchantment javadoc'."
+    ),
     UNKNOWN_ENTITY_TYPE("Entity type '%s' does not exist",
             "Entity type '%s' does not exist on the server.<br>" +
                     "Please refer to the wiki for a list of javadocs<br>" +
@@ -94,7 +101,7 @@ public enum ConfigProblemDescriptions {
                     "This may be the result of a cascading error<br>" +
                     "if '%s' failed to load, or a mis-typed ID."
     ),
-    NOT_ACCEPTED_VALUE("Value '%s' is not in the list of accepted values for task %s: %s", null);
+    NOT_ACCEPTED_VALUE("Value '%s' is not in the list of accepted values for task %s", null);
 
     private final String description;
     private final String extendedDescription;

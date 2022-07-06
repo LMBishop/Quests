@@ -15,6 +15,7 @@ import com.leonardobishop.quests.common.tasktype.TaskType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -481,6 +482,52 @@ public class TaskUtils {
 
     /**
      * Returns a config validator which checks if at least one value in the given
+     * paths is a valid list of enchantments.
+     * <p>
+     * The list of entities is expected to be in the format of:
+     * <pre>key: "ENCHANTMENT"</pre>
+     * where ENCHANTMENT is the name of an entity. Alternatively, the list
+     * of entities can be in the format of:
+     * <pre>key:
+     *   - "ENCHANTMENT"
+     *   - "..."</pre>
+     * </p>
+     *
+     * @param paths a list of valid paths for task
+     * @return config validator
+     */
+    public static TaskType.ConfigValidator useEnchantmentListConfigValidator(TaskType type, String... paths) {
+        return (config, problems) -> {
+            for (String path : paths) {
+                Object configObject = config.get(path);
+
+                List<String> checkEnchantments = new ArrayList<>();
+                if (configObject instanceof List<?> configList) {
+                    for (Object object : configList) {
+                        checkEnchantments.add(String.valueOf(object));
+                    }
+                } else {
+                    if (configObject == null) {
+                        continue;
+                    }
+                    checkEnchantments.add(String.valueOf(configObject));
+                }
+
+                for (String enchantment : checkEnchantments) {
+                    if (Enchantment.getByName(enchantment) == null) {
+                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                ConfigProblemDescriptions.UNKNOWN_ENCHANTMENT.getDescription(enchantment),
+                                ConfigProblemDescriptions.UNKNOWN_ENCHANTMENT.getExtendedDescription(enchantment),
+                                path));
+                    }
+                }
+                break;
+            }
+        };
+    }
+
+    /**
+     * Returns a config validator which checks if at least one value in the given
      * paths is a value in the list of accepted values.
      *
      * @param acceptedValues a list of accepted values
@@ -503,7 +550,7 @@ public class TaskUtils {
                         extendedDescription += "<br> - " + value;
                     }
                     problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.NOT_ACCEPTED_VALUE.getDescription(String.valueOf(configObject), type.getType(), acceptedValues.toString()),
+                        ConfigProblemDescriptions.NOT_ACCEPTED_VALUE.getDescription(String.valueOf(configObject), type.getType()),
                         extendedDescription,
                         path));
                 }
