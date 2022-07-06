@@ -51,17 +51,25 @@ public class CommandUtils {
                         for (ConfigProblem problem : sortedProblems.get(type)) {
                             if (Chat.isModernChatAvailable()) {
                                 String color = Chat.matchConfigProblemToColorName(problem.getType());
-                                String extendedDescription = String.format("<%s>%s</%s><br><gray>Problem location: </gray><white>%s</white><br><br><grey>%s</grey>",
+                                String extendedDescription = problem.getExtendedDescription() != null ? String.format("<%s>%s</%s><br><gray>Problem location: </gray><white>%s</white><br><br><grey>%s</grey>",
                                         color,
                                         problem.getDescription(),
                                         color,
                                         problem.getLocation(),
                                         problem.getExtendedDescription()
-                                );
+                                ) : "<dark_grey>This error has no extended description</dark_grey>";
                                 extendedDescription = extendedDescription.replace("'", "\\'");
+                                String problemDescription = String.format("<%s>%s</%s><br>%s",
+                                        color,
+                                        problem.getType().getTitle(),
+                                        color,
+                                        problem.getType().getDescription()
+                                );
+                                problemDescription = problemDescription.replace("'", "\\'");
 
                                 String message = String.format(
-                                        "<dark_gray> | - </dark_gray><%s>%s</%s><dark_gray>:</dark_gray> <hover:show_text:'%s'><gray>%s</gray></hover><dark_gray> :%s</dark_gray>",
+                                        "<dark_gray> | - </dark_gray><hover:show_text:'%s'><%s>%s</%s></hover><dark_gray>:</dark_gray> <hover:show_text:'%s'><gray>%s</gray></hover><dark_gray> :%s</dark_gray>",
+                                        problemDescription,
                                         color,
                                         problem.getType().getShortened(),
                                         color,
@@ -90,7 +98,9 @@ public class CommandUtils {
             sender.sendMessage(ChatColor.DARK_GRAY.toString() + "----");
 
             sender.sendMessage(ChatColor.GRAY.toString() + count + " problem(s) | " + String.join(ChatColor.DARK_GRAY + ", ", legend));
-            sender.sendMessage(ChatColor.DARK_GRAY.toString() + "Mouse-over for more information.");
+            if (Chat.isModernChatAvailable()) {
+                sender.sendMessage(ChatColor.DARK_GRAY + "Mouse-over for more information.");
+            }
         } else {
             sender.sendMessage(ChatColor.GRAY + "Quests did not detect any problems with your configuration.");
         }
