@@ -49,14 +49,18 @@ public class AdminDebugQuestCommandHandler implements CommandHandler {
             }
 
             String questId = args[3];
-            Quest quest = plugin.getQuestManager().getQuestById(questId);
-            if (quest == null) {
-                sender.sendMessage(ChatColor.RED + "Quest " + questId + " does not exist.");
-                return;
+            if (!questId.equals("*")) {
+                Quest quest = plugin.getQuestManager().getQuestById(questId);
+                if (quest == null) {
+                    sender.sendMessage(ChatColor.RED + "Quest " + questId + " does not exist.");
+                    return;
+                }
             }
+
 
             QPlayerPreferences preferences = qPlayer.getPlayerPreferences();
             QPlayerPreferences.DebugType currentDebugType = preferences.getDebug(questId);
+            String questName = questId.equals("*") ? "all quests" : "quest " + questId;
             if (currentDebugType == null) {
                 if (args.length < 5) {
                     sender.sendMessage(ChatColor.RED + "You must specify a debug type.");
@@ -74,14 +78,16 @@ public class AdminDebugQuestCommandHandler implements CommandHandler {
                 }
 
                 preferences.setDebug(questId, debugTypeEnum);
-                sender.sendMessage(ChatColor.GREEN + "Debugging enabled for quest '" + questId + "'.");
-                sender.sendMessage(ChatColor.GRAY + "You will now see debug logs for quest '" + quest.getId() + "' for " +
-                        (debugTypeEnum == QPlayerPreferences.DebugType.SELF ? "yourself" : "everybody on the server") +
+                sender.sendMessage(ChatColor.GREEN + "Debugging enabled for " + questName + ".");
+                sender.sendMessage(ChatColor.GRAY + "You will now see debug logs for "
+                        + questName
+                        + " for "
+                        + (debugTypeEnum == QPlayerPreferences.DebugType.SELF ? "yourself" : "everybody on the server") +
                         ". This may generate a lot of spam.");
-                sender.sendMessage(ChatColor.DARK_GRAY + "Use '/quests admin debug " + questId + "' to disable.");
+                sender.sendMessage(ChatColor.GRAY + "Use '/quests admin debug " + questId + "' to disable.");
             } else {
                 preferences.setDebug(questId, null);
-                sender.sendMessage(ChatColor.GREEN + "Debugging disabled for quest '" + questId + "'.");
+                sender.sendMessage(ChatColor.GREEN + "Debugging disabled for " + questName + ".");
             }
 
         } else {
@@ -92,7 +98,7 @@ public class AdminDebugQuestCommandHandler implements CommandHandler {
     @Override
     public List<String> tabComplete(CommandSender sender, String[] args) {
         if (args.length == 4) {
-            return TabHelper.tabCompleteQuests(args[3]);
+            return TabHelper.tabCompleteQuestsOrWildcard(args[3]);
         } else if (args.length == 5) {
             return TabHelper.matchTabComplete(args[4], Arrays.asList("self", "all"));
         }

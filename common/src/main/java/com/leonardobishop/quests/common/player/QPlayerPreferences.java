@@ -23,7 +23,7 @@ public class QPlayerPreferences {
     }
 
     public DebugType getDebug(String questId) {
-        return debug.get(questId);
+        return debug.getOrDefault(questId, debug.get("*"));
     }
 
     public void setDebug(String questId, DebugType debugType) {

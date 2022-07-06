@@ -36,4 +36,10 @@ public class TabHelper {
         return matchTabComplete(arg, options);
     }
 
+    public static List<String> tabCompleteQuestsOrWildcard(String arg) {
+        List<String> options = new ArrayList<>(plugin.getQuestManager().getQuests().keySet());
+        options.add("*");
+        return matchTabComplete(arg, options);
+    }
+
 }
