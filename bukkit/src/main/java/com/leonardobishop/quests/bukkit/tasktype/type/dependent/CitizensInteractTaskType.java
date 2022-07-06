@@ -5,9 +5,7 @@ import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.config.ConfigProblem;
-import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -15,11 +13,6 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public final class CitizensInteractTaskType extends BukkitTaskType {
 
@@ -35,17 +28,6 @@ public final class CitizensInteractTaskType extends BukkitTaskType {
                         "Both npc-name and npc-id is specified; npc-name will be ignored", null, "npc-name"));
             }
         });
-    }
-
-    @Override
-    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
-        ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (!config.containsKey("npc-name")) {
-            TaskUtils.configValidateExists(root + ".npc-id", config.get("npc-id"), problems, "npc-id", super.getType());
-        } else {
-            TaskUtils.configValidateExists(root + ".npc-name", config.get("npc-name"), problems, "npc-name", super.getType());
-        }
-        return problems;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

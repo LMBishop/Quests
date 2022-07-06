@@ -290,20 +290,14 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
 
             taskTypeManager.registerTaskType(new MiningTaskType(this));
-            taskTypeManager.registerTaskType(new MiningCertainTaskType(this));
             taskTypeManager.registerTaskType(new BuildingTaskType(this));
-            taskTypeManager.registerTaskType(new BuildingCertainTaskType(this));
             taskTypeManager.registerTaskType(new MobkillingTaskType(this));
-            taskTypeManager.registerTaskType(new MobkillingCertainTaskType(this));
             taskTypeManager.registerTaskType(new PlayerkillingTaskType(this));
             taskTypeManager.registerTaskType(new FishingTaskType(this));
-            taskTypeManager.registerTaskType(new FishingCertainTaskType(this));
             taskTypeManager.registerTaskType(new SmeltingTaskType(this));
-            taskTypeManager.registerTaskType(new SmeltingCertainTaskType(this));
             taskTypeManager.registerTaskType(new InventoryTaskType(this));
             taskTypeManager.registerTaskType(new ConsumeTaskType(this));
             taskTypeManager.registerTaskType(new WalkingTaskType(this));
-            taskTypeManager.registerTaskType(new TamingTaskType(this));
             taskTypeManager.registerTaskType(new TamingTaskType(this));
             taskTypeManager.registerTaskType(new MilkingTaskType(this));
             taskTypeManager.registerTaskType(new ShearingTaskType(this));
@@ -325,7 +319,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             try {
                 Class.forName("org.bukkit.block.data.Ageable");
                 taskTypeManager.registerTaskType(new FarmingTaskType(this));
-                taskTypeManager.registerTaskType(new FarmingCertainTaskType(this));
             } catch (ClassNotFoundException ignored) { } // server version cannot support task type
             if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
                 taskTypeManager.registerTaskType(new ASkyBlockLevelTaskType(this));
@@ -360,8 +353,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
             if (Bukkit.getPluginManager().isPluginEnabled("ShopGUIPlus")) {
                 // not tested
-                taskTypeManager.registerTaskType(new ShopGUIPlusBuyCertainTaskType(this));
-                taskTypeManager.registerTaskType(new ShopGUIPlusSellCertainTaskType(this));
+                taskTypeManager.registerTaskType(new ShopGUIPlusBuyTaskType(this));
+                taskTypeManager.registerTaskType(new ShopGUIPlusSellTaskType(this));
             }
             if (Bukkit.getPluginManager().isPluginEnabled("FabledSkyblock")) {
                 // not tested

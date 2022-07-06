@@ -10,6 +10,10 @@ public abstract class BukkitTaskType extends TaskType implements Listener {
 
     protected BukkitTaskTypeManager taskTypeManager;
 
+    public BukkitTaskType(@NotNull String type, String author, String description, String... aliases) {
+        super(type, author, description, aliases);
+    }
+
     public BukkitTaskType(@NotNull String type, String author, String description) {
         super(type, author, description);
     }

@@ -5,9 +5,7 @@ import com.bgsoftware.superiorskyblock.api.wrappers.SuperiorPlayer;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
-import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -15,12 +13,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public final class SuperiorSkyblockWorthType extends BukkitTaskType {
 
@@ -32,14 +26,6 @@ public final class SuperiorSkyblockWorthType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "worth"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "worth"));
-    }
-
-    @Override
-    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
-        ArrayList<ConfigProblem> problems = new ArrayList<>();
-//        if (TaskUtils.configValidateExists(root + ".worth", config.get("worth"), problems, "worth", super.getType()))
-//            TaskUtils.configValidateNumber(root + ".worth", config.get("worth"), problems, false, false, "worth");
-        return problems;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

@@ -17,10 +17,21 @@ import java.util.*;
 public abstract class TaskType {
 
     private final List<Quest> quests = new ArrayList<>();
+    private final List<String> aliases = new ArrayList<>();
     private final List<ConfigValidator> configValidators = new ArrayList<>();
     private final String type;
     private String author;
     private String description;
+
+    /**
+     * @param type the name of the task type, should not contain spaces
+     * @param author the name of the person (or people) who wrote it
+     * @param description a short, simple description of the task type
+     */
+    public TaskType(@NotNull String type, String author, String description, String... aliases) {
+        this(type, author, description);
+        this.aliases.addAll(Arrays.asList(aliases));
+    }
 
     /**
      * @param type the name of the task type, should not contain spaces
@@ -82,6 +93,10 @@ public abstract class TaskType {
         return description;
     }
 
+    public @NotNull List<String> getAliases() {
+        return Collections.unmodifiableList(aliases);
+    }
+
     /**
      * Called when Quests has finished registering all quests to the task type.
      * May be called several times if an operator uses /quests admin reload.
@@ -99,17 +114,6 @@ public abstract class TaskType {
 
     public void onDisable() {
         // not implemented here
-    }
-
-    /**
-     * Called when Quests reloads the configuration - used to detect errors in the configuration of your task type.
-     *
-     * @param root the root path for the config
-     * @param config the config itself
-     */
-    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
-        // not implemented here
-        return Collections.emptyList();
     }
 
     public void addConfigValidator(@NotNull ConfigValidator validator) {

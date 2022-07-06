@@ -1,11 +1,12 @@
 package com.leonardobishop.quests.bukkit.tasktype.type;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
-import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -18,29 +19,28 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public final class SmeltingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
+    private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
 
     public SmeltingTaskType(BukkitQuestsPlugin plugin) {
-        super("smelting", TaskUtils.TASK_ATTRIBUTION_STRING, "Smelt or cook a set amount of any item.");
+        super("smelting", TaskUtils.TASK_ATTRIBUTION_STRING, "Smelt or cook a set amount of a item.", "smeltingcertain");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
     }
 
     @Override
-    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
-        ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-        return problems;
+    public void onReady() {
+        fixedQuestItemCache.clear();
     }
 
+    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         ItemStack item = event.getCurrentItem();
@@ -51,11 +51,9 @@ public final class SmeltingTaskType extends BukkitTaskType {
                 || item == null || item.getType() == Material.AIR || event.getAction() == InventoryAction.NOTHING
                 || event.getAction() == InventoryAction.COLLECT_TO_CURSOR && cursor != null && cursor.getAmount() == cursor.getMaxStackSize()
                 || event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD
-                || !(event.getWhoClicked() instanceof Player)) {
+                || !(event.getWhoClicked() instanceof Player player)) {
             return;
         }
-
-        Player player = (Player) event.getWhoClicked();
 
         int eventAmount = item.getAmount();
         if (event.isShiftClick()) {
@@ -70,39 +68,44 @@ public final class SmeltingTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            super.debug("Player smelted item", quest.getId(), task.getId(), player.getUniqueId());
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            if (task.getConfigValue("mode") != null
+                    && !inventoryType.toString().equalsIgnoreCase(task.getConfigValue("mode").toString())) {
+                super.debug("Specific mode is required, but the actual mode '" + inventoryType + "' does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
-
-                    if (task.getConfigValue("mode") != null
-                            && !inventoryType.toString().equalsIgnoreCase(task.getConfigValue("mode").toString())) {
-                        continue;
-                    }
-
-                    int smeltedItemsNeeded = (int) task.getConfigValue("amount");
-
-                    int progressItemsSmelted;
-                    if (taskProgress.getProgress() == null) {
-                        progressItemsSmelted = 0;
-                    } else {
-                        progressItemsSmelted = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progressItemsSmelted + eventAmount);
-
-                    if (((int) taskProgress.getProgress()) >= smeltedItemsNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
+            if (task.hasConfigKey("item")) {
+                QuestItem qi;
+                if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                    QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "item", "data");
+                    fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
+                    qi = fetchedItem;
                 }
+
+                if (!qi.compareItemStack(item)) {
+                    super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+            }
+
+            int smeltedItemsNeeded = (int) task.getConfigValue("amount");
+
+            int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
+            int newAmount = progress + eventAmount;
+            taskProgress.setProgress(newAmount);
+            super.debug("Updating task progress (now " + (newAmount) + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+            if (newAmount >= smeltedItemsNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setProgress(newAmount);
+                taskProgress.setCompleted(true);
             }
         }
     }

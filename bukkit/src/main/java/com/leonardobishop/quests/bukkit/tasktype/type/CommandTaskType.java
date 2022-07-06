@@ -3,9 +3,7 @@ package com.leonardobishop.quests.bukkit.tasktype.type;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
-import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -13,10 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public final class CommandTaskType extends BukkitTaskType {
@@ -29,14 +24,6 @@ public final class CommandTaskType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "command"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "ignore-case"));
-    }
-
-    @Override
-    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
-        ArrayList<ConfigProblem> problems = new ArrayList<>();
-//        TaskUtils.configValidateExists(root + ".command", config.get("command"), problems, "command", super.getType());
-//        TaskUtils.configValidateBoolean(root + ".ignore-case", config.get("ignore-case"), problems, true, "ignore-case", super.getType());
-        return problems;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

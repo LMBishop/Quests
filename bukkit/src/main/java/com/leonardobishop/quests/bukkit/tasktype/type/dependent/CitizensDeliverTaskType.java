@@ -3,31 +3,21 @@ package com.leonardobishop.quests.bukkit.tasktype.type.dependent;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
-import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public final class CitizensDeliverTaskType extends BukkitTaskType {
 
@@ -51,23 +41,6 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "remove-items-when-complete"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "allow-partial-completion"));
-    }
-
-    @Override
-    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
-        ArrayList<ConfigProblem> problems = new ArrayList<>();
-//        if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType()))
-//            TaskUtils.configValidateItemStack(root + ".item", config.get("item"), problems, false, "item");
-//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-//        if (!config.containsKey("npc-name")) {
-//            TaskUtils.configValidateExists(root + ".npc-id", config.get("npc-id"), problems, "npc-id", super.getType());
-//        } else {
-//            TaskUtils.configValidateExists(root + ".npc-name", config.get("npc-name"), problems, "npc-name", super.getType());
-//        }
-//        TaskUtils.configValidateBoolean(root + ".remove-items-when-complete", config.get("remove-items-when-complete"), problems, true, "remove-items-when-complete", super.getType());
-//        TaskUtils.configValidateBoolean(root + ".allow-partial-completion", config.get("allow-partial-completion"), problems, true, "allow-partial-completion", super.getType());
-        return problems;
     }
 
     @Override

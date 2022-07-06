@@ -199,8 +199,9 @@ public class BukkitQuestsLoader implements QuestsLoader {
                             }
 
                             // check the tasks
-                            TaskType t = taskTypeManager.getTaskType(taskType);
-                            if (t != null) {
+                            String resolvedTaskTypeName = taskTypeManager.resolveTaskTypeName(taskType);
+                            if (resolvedTaskTypeName != null) {
+                                TaskType t = taskTypeManager.getTaskType(resolvedTaskTypeName);
                                 HashMap<String, Object> configValues = new HashMap<>();
                                 for (String key : config.getConfigurationSection(taskRoot).getKeys(false)) {
                                     configValues.put(key, config.get(taskRoot + "." + key));
@@ -310,8 +311,9 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         for (String taskId : config.getConfigurationSection("tasks").getKeys(false)) {
                             String taskRoot = "tasks." + taskId;
                             String taskType = config.getString(taskRoot + ".type");
+                            String resolvedTaskTypeName = taskTypeManager.resolveTaskTypeName(taskType);
 
-                            Task task = new Task(taskId, taskType);
+                            Task task = new Task(taskId, resolvedTaskTypeName);
 
                             for (String key : config.getConfigurationSection(taskRoot).getKeys(false)) {
                                 task.addConfigValue(key, config.get(taskRoot + "." + key));
@@ -490,7 +492,9 @@ public class BukkitQuestsLoader implements QuestsLoader {
             }
             if (!match)
                 configProblems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getDescription(parts[0]), location));
+                        ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getDescription(parts[0]),
+                        ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getExtendedDescription(parts[0]),
+                        location));
         }
     }
 

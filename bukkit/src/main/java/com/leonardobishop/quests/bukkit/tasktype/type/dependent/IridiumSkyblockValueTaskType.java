@@ -5,9 +5,7 @@ import com.iridium.iridiumskyblock.api.IslandWorthCalculatedEvent;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
-import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -15,11 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 //TODO update to latest ver
@@ -33,14 +27,6 @@ public final class IridiumSkyblockValueTaskType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "value"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "value"));
-    }
-
-    @Override
-    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
-        ArrayList<ConfigProblem> problems = new ArrayList<>();
-//        if (TaskUtils.configValidateExists(root + ".value", config.get("value"), problems, "value", super.getType()))
-//            TaskUtils.configValidateInt(root + ".value", config.get("value"), problems, false, false, "value");
-        return problems;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

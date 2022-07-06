@@ -3,18 +3,14 @@ package com.leonardobishop.quests.bukkit.tasktype.type;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
-import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
-import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,11 +19,6 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public final class CraftingTaskType extends BukkitTaskType {
 
@@ -44,17 +35,6 @@ public final class CraftingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
 
-    }
-
-    @Override
-    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
-        ArrayList<ConfigProblem> problems = new ArrayList<>();
-//        if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType()))
-//            TaskUtils.configValidateItemStack(root + ".item", config.get("item"), problems, false, "item");
-//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-//        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true, false, "data");
-        return problems;
     }
 
     @Override

@@ -69,7 +69,7 @@ public class TaskUtils {
         List<String> strings = new ArrayList<>();
         if (configObject instanceof List) {
             strings.addAll((List) configObject);
-        } else {
+        } else if (configObject != null) {
             strings.add(String.valueOf(configObject));
         }
         return strings;
@@ -182,6 +182,9 @@ public class TaskUtils {
         Object configData = task.getConfigValue("data");
 
         List<String> checkBlocks = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("block") ? "block" : "blocks");
+        if (checkBlocks.isEmpty()) {
+            return true;
+        }
 
         for (String materialName : checkBlocks) {
             // LOG:1 LOG:2 LOG should all be supported with this
@@ -243,125 +246,6 @@ public class TaskUtils {
         }
     }
 
-    public static void configValidateNumber(String path, Object object, List<ConfigProblem> problems, boolean allowNull, boolean greaterThanZero, String... args) {
-        if (object == null) {
-            if (!allowNull) {
-                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                        String.format("Expected a number for '%s', but got null instead", (Object[]) args), null, path));
-            }
-            return;
-        }
-
-        try {
-            double d = Double.parseDouble(String.valueOf(object));
-            if (greaterThanZero && d <= 0) {
-                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                        String.format("Value for field '%s' must be greater than 0", (Object[]) args), null, path));
-            }
-        } catch (ClassCastException ex) {
-            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                    String.format("Expected a number for '%s', but got '" + object + "' instead", (Object[]) args), null, path));
-        }
-    }
-
-    public static void configValidateInt(String path, Object object, List<ConfigProblem> problems, boolean allowNull, boolean greaterThanZero, String... args) {
-        if (object == null) {
-            if (!allowNull) {
-                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                        String.format("Expected an integer for '%s', but got null instead", (Object[]) args), null, path));
-            }
-            return;
-        }
-
-        try {
-            Integer i = (Integer) object;
-            if (greaterThanZero && i <= 0) {
-                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                        String.format("Value for field '%s' must be greater than 0", (Object[]) args), null, path));
-            }
-        } catch (ClassCastException ex) {
-            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                    String.format("Expected an integer for '%s', but got '" + object + "' instead", (Object[]) args), null, path));
-        }
-    }
-
-    public static void configValidateBoolean(String path, Object object, List<ConfigProblem> problems, boolean allowNull, String... args) {
-        if (object == null) {
-            if (!allowNull) {
-                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                        String.format("Expected a boolean for '%s', but got null instead", (Object[]) args), null, path));
-            }
-            return;
-        }
-
-        try {
-            Boolean b = (Boolean) object;
-        } catch (ClassCastException ex) {
-            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                    String.format("Expected a boolean for '%s', but got '" + object + "' instead", (Object[]) args), null, path));
-        }
-    }
-
-    public static void configValidateItemStack(String path, Object object, List<ConfigProblem> problems, boolean allowNull, String... args) {
-        if (object == null) {
-            if (!allowNull) {
-                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                        String.format("Expected item configuration for '%s', but got null instead", (Object[]) args), null, path));
-            }
-            return;
-        }
-
-        if (object instanceof ConfigurationSection) {
-            ConfigurationSection section = (ConfigurationSection) object;
-
-            if (section.contains("quest-item")) {
-                String type = section.getString("quest-item");
-                if (plugin.getQuestItemRegistry().getItem(section.getString("quest-item")) == null) {
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            ConfigProblemDescriptions.UNKNOWN_QUEST_ITEM.getDescription(type),
-                            ConfigProblemDescriptions.UNKNOWN_QUEST_ITEM.getExtendedDescription(type),
-                            path + ".item.quest-item"));
-                }
-            } else {
-                String itemloc = "item";
-                if (!section.contains("item")) {
-                    itemloc = "type";
-                }
-                if (!section.contains(itemloc)) {
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(""),
-                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(""),
-                            path + ".type"));
-                } else {
-                    String type = String.valueOf(section.get(itemloc));
-                    if (!plugin.getItemGetter().isValidMaterial(type)) {
-                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(type),
-                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(type),
-                                path + itemloc));
-                    }
-                }
-            }
-        } else {
-            if (Material.getMaterial(String.valueOf(object)) == null) {
-                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(object)),
-                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(String.valueOf(object)),
-                        path));
-            }
-        }
-    }
-
-    public static boolean configValidateExists(String path, Object object, List<ConfigProblem> problems, String... args) {
-        if (object == null) {
-            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                    ConfigProblemDescriptions.TASK_MISSING_FIELD.getDescription(args),
-                    ConfigProblemDescriptions.TASK_MISSING_FIELD.getExtendedDescription(args),
-                    path));
-            return false;
-        }
-        return true;
-    }
 
     /**
      * Returns a config validator which checks if at least one value in the given

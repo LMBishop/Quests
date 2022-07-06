@@ -15,6 +15,7 @@ import java.util.*;
 public abstract class TaskTypeManager {
 
     private final Map<String, TaskType> taskTypes = new HashMap<>();
+    private final Map<String, String> aliases = new HashMap<>();
     private final List<String> exclusions;
     private int skipped;
     private boolean allowRegistrations;
@@ -69,6 +70,9 @@ public abstract class TaskTypeManager {
             return false;
         }
         taskTypes.put(taskType.getType(), taskType);
+        for (String alias : taskType.getAliases()) {
+            aliases.put(alias, taskType.getType());
+        }
         return true;
     }
 
@@ -86,6 +90,7 @@ public abstract class TaskTypeManager {
         for (Task task : quest.getTasks()) {
             TaskType t;
             if ((t = getTaskType(task.getType())) != null) {
+
                 t.registerQuest(quest);
             }
         }
@@ -100,7 +105,31 @@ public abstract class TaskTypeManager {
     public @Nullable TaskType getTaskType(@NotNull String type) {
         Objects.requireNonNull(type, "type cannot be null");
 
-        return taskTypes.get(type);
+        TaskType taskType = taskTypes.get(type);
+        if (taskType == null) {
+            if (aliases.get(type) != null) {
+                return taskTypes.get(aliases.get(type));
+            }
+        }
+        return taskType;
+    }
+
+    /**
+     * Get the actual name of a task type, following aliases
+     *
+     * @param taskType name of task type
+     * @return actual name
+     */
+    public @Nullable String resolveTaskTypeName(@NotNull String taskType) {
+            Objects.requireNonNull(taskType, "taskType cannot be null");
+
+        if (taskTypes.containsKey(taskType)) {
+            return taskType;
+        }
+        if (aliases.containsKey(taskType)) {
+            return aliases.get(taskType);
+        }
+        return null;
     }
 
     /**

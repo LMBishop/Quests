@@ -3,9 +3,7 @@ package com.leonardobishop.quests.bukkit.tasktype.type.dependent;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
-import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -15,12 +13,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public final class MythicMobsKillingTaskType extends BukkitTaskType {
 
@@ -52,17 +46,6 @@ public final class MythicMobsKillingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "level"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "min-level"));
-    }
-
-    @Override
-    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
-        ArrayList<ConfigProblem> problems = new ArrayList<>();
-//        TaskUtils.configValidateExists(root + ".name", config.get("name"), problems, "name", super.getType());
-//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-//        TaskUtils.configValidateInt(root + ".level", config.get("level"), problems, true, true, "level");
-//        TaskUtils.configValidateInt(root + ".min-level", config.get("min-level"), problems, true, true, "min-level");
-        return problems;
     }
 
     private final class MythicMobs4Listener implements Listener {
