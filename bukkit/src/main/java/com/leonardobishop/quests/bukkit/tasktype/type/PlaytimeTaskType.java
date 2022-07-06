@@ -50,31 +50,33 @@ public final class PlaytimeTaskType extends BukkitTaskType {
                             continue;
                         }
 
-                        for (Quest quest : PlaytimeTaskType.super.getRegisteredQuests()) {
-                            if (qPlayer.hasStartedQuest(quest)) {
-                                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
-                                for (Task task : quest.getTasksOfType(PlaytimeTaskType.super.getType())) {
-                                    if ((boolean) task.getConfigValue("ignore-afk", false)
-                                            && plugin.getEssentialsHook() != null
-                                            && plugin.getEssentialsHook().isAfk(player)) {
-                                        continue;
-                                    }
-                                    if (!TaskUtils.validateWorld(player, task)) continue;
+                        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, PlaytimeTaskType.this)) {
+                            Quest quest = pendingTask.quest();
+                            Task task = pendingTask.task();
+                            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
-                                    if (taskProgress.isCompleted()) {
-                                        continue;
-                                    }
-                                    int minutes = (int) task.getConfigValue("minutes");
-                                    if (taskProgress.getProgress() == null) {
-                                        taskProgress.setProgress(1);
-                                    } else {
-                                        taskProgress.setProgress((int) taskProgress.getProgress() + 1);
-                                    }
-                                    if (((int) taskProgress.getProgress()) >= minutes) {
-                                        taskProgress.setCompleted(true);
-                                    }
-                                }
+                            PlaytimeTaskType.super.debug("Polling playtime for player", quest.getId(), task.getId(), player.getUniqueId());
+
+                            boolean ignoreAfk = (boolean) task.getConfigValue("ignore-afk", false);
+
+                            if (ignoreAfk && plugin.getEssentialsHook() == null) {
+                                PlaytimeTaskType.super.debug("ignore-afk is enabled, but Essentials is not detected on the server", quest.getId(), task.getId(), player.getUniqueId());
+                            }
+
+                            if (ignoreAfk
+                                    && plugin.getEssentialsHook() != null
+                                    && plugin.getEssentialsHook().isAfk(player)) {
+                                PlaytimeTaskType.super.debug("ignore-afk is enabled and Essentials reports player as afk, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                                continue;
+                            }
+
+                            int minutes = (int) task.getConfigValue("minutes");
+                            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+                            PlaytimeTaskType.super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+                            if (progress >= minutes) {
+                                PlaytimeTaskType.super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                                taskProgress.setCompleted(true);
                             }
                         }
                     }

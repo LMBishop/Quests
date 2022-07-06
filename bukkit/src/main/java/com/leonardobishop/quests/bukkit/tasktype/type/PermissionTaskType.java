@@ -33,20 +33,22 @@ public final class PermissionTaskType extends BukkitTaskType {
                     if (qPlayer == null) {
                         continue;
                     }
-                    for (Quest quest : PermissionTaskType.super.getRegisteredQuests()) {
-                        if (qPlayer.hasStartedQuest(quest)) {
-                            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
-                            for (Task task : quest.getTasksOfType(PermissionTaskType.super.getType())) {
-                                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
-                                if (taskProgress.isCompleted()) {
-                                    continue;
-                                }
-                                String permission = (String) task.getConfigValue("permission");
-                                if (permission != null) {
-                                    if (player.hasPermission(permission)) {
-                                        taskProgress.setCompleted(true);
-                                    }
-                                }
+                    for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, PermissionTaskType.this)) {
+                        Quest quest = pendingTask.quest();
+                        Task task = pendingTask.task();
+                        TaskProgress taskProgress = pendingTask.taskProgress();
+
+                        PermissionTaskType.super.debug("Polling permissions for player", quest.getId(), task.getId(), player.getUniqueId());
+
+                        String permission = (String) task.getConfigValue("permission");
+                        if (permission != null) {
+                            PermissionTaskType.super.debug("Checking permission '" + permission + "'", quest.getId(), task.getId(), player.getUniqueId());
+                            if (player.hasPermission(permission)) {
+                                PermissionTaskType.super.debug("Player has permission", quest.getId(), task.getId(), player.getUniqueId());
+                                PermissionTaskType.super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                                taskProgress.setCompleted(true);
+                            } else {
+                                PermissionTaskType.super.debug("Player does not have permission", quest.getId(), task.getId(), player.getUniqueId());
                             }
                         }
                     }

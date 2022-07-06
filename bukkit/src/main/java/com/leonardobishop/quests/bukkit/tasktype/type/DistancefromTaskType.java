@@ -74,34 +74,34 @@ public final class DistancefromTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            super.debug("Player moved", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            int x = (int) task.getConfigValue("x");
+            int y = (int) task.getConfigValue("y");
+            int z = (int) task.getConfigValue("z");
+            String worldString = (String) task.getConfigValue("world");
+            int distance = (int) task.getConfigValue("distance");
+            int distanceSquared = distance * distance;
 
-                    int x = (int) task.getConfigValue("x");
-                    int y = (int) task.getConfigValue("y");
-                    int z = (int) task.getConfigValue("z");
-                    String worldString = (String) task.getConfigValue("world");
-                    int distance = (int) task.getConfigValue("distance");
-                    int distanceSquared = distance * distance;
+            World world = Bukkit.getWorld(worldString);
+            if (world == null) {
+                super.debug("World " + worldString + " does not exist, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-                    World world = Bukkit.getWorld(worldString);
-                    if (world == null) {
-                        continue;
-                    }
+            Location location = new Location(world, x, y, z);
+            double playerDistanceSquared = player.getLocation().distanceSquared(location);
 
-                    Location location = new Location(world, x, y, z);
-                    if (player.getWorld().equals(world) && player.getLocation().distanceSquared(location) > distanceSquared) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            super.debug("Player is " + playerDistanceSquared + "m squared away", quest.getId(), task.getId(), player.getUniqueId());
+
+            if (player.getWorld().equals(world) && playerDistanceSquared > distanceSquared) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

@@ -55,36 +55,21 @@ public final class MilkingTaskType extends BukkitTaskType {
             return;
         }
 
-        QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            super.debug("Player milked cow", quest.getId(), task.getId(), player.getUniqueId());
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            int breedingNeeded = (int) task.getConfigValue("amount");
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
-
-                    int cowsNeeded = (int) task.getConfigValue("amount");
-
-                    int progressMilked;
-                    if (taskProgress.getProgress() == null) {
-                        progressMilked = 0;
-                    } else {
-                        progressMilked = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progressMilked + 1);
-
-                    if (((int) taskProgress.getProgress()) >= cowsNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (progress >= breedingNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

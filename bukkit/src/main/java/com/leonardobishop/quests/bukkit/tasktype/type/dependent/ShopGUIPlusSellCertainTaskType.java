@@ -55,71 +55,51 @@ public final class ShopGUIPlusSellCertainTaskType extends BukkitTaskType {
         if (shopAction != ShopAction.SELL && shopAction != ShopAction.SELL_ALL) {
             return;
         }
-    
+
         Player player = result.getPlayer();
         QPlayerManager playerManager = this.plugin.getPlayerManager();
-        QPlayer qplayer = playerManager.getPlayer(player.getUniqueId());
-        if (qplayer == null) {
+        QPlayer qPlayer = playerManager.getPlayer(player.getUniqueId());
+        if (qPlayer == null) {
             return;
         }
-        
-        World world = player.getWorld();
-        String worldName = world.getName();
-        
+
         ShopItem shopItem = result.getShopItem();
         Shop shop = shopItem.getShop();
         String shopId = shop.getId();
         String itemId = shopItem.getId();
-        int amountSold = result.getAmount();
-    
-        List<Quest> registeredQuests = super.getRegisteredQuests();
-        for (Quest quest : registeredQuests) {
-            if (!qplayer.hasStartedQuest(quest)) {
+        int amountBought = result.getAmount();
+
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
+
+            super.debug("Player bought item (shop = " + shopId + ", item id = " + itemId + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+            String taskShopId = (String) task.getConfigValue("shop-id");
+            if (taskShopId == null || !taskShopId.equals(shopId)) {
+                super.debug("Shop id does not match required id, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
-    
-            QuestProgressFile questProgressFile = qplayer.getQuestProgressFile();
-            QuestProgress questProgress = questProgressFile.getQuestProgress(quest);
-    
-            String questTypeName = super.getType();
-            List<Task> taskList = quest.getTasksOfType(questTypeName);
-            for (Task task : taskList) {
-                if (!TaskUtils.validateWorld(worldName, task)) {
-                    continue;
-                }
-                
-                String taskId = task.getId();
-                TaskProgress taskProgress = questProgress.getTaskProgress(taskId);
-                if (taskProgress.isCompleted()) {
-                    continue;
-                }
-                
-                String taskShopId = (String) task.getConfigValue("shop-id");
-                if (taskShopId == null || !taskShopId.equals(shopId)) {
-                    continue;
-                }
-                
-                String taskItemId = (String) task.getConfigValue("item-id");
-                if (taskItemId == null || !taskItemId.equals(itemId)) {
-                    continue;
-                }
-                
-                int amountNeeded = (int) task.getConfigValue("amount");
-                
-                int progressAmount;
-                Object progress = taskProgress.getProgress();
-                if (progress == null) {
-                    progressAmount = 0;
-                } else {
-                    progressAmount = (int) progress;
-                }
-                
-                int newProgress = (progressAmount + amountSold);
-                taskProgress.setProgress(newProgress);
-                
-                if (newProgress >= amountNeeded) {
-                    taskProgress.setCompleted(true);
-                }
+
+            String taskItemId = (String) task.getConfigValue("item-id");
+            if (taskItemId == null || !taskItemId.equals(itemId)) {
+                super.debug("Item id does not match required id, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
+
+            int amountNeeded = (int) task.getConfigValue("amount");
+
+            int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
+            int newProgress = progress + amountBought;
+            taskProgress.setProgress(newProgress);
+
+            super.debug("Updating task progress (now " + newProgress + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+            if (newProgress >= amountNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setProgress(amountNeeded);
+                taskProgress.setCompleted(true);
             }
         }
     }

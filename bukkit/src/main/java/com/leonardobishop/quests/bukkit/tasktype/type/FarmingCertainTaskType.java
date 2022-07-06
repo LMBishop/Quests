@@ -100,64 +100,48 @@ public final class FarmingCertainTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            super.debug("Player farmed crop " + crop.getMaterial() + " (mode = " + mode + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            if (task.getConfigValue("mode") != null
+                    && !mode.equalsIgnoreCase(task.getConfigValue("mode").toString())) {
+                super.debug("Mode does not match required mode, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            if (matchBlock(task, quest, player, block)) {
+                int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+                super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (task.getConfigValue("mode") != null
-                            && !mode.equalsIgnoreCase(task.getConfigValue("mode").toString())) {
-                        continue;
-                    }
+                int amount = (int) task.getConfigValue("amount");
 
-                    if (matchBlock(task, block)) {
-                        int blocksNeeded = (int) task.getConfigValue("amount");
-
-                        int progressBlocks;
-                        if (taskProgress.getProgress() == null) {
-                            progressBlocks = 0;
-                        } else {
-                            progressBlocks = (int) taskProgress.getProgress();
-                        }
-
-                        taskProgress.setProgress(progressBlocks + 1);
-
-                        if (((int) taskProgress.getProgress()) >= blocksNeeded) {
-                            taskProgress.setCompleted(true);
-                        }
-                    }
+                if (progress >= amount) {
+                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                    taskProgress.setCompleted(true);
                 }
             }
         }
     }
 
-    private boolean matchBlock(Task task, Block block) {
+    private boolean matchBlock(Task task, Quest quest, Player player, Block block) {
         Material material;
 
-        Object configBlock = task.getConfigValues().containsKey("block") ? task.getConfigValue("block") : task.getConfigValue("blocks");
-        Object configData = task.getConfigValue("data");
-
-        List<String> checkBlocks = new ArrayList<>();
-        if (configBlock instanceof List) {
-            checkBlocks.addAll((List) configBlock);
-        } else {
-            checkBlocks.add(String.valueOf(configBlock));
-        }
+        List<String> checkBlocks = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("block") ? "block" : "blocks");
 
         for (String materialName : checkBlocks) {
+            super.debug("Checking against '" + materialName + "'", quest.getId(), task.getId(), player.getUniqueId());
             material = Material.getMaterial(String.valueOf(materialName));
             Material blockType = block.getType();
 
             if (blockType == material) {
+                super.debug("Type match", quest.getId(), task.getId(), player.getUniqueId());
                 return true;
+            } else {
+                super.debug("Type mismatch", quest.getId(), task.getId(), player.getUniqueId());
             }
         }
         return false;

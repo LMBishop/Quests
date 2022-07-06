@@ -63,46 +63,34 @@ public final class TamingCertainTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            super.debug("Played tamed entity", quest.getId(), task.getId(), player.getUniqueId());
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            EntityType entityType;
+            try {
+                entityType = EntityType.valueOf((String) task.getConfigValue("mob"));
+            } catch (IllegalArgumentException ex) {
+                super.debug("Invalid entity in configuration, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            if (event.getEntity().getType() != entityType) {
+                super.debug("Tamed entity is not the correct type, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-                    EntityType entityType;
-                    try {
-                        entityType = EntityType.valueOf((String) task.getConfigValue("mob"));
-                    } catch (IllegalArgumentException ex) {
-                        continue;
-                    }
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (event.getEntity().getType() != entityType) {
-                        continue;
-                    }
+            int amount = (int) task.getConfigValue("amount");
 
-                    int tamesNeeded = (int) task.getConfigValue("amount");
-
-                    int progress;
-                    if (taskProgress.getProgress() == null) {
-                        progress = 0;
-                    } else {
-                        progress = (int) taskProgress.getProgress();
-                    }
-
-                    progress += 1;
-                    taskProgress.setProgress(progress);
-
-                    if (progress >= tamesNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (progress >= amount) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

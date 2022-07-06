@@ -5,7 +5,6 @@ import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -23,7 +22,6 @@ public final class MiningTaskType extends BukkitTaskType {
     private final BukkitQuestsPlugin plugin;
 
     public MiningTaskType(BukkitQuestsPlugin plugin) {
-        // type, author, description
         super("blockbreak", TaskUtils.TASK_ATTRIBUTION_STRING, "Break a set amount of blocks.");
         this.plugin = plugin;
     }
@@ -38,41 +36,28 @@ public final class MiningTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (event.getPlayer().hasMetadata("NPC")) return;  // citizens also causes these events to fire
+        if (event.getPlayer().hasMetadata("NPC")) return;
 
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(event.getPlayer().getUniqueId()); // get the qplayer so you can get their progress
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(event.getPlayer().getUniqueId());
         if (qPlayer == null) {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) { // iterate through all quests which are registered to use this task type
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(event.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) { // get all tasks of this type
-                    if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;
+            super.debug("Player mined block", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId()); // get the task progress and increment progress by 1
+            int brokenBlocksNeeded = (int) task.getConfigValue("amount");
 
-                    if (taskProgress.isCompleted()) { // dont need to increment a completed task
-                        continue;
-                    }
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
 
-                    int brokenBlocksNeeded = (int) task.getConfigValue("amount"); // this will retrieve a value from the config under the key "value"
-
-                    int progressBlocksBroken;
-                    if (taskProgress.getProgress() == null) { // note: if the player has never progressed before, getProgress() will return null
-                        progressBlocksBroken = 0;
-                    } else {
-                        progressBlocksBroken = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progressBlocksBroken + 1); // the progress does not have to be an int, although must be serializable by the yaml provider
-
-                    if (((int) taskProgress.getProgress()) >= brokenBlocksNeeded) { // completion statement, if true the task is complete
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (progress >= brokenBlocksNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

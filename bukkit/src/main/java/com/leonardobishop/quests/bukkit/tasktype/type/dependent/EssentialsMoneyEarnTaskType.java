@@ -10,6 +10,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import net.ess3.api.events.UserBalanceUpdateEvent;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
@@ -43,30 +44,28 @@ public final class EssentialsMoneyEarnTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        Player player = event.getPlayer();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            super.debug("Player balance updated to " + event.getNewBalance(), quest.getId(), task.getId(), player.getUniqueId());
 
-                    int earningsNeeded = (int) task.getConfigValue("amount");
+            int earningsNeeded = (int) task.getConfigValue("amount");
 
-                    BigDecimal current = (BigDecimal) taskProgress.getProgress();
-                    if (current == null) {
-                        current = new BigDecimal(0);
-                    }
-                    BigDecimal newProgress = current.add(event.getNewBalance().subtract(event.getOldBalance()));
-                    taskProgress.setProgress(newProgress);
+            BigDecimal current = (BigDecimal) taskProgress.getProgress();
+            if (current == null) {
+                current = new BigDecimal(0);
+            }
+            BigDecimal newProgress = current.add(event.getNewBalance().subtract(event.getOldBalance()));
+            taskProgress.setProgress(newProgress);
+            super.debug("Updating task progress (now " + newProgress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (newProgress.compareTo(BigDecimal.valueOf(earningsNeeded)) > 0) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (newProgress.compareTo(BigDecimal.valueOf(earningsNeeded)) > 0) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

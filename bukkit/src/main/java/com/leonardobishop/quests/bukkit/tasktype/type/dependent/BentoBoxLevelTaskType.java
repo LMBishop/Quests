@@ -10,6 +10,8 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 import world.bentobox.bentobox.BentoBox;
@@ -57,26 +59,29 @@ public final class BentoBoxLevelTaskType extends BukkitTaskType {
                     continue;
                 }
 
-                for (Quest quest : super.getRegisteredQuests()) {
-                    if (qPlayer.hasStartedQuest(quest)) {
-                        QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+                Player player = Bukkit.getPlayer(member);
 
-                        for (Task task : quest.getTasksOfType(super.getType())) {
-                            TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                if (player == null) {
+                    continue;
+                }
 
-                            if (taskProgress.isCompleted()) {
-                                continue;
-                            }
+                for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+                    Quest quest = pendingTask.quest();
+                    Task task = pendingTask.task();
+                    TaskProgress taskProgress = pendingTask.taskProgress();
 
-                            long islandLevelNeeded = (long) (int) task.getConfigValue("level");
-                            long newLevel = (long) event.getKeyValues().get("level");
+                    long islandLevelNeeded = (long) (int) task.getConfigValue("level");
+                    long newLevel = (long) event.getKeyValues().get("level");
 
-                            taskProgress.setProgress(event.getKeyValues().get("level"));
+                    super.debug("Player island level updated to " + newLevel, quest.getId(), task.getId(), member);
 
-                            if (newLevel >= islandLevelNeeded) {
-                                taskProgress.setCompleted(true);
-                            }
-                        }
+                    taskProgress.setProgress(newLevel);
+                    super.debug("Updating task progress (now " + newLevel + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+                    if (newLevel >= islandLevelNeeded) {
+                        super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                        taskProgress.setProgress(newLevel);
+                        taskProgress.setCompleted(true);
                     }
                 }
             }

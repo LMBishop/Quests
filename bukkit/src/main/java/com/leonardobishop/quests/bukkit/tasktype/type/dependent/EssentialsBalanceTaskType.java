@@ -70,25 +70,23 @@ public final class EssentialsBalanceTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        Player player = event.getPlayer();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            super.debug("Player balance updated to " + event.getNewBalance(), quest.getId(), task.getId(), player.getUniqueId());
 
-                    int earningsNeeded = (int) task.getConfigValue("amount");
+            int earningsNeeded = (int) task.getConfigValue("amount");
 
-                    taskProgress.setProgress(event.getNewBalance());
+            taskProgress.setProgress(event.getNewBalance());
+            super.debug("Updating task progress (now " + event.getNewBalance() + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (event.getNewBalance().compareTo(BigDecimal.valueOf(earningsNeeded)) > 0) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (event.getNewBalance().compareTo(BigDecimal.valueOf(earningsNeeded)) > 0) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

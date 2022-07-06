@@ -58,6 +58,11 @@ public class AdminDebugQuestCommandHandler implements CommandHandler {
             QPlayerPreferences preferences = qPlayer.getPlayerPreferences();
             QPlayerPreferences.DebugType currentDebugType = preferences.getDebug(questId);
             if (currentDebugType == null) {
+                if (args.length < 5) {
+                    sender.sendMessage(ChatColor.RED + "You must specify a debug type.");
+                    return;
+                }
+
                 String debugType = args[4];
                 QPlayerPreferences.DebugType debugTypeEnum;
 
@@ -70,7 +75,7 @@ public class AdminDebugQuestCommandHandler implements CommandHandler {
 
                 preferences.setDebug(questId, debugTypeEnum);
                 sender.sendMessage(ChatColor.GREEN + "Debugging enabled for quest '" + questId + "'.");
-                sender.sendMessage(ChatColor.GRAY + "You will now see debug logs for quest '" + quest + "' for " +
+                sender.sendMessage(ChatColor.GRAY + "You will now see debug logs for quest '" + quest.getId() + "' for " +
                         (debugTypeEnum == QPlayerPreferences.DebugType.SELF ? "yourself" : "everybody on the server") +
                         ". This may generate a lot of spam.");
                 sender.sendMessage(ChatColor.DARK_GRAY + "Use '/quests admin debug " + questId + "' to disable.");
@@ -89,7 +94,7 @@ public class AdminDebugQuestCommandHandler implements CommandHandler {
         if (args.length == 4) {
             return TabHelper.tabCompleteQuests(args[3]);
         } else if (args.length == 5) {
-            return TabHelper.matchTabComplete(args[2], Arrays.asList("self", "all"));
+            return TabHelper.matchTabComplete(args[4], Arrays.asList("self", "all"));
         }
         return Collections.emptyList();
     }

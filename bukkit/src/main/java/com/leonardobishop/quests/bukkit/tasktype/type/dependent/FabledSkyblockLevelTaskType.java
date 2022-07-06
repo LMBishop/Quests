@@ -10,6 +10,8 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import com.songoda.skyblock.api.event.island.IslandLevelChangeEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
@@ -48,29 +50,31 @@ public final class FabledSkyblockLevelTaskType extends BukkitTaskType {
                 continue;
             }
 
-            for (Quest quest : super.getRegisteredQuests()) {
-                if (qPlayer.hasStartedQuest(quest)) {
-                    QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            Player player = Bukkit.getPlayer(member);
 
-                    for (Task task : quest.getTasksOfType(super.getType())) {
-                        TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            if (player == null) {
+                continue;
+            }
 
-                        if (taskProgress.isCompleted()) {
-                            continue;
-                        }
+            for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+                Quest quest = pendingTask.quest();
+                Task task = pendingTask.task();
+                TaskProgress taskProgress = pendingTask.taskProgress();
 
-                        int islandValueNeeded = (int) task.getConfigValue("level");
+                int islandLevelNeeded = (int) task.getConfigValue("level");
 
-                        taskProgress.setProgress(event.getLevel().getLevel());
+                super.debug("Player island level updated to " + event.getLevel().getLevel(), quest.getId(), task.getId(), member);
 
-                        if (((double) taskProgress.getProgress()) >= islandValueNeeded) {
-                            taskProgress.setCompleted(true);
-                        }
-                    }
+                taskProgress.setProgress(event.getLevel().getLevel());
+                super.debug("Updating task progress (now " + event.getLevel().getLevel() + ")", quest.getId(), task.getId(), member);
+
+                if (event.getLevel().getLevel() >= islandLevelNeeded) {
+                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                    taskProgress.setProgress(islandLevelNeeded);
+                    taskProgress.setCompleted(true);
                 }
             }
         }
-
     }
 
 }

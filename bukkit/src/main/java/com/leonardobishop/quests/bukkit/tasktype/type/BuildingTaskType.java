@@ -5,7 +5,6 @@ import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -44,34 +43,21 @@ public final class BuildingTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(event.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;
+            super.debug("Player placed block", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            int brokenBlocksNeeded = (int) task.getConfigValue("amount");
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
 
-                    int brokenBlocksNeeded = (int) task.getConfigValue("amount");
-
-                    int progressBlocksBroken;
-                    if (taskProgress.getProgress() == null) {
-                        progressBlocksBroken = 0;
-                    } else {
-                        progressBlocksBroken = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progressBlocksBroken + 1);
-
-                    if (((int) taskProgress.getProgress()) >= brokenBlocksNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (progress >= brokenBlocksNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

@@ -47,44 +47,28 @@ public final class CommandTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            boolean ignoreCasing = TaskUtils.getConfigBoolean(task, "ignore-case");
+            List<String> commands = TaskUtils.getConfigStringList(task, "command");
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            String message = e.getMessage();
+            if (message.length() >= 1) {
+                message = message.substring(1);
+            }
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
-                    Object configCommand = task.getConfigValue("command");
-                    Object configIgnoreCase = task.getConfigValue("ignore-case");
+            super.debug("Player sent command '/" + message + "'", quest.getId(), task.getId(), player.getUniqueId());
 
-                    List<String> commands = new ArrayList<>();
-                    if (configCommand instanceof List) {
-                        commands.addAll((List) configCommand);
-                    } else {
-                        commands.add(String.valueOf(configCommand));
-                    }
-
-                    boolean ignoreCasing = false;
-                    if (configIgnoreCase != null) {
-                        ignoreCasing = (boolean) task.getConfigValue("ignore-case");
-                    }
-                    String message = e.getMessage();
-                    if (message.length() >= 1) {
-                        message = message.substring(1);
-                    }
-
-                    for (String command : commands) {
-                        if (ignoreCasing && command.equalsIgnoreCase(message)) {
-                            taskProgress.setCompleted(true);
-                        } else if (!ignoreCasing && command.equals(message)) {
-                            taskProgress.setCompleted(true);
-                        }
-                    }
+            for (String command : commands) {
+                super.debug("Checking command against '/" + command + "' (ignore case = " + ignoreCasing + ")", quest.getId(), task.getId(), player.getUniqueId());
+                if ((ignoreCasing && command.equalsIgnoreCase(message))
+                    || (!ignoreCasing && command.equals(message))) {
+                    super.debug("Command '/" + message + "' matches task command '" + command + "'", quest.getId(), task.getId(), player.getUniqueId());
+                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                    taskProgress.setCompleted(true);
                 }
             }
         }

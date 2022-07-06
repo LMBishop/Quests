@@ -1,6 +1,9 @@
 package com.leonardobishop.quests.bukkit.tasktype.type;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
@@ -26,10 +29,16 @@ import java.util.List;
 public final class FishingCertainTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
+    private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
 
     public FishingCertainTaskType(BukkitQuestsPlugin plugin) {
         super("fishingcertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Catch a set amount of a specific item from the sea.");
         this.plugin = plugin;
+    }
+
+    @Override
+    public void onReady() {
+        fixedQuestItemCache.clear();
     }
 
     @Override
@@ -58,61 +67,40 @@ public final class FishingCertainTaskType extends BukkitTaskType {
         }
         
         Player player = event.getPlayer();
-        if (!(event.getCaught() instanceof Item)) {
+        if (!(event.getCaught() instanceof Item caught)) {
             return;
         }
-        Item caught = (Item) event.getCaught();
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            QuestItem qi;
+            if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "item", "data");
+                fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
+                qi = fetchedItem;
+            }
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            super.debug("Player fished item of type " + caught.getItemStack().getType(), quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+            if (!qi.compareItemStack(caught.getItemStack())) {
+                super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+                continue;
+            }
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    int catchesNeeded = (int) task.getConfigValue("amount");
-                    String configItem = (String) task.getConfigValue("item");
-                    Object configData = task.getConfigValue("data");
+            int catchesNeeded = (int) task.getConfigValue("amount");
 
-                    ItemStack is;
-                    Material material = Material.getMaterial(String.valueOf(configItem));
-
-                    if (material == null) {
-                        continue;
-                    }
-                    if (configData != null) {
-                        is = new ItemStack(material, 1, ((Integer) configData).shortValue());
-                    } else {
-                        is = new ItemStack(material, 1);
-                    }
-
-                    if (!caught.getItemStack().isSimilar(is)) {
-                        continue;
-                    }
-
-                    int progressCatches;
-                    if (taskProgress.getProgress() == null) {
-                        progressCatches = 0;
-                    } else {
-                        progressCatches = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progressCatches + 1);
-
-                    if (((int) taskProgress.getProgress()) >= catchesNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (progress >= catchesNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

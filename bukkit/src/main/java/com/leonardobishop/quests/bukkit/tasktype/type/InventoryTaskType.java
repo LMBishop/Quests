@@ -106,116 +106,65 @@ public final class InventoryTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            super.debug("Inventory check triggered", quest.getId(), task.getId(), player.getUniqueId());
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            int itemsNeeded = (int) task.getConfigValue("amount");
+            boolean remove = TaskUtils.getConfigBoolean(task, "remove-items-when-complete");
+            boolean allowPartial = TaskUtils.getConfigBoolean(task, "allow-partial-completion", true);
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            QuestItem qi;
+            if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "item", "data");
+                fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
+                qi = fetchedItem;
+            }
 
-                    int itemsNeeded = (int) task.getConfigValue("amount");
-                    Object configBlock = task.getConfigValue("item");
-                    Object configData = task.getConfigValue("data");
-                    boolean remove = (boolean) task.getConfigValue("remove-items-when-complete", false);
-                    boolean allowPartial = (boolean) task.getConfigValue("allow-partial-completion", false);
+            int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
 
-                    QuestItem qi;
-                    if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
-                        if (configBlock instanceof ConfigurationSection) {
-                            qi = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
-                        } else {
-                            Material material = Material.getMaterial(String.valueOf(configBlock));
-                            if (material == null) {
-                                continue;
-                            }
+            int total;
+            int[] amountPerSlot = TaskUtils.getAmountsPerSlot(player, qi);
+            super.debug("Player has " + amountPerSlot[36] + " of the required item", quest.getId(), task.getId(), player.getUniqueId());
 
-                            ItemStack is;
-                            if (configData != null) {
-                                is = new ItemStack(material, 1, ((Integer) configData).shortValue());
-                            } else {
-                                is = new ItemStack(material, 1);
-                            }
+            if (allowPartial) {
+                total = Math.min(amountPerSlot[36], itemsNeeded - progress);
 
-                            qi = new ParsedQuestItem("parsed", null, is);
-                        }
-                        fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
-                    }
+                if (total == 0) {
+                    continue;
+                }
 
-                    int progress;
-                    if (taskProgress.getProgress() == null) {
-                        progress = 0;
-                    } else {
-                        progress = (int) taskProgress.getProgress();
-                    }
+                // We must ALWAYS remove items if partial completion is allowed
+                // https://github.com/LMBishop/Quests/issues/375
+                TaskUtils.removeItemsInSlots(player, amountPerSlot, total);
+                super.debug("Removing items from inventory", quest.getId(), task.getId(), player.getUniqueId());
 
-                    int total;
-                    int[] amountPerSlot = getAmountsPerSlot(player, qi);
+                progress += total;
+                taskProgress.setProgress(progress);
+                super.debug("Updating task progress (now " + (progress) + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (allowPartial) {
-                        total = Math.min(amountPerSlot[36], itemsNeeded - progress);
+                if (progress >= itemsNeeded) {
+                    taskProgress.setCompleted(true);
+                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                }
+            } else {
+                total = Math.min(amountPerSlot[36], itemsNeeded);
 
-                        if (total == 0) {
-                            continue;
-                        }
+                taskProgress.setProgress(total);
+                if (total >= itemsNeeded) {
+                    taskProgress.setCompleted(true);
+                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
 
-                        // We must ALWAYS remove items if partial completion is allowed
-                        // https://github.com/LMBishop/Quests/issues/375
-                        removeItemsInSlots(player, amountPerSlot, total);
-
-                        progress += total;
-                        taskProgress.setProgress(progress);
-
-                        if (progress >= itemsNeeded) {
-                            taskProgress.setCompleted(true);
-                        }
-                    } else {
-                        total = Math.min(amountPerSlot[36], itemsNeeded);
-
-                        taskProgress.setProgress(total);
-                        if (total >= itemsNeeded) {
-                            taskProgress.setCompleted(true);
-
-                            if (remove) {
-                                removeItemsInSlots(player, amountPerSlot, total);
-                            }
-                        }
+                    if (remove) {
+                        TaskUtils.removeItemsInSlots(player, amountPerSlot, total);
+                        super.debug("Removing items from inventory", quest.getId(), task.getId(), player.getUniqueId());
                     }
                 }
             }
         }
     }
 
-    private int[] getAmountsPerSlot(Player player, QuestItem qi) {
-        int[] slotToAmount = new int[37];
-        // idx 36 = total
-        for (int i = 0; i < 36; i++) {
-            ItemStack slot = player.getInventory().getItem(i);
-            if (slot == null || !qi.compareItemStack(slot))
-                continue;
-            slotToAmount[36] = slotToAmount[36] + slot.getAmount();
-            slotToAmount[i] = slot.getAmount();
-        }
-        return slotToAmount;
-    }
-
-    private void removeItemsInSlots(Player player, int[] amountPerSlot, int amountToRemove) {
-        for (int i = 0; i < 36; i++) {
-            if (amountPerSlot[i] == 0) continue;
-
-            ItemStack slot = player.getInventory().getItem(i);
-            if (slot == null) continue;
-
-            int amountInStack = slot.getAmount();
-            int min = Math.max(0, amountInStack - amountToRemove);
-            slot.setAmount(min);
-            amountToRemove = amountToRemove - amountInStack;
-            if (amountToRemove <= 0) break;
-        }
-    }
 }

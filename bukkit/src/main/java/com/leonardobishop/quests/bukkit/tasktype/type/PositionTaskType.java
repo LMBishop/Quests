@@ -60,37 +60,42 @@ public final class PositionTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            super.debug("Player moved", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            int x = (int) task.getConfigValue("x");
+            int y = (int) task.getConfigValue("y");
+            int z = (int) task.getConfigValue("z");
+            String worldString = (String) task.getConfigValue("world");
+            int padding = 0;
+            if (task.getConfigValue("distance-padding") != null) {
+                padding = (int) task.getConfigValue("distance-padding");
+            }
+            int paddingSquared = padding * padding;
+            World world = Bukkit.getWorld(worldString);
+            if (world == null) {
+                super.debug("World " + worldString + " does not exist, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-                    int x = (int) task.getConfigValue("x");
-                    int y = (int) task.getConfigValue("y");
-                    int z = (int) task.getConfigValue("z");
-                    String worldString = (String) task.getConfigValue("world");
-                    int padding = 0;
-                    if (task.getConfigValue("distance-padding") != null) {
-                        padding = (int) task.getConfigValue("distance-padding");
-                    }
-                    int paddingSquared = padding * padding;
-                    World world = Bukkit.getWorld(worldString);
-                    if (world == null) {
-                        continue;
-                    }
+            Location location = new Location(world, x, y, z);
+            if (player.getWorld().equals(world) && player.getLocation().getBlockX() == location.getBlockX() && player.getLocation().getBlockY() == location.getBlockY() && player.getLocation().getBlockZ() == location.getBlockZ()) {
+                super.debug("Player is precisely at location", quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("Marking task as complete", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+                taskProgress.setCompleted(true);
+            } else if (padding != 0 && player.getWorld().equals(world)) {
+                double playerDistanceSquared = player.getLocation().distanceSquared(location);
 
-                    Location location = new Location(world, x, y, z);
-                    if (player.getWorld().equals(world) && player.getLocation().getBlockX() == location.getBlockX() && player.getLocation().getBlockY() == location.getBlockY() && player.getLocation().getBlockZ() == location.getBlockZ()) {
-                        taskProgress.setCompleted(true);
-                    } else if (padding != 0 && player.getWorld().equals(world) && player.getLocation().distanceSquared(location) < paddingSquared) {
-                        taskProgress.setCompleted(true);
-                    }
+                super.debug("Player is " + playerDistanceSquared + "m squared away (padding squared = " + paddingSquared + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+                if (playerDistanceSquared <= paddingSquared) {
+                    super.debug("Player is within distance padding", quest.getId(), task.getId(), player.getUniqueId());
+                    super.debug("Marking task as complete", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+                    taskProgress.setCompleted(true);
                 }
             }
         }

@@ -51,32 +51,21 @@ public final class VotingPluginVoteType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            super.debug("Player voted", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            int votesNeeded = (int) task.getConfigValue("amount");
 
-                    int votesNeeded = (int) task.getConfigValue("amount");
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    int progressVotes;
-                    if (taskProgress.getProgress() == null) {
-                        progressVotes = 0;
-                    } else {
-                        progressVotes = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progressVotes + 1);
-
-                    if (((int) taskProgress.getProgress()) >= votesNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (progress >= votesNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

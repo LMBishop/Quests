@@ -11,6 +11,8 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
@@ -39,32 +41,34 @@ public final class SuperiorSkyblockWorthType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onIslandLevel(IslandWorthUpdateEvent event) {
-        for (SuperiorPlayer player : event.getIsland().getIslandMembers(true)) {
-            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+        for (SuperiorPlayer superiorPlayer : event.getIsland().getIslandMembers(true)) {
+            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(superiorPlayer.getUniqueId());
             if (qPlayer == null) {
                 continue;
             }
 
-            for (Quest quest : super.getRegisteredQuests()) {
-                if (qPlayer.hasStartedQuest(quest)) {
-                    QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            Player player = Bukkit.getPlayer(superiorPlayer.getUniqueId());
 
-                    for (Task task : quest.getTasksOfType(super.getType())) {
-                        TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            if (player == null) {
+                continue;
+            }
 
-                        if (taskProgress.isCompleted()) {
-                            continue;
-                        }
+            for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+                Quest quest = pendingTask.quest();
+                Task task = pendingTask.task();
+                TaskProgress taskProgress = pendingTask.taskProgress();
 
-                        double islandWorthNeeded = Double.parseDouble(String.valueOf(task.getConfigValue("worth")));
-                        BigDecimal bd = new BigDecimal(islandWorthNeeded);
+                super.debug("Player island worth updated", quest.getId(), task.getId(), player.getUniqueId());
 
-                        taskProgress.setProgress(event.getNewWorth().doubleValue());
+                double islandLevelNeeded = Double.parseDouble(String.valueOf(task.getConfigValue("worth")));
+                BigDecimal bd = new BigDecimal(islandLevelNeeded);
 
-                        if (event.getNewWorth().compareTo(bd) > 0) {
-                            taskProgress.setCompleted(true);
-                        }
-                    }
+                taskProgress.setProgress(event.getNewLevel().doubleValue());
+                super.debug("Updating task progress (now " + event.getNewLevel().doubleValue() + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+                if (event.getNewLevel().compareTo(bd) > 0) {
+                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                    taskProgress.setCompleted(true);
                 }
             }
         }

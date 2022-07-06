@@ -6,7 +6,6 @@ import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -52,41 +51,28 @@ public abstract class BucketInteractionTaskType extends BukkitTaskType {
 
         if (qPlayer == null) return;
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            int amount = (int) task.getConfigValue("amount");
+            Object configBucket = task.getConfigValue("bucket");
+            Material material = Material.getMaterial((String) configBucket);
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            super.debug("Player used bucket of type " + bucket, quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            if (bucket != material) {
+                super.debug("Player bucket does not match required bucket '" + material + "', continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-                    int amount = (int) task.getConfigValue("amount");
-                    Object configBucket = task.getConfigValue("bucket");
-                    Material material = Material.getMaterial((String) configBucket);
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (bucket != material) {
-                        continue;
-                    }
-
-                    int progress;
-                    if (taskProgress.getProgress() == null) {
-                        progress = 0;
-                    } else {
-                        progress = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progress + 1);
-
-                    if ((int) taskProgress.getProgress() >= amount) {
-                        taskProgress.setProgress(amount);
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if ((int) taskProgress.getProgress() >= amount) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

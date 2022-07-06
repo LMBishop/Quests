@@ -5,7 +5,6 @@ import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -18,7 +17,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -68,38 +66,29 @@ public final class BrewingTaskType extends BukkitTaskType {
                 return;
             }
 
-            for (Quest quest : super.getRegisteredQuests()) {
-                if (qPlayer.hasStartedQuest(quest)) {
-                    QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+                Quest quest = pendingTask.quest();
+                Task task = pendingTask.task();
+                TaskProgress taskProgress = pendingTask.taskProgress();
 
-                    for (Task task : quest.getTasksOfType(super.getType())) {
-                        if (!TaskUtils.validateWorld(player, task)) continue;
+                super.debug("Player brewed potion", quest.getId(), task.getId(), player.getUniqueId());
 
-                        TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                int progress = 0;
 
-                        if (taskProgress.isCompleted()) {
-                            continue;
-                        }
-
-                        int potionsNeeded = (int) task.getConfigValue("amount");
-
-                        int progress;
-                        if (taskProgress.getProgress() == null) {
-                            progress = 0;
-                        } else {
-                            progress = (int) taskProgress.getProgress();
-                        }
-
-                        ItemStack potion1 = event.getContents().getItem(0);
-                        ItemStack potion2 = event.getContents().getItem(1);
-                        ItemStack potion3 = event.getContents().getItem(2);
-
-                        taskProgress.setProgress(progress + (potion1 == null ? 0 : 1) + (potion2 == null ? 0 : 1) + (potion3 == null ? 0 : 1));
-
-                        if (((int) taskProgress.getProgress()) >= potionsNeeded) {
-                            taskProgress.setCompleted(true);
-                        }
+                for (int i = 0; i < 3; i++) {
+                    if (event.getContents().getItem(i) != null) {
+                        progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+                        super.debug("Incrementing task progress for brewed potion in slot " + i + " (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+                    } else {
+                        super.debug("Slot " + i + " does not have a brewed potion", quest.getId(), task.getId(), player.getUniqueId());
                     }
+                }
+
+                int potionsNeeded = (int) task.getConfigValue("amount");
+
+                if (progress >= potionsNeeded) {
+                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                    taskProgress.setCompleted(true);
                 }
             }
         }

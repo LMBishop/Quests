@@ -6,6 +6,7 @@ import com.leonardobishop.quests.common.player.QPlayerPreferences;
 import com.leonardobishop.quests.common.tasktype.TaskType;
 import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,21 +38,24 @@ public class BukkitTaskTypeManager extends TaskTypeManager {
         return false;
     }
 
-    public void sendDebug(@NotNull String message, @NotNull String taskType, @NotNull String questId, @NotNull UUID associatedPlayer) {
+    public void sendDebug(@NotNull String message, @NotNull String taskType, @NotNull String questId, @NotNull String taskId, @NotNull UUID associatedPlayer) {
         for (QPlayer qPlayer : plugin.getPlayerManager().getQPlayers()) {
             QPlayerPreferences.DebugType debugType = qPlayer.getPlayerPreferences().getDebug(questId);
             Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
             Player otherPlayer = Bukkit.getPlayer(associatedPlayer);
             String associatedName = otherPlayer == null ? associatedPlayer.toString() : otherPlayer.getName();
 
-            String chatMessage = "[" + taskType + ": " + associatedName + " on '" + questId + "'] " + message;
+            String chatHeader = ChatColor.GRAY + "[" + associatedName + " - " + questId + "/" + taskId + " - type '" + taskType + "']";
             if (player != null && debugType != null) {
                 switch (debugType) {
-                    case ALL -> player.sendMessage(chatMessage);
+                    case ALL -> {
+                        player.sendMessage(chatHeader);
+                        player.sendMessage(message);
+                    }
                     case SELF -> {
                         if (player.getUniqueId().equals(associatedPlayer)) {
-                            player.sendMessage(chatMessage);
-                        }
+                            player.sendMessage(chatHeader);
+                            player.sendMessage(message);                        }
                     }
                 }
             }

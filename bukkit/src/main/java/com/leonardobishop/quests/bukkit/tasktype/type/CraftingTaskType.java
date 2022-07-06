@@ -74,60 +74,35 @@ public final class CraftingTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            int amount = (int) task.getConfigValue("amount");
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            QuestItem qi;
+            if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "item", "data");
+                fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
+                qi = fetchedItem;
+            }
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            super.debug("Player crafted " + clickedAmount + " of " + clickedItem.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
-                    Material material;
-                    int amount = (int) task.getConfigValue("amount");
-                    Object configBlock = task.getConfigValue("item");
-                    Object configData = task.getConfigValue("data");
+            if (!qi.compareItemStack(clickedItem)) {
+                super.debug("Item does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-                    QuestItem qi;
-                    if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
-                        if (configBlock instanceof ConfigurationSection) {
-                            qi = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
-                        } else {
-                            material = Material.getMaterial(String.valueOf(configBlock));
-                            ItemStack is;
-                            if (material == null) {
-                                continue;
-                            }
-                            if (configData != null) {
-                                is = new ItemStack(material, 1, ((Integer) configData).shortValue());
-                            } else {
-                                is = new ItemStack(material, 1);
-                            }
-                            qi = new ParsedQuestItem("parsed", null, is);
-                        }
-                        fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
-                    }
+            int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
+            taskProgress.setProgress(progress + clickedAmount);
+            super.debug("Updating task progress (now " + (progress + clickedAmount) + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (!qi.compareItemStack(clickedItem)) continue;
-
-                    int progress;
-                    if (taskProgress.getProgress() == null) {
-                        progress = 0;
-                    } else {
-                        progress = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progress + clickedAmount);
-
-                    if ((int) taskProgress.getProgress() >= amount) {
-                        taskProgress.setProgress(amount);
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if ((int) taskProgress.getProgress() >= amount) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setProgress(amount);
+                taskProgress.setCompleted(true);
             }
         }
     }
@@ -170,7 +145,7 @@ public final class CraftingTaskType extends BukkitTaskType {
                 }
             }
 
-            return amountOfItems > amountCanBeMade ? amountCanBeMade : amountOfItems;
+            return Math.min(amountOfItems, amountCanBeMade);
         } else {
             return e.getRecipe().getResult().getAmount();
         }

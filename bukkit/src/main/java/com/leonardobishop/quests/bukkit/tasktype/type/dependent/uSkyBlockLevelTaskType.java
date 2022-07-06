@@ -9,6 +9,8 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
@@ -42,25 +44,24 @@ public final class uSkyBlockLevelTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        Player player = event.getPlayer();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            super.debug("Player island level updated to " + event.getScore().getScore(), quest.getId(), task.getId(), player.getUniqueId());
 
-                    double islandLevelNeeded = (double) (int) task.getConfigValue("level");
+            long islandLevelNeeded = (long) (int) task.getConfigValue("level");
 
-                    taskProgress.setProgress(event.getScore().getScore());
+            taskProgress.setProgress(event.getScore().getScore());
+            super.debug("Updating task progress (now " + event.getScore().getScore() + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (((double) taskProgress.getProgress()) >= islandLevelNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (event.getScore().getScore() >= islandLevelNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setProgress(islandLevelNeeded);
+                taskProgress.setCompleted(true);
             }
         }
     }

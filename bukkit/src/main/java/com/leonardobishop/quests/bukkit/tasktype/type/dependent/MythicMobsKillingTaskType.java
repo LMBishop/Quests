@@ -22,11 +22,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class MythicMobsKillingType extends BukkitTaskType {
+public final class MythicMobsKillingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
-    public MythicMobsKillingType(BukkitQuestsPlugin plugin, String mythicMobsVersion) {
+    public MythicMobsKillingTaskType(BukkitQuestsPlugin plugin, String mythicMobsVersion) {
         super("mythicmobs_killing", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of a MythicMobs entity.");
         this.plugin = plugin;
 
@@ -92,7 +92,7 @@ public final class MythicMobsKillingType extends BukkitTaskType {
     }
 
     private void handle(LivingEntity killer, Entity mob, String mobName, double level) {
-        if (killer == null) {
+        if (!(killer instanceof Player player)) {
             return;
         }
 
@@ -105,46 +105,40 @@ public final class MythicMobsKillingType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(killer.getWorld().getName(), task)) continue;
+            String configName = (String) task.getConfigValue("name");
+            int minMobLevel = (int) task.getConfigValue("min-level", -1);
+            int requiredLevel = (int) task.getConfigValue("level", -1);
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            super.debug("Player killed mythic mob '" + mobName + "' (level = " + level + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            if (!mobName.equals(configName)) {
+                super.debug("Name does not match required name, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-                    String configName = (String) task.getConfigValue("name");
-                    int minMobLevel = (int) task.getConfigValue("min-level", -1);
-                    int requiredLevel = (int) task.getConfigValue("level", -1);
+            if (level < minMobLevel) {
+                super.debug("Minimum level is required and it is not high enough, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-                    if (!mobName.equals(configName) || level < minMobLevel) {
-                        continue;
-                    }
+            if (requiredLevel != -1 && level != requiredLevel) {
+                super.debug("Specific level is required and it does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-                    if (requiredLevel != -1 && level != requiredLevel) {
-                        continue;
-                    }
+            int mobKillsNeeded = (int) task.getConfigValue("amount");
 
-                    int mobKillsNeeded = (int) task.getConfigValue("amount");
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    int progressKills;
-                    if (taskProgress.getProgress() == null) {
-                        progressKills = 0;
-                    } else {
-                        progressKills = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progressKills + 1);
-
-                    if (((int) taskProgress.getProgress()) >= mobKillsNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (progress >= mobKillsNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

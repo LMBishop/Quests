@@ -348,7 +348,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
                 String mythicMobsVersion = Bukkit.getPluginManager().getPlugin("MythicMobs").getDescription().getVersion();
                 if (mythicMobsVersion.startsWith("4") || mythicMobsVersion.startsWith("5")) {
-                    taskTypeManager.registerTaskType(new MythicMobsKillingType(this, mythicMobsVersion));
+                    taskTypeManager.registerTaskType(new MythicMobsKillingTaskType(this, mythicMobsVersion));
                 }
             }
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -378,7 +378,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
             if (Bukkit.getPluginManager().isPluginEnabled("Votifier")) {
                 // not tested
-                taskTypeManager.registerTaskType(new NuVotifierVoteType(this));
+                taskTypeManager.registerTaskType(new NuVotifierVoteTaskType(this));
             }
 
             taskTypeManager.closeRegistrations();

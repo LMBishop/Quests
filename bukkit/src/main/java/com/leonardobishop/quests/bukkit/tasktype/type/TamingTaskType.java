@@ -51,35 +51,25 @@ public final class TamingTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            int tamesNeeded = (int) task.getConfigValue("amount");
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            int progress;
+            if (taskProgress.getProgress() == null) {
+                progress = 0;
+            } else {
+                progress = (int) taskProgress.getProgress();
+            }
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            progress += 1;
+            taskProgress.setProgress(progress);
 
-                    int tamesNeeded = (int) task.getConfigValue("amount");
-
-                    int progress;
-                    if (taskProgress.getProgress() == null) {
-                        progress = 0;
-                    } else {
-                        progress = (int) taskProgress.getProgress();
-                    }
-
-                    progress += 1;
-                    taskProgress.setProgress(progress);
-
-                    if (progress >= tamesNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (progress >= tamesNeeded) {
+                taskProgress.setCompleted(true);
             }
         }
     }

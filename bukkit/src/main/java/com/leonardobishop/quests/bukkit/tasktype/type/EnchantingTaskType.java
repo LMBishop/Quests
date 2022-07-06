@@ -47,34 +47,21 @@ public final class EnchantingTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            super.debug("Player enchanted item", quest.getId(), task.getId(), player.getUniqueId());
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            int enchantsNeeded = (int) task.getConfigValue("amount");
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    int enchantsNeeded = (int) task.getConfigValue("amount");
-
-                    int progressEnchant;
-                    if (taskProgress.getProgress() == null) {
-                        progressEnchant = 0;
-                    } else {
-                        progressEnchant = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progressEnchant + 1);
-
-                    if (((int) taskProgress.getProgress()) >= enchantsNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (progress >= enchantsNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

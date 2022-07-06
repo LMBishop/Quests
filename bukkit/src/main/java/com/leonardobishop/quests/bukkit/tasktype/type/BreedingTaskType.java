@@ -5,7 +5,6 @@ import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -52,41 +51,27 @@ public final class BreedingTaskType extends BukkitTaskType {
         }
         // Check if there is a player in the list, otherwise: return.
         for (Entity current : entList) {
-            if (current instanceof Player && !current.hasMetadata("NPC")) {
-                Player player = (Player) current;
+            if (current instanceof Player player && !current.hasMetadata("NPC")) {
                 QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                 if (qPlayer == null) {
                     continue;
                 }
 
-                for (Quest quest : super.getRegisteredQuests()) {
-                    if (qPlayer.hasStartedQuest(quest)) {
-                        QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+                for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+                    Quest quest = pendingTask.quest();
+                    Task task = pendingTask.task();
+                    TaskProgress taskProgress = pendingTask.taskProgress();
 
-                        for (Task task : quest.getTasksOfType(super.getType())) {
-                            if (!TaskUtils.validateWorld(player, task)) continue;
+                    super.debug("Player detected near bred animal", quest.getId(), task.getId(), player.getUniqueId());
 
-                            TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                    int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+                    super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                            if (taskProgress.isCompleted()) {
-                                continue;
-                            }
+                    int breedingNeeded = (int) task.getConfigValue("amount");
 
-                            int breedingNeeded = (int) task.getConfigValue("amount");
-                            int breedingProgress;
-
-                            if (taskProgress.getProgress() == null) {
-                                breedingProgress = 0;
-                            } else {
-                                breedingProgress = (int) taskProgress.getProgress();
-                            }
-
-                            taskProgress.setProgress(breedingProgress + 1);
-
-                            if (((int) taskProgress.getProgress()) >= breedingNeeded) {
-                                taskProgress.setCompleted(true);
-                            }
-                        }
+                    if (progress >= breedingNeeded) {
+                        super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                        taskProgress.setCompleted(true);
                     }
                 }
             }

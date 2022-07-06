@@ -52,34 +52,21 @@ public final class ShearingTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            super.debug("Player sheared animal", quest.getId(), task.getId(), player.getUniqueId());
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            int sheepNeeded = (int) task.getConfigValue("amount");
 
-                    int sheepNeeded = (int) task.getConfigValue("amount");
-
-                    int progressSheared;
-                    if (taskProgress.getProgress() == null) {
-                        progressSheared = 0;
-                    } else {
-                        progressSheared = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progressSheared + 1);
-
-                    if (((int) taskProgress.getProgress()) >= sheepNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (progress >= sheepNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

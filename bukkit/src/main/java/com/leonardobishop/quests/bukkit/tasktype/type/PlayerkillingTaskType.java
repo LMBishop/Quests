@@ -54,34 +54,19 @@ public final class PlayerkillingTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(killer, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(killer, task)) continue;
+            int playerKillsNeeded = (int) task.getConfigValue("amount");
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), killer.getUniqueId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
-
-                    int playerKillsNeeded = (int) task.getConfigValue("amount");
-
-                    int progressKills;
-                    if (taskProgress.getProgress() == null) {
-                        progressKills = 0;
-                    } else {
-                        progressKills = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progressKills + 1);
-
-                    if (((int) taskProgress.getProgress()) >= playerKillsNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (progress >= playerKillsNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), killer.getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }

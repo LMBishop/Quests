@@ -18,8 +18,8 @@ public abstract class BukkitTaskType extends TaskType implements Listener {
         super(type);
     }
 
-    public final void debug(@NotNull String message, String questId, @NotNull UUID player) {
-        taskTypeManager.sendDebug(message, super.getType(), questId, player);
+    public final void debug(@NotNull String message, String questId, String taskId, @NotNull UUID player) {
+        taskTypeManager.sendDebug(message, super.getType(), questId, taskId, player);
     }
 
 }

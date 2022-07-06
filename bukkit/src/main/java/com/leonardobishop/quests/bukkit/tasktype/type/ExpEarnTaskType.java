@@ -9,6 +9,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerExpChangeEvent;
@@ -37,43 +38,36 @@ public final class ExpEarnTaskType extends BukkitTaskType {
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onExpEarn(PlayerExpChangeEvent e) {
-        if (e.getPlayer().hasMetadata("NPC")) return;
+        Player player = e.getPlayer();
+
+        if (player.hasMetadata("NPC")) return;
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(e.getPlayer().getUniqueId());
         if (qPlayer == null) {
             return;
         }
 
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
-                
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(e.getPlayer(), task)) continue;
+            int amountEarned = e.getAmount();
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
-                    
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
-                    int amount = e.getAmount();
-                    int expNeeded = (int) task.getConfigValue("amount");
-                    
-                    int progressExp;
-                    if (taskProgress.getProgress() == null) {
-                        progressExp = 0;
-                    } else {
-                        progressExp = (int) taskProgress.getProgress();
-                    }
-                    
-                    taskProgress.setProgress(progressExp + amount);
-                    
-                    if (((int) taskProgress.getProgress()) >= expNeeded) {
-                        taskProgress.setCompleted(true);
-                    }                    
-                }
+            super.debug("Player earned " + amountEarned + " XP", quest.getId(), task.getId(), player.getUniqueId());
+
+            int expNeeded = (int) task.getConfigValue("amount");
+
+            int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
+            int newProgress = progress + amountEarned;
+            taskProgress.setProgress(newProgress);
+            super.debug("Updating task progress (now " + (newProgress) + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+            if (newProgress >= expNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setProgress(newProgress);
+                taskProgress.setCompleted(true);
             }
-        }        
+        }
     }
 }

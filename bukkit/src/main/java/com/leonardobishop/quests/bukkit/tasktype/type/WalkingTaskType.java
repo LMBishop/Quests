@@ -52,73 +52,54 @@ public final class WalkingTaskType extends BukkitTaskType {
             return;
         }
 
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            super.debug("Player moved", quest.getId(), task.getId(), player.getUniqueId());
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            if (task.getConfigValue("mode") != null
+                    && !validateTransportMethod(player, task.getConfigValue("mode").toString())) {
+                super.debug("Player's mode does not match required mode, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (task.getConfigValue("mode") != null
-                            && !validateTransportMethod(player, task.getConfigValue("mode").toString())) {
-                        continue;
-                    }
+            int distanceNeeded = (int) task.getConfigValue("distance");
 
-                    int distanceNeeded = (int) task.getConfigValue("distance");
-
-                    int progressDistance;
-                    if (taskProgress.getProgress() == null) {
-                        progressDistance = 0;
-                    } else {
-                        progressDistance = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progressDistance + 1);
-
-                    if (((int) taskProgress.getProgress()) >= distanceNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
-                }
+            if (progress >= distanceNeeded) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
             }
         }
     }
 
     private boolean validateTransportMethod(Player player, String mode) {
-        switch (mode.toLowerCase()) {
-            case "boat":
-                return player.getVehicle() != null && player.getVehicle().getType() == EntityType.BOAT;
-            case "horse":
-                return player.getVehicle() != null && player.getVehicle().getType() == EntityType.HORSE;
-            case "pig":
-                return player.getVehicle() != null && player.getVehicle().getType() == EntityType.PIG;
-            case "minecart":
-                return player.getVehicle() != null && player.getVehicle().getType() == EntityType.MINECART;
-            case "strider":
-                return plugin.getVersionSpecificHandler().isPlayerOnStrider(player);
-            case "sneaking": // sprinting does not matter
-                return player.isSneaking() && !player.isSwimming() && !player.isFlying()
-                        && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            case "walking":
-                return !player.isSneaking() && !player.isSwimming() && !player.isSprinting() && !player.isFlying()
-                        && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            case "running":
-                return !player.isSneaking() && !player.isSwimming() && player.isSprinting() && !player.isFlying()
-                        && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            case "swimming": // sprinting and sneaking do not matter, flying is not possible
-                return player.isSwimming() && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            case "flying": // if the player is flying then the player is flying
-                return player.isFlying();
-            case "elytra": // if the player is gliding then the player is gliding
-                return plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            default:
-                return false;
-        }
+        return switch (mode.toLowerCase()) {
+            case "boat" -> player.getVehicle() != null && player.getVehicle().getType() == EntityType.BOAT;
+            case "horse" -> player.getVehicle() != null && player.getVehicle().getType() == EntityType.HORSE;
+            case "pig" -> player.getVehicle() != null && player.getVehicle().getType() == EntityType.PIG;
+            case "minecart" -> player.getVehicle() != null && player.getVehicle().getType() == EntityType.MINECART;
+            case "strider" -> plugin.getVersionSpecificHandler().isPlayerOnStrider(player);
+            case "sneaking" -> // sprinting does not matter
+                    player.isSneaking() && !player.isSwimming() && !player.isFlying()
+                            && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case "walking" ->
+                    !player.isSneaking() && !player.isSwimming() && !player.isSprinting() && !player.isFlying()
+                            && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case "running" -> !player.isSneaking() && !player.isSwimming() && player.isSprinting() && !player.isFlying()
+                    && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case "swimming" -> // sprinting and sneaking do not matter, flying is not possible
+                    player.isSwimming() && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case "flying" -> // if the player is flying then the player is flying
+                    player.isFlying();
+            case "elytra" -> // if the player is gliding then the player is gliding
+                    plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            default -> false;
+        };
     }
 
 }
