@@ -36,40 +36,45 @@ public final class FarmingCertainTaskType extends BukkitTaskType {
             Class.forName("org.bukkit.event.player.PlayerHarvestBlockEvent");
             plugin.getServer().getPluginManager().registerEvents(new FarmingCertainTaskType.HarvestBlockListener(), plugin);
         } catch (ClassNotFoundException ignored) { } // server version cannot support event
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "block", "blocks"));
+        super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, "block", "blocks"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-        if (config.get("block") == null && config.get("blocks") == null) {
-            TaskUtils.configValidateExists(root + ".block", config.get("block"), problems, "block", super.getType());
-        } else {
-            Object configBlock;
-            String source;
-            if (config.containsKey("block")) {
-                source = "block";
-            } else {
-                source = "blocks";
-            }
-            configBlock = config.get(source);
-            List<String> checkBlocks = new ArrayList<>();
-            if (configBlock instanceof List) {
-                checkBlocks.addAll((List) configBlock);
-            } else {
-                checkBlocks.add(String.valueOf(configBlock));
-            }
-
-            for (String materialName : checkBlocks) {
-                if (Material.getMaterial(String.valueOf(materialName)) == null) {
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(materialName),
-                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(materialName),
-                            root + "." + source));
-                }
-            }
-        }
+//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
+//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+//        if (config.get("block") == null && config.get("blocks") == null) {
+//            TaskUtils.configValidateExists(root + ".block", config.get("block"), problems, "block", super.getType());
+//        } else {
+//            Object configBlock;
+//            String source;
+//            if (config.containsKey("block")) {
+//                source = "block";
+//            } else {
+//                source = "blocks";
+//            }
+//            configBlock = config.get(source);
+//            List<String> checkBlocks = new ArrayList<>();
+//            if (configBlock instanceof List) {
+//                checkBlocks.addAll((List) configBlock);
+//            } else {
+//                checkBlocks.add(String.valueOf(configBlock));
+//            }
+//
+//            for (String materialName : checkBlocks) {
+//                if (Material.getMaterial(String.valueOf(materialName)) == null) {
+//                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+//                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(materialName),
+//                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(materialName),
+//                            root + "." + source));
+//                }
+//            }
+//        }
         return problems;
     }
 

@@ -37,22 +37,36 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
     public CitizensDeliverTaskType(BukkitQuestsPlugin plugin) {
         super("citizens_deliver", TaskUtils.TASK_ATTRIBUTION_STRING, "Deliver a set of items to a NPC.");
         this.plugin = plugin;
+
+        super.addConfigValidator((config, problems) -> {
+            if (config.containsKey("npc-name") && config.containsKey("npc-id")) {
+                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                        "Both npc-name and npc-id is specified; npc-name will be ignored", null, "npc-name"));
+            }
+        });
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item"));
+        super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "remove-items-when-complete"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "allow-partial-completion"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType()))
-            TaskUtils.configValidateItemStack(root + ".item", config.get("item"), problems, false, "item");
-        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-        if (!config.containsKey("npc-name")) {
-            TaskUtils.configValidateExists(root + ".npc-id", config.get("npc-id"), problems, "npc-id", super.getType());
-        } else {
-            TaskUtils.configValidateExists(root + ".npc-name", config.get("npc-name"), problems, "npc-name", super.getType());
-        }
-        TaskUtils.configValidateBoolean(root + ".remove-items-when-complete", config.get("remove-items-when-complete"), problems, true, "remove-items-when-complete", super.getType());
-        TaskUtils.configValidateBoolean(root + ".allow-partial-completion", config.get("allow-partial-completion"), problems, true, "allow-partial-completion", super.getType());
+//        if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType()))
+//            TaskUtils.configValidateItemStack(root + ".item", config.get("item"), problems, false, "item");
+//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
+//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+//        if (!config.containsKey("npc-name")) {
+//            TaskUtils.configValidateExists(root + ".npc-id", config.get("npc-id"), problems, "npc-id", super.getType());
+//        } else {
+//            TaskUtils.configValidateExists(root + ".npc-name", config.get("npc-name"), problems, "npc-name", super.getType());
+//        }
+//        TaskUtils.configValidateBoolean(root + ".remove-items-when-complete", config.get("remove-items-when-complete"), problems, true, "remove-items-when-complete", super.getType());
+//        TaskUtils.configValidateBoolean(root + ".allow-partial-completion", config.get("allow-partial-completion"), problems, true, "allow-partial-completion", super.getType());
         return problems;
     }
 
@@ -83,7 +97,12 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
 
             super.debug("Player clicked NPC", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (task.getConfigValue("npc-name") != null) {
+            if (task.getConfigValue("npc-id") != null) {
+                if (!task.getConfigValue("npc-id").equals(npc.getId())) {
+                    super.debug("NPC id ('" + npc.getId() + "') does not match required id, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+            } else if (task.getConfigValue("npc-name") != null) {
                 String npcName = Chat.legacyStrip(Chat.legacyColor(npc.getName()));
                 super.debug("NPC name is required, current name = '" + npcName + "'", quest.getId(), task.getId(), player.getUniqueId());
                 if (!Chat.legacyStrip(Chat.legacyColor(String.valueOf(task.getConfigValue("npc-name"))))
@@ -91,11 +110,7 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
                     super.debug("NPC name does not match required name, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
-            } else if (!task.getConfigValue("npc-id").equals(npc.getId())) {
-                super.debug("NPC id ('" + npc.getId() + "') does not match required id, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                continue;
             }
-
             int itemsNeeded = (int) task.getConfigValue("amount");
             boolean remove = TaskUtils.getConfigBoolean(task, "remove-items-when-complete");
             boolean allowPartial = TaskUtils.getConfigBoolean(task, "allow-partial-completion", true);

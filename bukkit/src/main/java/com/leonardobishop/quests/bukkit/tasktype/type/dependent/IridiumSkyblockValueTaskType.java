@@ -30,13 +30,16 @@ public final class IridiumSkyblockValueTaskType extends BukkitTaskType {
     public IridiumSkyblockValueTaskType(BukkitQuestsPlugin plugin) {
         super("iridiumskyblock_value", TaskUtils.TASK_ATTRIBUTION_STRING, "Reach a certain island value for Iridium Skyblock.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "value"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "value"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".value", config.get("value"), problems, "value", super.getType()))
-            TaskUtils.configValidateInt(root + ".value", config.get("value"), problems, false, false, "value");
+//        if (TaskUtils.configValidateExists(root + ".value", config.get("value"), problems, "value", super.getType()))
+//            TaskUtils.configValidateInt(root + ".value", config.get("value"), problems, false, false, "value");
         return problems;
     }
 

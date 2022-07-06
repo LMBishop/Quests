@@ -4,11 +4,12 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
+import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,7 +25,7 @@ public final class TamingTaskType extends BukkitTaskType {
     private final BukkitQuestsPlugin plugin;
 
     public TamingTaskType(BukkitQuestsPlugin plugin) {
-        super("taming", TaskUtils.TASK_ATTRIBUTION_STRING, "Tame a set amount of any animals.");
+        super("taming", TaskUtils.TASK_ATTRIBUTION_STRING, "Tame a set amount of certain animals.");
         this.plugin = plugin;
     }
 
@@ -33,6 +34,16 @@ public final class TamingTaskType extends BukkitTaskType {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+        if (TaskUtils.configValidateExists(root + ".mob", config.get("mob"), problems, "mob", super.getType())) {
+            try {
+                EntityType.valueOf(String.valueOf(config.get("mob")));
+            } catch (IllegalArgumentException ex) {
+                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                        ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(String.valueOf(config.get("mob"))),
+                        ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getExtendedDescription(String.valueOf(config.get("mob"))),
+                        root + ".mob"));
+            }
+        }
         return problems;
     }
 
@@ -56,19 +67,30 @@ public final class TamingTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            int tamesNeeded = (int) task.getConfigValue("amount");
+            super.debug("Played tamed entity", quest.getId(), task.getId(), player.getUniqueId());
 
-            int progress;
-            if (taskProgress.getProgress() == null) {
-                progress = 0;
-            } else {
-                progress = (int) taskProgress.getProgress();
+            if (task.hasConfigKey("mob")) {
+                EntityType entityType;
+                try {
+                    entityType = EntityType.valueOf((String) task.getConfigValue("mob"));
+                } catch (IllegalArgumentException ex) {
+                    super.debug("Invalid entity in configuration, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+
+                if (event.getEntity().getType() != entityType) {
+                    super.debug("Tamed entity is not the correct type, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
             }
 
-            progress += 1;
-            taskProgress.setProgress(progress);
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (progress >= tamesNeeded) {
+            int amount = (int) task.getConfigValue("amount");
+
+            if (progress >= amount) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
             }
         }

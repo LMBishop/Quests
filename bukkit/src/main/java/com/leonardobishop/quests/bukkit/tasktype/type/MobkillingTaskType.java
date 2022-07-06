@@ -29,6 +29,10 @@ public final class MobkillingTaskType extends BukkitTaskType {
     public MobkillingTaskType(BukkitQuestsPlugin plugin) {
         super("mobkilling", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of entities.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "hostile"));
     }
 
     @Override

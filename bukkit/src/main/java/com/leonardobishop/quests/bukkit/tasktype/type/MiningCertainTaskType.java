@@ -30,46 +30,56 @@ public final class MiningCertainTaskType extends BukkitTaskType {
     public MiningCertainTaskType(BukkitQuestsPlugin plugin) {
         super("blockbreakcertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Break a set amount of a specific block.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "block", "blocks"));
+        super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, "block", "blocks"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "check-coreprotect"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "check-coreprotect-time"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "reverse-if-placed"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "use-similar-blocks"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-        if (config.get("block") == null && config.get("blocks") == null) {
-            TaskUtils.configValidateExists(root + ".block", config.get("block"), problems, "block", super.getType());
-        } else {
-            Object configBlock;
-            String source;
-            if (config.containsKey("block")) {
-                source = "block";
-            } else {
-                source = "blocks";
-            }
-            configBlock = config.get(source);
-            List<String> checkBlocks = new ArrayList<>();
-            if (configBlock instanceof List) {
-                checkBlocks.addAll((List) configBlock);
-            } else {
-                checkBlocks.add(String.valueOf(configBlock));
-            }
-
-            for (String materialName : checkBlocks) {
-                String[] split = materialName.split(":");
-                if (Material.getMaterial(String.valueOf(split[0])) == null) {
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(materialName),
-                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(materialName),
-                            root + "." + source));
-                }
-            }
-        }
-        TaskUtils.configValidateBoolean(root + ".reverse-if-placed", config.get("reverse-if-placed"), problems, true,"reverse-if-placed");
-        TaskUtils.configValidateBoolean(root + ".check-coreprotect", config.get("check-coreprotect"), problems, true,"check-coreprotect");
-        TaskUtils.configValidateInt(root + ".check-coreprotect-time", config.get("check-coreprotect-time"), problems, true,true, "check-coreprotect-time");
-        TaskUtils.configValidateBoolean(root + ".use-similar-blocks", config.get("use-similar-blocks"), problems, true,"use-similar-blocks");
-        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true,true, "data");
+//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
+//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+//        if (config.get("block") == null && config.get("blocks") == null) {
+//            TaskUtils.configValidateExists(root + ".block", config.get("block"), problems, "block", super.getType());
+//        } else {
+//            Object configBlock;
+//            String source;
+//            if (config.containsKey("block")) {
+//                source = "block";
+//            } else {
+//                source = "blocks";
+//            }
+//            configBlock = config.get(source);
+//            List<String> checkBlocks = new ArrayList<>();
+//            if (configBlock instanceof List) {
+//                checkBlocks.addAll((List) configBlock);
+//            } else {
+//                checkBlocks.add(String.valueOf(configBlock));
+//            }
+//
+//            for (String materialName : checkBlocks) {
+//                String[] split = materialName.split(":");
+//                if (Material.getMaterial(String.valueOf(split[0])) == null) {
+//                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+//                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(materialName),
+//                            ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(materialName),
+//                            root + "." + source));
+//                }
+//            }
+//        }
+//        TaskUtils.configValidateBoolean(root + ".reverse-if-placed", config.get("reverse-if-placed"), problems, true,"reverse-if-placed");
+//        TaskUtils.configValidateBoolean(root + ".check-coreprotect", config.get("check-coreprotect"), problems, true,"check-coreprotect");
+//        TaskUtils.configValidateInt(root + ".check-coreprotect-time", config.get("check-coreprotect-time"), problems, true,true, "check-coreprotect-time");
+//        TaskUtils.configValidateBoolean(root + ".use-similar-blocks", config.get("use-similar-blocks"), problems, true,"use-similar-blocks");
+//        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true,true, "data");
         return problems;
     }
 

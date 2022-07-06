@@ -29,19 +29,28 @@ public final class DistancefromTaskType extends BukkitTaskType {
     public DistancefromTaskType(BukkitQuestsPlugin plugin) {
         super("distancefrom", TaskUtils.TASK_ATTRIBUTION_STRING, "Distance yourself from a set of co-ordinates.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "x"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "y"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "z"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "distance"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "x"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "y"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "z"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "distance"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".x", config.get("x"), problems, "x", super.getType()))
-            TaskUtils.configValidateInt(root + ".x", config.get("x"), problems, false, false, "x");
-        if (TaskUtils.configValidateExists(root + ".y", config.get("y"), problems, "y", super.getType()))
-            TaskUtils.configValidateInt(root + ".y", config.get("y"), problems, false, false, "y");
-        if (TaskUtils.configValidateExists(root + ".z", config.get("z"), problems, "z", super.getType()))
-            TaskUtils.configValidateInt(root + ".z", config.get("z"), problems, false, false, "z");
-        if (TaskUtils.configValidateExists(root + ".distance", config.get("distance"), problems, "distance", super.getType()))
-            TaskUtils.configValidateInt(root + ".distance", config.get("distance"), problems, false, true, "distance");
+//        if (TaskUtils.configValidateExists(root + ".x", config.get("x"), problems, "x", super.getType()))
+//            TaskUtils.configValidateInt(root + ".x", config.get("x"), problems, false, false, "x");
+//        if (TaskUtils.configValidateExists(root + ".y", config.get("y"), problems, "y", super.getType()))
+//            TaskUtils.configValidateInt(root + ".y", config.get("y"), problems, false, false, "y");
+//        if (TaskUtils.configValidateExists(root + ".z", config.get("z"), problems, "z", super.getType()))
+//            TaskUtils.configValidateInt(root + ".z", config.get("z"), problems, false, false, "z");
+//        if (TaskUtils.configValidateExists(root + ".distance", config.get("distance"), problems, "distance", super.getType()))
+//            TaskUtils.configValidateInt(root + ".distance", config.get("distance"), problems, false, true, "distance");
         return problems;
     }
 

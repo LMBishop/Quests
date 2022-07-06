@@ -34,6 +34,12 @@ public final class FishingCertainTaskType extends BukkitTaskType {
     public FishingCertainTaskType(BukkitQuestsPlugin plugin) {
         super("fishingcertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Catch a set amount of a specific item from the sea.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item"));
+        super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
     }
 
     @Override
@@ -44,17 +50,17 @@ public final class FishingCertainTaskType extends BukkitTaskType {
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType())) {
-            if (Material.getMaterial(String.valueOf(config.get("item"))) == null) {
-                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(config.get("item"))),
-                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(String.valueOf(config.get("item"))),
-                        root + ".item.item"));
-            }
-        }
-        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true, false, "data");
+//        if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType())) {
+//            if (Material.getMaterial(String.valueOf(config.get("item"))) == null) {
+//                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+//                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(config.get("item"))),
+//                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(String.valueOf(config.get("item"))),
+//                        root + ".item.item"));
+//            }
+//        }
+//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
+//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+//        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true, false, "data");
         return problems;
     }
 

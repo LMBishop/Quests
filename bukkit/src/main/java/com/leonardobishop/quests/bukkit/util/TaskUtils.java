@@ -15,6 +15,7 @@ import com.leonardobishop.quests.common.tasktype.TaskType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -360,5 +361,271 @@ public class TaskUtils {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Returns a config validator which checks if at least one value in the given
+     * paths exist.
+     *
+     * @param paths a list of valid paths for task
+     * @return config validator
+     */
+    public static TaskType.ConfigValidator useRequiredConfigValidator(TaskType type, String... paths) {
+        return (config, problems) -> {
+            for (String path : paths) {
+                Object object = config.get(path);
+
+                if (object != null) {
+                    return;
+                }
+            }
+            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                    ConfigProblemDescriptions.TASK_MISSING_FIELD.getDescription(paths[0], type.getType()),
+                    ConfigProblemDescriptions.TASK_MISSING_FIELD.getExtendedDescription(paths[0], type.getType()),
+                    paths[0]));
+        };
+    }
+
+    /**
+     * Returns a config validator which checks if at least one value in the given
+     * paths is an item stack.
+     *
+     * @param paths a list of valid paths for task
+     * @return config validator
+     */
+    public static TaskType.ConfigValidator useItemStackConfigValidator(TaskType type, String... paths) {
+        return (config, problems) -> {
+            for (String path : paths) {
+                Object object = config.get(path);
+
+                if (object == null) {
+                    continue;
+                }
+
+                if (object instanceof ConfigurationSection section) {
+
+                    if (section.contains("quest-item")) {
+                        String itemType = section.getString("quest-item");
+                        if (plugin.getQuestItemRegistry().getItem(itemType) == null) {
+                            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                    ConfigProblemDescriptions.UNKNOWN_QUEST_ITEM.getDescription(itemType),
+                                    ConfigProblemDescriptions.UNKNOWN_QUEST_ITEM.getExtendedDescription(itemType),
+                                    path + ".quest-item"));
+                        }
+                    } else {
+                        String materialLoc = "item";
+                        if (!section.contains("item")) {
+                            materialLoc = "type";
+                        }
+
+                        if (!section.contains(materialLoc)) {
+                            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                    ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(""),
+                                    ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(""),
+                                    path + ".type"));
+                        } else {
+                            String material = String.valueOf(section.get(materialLoc));
+                            if (!plugin.getItemGetter().isValidMaterial(material)) {
+                                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(material),
+                                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(material),
+                                        path + "." + materialLoc));
+                            }
+                        }
+                    }
+                } else {
+                    if (Material.getMaterial(String.valueOf(object)) == null) {
+                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(object)),
+                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(String.valueOf(object)),
+                                path));
+                    }
+                }
+                break;
+            }
+        };
+    }
+
+    /**
+     * Returns a config validator which checks if at least one value in the given
+     * paths is an integer.
+     *
+     * @param paths a list of valid paths for task
+     * @return config validator
+     */
+    public static TaskType.ConfigValidator useIntegerConfigValidator(TaskType type, String... paths) {
+        return (config, problems) -> {
+            for (String path : paths) {
+                Object object = config.get(path);
+
+                if (object == null) {
+                    continue;
+                }
+
+                try {
+                    Integer i = (Integer) object;
+                } catch (ClassCastException ex) {
+                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                            "Expected an integer for '" + path + "', but got '" + object + "' instead", null, path));
+                }
+                break;
+            }
+        };
+    }
+
+    /**
+     * Returns a config validator which checks if at least one value in the given
+     * paths is a boolean.
+     *
+     * @param paths a list of valid paths for task
+     * @return config validator
+     */
+    public static TaskType.ConfigValidator useBooleanConfigValidator(TaskType type, String... paths) {
+        return (config, problems) -> {
+            for (String path : paths) {
+                Object object = config.get(path);
+
+                if (object == null) {
+                    continue;
+                }
+
+                try {
+                    Boolean b = (Boolean) object;
+                } catch (ClassCastException ex) {
+                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                            "Expected a boolean for '" + path + "', but got '" + object + "' instead", null, path));
+                }
+                break;
+            }
+        };
+    }
+
+    /**
+     * Returns a config validator which checks if at least one value in the given
+     * paths is a valid list of materials.
+     * <p>
+     * The list of materials is expected to be in the format of:
+     * <pre>key: "MATERIAL_NAME"</pre>
+     * where MATERIAL_NAME is the name of a material. Alternatively, the list
+     * of materials can be in the format of:
+     * <pre>key:
+     *   - "MATERIAL_NAME"
+     *   - "..."</pre>
+     * </p>
+     *
+     * @param paths a list of valid paths for task
+     * @return config validator
+     */
+    public static TaskType.ConfigValidator useMaterialListConfigValidator(TaskType type, String... paths) {
+        return (config, problems) -> {
+            for (String path : paths) {
+                Object configBlock = config.get(path);
+
+                List<String> checkBlocks = new ArrayList<>();
+                if (configBlock instanceof List<?> configList) {
+                    for (Object object : configList) {
+                        checkBlocks.add(String.valueOf(object));
+                    }
+                } else {
+                    if (configBlock == null) {
+                        continue;
+                    }
+                    checkBlocks.add(String.valueOf(configBlock));
+                }
+
+                for (String materialName : checkBlocks) {
+                    String[] split = materialName.split(":");
+                    if (Material.getMaterial(String.valueOf(split[0])) == null) {
+                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(materialName),
+                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(materialName),
+                                 path));
+                    }
+                }
+                break;
+            }
+        };
+    }
+
+    /**
+     * Returns a config validator which checks if at least one value in the given
+     * paths is a valid list of entities.
+     * <p>
+     * The list of entities is expected to be in the format of:
+     * <pre>key: "ENTITY_TYPE"</pre>
+     * where ENTITY_TYPE is the name of an entity. Alternatively, the list
+     * of entities can be in the format of:
+     * <pre>key:
+     *   - "ENTITY_TYPE"
+     *   - "..."</pre>
+     * </p>
+     *
+     * @param paths a list of valid paths for task
+     * @return config validator
+     */
+    public static TaskType.ConfigValidator useEntityListConfigValidator(TaskType type, String... paths) {
+        return (config, problems) -> {
+            for (String path : paths) {
+                Object configObject = config.get(path);
+
+                List<String> checkEntities = new ArrayList<>();
+                if (configObject instanceof List<?> configList) {
+                    for (Object object : configList) {
+                        checkEntities.add(String.valueOf(object));
+                    }
+                } else {
+                    if (configObject == null) {
+                        continue;
+                    }
+                    checkEntities.add(String.valueOf(configObject));
+                }
+
+                for (String entity : checkEntities) {
+                    try {
+                        EntityType.valueOf(entity);
+                    } catch (IllegalArgumentException ex) {
+                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(entity),
+                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(entity),
+                                path));
+                    }
+                }
+                break;
+            }
+        };
+    }
+
+    /**
+     * Returns a config validator which checks if at least one value in the given
+     * paths is a value in the list of accepted values.
+     *
+     * @param acceptedValues a list of accepted values
+     * @param paths a list of valid paths for task
+     * @return config validator
+     */
+    public static TaskType.ConfigValidator useAcceptedValuesConfigValidator(TaskType type, List<String> acceptedValues, String... paths) {
+        return (config, problems) -> {
+            for (String path : paths) {
+                Object configObject = config.get(path);
+
+                if (configObject == null) {
+                    continue;
+                }
+
+                if (!acceptedValues.contains(String.valueOf(configObject))) {
+                    String extendedDescription =
+                            "The accepted values are:";
+                    for (String value : acceptedValues) {
+                        extendedDescription += "<br> - " + value;
+                    }
+                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                        ConfigProblemDescriptions.NOT_ACCEPTED_VALUE.getDescription(String.valueOf(configObject), type.getType(), acceptedValues.toString()),
+                        extendedDescription,
+                        path));
+                }
+
+                break;
+            }
+        };
     }
 }

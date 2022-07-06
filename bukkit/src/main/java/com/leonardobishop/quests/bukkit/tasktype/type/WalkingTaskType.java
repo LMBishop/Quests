@@ -5,7 +5,6 @@ import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -17,6 +16,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,6 +27,22 @@ public final class WalkingTaskType extends BukkitTaskType {
     public WalkingTaskType(BukkitQuestsPlugin plugin) {
         super("walking", TaskUtils.TASK_ATTRIBUTION_STRING, "Walk a set distance.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "distance"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "distance"));
+        super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Arrays.asList(
+                "boat",
+                "horse",
+                "pig",
+                "minecart",
+                "strider",
+                "sneaking",
+                "walking",
+                "running",
+                "swimming",
+                "flying",
+                "elytra"
+        ), "mode"));
     }
 
     @Override

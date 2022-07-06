@@ -27,6 +27,9 @@ public final class PlayerkillingTaskType extends BukkitTaskType {
     public PlayerkillingTaskType(BukkitQuestsPlugin plugin) {
         super("playerkilling", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of players.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
     }
 
     @Override

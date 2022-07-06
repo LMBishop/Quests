@@ -29,6 +29,16 @@ public final class PositionTaskType extends BukkitTaskType {
     public PositionTaskType(BukkitQuestsPlugin plugin) {
         super("position", TaskUtils.TASK_ATTRIBUTION_STRING, "Reach a set of co-ordinates.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "x"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "y"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "z"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "distance"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "x"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "y"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "z"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "distance"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "distance-padding"));
     }
 
     @Override

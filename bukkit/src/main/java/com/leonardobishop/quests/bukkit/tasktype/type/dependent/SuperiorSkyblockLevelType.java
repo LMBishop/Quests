@@ -29,13 +29,16 @@ public final class SuperiorSkyblockLevelType extends BukkitTaskType {
     public SuperiorSkyblockLevelType(BukkitQuestsPlugin plugin) {
         super("superiorskyblock_level", TaskUtils.TASK_ATTRIBUTION_STRING, "Reach a certain island level for SuperiorSkyblock.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "level"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "level"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".level", config.get("level"), problems, "level", super.getType()))
-            TaskUtils.configValidateNumber(root + ".level", config.get("level"), problems, false, false, "level");
+//        if (TaskUtils.configValidateExists(root + ".level", config.get("level"), problems, "level", super.getType()))
+//            TaskUtils.configValidateNumber(root + ".level", config.get("level"), problems, false, false, "level");
         return problems;
     }
 

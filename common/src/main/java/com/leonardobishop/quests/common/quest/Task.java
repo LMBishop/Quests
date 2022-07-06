@@ -34,6 +34,18 @@ public class Task {
     }
 
     /**
+     * Check if a config value is set for this task
+     *
+     * @param key key of config value to check
+     * @return whether it exists
+     */
+    public boolean hasConfigKey(@NotNull String key) {
+        Objects.requireNonNull(key, "key cannot be null");
+
+        return configValues.containsKey(key);
+    }
+
+    /**
      * Get a specific configuration value for this task
      *
      * @param key key of config value to get

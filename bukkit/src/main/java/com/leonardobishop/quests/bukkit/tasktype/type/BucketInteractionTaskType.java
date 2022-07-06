@@ -21,26 +21,31 @@ public abstract class BucketInteractionTaskType extends BukkitTaskType {
 
     public BucketInteractionTaskType(@NotNull String type, String author, String description) {
         super(type, author, description);
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "bucket"));
+        super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, "bucket"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (config.get("bucket") == null) {
-            TaskUtils.configValidateExists(root + ".bucket", config.get("bucket"), problems, "bucket", super.getType());
-        } else {
-            String configBlock = config.get("bucket").toString();
-
-            String[] split = configBlock.split(":");
-            if (Material.getMaterial(String.valueOf(split[0])) == null) {
-                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(configBlock),
-                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(configBlock),
-                        root + ".bucket"));
-            }
-        }
-        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+//        if (config.get("bucket") == null) {
+//            TaskUtils.configValidateExists(root + ".bucket", config.get("bucket"), problems, "bucket", super.getType());
+//        } else {
+//            String configBlock = config.get("bucket").toString();
+//
+//            String[] split = configBlock.split(":");
+//            if (Material.getMaterial(String.valueOf(split[0])) == null) {
+//                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+//                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(configBlock),
+//                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(configBlock),
+//                        root + ".bucket"));
+//            }
+//        }
+//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
+//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
         return problems;
     }
 

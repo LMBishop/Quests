@@ -206,7 +206,16 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                     configValues.put(key, config.get(taskRoot + "." + key));
                                 }
 
-                                problems.addAll(t.validateConfig(taskRoot, configValues));
+                                List<ConfigProblem> taskProblems = new ArrayList<>();
+                                for (TaskType.ConfigValidator validator : t.getConfigValidators()) {
+                                    validator.validateConfig(configValues, taskProblems);
+                                }
+
+                                // pre-pend task root to locations
+                                for (ConfigProblem problem : taskProblems) {
+                                    problems.add(new ConfigProblem(problem.getType(), problem.getDescription(),
+                                            problem.getExtendedDescription(), taskRoot + "." + problem.getLocation()));
+                                }
                             } else {
                                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
                                         ConfigProblemDescriptions.UNKNOWN_TASK_TYPE.getDescription(taskType),

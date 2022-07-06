@@ -37,16 +37,22 @@ public final class SmeltingCertainTaskType extends BukkitTaskType {
     public SmeltingCertainTaskType(BukkitQuestsPlugin plugin) {
         super("smeltingcertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Smelt or cook a set amount of certain item.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item"));
+        super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType()))
-            TaskUtils.configValidateItemStack(root + ".item", config.get("item"), problems, false, "item");
-        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true, false, "data");
+//        if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType()))
+//            TaskUtils.configValidateItemStack(root + ".item", config.get("item"), problems, false, "item");
+//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
+//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+//        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true, false, "data");
         return problems;
     }
 

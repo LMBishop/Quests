@@ -28,14 +28,18 @@ public final class DealDamageTaskType extends BukkitTaskType {
     public DealDamageTaskType(BukkitQuestsPlugin plugin) {
         super("dealdamage", TaskUtils.TASK_ATTRIBUTION_STRING, "Deal a certain amount of damage.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "allow-only-creatures"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-        TaskUtils.configValidateBoolean(root + ".allow-only-creatures", config.get("allow-only-creatures"), problems, true, "allow-only-creatures");
+//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
+//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+//        TaskUtils.configValidateBoolean(root + ".allow-only-creatures", config.get("allow-only-creatures"), problems, true, "allow-only-creatures");
         return problems;
     }
 

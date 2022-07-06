@@ -93,7 +93,8 @@ public enum ConfigProblemDescriptions {
     UNKNOWN_REQUIREMENT("Quest requirement '%s' does not exist",
                     "This may be the result of a cascading error<br>" +
                     "if '%s' failed to load, or a mis-typed ID."
-    );
+    ),
+    NOT_ACCEPTED_VALUE("Value '%s' is not in the list of accepted values for task %s: %s", null);
 
     private final String description;
     private final String extendedDescription;

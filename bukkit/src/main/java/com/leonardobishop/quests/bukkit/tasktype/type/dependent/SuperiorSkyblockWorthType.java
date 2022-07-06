@@ -29,13 +29,16 @@ public final class SuperiorSkyblockWorthType extends BukkitTaskType {
     public SuperiorSkyblockWorthType(BukkitQuestsPlugin plugin) {
         super("superiorskyblock_worth", TaskUtils.TASK_ATTRIBUTION_STRING, "Reach a certain island worth for SuperiorSkyblock.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "worth"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "worth"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".worth", config.get("worth"), problems, "worth", super.getType()))
-            TaskUtils.configValidateNumber(root + ".worth", config.get("worth"), problems, false, false, "worth");
+//        if (TaskUtils.configValidateExists(root + ".worth", config.get("worth"), problems, "worth", super.getType()))
+//            TaskUtils.configValidateNumber(root + ".worth", config.get("worth"), problems, false, false, "worth");
         return problems;
     }
 

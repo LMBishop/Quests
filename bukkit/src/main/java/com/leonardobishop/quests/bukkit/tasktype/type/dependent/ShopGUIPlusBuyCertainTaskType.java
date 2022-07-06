@@ -33,6 +33,11 @@ public final class ShopGUIPlusBuyCertainTaskType extends BukkitTaskType {
     public ShopGUIPlusBuyCertainTaskType(BukkitQuestsPlugin plugin) {
         super("shopguiplus_buycertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Purchase a given item from a ShopGUI+ shop");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "shop-id"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item-id"));
     }
 
     @Override

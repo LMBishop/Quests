@@ -44,19 +44,27 @@ public final class InventoryTaskType extends BukkitTaskType {
             Class.forName("org.bukkit.event.player.PlayerBucketEntityEvent");
             plugin.getServer().getPluginManager().registerEvents(new BucketEntityListener(), plugin);
         } catch (ClassNotFoundException ignored) { } // server version cannot support event
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item"));
+        super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "remove-items-when-complete"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "allow-partial-completion"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType()))
-            TaskUtils.configValidateItemStack(root + ".item", config.get("item"), problems, false, "item");
-        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true, false, "data");
-        TaskUtils.configValidateBoolean(root + ".remove-items-when-complete", config.get("remove-items-when-complete"), problems, true, "remove-items-when-complete", super.getType());
-        TaskUtils.configValidateBoolean(root + ".update-progress", config.get("update-progress"), problems, true, "update-progress", super.getType());
-        TaskUtils.configValidateBoolean(root + ".allow-partial-completion", config.get("allow-partial-completion"), problems, true, "allow-partial-completion", super.getType());
+//        if (TaskUtils.configValidateExists(root + ".item", config.get("item"), problems, "item", super.getType()))
+//            TaskUtils.configValidateItemStack(root + ".item", config.get("item"), problems, false, "item");
+//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
+//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+//        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true, false, "data");
+//        TaskUtils.configValidateBoolean(root + ".remove-items-when-complete", config.get("remove-items-when-complete"), problems, true, "remove-items-when-complete", super.getType());
+//        TaskUtils.configValidateBoolean(root + ".update-progress", config.get("update-progress"), problems, true, "update-progress", super.getType());
+//        TaskUtils.configValidateBoolean(root + ".allow-partial-completion", config.get("allow-partial-completion"), problems, true, "allow-partial-completion", super.getType());
         return problems;
     }
 

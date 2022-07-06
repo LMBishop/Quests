@@ -31,6 +31,9 @@ public final class EssentialsBalanceTaskType extends BukkitTaskType {
     public EssentialsBalanceTaskType(BukkitQuestsPlugin plugin) {
         super("essentials_balance", TaskUtils.TASK_ATTRIBUTION_STRING, "Reach a set amount of money.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
     }
 
     @Override

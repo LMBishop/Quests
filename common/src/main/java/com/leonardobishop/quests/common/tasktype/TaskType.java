@@ -17,6 +17,7 @@ import java.util.*;
 public abstract class TaskType {
 
     private final List<Quest> quests = new ArrayList<>();
+    private final List<ConfigValidator> configValidators = new ArrayList<>();
     private final String type;
     private String author;
     private String description;
@@ -109,5 +110,20 @@ public abstract class TaskType {
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         // not implemented here
         return Collections.emptyList();
+    }
+
+    public void addConfigValidator(@NotNull ConfigValidator validator) {
+        Objects.requireNonNull(validator, "validator cannot be null");
+
+        configValidators.add(validator);
+    }
+
+    public List<ConfigValidator> getConfigValidators() {
+        return configValidators;
+    }
+
+    @FunctionalInterface
+    public interface ConfigValidator {
+        void validateConfig(@NotNull HashMap<String, Object> taskConfig, @NotNull List<ConfigProblem> problems);
     }
 }

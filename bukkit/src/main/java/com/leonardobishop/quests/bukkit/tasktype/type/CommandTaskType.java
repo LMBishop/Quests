@@ -26,13 +26,16 @@ public final class CommandTaskType extends BukkitTaskType {
     public CommandTaskType(BukkitQuestsPlugin plugin) {
         super("command", TaskUtils.TASK_ATTRIBUTION_STRING, "Execute a certain command.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "command"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "ignore-case"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        TaskUtils.configValidateExists(root + ".command", config.get("command"), problems, "command", super.getType());
-        TaskUtils.configValidateBoolean(root + ".ignore-case", config.get("ignore-case"), problems, true, "ignore-case", super.getType());
+//        TaskUtils.configValidateExists(root + ".command", config.get("command"), problems, "command", super.getType());
+//        TaskUtils.configValidateBoolean(root + ".ignore-case", config.get("ignore-case"), problems, true, "ignore-case", super.getType());
         return problems;
     }
 

@@ -33,17 +33,22 @@ public final class ShopGUIPlusSellCertainTaskType extends BukkitTaskType {
     public ShopGUIPlusSellCertainTaskType(BukkitQuestsPlugin plugin) {
         super("shopguiplus_sellcertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Sell a given item to a ShopGUI+ shop");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "shop-id"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item-id"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         List<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType())) {
-            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-        }
-    
-        TaskUtils.configValidateExists(root + ".shop-id", config.get("shop-id"), problems, "shop-id", super.getType());
-        TaskUtils.configValidateExists(root + ".item-id", config.get("item-id"), problems, "item-id", super.getType());
+//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType())) {
+//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+//        }
+//
+//        TaskUtils.configValidateExists(root + ".shop-id", config.get("shop-id"), problems, "shop-id", super.getType());
+//        TaskUtils.configValidateExists(root + ".item-id", config.get("item-id"), problems, "item-id", super.getType());
         
         return problems;
     }

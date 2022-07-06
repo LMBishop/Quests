@@ -46,16 +46,22 @@ public final class MythicMobsKillingTaskType extends BukkitTaskType {
 
         plugin.getLogger().severe("Failed to register event handler for MythicMobs task type!");
         plugin.getLogger().severe("MythicMobs version detected: " + mythicMobsVersion);
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "name"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "level"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "min-level"));
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        TaskUtils.configValidateExists(root + ".name", config.get("name"), problems, "name", super.getType());
-        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
-        TaskUtils.configValidateInt(root + ".level", config.get("level"), problems, true, true, "level");
-        TaskUtils.configValidateInt(root + ".min-level", config.get("min-level"), problems, true, true, "min-level");
+//        TaskUtils.configValidateExists(root + ".name", config.get("name"), problems, "name", super.getType());
+//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
+//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+//        TaskUtils.configValidateInt(root + ".level", config.get("level"), problems, true, true, "level");
+//        TaskUtils.configValidateInt(root + ".min-level", config.get("min-level"), problems, true, true, "min-level");
         return problems;
     }
 

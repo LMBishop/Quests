@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,39 +29,63 @@ public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
     public PlaceholderAPIEvaluateTaskType(BukkitQuestsPlugin plugin) {
         super("placeholderapi_evaluate", TaskUtils.TASK_ATTRIBUTION_STRING, "Evaluate the result of a placeholder");
         this.plugin = plugin;
-    }
 
-    @Override
-    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
-        ArrayList<ConfigProblem> problems = new ArrayList<>();
-        TaskUtils.configValidateExists(root + ".placeholder", config.get("placeholder"), problems, "placeholder", super.getType());
-        boolean evalExists = TaskUtils.configValidateExists(root + ".evaluates", config.get("evaluates"), problems, "evaluates", super.getType());
-
-        if (config.containsKey("operator")) {
-            String operatorStr = (String) config.get("operator");
-            Operator operator = null;
-            try {
-                operator = Operator.valueOf(operatorStr);
-            } catch (IllegalArgumentException ex) {
-                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        "Operator '" + operatorStr + "' does not exist",
-                        "Valid operators are:<br>" +
-                                "- GREATER_THAN<br>" +
-                                "- LESS_THAN<br>" +
-                                "- GREATER_THAN_OR_EQUAL_TO<br>" +
-                                "- LESS_THAN_OR_EQUAL_TO<br>",
-                        root + ".operator"));
-            }
-            if (operator != null && evalExists) {
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "placeholder"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "evaluates"));
+        super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Arrays.asList(
+                "GREATER_THAN",
+                "GREATER_THAN_OR_EQUAL_TO",
+                "LESS_THAN",
+                "LESS_THAN_OR_EQUAL_TO"
+        ),"operator"));
+        super.addConfigValidator((config, problems) -> {
+            if (config.containsKey("operator")) {
                 String evalStr = String.valueOf(config.get("evaluates"));
                 try {
                     Double.parseDouble(evalStr);
                 } catch (IllegalArgumentException ex) {
                     problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            "Numeric operator specified, but placeholder evaluation '" + evalStr + "' is not numeric", null, root + ".evaluates"));
+                            "Numeric operator specified, but placeholder evaluation '" + evalStr + "' is not numeric",
+                            "A numeric operator was specified, but<br>" +
+                            "the evaluation '" + evalStr + "' is not numeric<br>" +
+                            "and cannot be parsed.",
+                            "evaluates"));
                 }
             }
-        }
+        });
+    }
+
+    @Override
+    public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
+        ArrayList<ConfigProblem> problems = new ArrayList<>();
+//        TaskUtils.configValidateExists(root + ".placeholder", config.get("placeholder"), problems, "placeholder", super.getType());
+//        boolean evalExists = TaskUtils.configValidateExists(root + ".evaluates", config.get("evaluates"), problems, "evaluates", super.getType());
+//
+//        if (config.containsKey("operator")) {
+//            String operatorStr = (String) config.get("operator");
+//            Operator operator = null;
+//            try {
+//                operator = Operator.valueOf(operatorStr);
+//            } catch (IllegalArgumentException ex) {
+//                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+//                        "Operator '" + operatorStr + "' does not exist",
+//                        "Valid operators are:<br>" +
+//                                "- GREATER_THAN<br>" +
+//                                "- LESS_THAN<br>" +
+//                                "- GREATER_THAN_OR_EQUAL_TO<br>" +
+//                                "- LESS_THAN_OR_EQUAL_TO<br>",
+//                        root + ".operator"));
+//            }
+//            if (operator != null && evalExists) {
+//                String evalStr = String.valueOf(config.get("evaluates"));
+//                try {
+//                    Double.parseDouble(evalStr);
+//                } catch (IllegalArgumentException ex) {
+//                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+//                            "Numeric operator specified, but placeholder evaluation '" + evalStr + "' is not numeric", null, root + ".evaluates"));
+//                }
+//            }
+//        }
         return problems;
     }
 

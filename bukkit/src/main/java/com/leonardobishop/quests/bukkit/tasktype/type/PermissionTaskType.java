@@ -21,6 +21,8 @@ public final class PermissionTaskType extends BukkitTaskType {
     public PermissionTaskType(BukkitQuestsPlugin plugin) {
         super("permission", TaskUtils.TASK_ATTRIBUTION_STRING, "Test if a player has a permission");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "permission"));
     }
 
     @Override

@@ -30,6 +30,9 @@ public final class FarmingTaskType extends BukkitTaskType {
         super("farming", TaskUtils.TASK_ATTRIBUTION_STRING, "Break or harvest a set amount of any crop.");
         this.plugin = plugin;
 
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+
         try {
             Class.forName("org.bukkit.event.player.PlayerHarvestBlockEvent");
             plugin.getServer().getPluginManager().registerEvents(new FarmingTaskType.HarvestBlockListener(), plugin);
@@ -39,8 +42,8 @@ public final class FarmingTaskType extends BukkitTaskType {
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
-            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+//        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
+//            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
         return problems;
     }
 

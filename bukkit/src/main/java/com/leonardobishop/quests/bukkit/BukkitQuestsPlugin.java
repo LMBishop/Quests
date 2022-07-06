@@ -304,7 +304,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new ConsumeTaskType(this));
             taskTypeManager.registerTaskType(new WalkingTaskType(this));
             taskTypeManager.registerTaskType(new TamingTaskType(this));
-            taskTypeManager.registerTaskType(new TamingCertainTaskType(this));
+            taskTypeManager.registerTaskType(new TamingTaskType(this));
             taskTypeManager.registerTaskType(new MilkingTaskType(this));
             taskTypeManager.registerTaskType(new ShearingTaskType(this));
             taskTypeManager.registerTaskType(new PositionTaskType(this));

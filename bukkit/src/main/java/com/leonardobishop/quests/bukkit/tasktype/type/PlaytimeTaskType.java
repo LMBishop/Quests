@@ -27,6 +27,9 @@ public final class PlaytimeTaskType extends BukkitTaskType {
     public PlaytimeTaskType(BukkitQuestsPlugin plugin) {
         super("playtime", TaskUtils.TASK_ATTRIBUTION_STRING, "Track the amount of playing time a user has been on");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "minutes"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "minutes"));
     }
 
     @Override
