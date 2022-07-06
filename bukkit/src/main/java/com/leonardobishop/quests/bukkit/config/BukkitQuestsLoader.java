@@ -456,6 +456,10 @@ public class BukkitQuestsLoader implements QuestsLoader {
                             if (!Bukkit.getPluginManager().isPluginEnabled("Slimefun")) return FileVisitResult.CONTINUE;
                             item = new SlimefunQuestItem(id, config.getString("item.id"));
                             break;
+                        case "executableitems":
+                            if (!Bukkit.getPluginManager().isPluginEnabled("ExecutableItems")) return FileVisitResult.CONTINUE;
+                            item = new ExecutableItemsQuestItem(id, config.getString("item.id"));
+                            break;
                     }
 
                     questItemRegistry.registerItem(id, item);
