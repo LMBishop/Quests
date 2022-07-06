@@ -1,6 +1,9 @@
 package com.leonardobishop.quests.bukkit.tasktype.type;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
@@ -12,12 +15,14 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
 public final class MobkillingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
+    private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
 
     public MobkillingTaskType(BukkitQuestsPlugin plugin) {
         super("mobkilling", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of a entity type.", "mobkillingcertain");
@@ -27,6 +32,12 @@ public final class MobkillingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useEntityListConfigValidator(this, "mob", "mobs"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "hostile"));
+        super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
+    }
+
+    @Override
+    public void onReady() {
+        fixedQuestItemCache.clear();
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -113,6 +124,30 @@ public final class MobkillingTaskType extends BukkitTaskType {
                 if (!validName) {
                     super.debug("Mob name is not in list of valid name, continuing...", quest.getId(), task.getId(), killer.getUniqueId());
                     continue;
+                }
+            }
+
+            if (task.hasConfigKey("item")) {
+                ItemStack item = killer.getItemInHand();
+                if (item == null) {
+                    super.debug("Specific item is required, player has no item in hand; continuing...", quest.getId(), task.getId(), killer.getUniqueId());
+                    continue;
+                }
+
+                super.debug("Specific item is required; player held item is of type '" + item.getType() + "'", quest.getId(), task.getId(), killer.getUniqueId());
+
+                QuestItem qi;
+                if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                    QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "item", "data");
+                    fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
+                    qi = fetchedItem;
+                }
+
+                if (!qi.compareItemStack(item)) {
+                    super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), killer.getUniqueId());
+                    continue;
+                } else {
+                    super.debug("Item matches required item", quest.getId(), task.getId(), killer.getUniqueId());
                 }
             }
 
