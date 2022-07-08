@@ -26,11 +26,9 @@ public final class PositionTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "x"));
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "y"));
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "z"));
-        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "distance"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "x"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "y"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "z"));
-        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "distance"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "distance-padding"));
     }
 
