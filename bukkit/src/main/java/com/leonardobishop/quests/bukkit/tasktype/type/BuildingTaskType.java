@@ -81,7 +81,7 @@ public final class BuildingTaskType extends BukkitTaskType {
             super.debug("Player mined block " + event.getBlock().getType(), quest.getId(), task.getId(), event.getPlayer().getUniqueId());
 
 
-            if (task.getConfigValue("reverse-if-broken") != null && ((boolean) task.getConfigValue("reverse-if-placed"))) {
+            if (task.getConfigValue("reverse-if-broken") != null && ((boolean) task.getConfigValue("reverse-if-broken"))) {
                 super.debug("reverse-if-broken is enabled, checking block", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
                 if (TaskUtils.matchBlock(this, pendingTask, event.getBlock(), player.getUniqueId())) {
                     int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
