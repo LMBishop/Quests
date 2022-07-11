@@ -314,6 +314,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new CraftingTaskType(this));
             taskTypeManager.registerTaskType(new BucketEmptyTaskType(this));
             taskTypeManager.registerTaskType(new BucketFillTaskType(this));
+            taskTypeManager.registerTaskType(new InteractTaskType(this));
             // TODO: FIX
             // taskTypeManager.registerTaskType(new BrewingCertainTaskType());
             try {

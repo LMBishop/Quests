@@ -45,7 +45,6 @@ public final class InteractTaskType extends BukkitTaskType {
         fixedQuestItemCache.clear();
     }
 
-    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
         if (event.getPlayer().hasMetadata("NPC")) return;
@@ -64,21 +63,16 @@ public final class InteractTaskType extends BukkitTaskType {
 
             super.debug("Player interacted", quest.getId(), task.getId(), player.getUniqueId());
 
-            List<String> configBlocks = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("mob") ? "mob" : "mobs");
-
             if (task.hasConfigKey("item")) {
                 ItemStack held = event.getItem();
-                if (held == null) {
-                    super.debug("Item is required, current item is null", quest.getId(), task.getId(), player.getUniqueId());
-                }
-                super.debug("Item is required, current item is " + held.getType(), quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("Item is required, current item is " + (held == null ? "null" : held.getType()) , quest.getId(), task.getId(), player.getUniqueId());
                 QuestItem qi;
                 if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
                     QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "item", "data");
                     fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
                     qi = fetchedItem;
                 }
-                if (!qi.compareItemStack(held)) {
+                if (held == null || !qi.compareItemStack(held)) {
                     super.debug("Item is not the required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 } else {
@@ -86,15 +80,12 @@ public final class InteractTaskType extends BukkitTaskType {
                 }
             }
 
-            if (!configBlocks.isEmpty()) {
-                Block block = event.getClickedBlock();
-                if (block == null) {
-                    super.debug("Clicked block is required, current clicked block is null", quest.getId(), task.getId(), player.getUniqueId());
-                }
-                super.debug("Clicked block is required, current clicked block is " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
-                if (TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
-                    super.debug("Block match", quest.getId(), task.getId(), player.getUniqueId());
-                }
+            Block block = event.getClickedBlock();
+
+            super.debug("Current clicked block is " + (block == null ? "null" : block.getType()), quest.getId(), task.getId(), player.getUniqueId());
+            if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
             }
 
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
