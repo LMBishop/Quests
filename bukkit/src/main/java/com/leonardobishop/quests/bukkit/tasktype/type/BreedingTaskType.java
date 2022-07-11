@@ -25,7 +25,7 @@ public final class BreedingTaskType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
-        super.addConfigValidator(TaskUtils.useEntityListConfigValidator(this, "animal", "animals"));
+        super.addConfigValidator(TaskUtils.useEntityListConfigValidator(this, "mob", "mobs"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
