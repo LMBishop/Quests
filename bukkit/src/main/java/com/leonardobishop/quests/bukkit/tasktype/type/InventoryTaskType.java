@@ -98,7 +98,7 @@ public final class InventoryTaskType extends BukkitTaskType {
 
             int itemsNeeded = (int) task.getConfigValue("amount");
             boolean remove = TaskUtils.getConfigBoolean(task, "remove-items-when-complete");
-            boolean allowPartial = TaskUtils.getConfigBoolean(task, "allow-partial-completion", true);
+            boolean allowPartial = TaskUtils.getConfigBoolean(task, "allow-partial-completion");
 
             QuestItem qi;
             if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
