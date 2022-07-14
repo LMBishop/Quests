@@ -20,7 +20,7 @@
 The latest release version of Quests can be found [here](https://github.com/LMBishop/Quests/wiki/download).
 The latest build of Quests (development version) can be found on [GitHub](https://github.com/LMBishop/Quests/actions).
 
-Alternatively, you can build Quests via Gradle. Release versions of Quests are built using **Gradle**, targeting **Java 8**. You can change the target version in ``build.gradle``.
+Alternatively, you can build Quests via Gradle. Release versions of Quests are built using **Gradle**, targeting **Java 17**. You can change the target version in ``build.gradle``.
 * Ensure Java is installed on your machine
 * Clone this repository
 * Run ``./gradlew`` (Linux and macOS) or ``gradlew`` (Windows) in the base directory to build Quests
