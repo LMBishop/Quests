@@ -283,7 +283,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 this.placeholderAPIProcessor = (player, s) -> placeholderAPIHook.replacePlaceholders(player, s);
             }
             if (Bukkit.getPluginManager().isPluginEnabled("CoreProtect")) {
-                this.coreProtectHook = new CoreProtectHook();
+                this.coreProtectHook = new CoreProtectHook(this);
             }
             if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
                 this.essentialsHook = new EssentialsHook();

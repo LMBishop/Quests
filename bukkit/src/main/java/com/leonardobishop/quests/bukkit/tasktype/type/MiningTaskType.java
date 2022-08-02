@@ -57,19 +57,34 @@ public final class MiningTaskType extends BukkitTaskType {
                     super.debug("check-coreprotect is enabled, but CoreProtect is not detected on the server", quest.getId(), task.getId(), player.getUniqueId());
                 }
 
-                if (plugin.getCoreProtectHook() != null && plugin.getCoreProtectHook().checkBlock(event.getBlock(), coreProtectTime)) {
-                    super.debug("CoreProtect indicates blocks was recently placed, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                    continue;
-                }
+                Runnable increment = () -> {
+                    int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+                    super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-                super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+                    int blocksNeeded = (int) task.getConfigValue("amount");
 
-                int blocksNeeded = (int) task.getConfigValue("amount");
+                    if (progress >= blocksNeeded) {
+                        super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                        taskProgress.setCompleted(true);
+                    }
+                };
 
-                if (progress >= blocksNeeded) {
-                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                    taskProgress.setCompleted(true);
+                if (plugin.getCoreProtectHook() != null) {
+                    super.debug("Running CoreProtect lookup (may take a while)", quest.getId(), task.getId(), player.getUniqueId());
+                    plugin.getCoreProtectHook().checkBlock(event.getBlock(), coreProtectTime).thenAccept(result -> {
+                        if (result) {
+                            super.debug("CoreProtect lookup indicates this is a player placed block, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                        } else {
+                            super.debug("CoreProtect lookup OK", quest.getId(), task.getId(), player.getUniqueId());
+                            increment.run();
+                        }
+                    }).exceptionally(ex -> {
+                        super.debug("CoreProtect lookup failed: " + ex.getMessage(), quest.getId(), task.getId(), player.getUniqueId());
+                        ex.printStackTrace();
+                        return null;
+                    });
+                } else {
+                    increment.run();
                 }
             }
         }
