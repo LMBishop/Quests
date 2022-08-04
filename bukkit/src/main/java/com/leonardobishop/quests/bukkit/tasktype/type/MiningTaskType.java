@@ -69,7 +69,7 @@ public final class MiningTaskType extends BukkitTaskType {
                     }
                 };
 
-                if (plugin.getCoreProtectHook() != null) {
+                if (coreProtectEnabled && plugin.getCoreProtectHook() != null) {
                     super.debug("Running CoreProtect lookup (may take a while)", quest.getId(), task.getId(), player.getUniqueId());
                     plugin.getCoreProtectHook().checkBlock(event.getBlock(), coreProtectTime).thenAccept(result -> {
                         if (result) {
