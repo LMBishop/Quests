@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.bukkit.tasktype.type;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -13,9 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class EnchantingTaskType extends BukkitTaskType {
 
@@ -49,6 +48,14 @@ public final class EnchantingTaskType extends BukkitTaskType {
             TaskProgress taskProgress = pendingTask.taskProgress();
 
             super.debug("Player enchanted item", quest.getId(), task.getId(), player.getUniqueId());
+
+            if (task.hasConfigKey("item")) {
+                QuestItem qi = TaskUtils.getConfigQuestItem(task, "item", "data");
+                if (!qi.getItemStack().getType().equals(e.getItem().getType())) {
+                    super.debug("Item does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+            }
 
             boolean hasEnchantment = true;
 
