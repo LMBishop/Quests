@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report issues/unexpected behaviour with Quests
+description: Report an issue or unexpected behaviour
 labels: ['bug', 'status: needs investigating']
 body:
   - type: markdown
@@ -16,17 +16,17 @@ body:
     attributes:
       label: Steps to Reproduce
       description: |
-        Describe any steps or details intructions to reproduce this bug.
-        Your answer may include any screenshots or videos, or may list steps.
+        Describe any steps or details instructions to reproduce this bug.
+        Please include any screenshots or videos, or list steps, if possible.
     validations:
       required: true
   - type: textarea
     attributes:
       label: Environment
       description: |
-        State the Minecraft version and server software this bug is present on.
+        State the Minecraft version and server software this bug is present on. Please also include other versions of relevant versions.
         You can identify your server software by running `/version`, and your Quests version by running `/version Quests`.
-        **Note:** simply stating "Latest version" is **not** enough! You must include an actual version string for all versions.
+        **Note:** simply stating "Latest version" is **not** enough! You must include the actual version!
       value: |
           - Minecraft version:
           - Server software:
