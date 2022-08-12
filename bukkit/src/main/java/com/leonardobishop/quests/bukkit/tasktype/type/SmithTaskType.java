@@ -23,7 +23,7 @@ public class SmithTaskType extends BukkitTaskType {
     private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
 
     public SmithTaskType(BukkitQuestsPlugin plugin) {
-        super("smith", TaskUtils.TASK_ATTRIBUTION_STRING, "Smith a specific item.");
+        super("smithing", TaskUtils.TASK_ATTRIBUTION_STRING, "Smith a specific item.");
         this.plugin = plugin;
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
