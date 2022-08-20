@@ -118,7 +118,7 @@ dependencies {
     // NuVotifier
     compileOnly "com.vexsoftware:NuVotifier:2.7.3"
     // SCore
-    compileOnly "com.github.Ssomar-Developement:SCore:main-SNAPSHOT"
+    compileOnly "com.github.Ssomar-Developement:SCore:v3.1.1"
     // bStats
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
     // HikariCP
