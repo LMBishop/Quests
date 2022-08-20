@@ -70,14 +70,8 @@ dependencies {
     // MythicMobs 5
     compileOnly 'io.lumine:Mythic-Dist:5.0.3'
     // Citizens
-    compileOnly ('net.citizensnpcs:citizens:2.0.27-SNAPSHOT') {
-        exclude group: 'net.citizensnpcs', module: 'citizens-main'
-        exclude group: 'net.citizensnpcs', module: 'citizens-v1_8_R3'
-        exclude group: 'net.citizensnpcs', module: 'citizens-v1_12_R1'
-        exclude group: 'net.citizensnpcs', module: 'citizens-v1_13_R2'
-        exclude group: 'net.citizensnpcs', module: 'citizens-v1_14_R1'
-        exclude group: 'net.citizensnpcs', module: 'citizens-v1_15_R1'
-        exclude group: 'net.citizensnpcs', module: 'citizens-v1_16_R3'
+    compileOnly ('net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT') {
+        transitive = false
     }
     // PlaceholderAPI
     compileOnly 'me.clip:placeholderapi:2.11.1'
