@@ -23,11 +23,12 @@ public final class ShearingTaskType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useDyeColorConfigValidator(this, "color", "colors"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onShear(PlayerShearEntityEvent event) {
-        if (!(event.getEntity() instanceof Sheep)) {
+        if (!(event.getEntity() instanceof Sheep sheep)) {
             return;
         }
 
@@ -47,14 +48,16 @@ public final class ShearingTaskType extends BukkitTaskType {
 
             super.debug("Player sheared animal", quest.getId(), task.getId(), player.getUniqueId());
 
-            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+            if (TaskUtils.matchDyeColor(this, pendingTask, sheep, player.getUniqueId())) {
+                int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+                super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-            int sheepNeeded = (int) task.getConfigValue("amount");
+                int sheepNeeded = (int) task.getConfigValue("amount");
 
-            if (progress >= sheepNeeded) {
-                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                taskProgress.setCompleted(true);
+                if (progress >= sheepNeeded) {
+                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                    taskProgress.setCompleted(true);
+                }
             }
         }
     }
