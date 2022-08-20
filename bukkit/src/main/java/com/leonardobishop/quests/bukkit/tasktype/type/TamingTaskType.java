@@ -20,6 +20,10 @@ public final class TamingTaskType extends BukkitTaskType {
     public TamingTaskType(BukkitQuestsPlugin plugin) {
         super("taming", TaskUtils.TASK_ATTRIBUTION_STRING, "Tame a set amount of certain animals.");
         this.plugin = plugin;
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useEntityListConfigValidator(this, "mob", "mobs"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
