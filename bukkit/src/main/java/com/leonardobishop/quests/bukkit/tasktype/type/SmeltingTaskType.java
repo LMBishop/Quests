@@ -40,7 +40,6 @@ public final class SmeltingTaskType extends BukkitTaskType {
         fixedQuestItemCache.clear();
     }
 
-    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         ItemStack item = event.getCurrentItem();
