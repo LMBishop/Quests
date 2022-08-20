@@ -1,40 +1,39 @@
-name: Build plugin
-
-on: ["pull_request", "push"]
-
+name: Build
+on: [pull_request, push]
 jobs:
   build:
     strategy:
       matrix:
-        java: ["17"]
-        os: ["ubuntu-18.04"]
-    runs-on: "${{ matrix.os }}"
-
+        os: [ubuntu-latest]
+        distribution: [temurin]
+        java-version: ["17"]
+    runs-on: ${{ matrix.os }}
+    if: "!contains(github.event.commits[0].message, '[ci-skip]')"
     steps:
-      - name: "Checkout Repository"
-        uses: "actions/checkout@v2.3.4"
-      - name: "Setup JDK ${{ matrix.java }}"
-        uses: "actions/setup-java@v1.4.3"
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: "Setup JDK (${{ matrix.distribution }} ${{ matrix.java-version }})"
+        uses: actions/setup-java@v3
         with:
-          java-version: "${{ matrix.java }}"
-      - name: Cache .gradle/caches
-        uses: actions/cache@v1
+          distribution: "${{ matrix.distribution }}"
+          java-version: "${{ matrix.java-version }}"
+      - name: "Cache: ~/.gradle/caches, ~/.gradle/wrapper"
+        uses: actions/cache@v3
         with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: ${{ runner.os }}-gradle-
-      - name: Cache .gradle/wrapper
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle-wrapper-
-      - name: Grant execute permission for gradlew
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Grant execute permission on gradlew file
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew
-      - name: Upload Plugin
-        uses: actions/upload-artifact@master
+      - name: Upload the plugin JAR
+        uses: actions/upload-artifact@v3
         with:
-          name: Quests-JDK${{ matrix.java }}
+          name: "Quests-JDK${{ matrix.java-version }}"
           path: build/libs/*.jar
