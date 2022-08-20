@@ -69,25 +69,25 @@ public final class DistancefromTaskType extends BukkitTaskType {
 
             super.debug("Player moved", quest.getId(), task.getId(), player.getUniqueId());
 
+            String worldString = (String) task.getConfigValue("world");
+            World world = Bukkit.getWorld(worldString);
+            if (!player.getWorld().equals(world)) {
+                super.debug("World " + worldString + " does not exist or isn't the player world, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
+
             int x = (int) task.getConfigValue("x");
             int y = (int) task.getConfigValue("y");
             int z = (int) task.getConfigValue("z");
-            String worldString = (String) task.getConfigValue("world");
             int distance = (int) task.getConfigValue("distance");
             int distanceSquared = distance * distance;
-
-            World world = Bukkit.getWorld(worldString);
-            if (world == null) {
-                super.debug("World " + worldString + " does not exist, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                continue;
-            }
 
             Location location = new Location(world, x, y, z);
             double playerDistanceSquared = player.getLocation().distanceSquared(location);
 
             super.debug("Player is " + playerDistanceSquared + "m squared away", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (player.getWorld().equals(world) && playerDistanceSquared > distanceSquared) {
+            if (playerDistanceSquared > distanceSquared) {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
             }
