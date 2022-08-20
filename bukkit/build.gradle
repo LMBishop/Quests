@@ -86,7 +86,7 @@ dependencies {
         transitive = false
     }
     // ShopGUI+
-    compileOnly ('com.github.brcdev-minecraft:shopgui-api:master-SNAPSHOT') {
+    compileOnly ('com.github.brcdev-minecraft:shopgui-api:3.0.0') {
         transitive = false
     }
     // CoreProtect
