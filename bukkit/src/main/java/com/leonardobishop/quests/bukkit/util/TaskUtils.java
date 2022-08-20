@@ -12,6 +12,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import com.leonardobishop.quests.common.tasktype.TaskType;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
@@ -19,6 +20,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Colorable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -213,6 +215,36 @@ public class TaskUtils {
                 }
             } else {
                 type.debug("Type mismatch", pendingTask.quest.getId(), task.getId(), player);
+            }
+        }
+        return false;
+    }
+
+    public static boolean matchDyeColor(BukkitTaskType type, PendingTask pendingTask, Colorable colorable, UUID player) {
+        Task task = pendingTask.task;
+
+        DyeColor color;
+
+        List<String> checkColors = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("color") ? "color" : "colors");
+        if (checkColors.isEmpty()) {
+            return true;
+        }
+
+        for (String colorName : checkColors) {
+            color = DyeColor.valueOf(colorName);
+
+            DyeColor entityColor = colorable.getColor();
+            if (entityColor == null) {
+                break;
+            }
+
+            type.debug("Checking against entity " + entityColor.name(), pendingTask.quest.getId(), task.getId(), player);
+
+            if (entityColor == color) {
+                type.debug("DyeColor match", pendingTask.quest.getId(), task.getId(), player);
+                return true;
+            } else {
+                type.debug("DyeColor mismatch", pendingTask.quest.getId(), task.getId(), player);
             }
         }
         return false;
@@ -423,7 +455,55 @@ public class TaskUtils {
                         problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
                                 ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(materialName),
                                 ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(materialName),
-                                 path));
+                                path));
+                    }
+                }
+                break;
+            }
+        };
+    }
+
+    /**
+     * Returns a config validator which checks if at least one value in the given
+     * paths is a valid list of dye colors.
+     * <p>
+     * The list of dye colors is expected to be in the format of:
+     * <pre>key: "DYE_COLOR_NAME"</pre>
+     * where DYE_COLOR_NAME is the name of a material. Alternatively, the list
+     * of materials can be in the format of:
+     * <pre>key:
+     *   - "DYE_COLOR_NAME"
+     *   - "..."</pre>
+     * </p>
+     *
+     * @param paths a list of valid paths for task
+     * @return config validator
+     */
+    public static TaskType.ConfigValidator useDyeColorConfigValidator(TaskType type, String... paths) {
+        return (config, problems) -> {
+            for (String path : paths) {
+                Object configColor = config.get(path);
+
+                List<String> checkColors = new ArrayList<>();
+                if (configColor instanceof List<?> configList) {
+                    for (Object object : configList) {
+                        checkColors.add(String.valueOf(object));
+                    }
+                } else {
+                    if (configColor == null) {
+                        continue;
+                    }
+                    checkColors.add(String.valueOf(configColor));
+                }
+
+                for (String colorName : checkColors) {
+                    try {
+                        DyeColor.valueOf(colorName);
+                    } catch (IllegalArgumentException ex) {
+                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                ConfigProblemDescriptions.UNKNOWN_DYE_COLOR.getDescription(colorName),
+                                ConfigProblemDescriptions.UNKNOWN_DYE_COLOR.getExtendedDescription(colorName),
+                                path));
                     }
                 }
                 break;
