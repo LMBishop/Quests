@@ -33,7 +33,6 @@ public final class CraftingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
-
     }
 
     @Override
@@ -43,12 +42,15 @@ public final class CraftingTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCraftItem(CraftItemEvent event) {
-        if (event.getAction() == InventoryAction.NOTHING
-                || event.getCurrentItem() == null
+        //noinspection DuplicatedCode
+        if ((event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR)
                 || event.getAction() == InventoryAction.NOTHING
-                || event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD
-                || event.getClick() == ClickType.DROP && event.getAction() == InventoryAction.DROP_ONE_SLOT && event.getCursor() != null
-                || !(event.getWhoClicked() instanceof Player player)) {
+                || event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD && event.getClick() == ClickType.NUMBER_KEY && !plugin.getVersionSpecificHandler().isHotbarMoveAndReaddSupported() // https://discord.com/channels/211910297810632704/510553623022010371/1011035743331819550
+                || event.getAction() == InventoryAction.DROP_ONE_SLOT && event.getClick() == ClickType.DROP && (event.getCursor() != null && event.getCursor().getType() != Material.AIR) // https://github.com/LMBishop/Quests/issues/430
+                || event.getAction() == InventoryAction.DROP_ALL_SLOT && event.getClick() == ClickType.CONTROL_DROP && (event.getCursor() != null && event.getCursor().getType() != Material.AIR) // https://github.com/LMBishop/Quests/issues/430
+                || event.getAction() == InventoryAction.UNKNOWN && event.getClick() == ClickType.UNKNOWN // for better ViaVersion support
+                || !(event.getWhoClicked() instanceof Player player)
+                || plugin.getVersionSpecificHandler().isOffHandSwap(event.getClick()) && !plugin.getVersionSpecificHandler().isOffHandEmpty(player)) {
             return;
         }
 
@@ -60,7 +62,7 @@ public final class CraftingTaskType extends BukkitTaskType {
         ItemStack item = event.getCurrentItem();
 
         int eventAmount = item.getAmount();
-        if (event.isShiftClick()) {
+        if (event.isShiftClick() && event.getClick() != ClickType.CONTROL_DROP) { // https://github.com/LMBishop/Quests/issues/317
             int maxAmount = event.getInventory().getMaxStackSize();
             ItemStack[] matrix = event.getInventory().getMatrix();
             for (ItemStack itemStack : matrix) {

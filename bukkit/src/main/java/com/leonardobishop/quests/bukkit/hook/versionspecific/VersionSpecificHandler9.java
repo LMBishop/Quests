@@ -37,4 +37,9 @@ public class VersionSpecificHandler9 extends VersionSpecificHandler8 implements 
 
         return availableSpace;
     }
+
+    @Override
+    public boolean isHotbarMoveAndReaddSupported() {
+        return false;
+    }
 }

@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -21,6 +22,16 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
 
     @Override
     public boolean isPlayerOnStrider(Player player) {
+        return false;
+    }
+
+    @Override
+    public boolean isOffHandSwap(ClickType clickType) {
+        return false;
+    }
+
+    @Override
+    public boolean isOffHandEmpty(Player player) {
         return false;
     }
 
@@ -47,5 +58,10 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
     @Override
     public boolean isFurnaceInventoryType(InventoryType type) {
         return type == InventoryType.FURNACE;
+    }
+
+    @Override
+    public boolean isHotbarMoveAndReaddSupported() {
+        return true;
     }
 }
