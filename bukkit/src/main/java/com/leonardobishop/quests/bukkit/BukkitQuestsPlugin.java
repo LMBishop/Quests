@@ -283,7 +283,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 this.placeholderAPIProcessor = (player, s) -> placeholderAPIHook.replacePlaceholders(player, s);
             }
             if (Bukkit.getPluginManager().isPluginEnabled("CoreProtect")) {
-                this.coreProtectHook = new CoreProtectHook();
+                this.coreProtectHook = new CoreProtectHook(this);
             }
             if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
                 this.essentialsHook = new EssentialsHook();
@@ -314,6 +314,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new CraftingTaskType(this));
             taskTypeManager.registerTaskType(new BucketEmptyTaskType(this));
             taskTypeManager.registerTaskType(new BucketFillTaskType(this));
+            taskTypeManager.registerTaskType(new InteractTaskType(this));
+            taskTypeManager.registerTaskType(new SmithTaskType(this));
             // TODO: FIX
             // taskTypeManager.registerTaskType(new BrewingCertainTaskType());
             try {

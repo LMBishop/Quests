@@ -201,13 +201,12 @@ public class TaskUtils {
             }
 
             material = Material.getMaterial(String.valueOf(split[0]));
-            Material blockType = block.getType();
 
-            short blockData = block.getData();
 
             type.debug("Checking against block " + material, pendingTask.quest.getId(), task.getId(), player);
 
-            if (blockType == material) {
+            if (block != null && block.getType() == material) {
+                short blockData = block.getData();
                 if (((split.length == 1 && configData == null) || ((int) blockData) == comparableData)) {
                     type.debug("Block match", pendingTask.quest.getId(), task.getId(), player);
                     return true;

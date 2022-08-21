@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest an idea for Quests
+description: Request a new feature or suggest new ideas
 labels: ['enhancement', 'status: needs investigating']
 body:
   - type: markdown
@@ -8,19 +8,19 @@ body:
         Before requesting a new feature, please make sure you are on the latest version of Quests.
   - type: textarea
     attributes:
+      label: Description of Feature
+      description: Describe what you would like added to Quests. Videos or screenshots are welcome.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
       label: Reason for Addition
       description: |
-        Explain your rationale for coming up with this idea.
-        Your answer may describe a problem you're having, or any context for this request.
+        Explain your reasoning for wanting this addition.
+        This may include a problem you're trying to solve, or any context for this request.
         This field is not required.
     validations:
       required: false
-  - type: textarea
-    attributes:
-      label: Description of Feature
-      description: Discuss what you would like added to Quests. Please keep your description clear and concise.
-    validations:
-      required: true
   - type: textarea
     attributes:
       label: Alternative Solutions
@@ -34,7 +34,7 @@ body:
       options:
         - label: I am running the latest version of Quests
           required: true
-        - label: I am certain this issue is unique and a similar issue is not currently open
+        - label: I am certain this request is unique and a similar issue is not currently open
           required: true
   - type: textarea
     attributes:
