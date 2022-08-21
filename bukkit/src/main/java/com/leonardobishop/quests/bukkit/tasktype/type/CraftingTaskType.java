@@ -17,7 +17,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
 public final class CraftingTaskType extends BukkitTaskType {
@@ -43,22 +42,40 @@ public final class CraftingTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onItemCraft(CraftItemEvent event) {
-        if (event.getClickedInventory() == null
-                || (event.getClickedInventory().getType() != InventoryType.CRAFTING && event.getClickedInventory().getType() != InventoryType.WORKBENCH)
-                || event.getSlotType() != InventoryType.SlotType.RESULT
+    public void onCraftItem(CraftItemEvent event) {
+        if (event.getAction() == InventoryAction.NOTHING
                 || event.getCurrentItem() == null
-                || event.getAction() == InventoryAction.NOTHING) {
+                || event.getAction() == InventoryAction.NOTHING
+                || event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD
+                || event.getClick() == ClickType.DROP && event.getAction() == InventoryAction.DROP_ONE_SLOT && event.getCursor() != null
+                || !(event.getWhoClicked() instanceof Player player)) {
             return;
         }
-
-        ItemStack clickedItem = event.getCurrentItem();
-        Player player = (Player) event.getWhoClicked();
-        int clickedAmount = getCraftAmount(event);
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
+        }
+
+        ItemStack item = event.getCurrentItem();
+
+        int eventAmount = item.getAmount();
+        if (event.isShiftClick()) {
+            int maxAmount = event.getInventory().getMaxStackSize();
+            ItemStack[] matrix = event.getInventory().getMatrix();
+            for (ItemStack itemStack : matrix) {
+                if (itemStack != null && itemStack.getType() != Material.AIR) {
+                    int itemStackAmount = itemStack.getAmount();
+                    if (itemStackAmount < maxAmount && itemStackAmount > 0) {
+                        maxAmount = itemStackAmount;
+                    }
+                }
+            }
+            eventAmount *= maxAmount;
+            eventAmount = Math.min(eventAmount, plugin.getVersionSpecificHandler().getAvailableSpace(player, item));
+            if (eventAmount == 0) {
+                return;
+            }
         }
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
@@ -75,66 +92,22 @@ public final class CraftingTaskType extends BukkitTaskType {
                 qi = fetchedItem;
             }
 
-            super.debug("Player crafted " + clickedAmount + " of " + clickedItem.getType(), quest.getId(), task.getId(), player.getUniqueId());
+            super.debug("Player crafted " + eventAmount + " of " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
-            if (!qi.compareItemStack(clickedItem)) {
+            if (!qi.compareItemStack(item)) {
                 super.debug("Item does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
 
             int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
-            taskProgress.setProgress(progress + clickedAmount);
-            super.debug("Updating task progress (now " + (progress + clickedAmount) + ")", quest.getId(), task.getId(), player.getUniqueId());
+            taskProgress.setProgress(progress + eventAmount);
+            super.debug("Updating task progress (now " + (progress + eventAmount) + ")", quest.getId(), task.getId(), player.getUniqueId());
 
             if ((int) taskProgress.getProgress() >= amount) {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setProgress(amount);
                 taskProgress.setCompleted(true);
             }
-        }
-    }
-
-    // thanks https://www.spigotmc.org/threads/util-get-the-crafted-item-amount-from-a-craftitemevent.162952/
-    private int getCraftAmount(CraftItemEvent e) {
-        if(e.isCancelled()) { return 0; }
-
-        Player p = (Player) e.getWhoClicked();
-
-        if (e.isShiftClick() && e.getClick() != ClickType.CONTROL_DROP) {
-            int itemsChecked = 0;
-            int possibleCreations = 1;
-
-            int amountCanBeMade = 0;
-
-            for (ItemStack item : e.getInventory().getMatrix()) {
-                if (item != null && item.getType() != Material.AIR) {
-                    if (itemsChecked == 0) {
-                        possibleCreations = item.getAmount();
-                        itemsChecked++;
-                    } else {
-                        possibleCreations = Math.min(possibleCreations, item.getAmount());
-                    }
-                }
-            }
-
-            int amountOfItems = e.getRecipe().getResult().getAmount() * possibleCreations;
-
-            ItemStack i = e.getRecipe().getResult();
-
-            for(int s = 0; s <= 35; s++) {
-                ItemStack test = p.getInventory().getItem(s);
-                if(test == null || test.getType() == Material.AIR) {
-                    amountCanBeMade+= i.getMaxStackSize();
-                    continue;
-                }
-                if(test.isSimilar(i)) {
-                    amountCanBeMade += i.getMaxStackSize() - test.getAmount();
-                }
-            }
-
-            return Math.min(amountOfItems, amountCanBeMade);
-        } else {
-            return e.getRecipe().getResult().getAmount();
         }
     }
 
