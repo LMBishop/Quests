@@ -17,12 +17,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class SmithTaskType extends BukkitTaskType {
+public final class SmithingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
     private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
 
-    public SmithTaskType(BukkitQuestsPlugin plugin) {
+    public SmithingTaskType(BukkitQuestsPlugin plugin) {
         super("smithing", TaskUtils.TASK_ATTRIBUTION_STRING, "Smith a specific item.");
         this.plugin = plugin;
 
