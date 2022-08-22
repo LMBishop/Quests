@@ -2,7 +2,6 @@ package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -53,11 +52,6 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
         }
 
         return availableSpace;
-    }
-
-    @Override
-    public boolean isFurnaceInventoryType(InventoryType type) {
-        return type == InventoryType.FURNACE;
     }
 
     @Override

@@ -219,8 +219,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         if (version <= 8) {
             versionSpecificHandler = new VersionSpecificHandler8();
         } else switch (version) {
-            case 9, 10, 11, 12, 13 -> versionSpecificHandler = new VersionSpecificHandler9();
-            case 14, 15 -> versionSpecificHandler = new VersionSpecificHandler14();
+            case 9, 10, 11, 12, 13, 14, 15 -> versionSpecificHandler = new VersionSpecificHandler9();
             default -> versionSpecificHandler = new VersionSpecificHandler16();
         }
 

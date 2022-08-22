@@ -2,6 +2,7 @@ package com.leonardobishop.quests.bukkit.tasktype.type;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import com.google.common.math.IntMath;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
@@ -18,7 +19,11 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.math.RoundingMode;
+import java.util.Arrays;
 
 public final class SmeltingTaskType extends BukkitTaskType {
 
@@ -33,6 +38,11 @@ public final class SmeltingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Arrays.asList(
+                "smoker",
+                "blast_furnace",
+                "furnace"
+        ), "mode"));
     }
 
     @Override
@@ -42,24 +52,34 @@ public final class SmeltingTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        ItemStack item = event.getCurrentItem();
-        ItemStack cursor = event.getCursor();
-        InventoryType inventoryType = event.getInventory().getType();
-
-        if (event.getRawSlot() != 2 || !plugin.getVersionSpecificHandler().isFurnaceInventoryType(inventoryType)
-                || item == null || item.getType() == Material.AIR || event.getAction() == InventoryAction.NOTHING
-                || event.getAction() == InventoryAction.COLLECT_TO_CURSOR && cursor != null && cursor.getAmount() == cursor.getMaxStackSize()
-                || event.getClick() == ClickType.NUMBER_KEY && event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD
-                || event.getClick() == ClickType.DROP && event.getAction() == InventoryAction.DROP_ONE_SLOT && event.getCursor() != null
-                || !(event.getWhoClicked() instanceof Player player)) {
+        //noinspection DuplicatedCode
+        if (!(event.getInventory() instanceof FurnaceInventory) || event.getRawSlot() != 2
+                || (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR)
+                || event.getAction() == InventoryAction.NOTHING
+                || event.getAction() == InventoryAction.COLLECT_TO_CURSOR && event.getClick() == ClickType.DOUBLE_CLICK && (event.getCursor() != null && event.getCursor().getType() != Material.AIR) && ((event.getCursor().getAmount() + event.getCurrentItem().getAmount() > event.getCursor().getMaxStackSize()) || event.getCursor().getType() != event.getCurrentItem().getType()) // does not apply to crafting tables lol
+                || event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD && event.getClick() == ClickType.NUMBER_KEY && !plugin.getVersionSpecificHandler().isHotbarMoveAndReaddSupported() // https://discord.com/channels/211910297810632704/510553623022010371/1011035743331819550
+                || event.getAction() == InventoryAction.DROP_ONE_SLOT && event.getClick() == ClickType.DROP && (event.getCursor() != null && event.getCursor().getType() != Material.AIR) // https://github.com/LMBishop/Quests/issues/430
+                || event.getAction() == InventoryAction.DROP_ALL_SLOT && event.getClick() == ClickType.CONTROL_DROP && (event.getCursor() != null && event.getCursor().getType() != Material.AIR) // https://github.com/LMBishop/Quests/issues/430
+                || event.getAction() == InventoryAction.UNKNOWN && event.getClick() == ClickType.UNKNOWN // for better ViaVersion support
+                || !(event.getWhoClicked() instanceof Player player)
+                || plugin.getVersionSpecificHandler().isOffHandSwap(event.getClick()) && !plugin.getVersionSpecificHandler().isOffHandEmpty(player)) {
             return;
         }
 
-        int eventAmount = item.getAmount();
-        if (event.isShiftClick()) {
-            eventAmount = Math.min(eventAmount, plugin.getVersionSpecificHandler().getAvailableSpace(player, item));
-            if (eventAmount == 0) {
-                return;
+        ItemStack item = event.getCurrentItem();
+
+        int eventAmount;
+        if (event.getAction() == InventoryAction.DROP_ONE_SLOT) {
+            eventAmount = 1;
+        } else if (event.getAction() == InventoryAction.PICKUP_HALF) {
+            eventAmount = IntMath.divide(item.getAmount(), 2, RoundingMode.CEILING);
+        } else {
+            eventAmount = item.getAmount();
+            if (event.isShiftClick() && event.getClick() != ClickType.CONTROL_DROP) { // https://github.com/LMBishop/Quests/issues/317
+                eventAmount = Math.min(eventAmount, plugin.getVersionSpecificHandler().getAvailableSpace(player, item));
+                if (eventAmount == 0) {
+                    return;
+                }
             }
         }
 
@@ -68,6 +88,8 @@ public final class SmeltingTaskType extends BukkitTaskType {
             return;
         }
 
+        final InventoryType inventoryType = event.getInventory().getType();
+
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
@@ -75,8 +97,8 @@ public final class SmeltingTaskType extends BukkitTaskType {
 
             super.debug("Player smelted item", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (task.getConfigValue("mode") != null
-                    && !inventoryType.toString().equalsIgnoreCase(task.getConfigValue("mode").toString())) {
+            final String mode = (String) task.getConfigValue("mode");
+            if (mode != null && !inventoryType.name().equalsIgnoreCase(mode)) {
                 super.debug("Specific mode is required, but the actual mode '" + inventoryType + "' does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
@@ -95,16 +117,15 @@ public final class SmeltingTaskType extends BukkitTaskType {
                 }
             }
 
-            int smeltedItemsNeeded = (int) task.getConfigValue("amount");
+            int amount = (int) task.getConfigValue("amount");
 
             int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
-            int newAmount = progress + eventAmount;
-            taskProgress.setProgress(newAmount);
-            super.debug("Updating task progress (now " + (newAmount) + ")", quest.getId(), task.getId(), player.getUniqueId());
+            taskProgress.setProgress(progress + eventAmount);
+            super.debug("Updating task progress (now " + (progress + eventAmount) + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (newAmount >= smeltedItemsNeeded) {
+            if ((int) taskProgress.getProgress() >= amount) {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                taskProgress.setProgress(newAmount);
+                taskProgress.setProgress(amount);
                 taskProgress.setCompleted(true);
             }
         }

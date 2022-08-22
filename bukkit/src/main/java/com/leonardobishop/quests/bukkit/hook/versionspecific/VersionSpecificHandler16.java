@@ -4,7 +4,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
-public class VersionSpecificHandler16 extends VersionSpecificHandler14 implements VersionSpecificHandler {
+public class VersionSpecificHandler16 extends VersionSpecificHandler9 implements VersionSpecificHandler {
 
     @Override
     public int getMinecraftVersion() {
