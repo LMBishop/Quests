@@ -85,8 +85,6 @@ public final class CraftingTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            int amount = (int) task.getConfigValue("amount");
-
             QuestItem qi;
             if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
                 QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "item", "data");
@@ -100,6 +98,8 @@ public final class CraftingTaskType extends BukkitTaskType {
                 super.debug("Item does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
+
+            int amount = (int) task.getConfigValue("amount");
 
             int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
             taskProgress.setProgress(progress + eventAmount);
