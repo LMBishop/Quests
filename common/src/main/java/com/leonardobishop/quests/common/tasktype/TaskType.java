@@ -30,7 +30,7 @@ public abstract class TaskType {
      */
     public TaskType(@NotNull String type, String author, String description, String... aliases) {
         this(type, author, description);
-        this.aliases.addAll(Arrays.asList(aliases));
+        Collections.addAll(this.aliases, aliases);
     }
 
     /**
