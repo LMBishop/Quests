@@ -162,8 +162,7 @@ public class CategoryQMenu implements QMenu {
 
         } else if (event.getSlot() < pageSize && menuElements.containsKey(event.getSlot() + (((currentPage) - 1) * pageSize))) {
             MenuElement element = menuElements.get(event.getSlot() + ((currentPage - 1) * pageSize));
-            if (element instanceof CategoryMenuElement) {
-                CategoryMenuElement categoryMenuElement = (CategoryMenuElement) element;
+            if (element instanceof CategoryMenuElement categoryMenuElement) {
                 QuestQMenu questQMenu = categoryMenuElement.getQuestMenu();
                 if (plugin.getMenuController().openQuestCategory(owner,
                         plugin.getQuestManager().getCategoryById(questQMenu.getCategoryName()), questQMenu) != 0) {
@@ -171,8 +170,7 @@ public class CategoryQMenu implements QMenu {
                 } else {
                     return true;
                 }
-            } else if (element instanceof CustomMenuElement) {
-                CustomMenuElement customMenuElement = (CustomMenuElement) element;
+            } else if (element instanceof CustomMenuElement customMenuElement) {
                 for (String command : customMenuElement.getCommands()) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                             command.replace("{player}", event.getWhoClicked().getName()));

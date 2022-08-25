@@ -226,8 +226,7 @@ public class QuestQMenu implements QMenu {
             return true;
         } else if (event.getSlot() < pageSize && menuElements.containsKey(event.getSlot() + (((currentPage) - 1) * pageSize))) {
             MenuElement menuElement = menuElements.get(event.getSlot() + ((currentPage - 1) * pageSize));
-            if (menuElement instanceof QuestMenuElement) {
-                QuestMenuElement questMenuElement = (QuestMenuElement) menuElement;
+            if (menuElement instanceof QuestMenuElement questMenuElement) {
                 Quest quest = questMenuElement.getQuest();
                 if (!owner.hasStartedQuest(quest) && event.getClick() == startClickType) {
                     if (owner.startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
@@ -241,8 +240,7 @@ public class QuestQMenu implements QMenu {
                     MenuUtils.handleRightClick(plugin, this, quest, Bukkit.getPlayer(owner.getPlayerUUID()), controller);
                     return true;
                 }
-            } else if (menuElement instanceof CustomMenuElement) {
-                CustomMenuElement customMenuElement = (CustomMenuElement) menuElement;
+            } else if (menuElement instanceof CustomMenuElement customMenuElement) {
                 for (String command : customMenuElement.getCommands()) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                             command.replace("{player}", event.getWhoClicked().getName()));
