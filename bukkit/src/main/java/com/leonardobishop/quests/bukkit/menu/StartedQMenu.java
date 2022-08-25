@@ -7,6 +7,7 @@ import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.quest.Quest;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -25,7 +26,7 @@ public class StartedQMenu implements QMenu {
 
     private final BukkitQuestsPlugin plugin;
     private final BukkitQuestsConfig config;
-    private final HashMap<Integer, String> slotsToQuestIds = new HashMap<>();
+    private final Int2ObjectOpenHashMap<String> slotsToQuestIds = new Int2ObjectOpenHashMap<>();
     private final int pageSize = 45;
     private final QPlayer owner;
     private final ClickType trackClickType;
@@ -55,7 +56,7 @@ public class StartedQMenu implements QMenu {
         }
     }
 
-    public HashMap<Integer, String> getSlotsToMenu() {
+    public Int2ObjectOpenHashMap<String> getSlotsToMenu() {
         return slotsToQuestIds;
     }
 

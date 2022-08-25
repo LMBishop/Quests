@@ -13,6 +13,7 @@ import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.quest.Quest;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -32,7 +33,7 @@ public class QuestQMenu implements QMenu {
 
     private final BukkitQuestsPlugin plugin;
     private final BukkitQuestsConfig config;
-    private final HashMap<Integer, MenuElement> menuElements = new HashMap<>();
+    private final Int2ObjectOpenHashMap<MenuElement> menuElements = new Int2ObjectOpenHashMap<>();
     private final CategoryQMenu superMenu;
     private final String categoryName;
     private final int pageSize = 45;

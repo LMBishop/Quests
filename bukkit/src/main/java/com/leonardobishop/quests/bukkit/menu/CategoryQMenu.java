@@ -11,6 +11,7 @@ import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.bukkit.util.StringUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.player.QPlayer;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -27,7 +28,7 @@ public class CategoryQMenu implements QMenu {
 
     private final BukkitQuestsPlugin plugin;
     private final BukkitQuestsConfig config;
-    private final HashMap<Integer, MenuElement> menuElements = new HashMap<>();
+    private final Int2ObjectOpenHashMap<MenuElement> menuElements = new Int2ObjectOpenHashMap<>();
     private final QPlayer owner;
 
     private int pageSize = 45;
