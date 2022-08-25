@@ -17,6 +17,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,9 +76,7 @@ public class CategoryQMenu implements QMenu {
             slot++;
         }
 
-        for (Integer integer : menuElements.keySet()) {
-            if (integer + 1 > maxElement) maxElement = integer + 1;
-        }
+        maxElement = menuElements.size() > 0 ? Collections.max(menuElements.keySet()) + 1 : 0;
 
         // stop bottom row of pg1 going to pg2 if entire inv contents would fit on pg1 perfectly
         if (maxElement > 45 && maxElement <= 54) {

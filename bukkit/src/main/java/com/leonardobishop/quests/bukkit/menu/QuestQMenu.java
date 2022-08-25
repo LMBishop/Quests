@@ -108,9 +108,7 @@ public class QuestQMenu implements QMenu {
             slot++;
         }
 
-        for (Integer integer : menuElements.keySet()) {
-            if (integer + 1 > maxElement) maxElement = integer + 1;
-        }
+        maxElement = menuElements.size() > 0 ? Collections.max(menuElements.keySet()) + 1 : 0;
     }
 
     @Override
