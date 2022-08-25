@@ -1,6 +1,9 @@
 package com.leonardobishop.quests.bukkit.tasktype.type;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -16,71 +19,100 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public final class BrewingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
     private final HashMap<Location, UUID> brewingStands = new HashMap<>();
+    private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
 
     public BrewingTaskType(BukkitQuestsPlugin plugin) {
-        super("brewing", TaskUtils.TASK_ATTRIBUTION_STRING, "Brew a potion.");
+        super("brewing", TaskUtils.TASK_ATTRIBUTION_STRING, "Brew a potion using specific ingredient.");
         this.plugin = plugin;
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "ingredient"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
     }
 
+    @Override
+    public void onReady() {
+        fixedQuestItemCache.clear();
+    }
+
+    @SuppressWarnings("ConstantConditions")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onBlockPlace(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (event.getClickedBlock().getType() == Material.BREWING_STAND) {
-                brewingStands.put(event.getClickedBlock().getLocation(), event.getPlayer().getUniqueId());
-            }
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.BREWING_STAND) {
+            brewingStands.put(event.getClickedBlock().getLocation(), event.getPlayer().getUniqueId());
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onBlockPlace(BrewEvent event) {
+    public void onBrew(BrewEvent event) {
         UUID uuid;
-        if ((uuid = brewingStands.get(event.getBlock().getLocation())) != null) {
-            Player player = Bukkit.getPlayer(uuid);
+        if ((uuid = brewingStands.get(event.getBlock().getLocation())) == null) {
+            return;
+        }
 
-            if (player == null || player.hasMetadata("NPC")) {
-                return;
+        Player player = Bukkit.getPlayer(uuid);
+        if (player == null || player.hasMetadata("NPC")) {
+            return;
+        }
+
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
+        if (qPlayer == null) {
+            return;
+        }
+
+        final ItemStack ingredient = event.getContents().getIngredient();
+        final ItemStack[] contents = event.getContents().getContents();
+        final List<ItemStack> results = event.getResults();
+
+        int eventAmount = 0;
+        for (int i = 0; i < results.size(); i++) {
+            if (contents[i] != null && !contents[i].isSimilar(results.get(i))) {
+                eventAmount++;
             }
+        }
 
-            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
-            if (qPlayer == null) {
-                return;
-            }
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
 
-            for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
-                Quest quest = pendingTask.quest();
-                Task task = pendingTask.task();
-                TaskProgress taskProgress = pendingTask.taskProgress();
-
-                super.debug("Player brewed potion", quest.getId(), task.getId(), player.getUniqueId());
-
-                int progress = 0;
-
-                for (int i = 0; i < 3; i++) {
-                    if (event.getContents().getItem(i) != null) {
-                        progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-                        super.debug("Incrementing task progress for brewed potion in slot " + i + " (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
-                    } else {
-                        super.debug("Slot " + i + " does not have a brewed potion", quest.getId(), task.getId(), player.getUniqueId());
-                    }
+            if (task.hasConfigKey("ingredient")) {
+                QuestItem qi;
+                if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                    QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "ingredient", "data");
+                    fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
+                    qi = fetchedItem;
                 }
 
-                int potionsNeeded = (int) task.getConfigValue("amount");
+                super.debug("Player brewed " + eventAmount + " potions" + (ingredient != null ? " using " + ingredient.getType() : ""), quest.getId(), task.getId(), player.getUniqueId());
 
-                if (progress >= potionsNeeded) {
-                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                    taskProgress.setCompleted(true);
+                if (!qi.compareItemStack(ingredient)) {
+                    super.debug("Ingredient does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
                 }
+            }
+
+            int amount = (int) task.getConfigValue("amount");
+
+            int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
+            taskProgress.setProgress(progress + eventAmount);
+            super.debug("Updating task progress (now " + (progress + eventAmount) + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+            if ((int) taskProgress.getProgress() >= amount) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setProgress(amount);
+                taskProgress.setCompleted(true);
             }
         }
     }
