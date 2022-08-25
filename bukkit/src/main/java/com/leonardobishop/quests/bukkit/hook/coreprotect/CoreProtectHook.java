@@ -1,7 +1,6 @@
 package com.leonardobishop.quests.bukkit.hook.coreprotect;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
-import com.leonardobishop.quests.common.plugin.Quests;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
 import org.bukkit.Bukkit;

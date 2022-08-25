@@ -1,34 +1,17 @@
 package com.leonardobishop.quests.bukkit.command;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
-import com.leonardobishop.quests.bukkit.item.QuestItem;
-import com.leonardobishop.quests.bukkit.questcompleter.BukkitQuestCompleter;
-import com.leonardobishop.quests.bukkit.util.LogHistory;
-import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.QPlayerPreferences;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
-import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
-import com.leonardobishop.quests.common.quest.Category;
 import com.leonardobishop.quests.common.quest.Quest;
-import com.leonardobishop.quests.common.quest.Task;
-import com.leonardobishop.quests.common.tasktype.TaskType;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.function.Function;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class AdminDebugQuestCommandHandler implements CommandHandler {
 

@@ -1,6 +1,5 @@
 package com.leonardobishop.quests.common.player;
 
-import com.leonardobishop.quests.common.logger.QuestsLogger;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.questcontroller.QuestController;
@@ -38,14 +37,14 @@ public class QPlayerManager {
     public @Nullable QPlayer getPlayer(@NotNull UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
-        QPlayer qPlayer = qPlayers.get(uuid);
+//        QPlayer qPlayer = qPlayers.get(uuid);
 //        if (qPlayer == null) {
 //            plugin.getQuestsLogger().debug("QPlayer of " + uuid + " is null, but was requested:");
 //            if (plugin.getQuestsLogger().getServerLoggingLevel() == QuestsLogger.LoggingLevel.DEBUG) {
 //                Thread.dumpStack();
 //            }
 //        }
-        return qPlayer;
+        return qPlayers.get(uuid);
     }
 
     /**
