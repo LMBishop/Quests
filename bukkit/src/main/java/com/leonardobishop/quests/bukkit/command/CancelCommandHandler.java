@@ -57,6 +57,6 @@ public class CancelCommandHandler implements CommandHandler {
 
     @Override
     public @Nullable String getPermission() {
-        return null;
+        return "quests.command.cancel";
     }
 }
