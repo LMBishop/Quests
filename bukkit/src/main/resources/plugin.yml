@@ -22,6 +22,9 @@ permissions:
   quests.command:
     description: Permission for main command
     default: true
+  quests.command.start:
+    description: Permission to execute /q start
+    default: op
   quests.command.random:
     description: Permission to execute /q random
     default: true
