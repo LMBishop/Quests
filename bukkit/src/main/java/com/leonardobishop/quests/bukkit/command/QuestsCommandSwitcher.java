@@ -28,6 +28,7 @@ public class QuestsCommandSwitcher extends CommandSwitcher implements TabExecuto
         super.subcommands.put("started", new StartedCommandHandler(plugin));
         super.subcommands.put("admin", new AdminCommandSwitcher(plugin));
         super.subcommands.put("start", new StartCommandHandler(plugin));
+        super.subcommands.put("track", new TrackCommandHandler(plugin));
         super.subcommands.put("cancel", new CancelCommandHandler(plugin));
 
         super.aliases.put("q", "quest");
@@ -87,6 +88,9 @@ public class QuestsCommandSwitcher extends CommandSwitcher implements TabExecuto
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests cancel [questid]" + ChatColor.DARK_GRAY + ": cancel active quest/quest by name");
         if (sender.hasPermission(subcommands.get("start").getPermission())) {
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests start [questid]" + ChatColor.DARK_GRAY + ": start quest by name");
+        }
+        if (sender.hasPermission(subcommands.get("track").getPermission())) {
+            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests track [questid]" + ChatColor.DARK_GRAY + ": track quest by name");
         }
         if (sender.hasPermission(subcommands.get("random").getPermission())) {
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests random " + ChatColor.DARK_GRAY + ": show random quests");

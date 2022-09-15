@@ -25,6 +25,9 @@ permissions:
   quests.command.start:
     description: Permission to execute /q start
     default: op
+  quests.command.track:
+    description: Permission to execute /q track
+    default: op
   quests.command.random:
     description: Permission to execute /q random
     default: true
