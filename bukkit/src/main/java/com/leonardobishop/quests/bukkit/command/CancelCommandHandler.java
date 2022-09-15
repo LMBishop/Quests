@@ -52,6 +52,9 @@ public class CancelCommandHandler implements CommandHandler {
 
     @Override
     public List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length == 2) {
+            return TabHelper.tabCompleteQuests(args[1]);
+        }
         return Collections.emptyList();
     }
 
