@@ -330,6 +330,7 @@ messages:
   quest-updater: "&cQuests > &7A new version &c{newver} &7was found on Spigot (your version: &c{oldver}&7). Please update me! <3 - Link: {link}"
   command-data-not-loaded: "&4Your quests progress file has not been loaded; you cannot use quests. If this issue persists, contact an admin."
   command-sub-doesntexist: "&7The specified subcommand '&c{sub}' &7does not exist."
+  command-no-permission: "&7You do not have permission to use this command."
   command-quest-cancel-specify: "&7You must specify a quest to cancel."
   command-quest-start-doesntexist: "&7The specified quest '&c{quest}&7' does not exist."
   command-quest-general-doesntexist: "&7The specified quest '&c{quest}&7' does not exist."
