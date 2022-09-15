@@ -39,7 +39,7 @@ permissions:
     default: op
   quests.command.random:
     description: Permission to execute /q random
-    default: true
+    default: op
   quests.admin:
-    description: Permission for the admin commands 
+    description: Permission for the admin commands
     default: op
