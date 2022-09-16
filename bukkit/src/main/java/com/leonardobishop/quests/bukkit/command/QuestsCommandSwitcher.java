@@ -22,6 +22,7 @@ public class QuestsCommandSwitcher extends CommandSwitcher implements TabExecuto
         super(0);
         this.plugin = plugin;
 
+        super.subcommands.put("quest", new QuestCommandHandler(plugin));
         super.subcommands.put("category", new CategoryCommandHandler(plugin));
         super.subcommands.put("random", new RandomCommandHandler(plugin));
         super.subcommands.put("started", new StartedCommandHandler(plugin));
@@ -30,6 +31,7 @@ public class QuestsCommandSwitcher extends CommandSwitcher implements TabExecuto
         super.subcommands.put("track", new TrackCommandHandler(plugin));
         super.subcommands.put("cancel", new CancelCommandHandler(plugin));
 
+        super.aliases.put("q", "quest");
         super.aliases.put("c", "category");
         super.aliases.put("a", "admin");
     }
@@ -66,6 +68,7 @@ public class QuestsCommandSwitcher extends CommandSwitcher implements TabExecuto
         super.handle(sender, args);
         return true;
     }
+
 
     @Nullable
     @Override
