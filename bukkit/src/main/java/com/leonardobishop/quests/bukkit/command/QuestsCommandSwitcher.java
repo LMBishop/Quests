@@ -88,6 +88,9 @@ public class QuestsCommandSwitcher extends CommandSwitcher implements TabExecuto
         if (sender.hasPermission(subcommands.get("started").getPermission())) {
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests started " + ChatColor.DARK_GRAY + ": show started quests");
         }
+        if (sender.hasPermission(subcommands.get("quest").getPermission())) {
+            sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests q/quest <questid> (start|cancel|track) " + ChatColor.DARK_GRAY + ": start, cancel or track quest by ID");
+        }
         if (sender.hasPermission(subcommands.get("start").getPermission())) {
             sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests start <questid>" + ChatColor.DARK_GRAY + ": start quest by name");
         }
