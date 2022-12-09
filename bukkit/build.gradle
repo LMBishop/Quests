@@ -4,7 +4,7 @@ plugins {
 }
 
 processResources {
-    duplicatesStrategy = 'include'
+    duplicatesStrategy = duplicatesStrategy.INCLUDE
     from(sourceSets.main.resources.srcDirs) {
         include 'plugin.yml'
         expand('version': project.version)
@@ -13,116 +13,94 @@ processResources {
 
 repositories {
     // Paper
-    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
-    // ASkyBlock, BentoBox
+    maven { url = 'https://papermc.io/repo/repository/maven-public/' }
+    // ASkyBlock, BentoBox, bStats, Citizens
     maven { url = 'https://repo.codemc.org/repository/maven-public/' }
-    // uSkyBlock
-    maven { url = 'https://raw.github.com/rlf/uSkyBlock/mvn-repo/' }
-    // Citizens
-    maven { url = 'https://repo.citizensnpcs.co/' }
-    // MythicMobs
-    maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
-    // PlaceholderAPI
-    maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-    // EssentialsX
-    maven { url = 'https://repo.essentialsx.net/releases/' }
-    // JitPack (IridiumSkyblock, ShopGUI+, SCore)
-    maven { url = 'https://jitpack.io' }
-    // CoreProtect
-    maven { url = 'https://maven.playpro.com/' }
-    // bStats
-    maven { url = uri('https://repo.codemc.org/repository/maven-public') }
     // AuthLib
     maven { url = 'https://libraries.minecraft.net/' }
-    // FabledSkyblock
+    // CoreProtect
+    maven { url = 'https://maven.playpro.com/' }
+    // EssentialsX
+    maven { url = 'https://repo.essentialsx.net/releases/' }
+    // MMOItems, MythicLib
+    maven { url = 'https://nexus.phoenixdvpt.fr/repository/maven-public/' }
+    // MythicMobs 4, FabledSkyblock
     maven { url = 'https://repo.songoda.com/repository/public/' }
-    // SuperiorSkyblock
-    maven { url = 'https://repo.bg-software.com/repository/api/' }
-    // VotingPlugin
-    maven { url = 'https://nexus.bencodez.com/repository/maven-public/'}
+    // MythicMobs 5
+    maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
     // NuVotifier
-    maven { url = 'https://repo.leonardobishop.com/releases/'}
-    // Adventure
+    maven { url = 'https://repo.leonardobishop.com/releases/' }
+    // PlaceholderAPI
+    maven { url = 'https://repo.extendedclip.com/content/repositories/dev/' }
+    // SCore, ShopGUIPlus, Slimefun4
+    maven { url = 'https://jitpack.io/' }
+    // SuperiorSkyblock2
+    maven { url = 'https://repo.bg-software.com/repository/api/' }
+    // uSkyBlock
+    maven { url = 'https://www.uskyblock.ovh/maven/uskyblock/' }
+    // VotingPlugin
+    maven { url = 'https://nexus.bencodez.com/repository/maven-public/' }
+
+    // JetBrains Annotations
     mavenCentral()
 }
 
 dependencies {
     compileOnly project(':common')
     // Paper
-    compileOnly 'io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT'
     // ASkyBlock
-    compileOnly ('com.wasteofplastic:askyblock:3.0.9.4') {
-        exclude group: 'net.milkbowl.vault', module: 'VaultAPI'
-    }
-    // BentoBox (bSkyBlock)
-    compileOnly ('world.bentobox:bentobox:1.15.5-SNAPSHOT') {
-        exclude group: 'org.eclipse.jdt', module: 'org.eclipse.jdt.annotation'
-        exclude group: 'org.mongodb', module: 'mongodb-driver'
-    }
-    // IridiumSkyblock
-    // TODO fix whenever repo is up
-    //    compileOnly 'com.github.Iridium-Development:IridiumSkyblock:master-SNAPSHOT'
-    // download  from spigot and add to /libs/ yourself
-    // uSkyBlock
-    compileOnly 'com.github.rlf:uSkyBlock-API:2.6.4'
+    compileOnly ('com.wasteofplastic:askyblock:3.0.9.4') { transitive = false }
+    // AuthLib
+    compileOnly ('com.mojang:authlib:1.5.21') { transitive = false }
+    // BentoBox
+    compileOnly ('world.bentobox:bentobox:1.22.0-SNAPSHOT') { transitive = false }
+    // Citizens
+    compileOnly ('net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT') { transitive = false }
+    // CoreProtect
+    compileOnly 'net.coreprotect:coreprotect:21.2'
+    // EssentialsX
+    compileOnly ('net.essentialsx:EssentialsX:2.19.7') { transitive = false }
+    // FabledSkyblock
+    compileOnly 'com.songoda:skyblock:2.3.30'
+    // IridiumSkyblock TODO fix whenever repo is up
+    //compileOnly 'com.github.Iridium-Development:IridiumSkyblock:master-SNAPSHOT'
+    // JetBrains Annotations
+    compileOnly 'org.jetbrains:annotations:23.0.0'
+    // MMOItems
+    compileOnly 'net.Indyuce:MMOItems-API:6.8.3-SNAPSHOT'
+    // MythicLib
+    compileOnly 'io.lumine:MythicLib-dist:1.3.4-SNAPSHOT'
     // MythicMobs 4
     compileOnly 'io.lumine.xikage:MythicMobs:4.12.0'
     // MythicMobs 5
-    compileOnly 'io.lumine:Mythic-Dist:5.0.3'
-    // Citizens
-    compileOnly ('net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT') {
-        transitive = false
-    }
-    // PlaceholderAPI
-    compileOnly 'me.clip:placeholderapi:2.11.1'
-    // EssentialsX
-    compileOnly ('net.ess3:EssentialsX:2.18.2') {
-        transitive = false
-    }
-    // ShopGUI+
-    compileOnly ('com.github.brcdev-minecraft:shopgui-api:3.0.0') {
-        transitive = false
-    }
-    // CoreProtect
-    compileOnly ('net.coreprotect:coreprotect:2.18.2') {
-        transitive = false
-    }
-    // JetBrains Annotations
-    compileOnly 'org.jetbrains:annotations:23.0.0'
-    // AuthLib
-    compileOnly ('com.mojang:authlib:1.5.21') {
-        transitive = false
-    }
-    // FabledSkyblock
-    compileOnly ('com.songoda:skyblock:2.2.13') {
-        transitive = false
-    }
-    // SuperiorSkyblock
-    compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:1.8.4'
-    // VotingPlugin
-    compileOnly ('com.bencodez:votingplugin:6.8.3') {
-        transitive = false
-        exclude group: 'dev.dbassett'
-    }
-    // MMOItems
-    compileOnly ('net.Indyuce:MMOItems:6.5') {
-        transitive = false
-    }
-    compileOnly 'io.lumine:MythicLib:1.1.1'
-    // Slimefun4
-    compileOnly 'com.github.Slimefun:Slimefun4:RC-28'
+    compileOnly 'io.lumine:Mythic-Dist:5.2.0'
     // NuVotifier
-    compileOnly "com.vexsoftware:NuVotifier:2.7.3"
+    compileOnly 'com.vexsoftware:NuVotifier:2.7.3'
+    // PlaceholderAPI
+    compileOnly 'me.clip:placeholderapi:2.11.3-DEV-160'
     // SCore
-    compileOnly "com.github.Ssomar-Developement:SCore:v3.1.1"
+    compileOnly 'com.github.Ssomar-Developement:SCore:3.4.7'
+    // ShopGUIPlus
+    compileOnly ('com.github.brcdev-minecraft:shopgui-api:3.0.0') { transitive = false }
+    // Slimefun4
+    compileOnly 'com.github.Slimefun:Slimefun4:RC-32'
+    // SuperiorSkyblock2
+    compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:2022.9'
+    // uSkyBlock
+    compileOnly ('com.github.rlf:uSkyBlock-API:2.8.3') { transitive = false }
+    // VotingPlugin
+    compileOnly ('com.bencodez:votingplugin:6.9.5') { transitive = false }
+
+    // IridiumSkyblock
+    compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
+
     // bStats
     implementation 'org.bstats:bstats-bukkit-lite:1.8'
     // HikariCP
     implementation 'com.zaxxer:HikariCP:4.0.3'
     // slf4j
     implementation 'org.slf4j:slf4j-nop:1.7.36'
-
-    compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
 }
 
 tasks.build {
