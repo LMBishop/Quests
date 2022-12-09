@@ -41,14 +41,14 @@ public final class WalkingTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onMove(PlayerMoveEvent event) {
+    public void onPlayerMove(PlayerMoveEvent event) {
         if (event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
             return;
         }
 
-        Player player = event.getPlayer();
+        if (event.getPlayer().hasMetadata("NPC")) return;
 
-        if (player.hasMetadata("NPC")) return;
+        Player player = event.getPlayer();
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
@@ -62,8 +62,8 @@ public final class WalkingTaskType extends BukkitTaskType {
 
             super.debug("Player moved", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (task.getConfigValue("mode") != null
-                    && !validateTransportMethod(player, task.getConfigValue("mode").toString())) {
+            final String mode = (String) task.getConfigValue("mode");
+            if (mode != null && !validateMode(player, mode)) {
                 super.debug("Player's mode does not match required mode, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
@@ -80,8 +80,8 @@ public final class WalkingTaskType extends BukkitTaskType {
         }
     }
 
-    private boolean validateTransportMethod(Player player, String mode) {
-        return switch (mode.toLowerCase()) {
+    private boolean validateMode(Player player, String mode) {
+        return switch (mode) {
             case "boat" -> player.getVehicle() != null && player.getVehicle().getType() == EntityType.BOAT;
             case "horse" -> player.getVehicle() != null && player.getVehicle().getType() == EntityType.HORSE;
             case "pig" -> player.getVehicle() != null && player.getVehicle().getType() == EntityType.PIG;
