@@ -24,6 +24,12 @@ public final class MythicMobsKillingTaskType extends BukkitTaskType {
         super("mythicmobs_killing", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of a MythicMobs entity.");
         this.plugin = plugin;
 
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "name"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "level"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "min-level"));
+
         // MythicMobs 4
         try {
             Class.forName("io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent");
@@ -40,12 +46,6 @@ public final class MythicMobsKillingTaskType extends BukkitTaskType {
 
         plugin.getLogger().severe("Failed to register event handler for MythicMobs task type!");
         plugin.getLogger().severe("MythicMobs version detected: " + mythicMobsVersion);
-
-        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "name"));
-        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
-        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
-        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "level"));
-        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "min-level"));
     }
 
     private final class MythicMobs4Listener implements Listener {
