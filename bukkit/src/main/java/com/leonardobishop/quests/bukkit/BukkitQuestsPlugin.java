@@ -349,8 +349,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
             if (Bukkit.getPluginManager().isPluginEnabled("ShopGUIPlus")) {
                 // not tested
-                taskTypeManager.registerTaskType(new ShopGUIPlusBuyTaskType(this));
-                taskTypeManager.registerTaskType(new ShopGUIPlusSellTaskType(this));
+                String shopGUIPlusVersion = Bukkit.getPluginManager().getPlugin("ShopGUIPlus").getDescription().getVersion();
+                taskTypeManager.registerTaskType(new ShopGUIPlusBuyTaskType(this, shopGUIPlusVersion));
+                taskTypeManager.registerTaskType(new ShopGUIPlusSellTaskType(this, shopGUIPlusVersion));
             }
             if (Bukkit.getPluginManager().isPluginEnabled("FabledSkyblock")) {
                 // not tested

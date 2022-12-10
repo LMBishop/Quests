@@ -4,7 +4,6 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.QPlayerManager;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -12,44 +11,72 @@ import net.brcdev.shopgui.event.ShopPostTransactionEvent;
 import net.brcdev.shopgui.shop.Shop;
 import net.brcdev.shopgui.shop.ShopManager.ShopAction;
 import net.brcdev.shopgui.shop.ShopTransactionResult;
-import net.brcdev.shopgui.shop.item.ShopItem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public final class ShopGUIPlusBuyTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
+    private Method getShopItemMethod;
+    private Method getShopMethod;
+    private Method getIdMethod;
 
-    public ShopGUIPlusBuyTaskType(BukkitQuestsPlugin plugin) {
-        super("shopguiplus_buy", TaskUtils.TASK_ATTRIBUTION_STRING, "Purchase a given item from a ShopGUI+ shop", "shopguiplus_buycertain");
+    public ShopGUIPlusBuyTaskType(BukkitQuestsPlugin plugin, String shopGUIPlusVersion) {
+        super("shopguiplus_buy", TaskUtils.TASK_ATTRIBUTION_STRING, "Purchase a given item from a ShopGUIPlus shop", "shopguiplus_buycertain");
         this.plugin = plugin;
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "shop-id"));
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item-id"));
+
+        try {
+            Class<?> clazz = Class.forName("net.brcdev.shopgui.shop.ShopTransactionResult");
+            this.getShopItemMethod = clazz.getDeclaredMethod("getShopItem");
+
+            Class<?> returnType = this.getShopItemMethod.getReturnType();
+            this.getShopMethod = returnType.getDeclaredMethod("getShop");
+            this.getIdMethod = returnType.getDeclaredMethod("getId");
+
+            return;
+        } catch (ClassNotFoundException | NoSuchMethodException ignored) { }
+
+        plugin.getLogger().severe("Failed to register event handler for ShopGUIPlus task type!");
+        plugin.getLogger().severe("ShopGUIPlus version detected: " + shopGUIPlusVersion);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void afterTransaction(ShopPostTransactionEvent event) {
+    public void onShopPostTransaction(ShopPostTransactionEvent event) {
         ShopTransactionResult result = event.getResult();
         ShopAction shopAction = result.getShopAction();
         if (shopAction != ShopAction.BUY) {
             return;
         }
-    
+
         Player player = result.getPlayer();
-        QPlayerManager playerManager = this.plugin.getPlayerManager();
-        QPlayer qPlayer = playerManager.getPlayer(player.getUniqueId());
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
         }
-        
-        ShopItem shopItem = result.getShopItem();
-        Shop shop = shopItem.getShop();
-        String shopId = shop.getId();
-        String itemId = shopItem.getId();
+
+        Shop shop;
+        String itemId;
+        String shopId;
+
+        try {
+            Object shopItem = getShopItemMethod.invoke(result);
+            shop = (Shop) getShopMethod.invoke(shopItem);
+            itemId = (String) getIdMethod.invoke(shopItem);
+            shopId = shop.getId();
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            // It should never happen
+            return;
+        }
+
         int amountBought = result.getAmount();
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
