@@ -39,23 +39,33 @@ public class BukkitTaskTypeManager extends TaskTypeManager {
     }
 
     public void sendDebug(@NotNull String message, @NotNull String taskType, @NotNull String questId, @NotNull String taskId, @NotNull UUID associatedPlayer) {
+        String chatHeader = null;
         for (QPlayer qPlayer : plugin.getPlayerManager().getQPlayers()) {
             QPlayerPreferences.DebugType debugType = qPlayer.getPlayerPreferences().getDebug(questId);
-            Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
-            Player otherPlayer = Bukkit.getPlayer(associatedPlayer);
-            String associatedName = otherPlayer == null ? associatedPlayer.toString() : otherPlayer.getName();
+            if (debugType == null) {
+                continue;
+            }
 
-            String chatHeader = ChatColor.GRAY + "[" + associatedName + " - " + questId + "/" + taskId + " - type '" + taskType + "']";
-            if (player != null && debugType != null) {
-                switch (debugType) {
-                    case ALL -> {
+            Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
+            if (player == null) {
+                continue;
+            }
+
+            if (chatHeader == null) {
+                Player otherPlayer = Bukkit.getPlayer(associatedPlayer);
+                String associatedName = otherPlayer != null ? otherPlayer.getName() : associatedPlayer.toString();
+                chatHeader = ChatColor.GRAY + "[" + associatedName + " - " + questId + "/" + taskId + " - type '" + taskType + "']";
+            }
+
+            switch (debugType) {
+                case ALL -> {
+                    player.sendMessage(chatHeader);
+                    player.sendMessage(message);
+                }
+                case SELF -> {
+                    if (player.getUniqueId().equals(associatedPlayer)) {
                         player.sendMessage(chatHeader);
                         player.sendMessage(message);
-                    }
-                    case SELF -> {
-                        if (player.getUniqueId().equals(associatedPlayer)) {
-                            player.sendMessage(chatHeader);
-                            player.sendMessage(message);                        }
                     }
                 }
             }
