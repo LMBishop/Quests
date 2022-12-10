@@ -318,6 +318,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 Class.forName("org.bukkit.block.data.Ageable");
                 taskTypeManager.registerTaskType(new FarmingTaskType(this));
             } catch (ClassNotFoundException ignored) { } // server version cannot support task type
+            try {
+                Class.forName("io.papermc.paper.event.block.PlayerShearBlockEvent");
+                taskTypeManager.registerTaskType(new BlockshearingTaskType(this));
+            } catch (ClassNotFoundException ignored) { } // server version cannot support task type
             if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
                 taskTypeManager.registerTaskType(new ASkyBlockLevelTaskType(this));
             }
