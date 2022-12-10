@@ -14,6 +14,8 @@ public interface VersionSpecificHandler {
 
     boolean isPlayerOnStrider(Player player);
 
+    boolean isPlayerOnHorse(Player player);
+
     boolean isOffHandSwap(ClickType clickType);
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

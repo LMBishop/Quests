@@ -18,6 +18,7 @@ import com.leonardobishop.quests.bukkit.hook.title.Title_Bukkit;
 import com.leonardobishop.quests.bukkit.hook.title.Title_BukkitNoTimings;
 import com.leonardobishop.quests.bukkit.hook.title.Title_Other;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler;
+import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler11;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler16;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler8;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler9;
@@ -222,7 +223,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         if (version <= 8) {
             versionSpecificHandler = new VersionSpecificHandler8();
         } else switch (version) {
-            case 9, 10, 11, 12, 13, 14, 15 -> versionSpecificHandler = new VersionSpecificHandler9();
+            case 9, 10 -> versionSpecificHandler = new VersionSpecificHandler9();
+            case 11, 12, 13, 14, 15 -> versionSpecificHandler = new VersionSpecificHandler11();
             default -> versionSpecificHandler = new VersionSpecificHandler16();
         }
 

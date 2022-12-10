@@ -7,7 +7,9 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Boat;
+import org.bukkit.entity.Minecart;
+import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -82,10 +84,10 @@ public final class WalkingTaskType extends BukkitTaskType {
 
     private boolean validateMode(Player player, String mode) {
         return switch (mode) {
-            case "boat" -> player.getVehicle() != null && player.getVehicle().getType() == EntityType.BOAT;
-            case "horse" -> player.getVehicle() != null && player.getVehicle().getType() == EntityType.HORSE;
-            case "pig" -> player.getVehicle() != null && player.getVehicle().getType() == EntityType.PIG;
-            case "minecart" -> player.getVehicle() != null && player.getVehicle().getType() == EntityType.MINECART;
+            case "boat" -> player.getVehicle() instanceof Boat;
+            case "horse" -> plugin.getVersionSpecificHandler().isPlayerOnHorse(player);
+            case "pig" -> player.getVehicle() instanceof Pig;
+            case "minecart" -> player.getVehicle() instanceof Minecart;
             case "strider" -> plugin.getVersionSpecificHandler().isPlayerOnStrider(player);
             case "sneaking" -> // sprinting does not matter
                     player.isSneaking() && !player.isSwimming() && !player.isFlying()

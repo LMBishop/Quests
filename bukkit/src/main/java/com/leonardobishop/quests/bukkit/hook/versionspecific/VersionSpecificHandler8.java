@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -22,6 +23,11 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
     @Override
     public boolean isPlayerOnStrider(Player player) {
         return false;
+    }
+
+    @Override
+    public boolean isPlayerOnHorse(Player player) {
+        return player.getVehicle() instanceof Horse;
     }
 
     @Override
