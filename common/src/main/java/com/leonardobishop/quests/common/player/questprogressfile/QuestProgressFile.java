@@ -92,7 +92,7 @@ public class QuestProgressFile {
         COMPLETED_BEFORE("completedBefore"),
         STARTED("started");
 
-        private String legacy;
+        private final String legacy;
 
         QuestsProgressFilter(String legacy) {
             this.legacy = legacy;
@@ -197,10 +197,10 @@ public class QuestProgressFile {
     }
 
     /**
-     * Get the {@link QuestProgress} for a specified {@link Quest}, and generates a new one if it does not exist.
+     * Get the {@link QuestProgress} for a specified {@link Quest}. Generates a new one if it does not exist.
      *
      * @param quest the quest to get progress for
-     * @return {@link QuestProgress} or null if the quest does not exist
+     * @return {@link QuestProgress} or a blank generated one if the quest does not exist
      */
     public QuestProgress getQuestProgress(Quest quest) {
         if (questProgress.containsKey(quest.getId())) {
@@ -208,6 +208,16 @@ public class QuestProgressFile {
         }
         generateBlankQuestProgress(quest);
         return getQuestProgress(quest);
+    }
+
+    /**
+     * Tests whether or not the player has a specified {@link Quest} started.
+     *
+     * @param quest the quest to check for
+     * @return true if player has the quest started
+     */
+    public boolean hasQuestStarted(Quest quest) {
+        return questProgress.containsKey(quest.getId()) && questProgress.get(quest.getId()).isStarted();
     }
 
     /**

@@ -247,15 +247,9 @@ public class NormalQuestController implements QuestController {
 
     @Override
     public boolean hasPlayerStartedQuest(QPlayer qPlayer, Quest quest) {
-        if (config.getBoolean("options.quest-autostart")) {
-            QuestStartResult response = canPlayerStartQuest(qPlayer, quest);
-            return response == QuestStartResult.QUEST_SUCCESS || response == QuestStartResult.QUEST_ALREADY_STARTED;
-        } else {
-            if (quest.isAutoStartEnabled()) {
-                QuestStartResult response = canPlayerStartQuest(qPlayer, quest);
-                return response == QuestStartResult.QUEST_SUCCESS || response == QuestStartResult.QUEST_ALREADY_STARTED;
-            } else return qPlayer.getQuestProgressFile().hasQuestProgress(quest) && qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted();
-        }
+        return config.getBoolean("options.quest-autostart") || quest.isAutoStartEnabled()
+                ? canPlayerStartQuest(qPlayer, quest).hasPlayerStartedQuest()
+                : qPlayer.getQuestProgressFile().hasQuestStarted(quest);
     }
 
     private void resetQuest(QuestProgress questProgress) {
