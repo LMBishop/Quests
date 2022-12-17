@@ -1,7 +1,7 @@
 <p align="center">
 <img src="https://leonardobishop.com/~/artwork/questcompass2-256.png" width="200" height="200"><br>
 <img src="https://img.shields.io/github/license/LMBishop/Quests">
-<img src="https://img.shields.io/github/workflow/status/LMBishop/Quests/Build%20plugin">
+<img src="https://img.shields.io/github/actions/workflow/status/LMBishop/Quests/build.yml?branch=master">
 <img src="https://img.shields.io/github/issues-raw/LMBishop/Quests">
 <img src="https://img.shields.io/spiget/version/23696?color=inactive&label=version">
 <img src="https://mcbadges.leonardobishop.com/all/downloads?spigot=23696&songoda=quests-quests&polymart=938">
