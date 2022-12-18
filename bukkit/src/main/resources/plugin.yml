@@ -22,9 +22,27 @@ permissions:
   quests.command:
     description: Permission for main command
     default: true
+  quests.command.category:
+    description: Permission to execute /q category
+    default: op
+  quests.command.started:
+    description: Permission to execute /q started
+    default: op
+  quests.command.quest:
+    description: Permission to execute /q quest
+    default: op
+  quests.command.start:
+    description: Permission to execute /q start
+    default: op
+  quests.command.track:
+    description: Permission to execute /q track
+    default: op
+  quests.command.cancel:
+    description: Permission to execute /q cancel
+    default: op
   quests.command.random:
     description: Permission to execute /q random
-    default: true
+    default: op
   quests.admin:
-    description: Permission for the admin commands 
+    description: Permission for the admin commands
     default: op

@@ -35,6 +35,7 @@ public enum Messages {
     QUEST_UPDATER("messages.quest-updater", "&cQuests > &7A new version &c{newver} &7was found on Spigot (your version: &c{oldver}&7). Please update me! <3 - Link: {link}"),
     COMMAND_DATA_NOT_LOADED("messages.command-data-not-loaded", "&4Your quests progress file has not been loaded; you cannot use quests. If this issue persists, contact an admin."),
     COMMAND_SUB_DOESNTEXIST("messages.command-sub-doesntexist", "&7The specified subcommand '&c{sub}' &7does not exist."),
+    COMMAND_NO_PERMISSION("messages.command-no-permission", "&7You do not have permission to use this command."),
     COMMAND_QUEST_CANCEL_SPECIFY("messages.quest-cancel-specify", "&7You must specify a quest to cancel."),
     COMMAND_QUEST_START_DOESNTEXIST("messages.command-quest-start-doesntexist", "&7The specified quest '&c{quest}&7' does not exist."),
     COMMAND_QUEST_GENERAL_DOESNTEXIST("messages.command-quest-general-doesntexist", "&7The specified quest '&c{quest}&7' does not exist."),

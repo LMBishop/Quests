@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.quest.Quest;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -11,43 +12,33 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class CancelCommandHandler implements CommandHandler {
+public class StartCommandHandler implements CommandHandler {
 
     private final BukkitQuestsPlugin plugin;
 
-    public CancelCommandHandler(BukkitQuestsPlugin plugin) {
+    public StartCommandHandler(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public void handle(CommandSender sender, String[] args) {
         Player player = (Player) sender;
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
-        if (qPlayer == null) {
-            Messages.COMMAND_DATA_NOT_LOADED.send(player);
-            return;
-        }
-
-        Quest quest;
-        if (qPlayer.getQuestProgressFile().getStartedQuests().size() == 1) {
-            quest = qPlayer.getQuestProgressFile().getStartedQuests().get(0);
-        } else if (args.length >= 2) {
-            if (args[1].equals("*")) {
-                for (Quest startedQuest : qPlayer.getQuestProgressFile().getStartedQuests()) {
-                    qPlayer.cancelQuest(startedQuest);
-                }
+        if (args.length >= 2) {
+            Quest quest = plugin.getQuestManager().getQuestById(args[1]);
+            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+            if (qPlayer == null) {
+                Messages.COMMAND_DATA_NOT_LOADED.send(player);
                 return;
             }
-            quest = plugin.getQuestManager().getQuestById(args[1]);
             if (quest == null) {
                 Messages.COMMAND_QUEST_GENERAL_DOESNTEXIST.send(sender, "{quest}", args[1]);
                 return;
+            } else {
+                qPlayer.startQuest(quest);
             }
-        } else {
-            Messages.COMMAND_QUEST_CANCEL_SPECIFY.send(sender);
             return;
         }
-        qPlayer.cancelQuest(quest);
+        sender.sendMessage(ChatColor.RED + "/quests start <questid>");
     }
 
     @Override
@@ -60,6 +51,7 @@ public class CancelCommandHandler implements CommandHandler {
 
     @Override
     public @Nullable String getPermission() {
-        return "quests.command.cancel";
+        return "quests.command.start";
     }
+
 }

@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.bukkit.command;
 
+import com.leonardobishop.quests.bukkit.util.Messages;
 import org.bukkit.command.CommandSender;
 
 import java.util.*;
@@ -19,8 +20,12 @@ public abstract class CommandSwitcher implements CommandHandler {
         if (args.length > switchingIndex) {
             String subcommand = args[switchingIndex].toLowerCase();
             CommandHandler handler = subcommands.getOrDefault(subcommand, subcommands.get(aliases.get(subcommand)));
-            if (handler != null && (handler.getPermission() == null || sender.hasPermission(handler.getPermission()))) {
-                handler.handle(sender, args);
+            if (handler != null) {
+                if ((handler.getPermission() == null || sender.hasPermission(handler.getPermission()))) {
+                    handler.handle(sender, args);
+                } else {
+                    Messages.COMMAND_NO_PERMISSION.send(sender);
+                }
                 return;
             }
         }

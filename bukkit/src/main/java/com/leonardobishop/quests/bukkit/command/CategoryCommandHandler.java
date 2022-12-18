@@ -54,7 +54,7 @@ public class CategoryCommandHandler implements CommandHandler {
 
     @Override
     public @Nullable String getPermission() {
-        return null;
+        return "quests.command.category";
     }
 
 }

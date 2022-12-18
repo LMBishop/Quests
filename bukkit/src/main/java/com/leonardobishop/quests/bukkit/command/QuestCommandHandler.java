@@ -61,7 +61,7 @@ public class QuestCommandHandler implements CommandHandler {
 
     @Override
     public @Nullable String getPermission() {
-        return null;
+        return "quests.command.quest";
     }
 
 }

@@ -36,6 +36,6 @@ public class StartedCommandHandler implements CommandHandler {
 
     @Override
     public @Nullable String getPermission() {
-        return null;
+        return "quests.command.started";
     }
 }
