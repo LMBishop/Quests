@@ -26,10 +26,9 @@ public final class MilkingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
     }
 
-    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMilk(PlayerInteractEntityEvent event) {
-        if (!(event.getRightClicked() instanceof Cow) || (event.getPlayer().getItemInHand().getType() != Material.BUCKET)) {
+        if (!(event.getRightClicked() instanceof Cow) || (plugin.getVersionSpecificHandler().getItemInMainHand(event.getPlayer()).getType() != Material.BUCKET)) {
             return;
         }
 

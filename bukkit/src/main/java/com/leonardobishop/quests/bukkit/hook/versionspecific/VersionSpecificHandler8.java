@@ -64,4 +64,10 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
     public boolean isHotbarMoveAndReaddSupported() {
         return true;
     }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public ItemStack getItemInMainHand(Player player) {
+        return player.getItemInHand();
+    }
 }
