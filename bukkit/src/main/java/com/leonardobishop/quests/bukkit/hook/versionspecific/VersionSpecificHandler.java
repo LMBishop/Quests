@@ -25,4 +25,6 @@ public interface VersionSpecificHandler {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean isHotbarMoveAndReaddSupported();
+
+    ItemStack getItemInMainHand(Player player);
 }

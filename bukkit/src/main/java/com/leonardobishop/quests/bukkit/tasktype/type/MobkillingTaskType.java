@@ -128,7 +128,7 @@ public final class MobkillingTaskType extends BukkitTaskType {
             }
 
             if (task.hasConfigKey("item")) {
-                ItemStack item = killer.getItemInHand();
+                ItemStack item = plugin.getVersionSpecificHandler().getItemInMainHand(killer);
                 if (item == null) {
                     super.debug("Specific item is required, player has no item in hand; continuing...", quest.getId(), task.getId(), killer.getUniqueId());
                     continue;

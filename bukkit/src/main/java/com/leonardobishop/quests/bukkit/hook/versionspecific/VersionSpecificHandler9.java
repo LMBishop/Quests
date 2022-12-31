@@ -42,4 +42,9 @@ public class VersionSpecificHandler9 extends VersionSpecificHandler8 implements 
     public boolean isHotbarMoveAndReaddSupported() {
         return false;
     }
+
+    @Override
+    public ItemStack getItemInMainHand(Player player) {
+        return player.getInventory().getItemInMainHand();
+    }
 }
