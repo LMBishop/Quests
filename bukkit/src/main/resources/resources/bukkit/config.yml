@@ -191,6 +191,8 @@ options:
   gui-use-placeholderapi: false
   # Truncate quest requirements when there are multiple requirements to prevent enormous display items
   gui-truncate-requirements: true
+  # Close the UI automatically when a quest is accepted
+  gui-close-after-accept: true
   # Set the action buttons for the GUI
   gui-actions:
     start-quest: "LEFT"
