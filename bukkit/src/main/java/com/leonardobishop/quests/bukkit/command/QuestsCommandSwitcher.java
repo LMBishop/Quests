@@ -2,6 +2,7 @@ package com.leonardobishop.quests.bukkit.command;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.CommandUtils;
+import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.common.player.QPlayer;
 import org.bukkit.ChatColor;
@@ -61,7 +62,7 @@ public class QuestsCommandSwitcher extends CommandSwitcher implements TabExecuto
                 Messages.COMMAND_DATA_NOT_LOADED.send(player);
                 return true;
             }
-            plugin.getMenuController().openMainMenu(qPlayer);
+            MenuUtils.openMainMenu(plugin, qPlayer);
             return true;
         }
 

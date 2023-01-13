@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.bukkit.command;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.common.player.QPlayer;
 import org.bukkit.Bukkit;
@@ -27,7 +28,7 @@ public class AdminOpenguiQuestCommandHandler implements CommandHandler {
             if (player != null) {
                 QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                 if (qPlayer != null) {
-                    plugin.getMenuController().openMainMenu(qPlayer);
+                    MenuUtils.openMainMenu(plugin, qPlayer);
                     Messages.COMMAND_QUEST_OPENQUESTS_ADMIN_SUCCESS.send(sender,
                             "{player}", player.getName());
                     return;

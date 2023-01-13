@@ -2,6 +2,9 @@ package com.leonardobishop.quests.bukkit.menu.element;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
+import com.leonardobishop.quests.bukkit.menu.CancelQMenu;
+import com.leonardobishop.quests.bukkit.menu.ClickResult;
+import com.leonardobishop.quests.bukkit.menu.QMenu;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.util.Format;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
@@ -11,6 +14,7 @@ import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.quest.Quest;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -25,12 +29,28 @@ public class QuestMenuElement extends MenuElement {
     private final BukkitQuestsConfig config;
     private final QPlayer owner;
     private final Quest quest;
+    private final QMenu menu;
+    private final boolean dummy;
 
-    public QuestMenuElement(BukkitQuestsPlugin plugin, QPlayer owner, Quest quest) {
+    private final ClickType startClickType;
+    private final ClickType trackClickType;
+    private final ClickType cancelClickType;
+
+    public QuestMenuElement(BukkitQuestsPlugin plugin, Quest quest, QMenu menu) {
+        this(plugin, quest, menu, false);
+    }
+
+    public QuestMenuElement(BukkitQuestsPlugin plugin, Quest quest, QMenu menu, boolean dummy) {
         this.plugin = plugin;
         this.config = (BukkitQuestsConfig) plugin.getQuestsConfig();
-        this.owner = owner;
+        this.menu = menu;
+        this.owner = menu.getOwner();
         this.quest = quest;
+        this.dummy = dummy;
+
+        this.startClickType = MenuUtils.getClickType(config, "options.gui-actions.start-quest", "LEFT");
+        this.trackClickType = MenuUtils.getClickType(config, "options.gui-actions.track-quest", "MIDDLE");
+        this.cancelClickType = MenuUtils.getClickType(config, "options.gui-actions.cancel-quest", "RIGHT");
     }
 
     public QPlayer getOwner() {
@@ -52,6 +72,8 @@ public class QuestMenuElement extends MenuElement {
         long cooldown = owner.getQuestProgressFile().getCooldownFor(quest);
         QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(quest);
 
+        Map<String, String> placeholders = new HashMap<>();
+        ItemStack display;
         if (status == QuestStartResult.QUEST_LOCKED) {
             List<String> quests = new ArrayList<>();
             for (String requirement : quest.getRequirements()) {
@@ -62,7 +84,6 @@ public class QuestMenuElement extends MenuElement {
                     quests.add(Chat.legacyStrip(plugin.getQItemStackRegistry().getQuestItemStack(requirementQuest).getName()));
                 }
             }
-            Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", Chat.legacyStrip(qItemStack.getName()));
             placeholders.put("{questid}", quest.getId());
             if (quests.size() > 1 && plugin.getConfig().getBoolean("options.gui-truncate-requirements", true)) {
@@ -70,50 +91,90 @@ public class QuestMenuElement extends MenuElement {
             } else {
                 placeholders.put("{requirements}", String.join(", ", quests));
             }
-            ItemStack display;
             if (plugin.getQItemStackRegistry().hasQuestLockedItemStack(quest)) {
                 display = plugin.getQItemStackRegistry().getQuestLockedItemStack(quest);
             } else {
                 display = config.getItem("gui.quest-locked-display");
             }
-            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), display, placeholders);
         } else if (status == QuestStartResult.QUEST_ALREADY_COMPLETED) {
-            Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", Chat.legacyStrip(qItemStack.getName()));
             placeholders.put("{questid}", quest.getId());
-            ItemStack display;
             if (plugin.getQItemStackRegistry().hasQuestCompletedItemStack(quest)) {
                 display = plugin.getQItemStackRegistry().getQuestCompletedItemStack(quest);
             } else {
                 display = config.getItem("gui.quest-completed-display");
             }
-            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), display, placeholders);
         } else if (status == QuestStartResult.QUEST_NO_PERMISSION) {
-            Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{quest}", Chat.legacyStrip(qItemStack.getName()));
             placeholders.put("{questid}", quest.getId());
-            ItemStack display;
             if (plugin.getQItemStackRegistry().hasQuestPermissionItemStack(quest)) {
                 display = plugin.getQItemStackRegistry().getQuestPermissionItemStack(quest);
             } else {
                 display = config.getItem("gui.quest-permission-display");
             }
-            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), display, placeholders);
         } else if (cooldown > 0) {
-            Map<String, String> placeholders = new HashMap<>();
             placeholders.put("{time}", Format.formatTime(TimeUnit.SECONDS.convert(cooldown, TimeUnit.MILLISECONDS)));
             placeholders.put("{quest}", Chat.legacyStrip(qItemStack.getName()));
             placeholders.put("{questid}", quest.getId());
-            ItemStack display;
             if (plugin.getQItemStackRegistry().hasQuestCooldownItemStack(quest)) {
                 display = plugin.getQItemStackRegistry().getQuestCooldownItemStack(quest);
             } else {
                 display = config.getItem("gui.quest-cooldown-display");
             }
-            return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), display, placeholders);
         } else {
             return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), qItemStack.toItemStack(quest, owner, questProgress));
         }
+        return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), display, placeholders);
     }
 
+    @Override
+    public ClickResult handleClick(ClickType clickType) {
+        if (dummy) {
+            return ClickResult.DO_NOTHING;
+        }
+
+        boolean close = config.getBoolean("options.gui-close-after-accept", true);
+        if (!owner.hasStartedQuest(quest) && clickType == startClickType) {
+            if (owner.startQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
+                return close ? ClickResult.CLOSE_MENU : ClickResult.REFRESH_PANE;
+            }
+
+        } else if (clickType == trackClickType) {
+            if (owner.hasStartedQuest(quest)) {
+                if (!plugin.getQuestsConfig().getBoolean("options.allow-quest-track")) {
+                    return ClickResult.DO_NOTHING;
+                }
+
+                String tracked = owner.getPlayerPreferences().getTrackedQuestId();
+
+                if (quest.getId().equals(tracked)) {
+                    owner.trackQuest(null);
+                } else {
+                    owner.trackQuest(quest);
+                }
+                return close ? ClickResult.CLOSE_MENU : ClickResult.REFRESH_PANE;
+            }
+
+        } else if (clickType == cancelClickType) {
+            if (owner.hasStartedQuest(quest)) {
+                if (!plugin.getQuestsConfig().getBoolean("options.allow-quest-cancel")
+                        || plugin.getConfig().getBoolean("options.quest-autostart")
+                        || quest.isAutoStartEnabled()
+                        || !quest.isCancellable()) {
+                    return ClickResult.DO_NOTHING;
+                }
+
+                if (plugin.getQuestsConfig().getBoolean("options.gui-confirm-cancel", true)) {
+                     CancelQMenu cancelQMenu = new CancelQMenu(plugin, menu, owner, quest);
+                     plugin.getMenuController().openMenu(owner.getPlayerUUID(), cancelQMenu);
+                } else {
+                    if (menu.getOwner().cancelQuest(quest)) {
+                        return close ? ClickResult.CLOSE_MENU : ClickResult.REFRESH_PANE;
+                    }
+                }
+            }
+        }
+
+        return ClickResult.DO_NOTHING;
+    }
 }

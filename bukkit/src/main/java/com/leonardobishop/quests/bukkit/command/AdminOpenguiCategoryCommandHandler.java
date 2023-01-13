@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.bukkit.command;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.quest.Category;
@@ -37,12 +38,13 @@ public class AdminOpenguiCategoryCommandHandler implements CommandHandler {
             if (player != null) {
                 QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
                 if (qPlayer != null) {
-                    if (plugin.getMenuController().openQuestCategory(qPlayer, category, null, false) == 0) {
+                    if (category.isPermissionRequired() && !player.hasPermission("quests.category." + category.getId())) {
+                        Messages.COMMAND_QUEST_ADMIN_CATEGORY_PERMISSION.send(sender, "{player}", player.getName(), "{category}", category.getId());
+                    } else {
+                        MenuUtils.openQuestCategory(plugin, qPlayer, category, null);
                         Messages.COMMAND_QUEST_OPENCATEGORY_ADMIN_SUCCESS.send(sender,
                                 "{player}", player.getName(),
                                 "{category}", category.getId());
-                    } else {
-                        Messages.COMMAND_QUEST_ADMIN_CATEGORY_PERMISSION.send(sender, "{player}", player.getName(), "{category}", category.getId());
                     }
                     return;
                 }
