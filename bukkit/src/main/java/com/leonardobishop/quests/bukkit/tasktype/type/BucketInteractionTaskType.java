@@ -19,7 +19,7 @@ public abstract class BucketInteractionTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "bucket"));
-        super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, "bucket"));
+        super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, TaskUtils.MaterialListConfigValidatorMode.ITEM, "bucket"));
     }
 
     public void onBucket(Player player, Material bucket, BukkitQuestsPlugin plugin) {

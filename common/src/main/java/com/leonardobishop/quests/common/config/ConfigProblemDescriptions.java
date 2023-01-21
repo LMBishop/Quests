@@ -52,9 +52,11 @@ public enum ConfigProblemDescriptions {
                     "by their ID. The ID does not include the .yml<br>" +
                     "extension."
     ),
-    UNKNOWN_MATERIAL("Material '%s' does not exist",
-            "Material '%s' does not exist on the server.<br>" +
-                    "Please refer to the wiki for a list of javadocs<br>" +
+    UNKNOWN_MATERIAL("Material '%s' does not exist or is unsuitable",
+            "Material '%s' does not exist on the server<br>" +
+                    "or is unsuitable to the chosen task type. Ensure that<br>" +
+                    "the material is the adequate one for the specified<br>" +
+                    "item or block. Please refer to the wiki for a list of javadocs<br>" +
                     "corresponding to your server version. Alternatively,<br>" +
                     "you can find the material list by searching for your<br>" +
                     "server version + 'Material ENUM'."

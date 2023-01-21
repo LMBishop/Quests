@@ -29,7 +29,7 @@ public final class InteractTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
-        super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, "block", "blocks"));
+        super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, TaskUtils.MaterialListConfigValidatorMode.BLOCK, "block", "blocks"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
     }
 

@@ -33,7 +33,7 @@ public final class FarmingTaskType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
-        super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, "block", "blocks"));
+        super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, TaskUtils.MaterialListConfigValidatorMode.BLOCK, "block", "blocks"));
         super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Arrays.asList("break", "harvest"), "mode"));
     }
 

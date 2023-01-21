@@ -416,6 +416,29 @@ public class TaskUtils {
         };
     }
 
+    public enum MaterialListConfigValidatorMode {
+        ANY {
+            @Override
+            public boolean isValid(Material material) {
+                return true;
+            }
+        },
+        BLOCK {
+            @Override
+            public boolean isValid(Material material) {
+                return material.isBlock();
+            }
+        },
+        ITEM {
+            @Override
+            public boolean isValid(Material material) {
+                return material.isItem();
+            }
+        };
+
+        public abstract boolean isValid(Material material);
+    }
+
     /**
      * Returns a config validator which checks if at least one value in the given
      * paths is a valid list of materials.
@@ -432,7 +455,7 @@ public class TaskUtils {
      * @param paths a list of valid paths for task
      * @return config validator
      */
-    public static TaskType.ConfigValidator useMaterialListConfigValidator(TaskType type, String... paths) {
+    public static TaskType.ConfigValidator useMaterialListConfigValidator(TaskType type, MaterialListConfigValidatorMode mode, String... paths) {
         return (config, problems) -> {
             for (String path : paths) {
                 Object configBlock = config.get(path);
@@ -451,7 +474,8 @@ public class TaskUtils {
 
                 for (String materialName : checkBlocks) {
                     String[] split = materialName.split(":");
-                    if (Material.getMaterial(String.valueOf(split[0])) == null) {
+                    final Material material = Material.getMaterial(String.valueOf(split[0]));
+                    if (material == null || !mode.isValid(material)) {
                         problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
                                 ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(materialName),
                                 ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(materialName),

@@ -23,7 +23,7 @@ public final class MiningTaskType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
-        super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, "block", "blocks"));
+        super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, TaskUtils.MaterialListConfigValidatorMode.BLOCK, "block", "blocks"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "check-coreprotect"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "check-coreprotect-time"));
