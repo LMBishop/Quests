@@ -84,6 +84,9 @@ public class NormalQuestController implements QuestController {
             // PreStartQuestEvent -- start
             PreStartQuestEvent preStartQuestEvent = new PreStartQuestEvent(player, qPlayer, questResultMessage, code);
             Bukkit.getPluginManager().callEvent(preStartQuestEvent);
+
+            code = preStartQuestEvent.getQuestStartResult();
+
             // PreStartQuestEvent -- end
             if (code != QuestStartResult.QUEST_SUCCESS) {
                 Messages.send(preStartQuestEvent.getQuestResultMessage(), player);
