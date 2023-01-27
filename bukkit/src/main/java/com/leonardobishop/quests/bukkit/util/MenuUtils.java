@@ -73,6 +73,7 @@ public class MenuUtils {
             for (Map.Entry<String, Quest> entry : plugin.getQuestManager().getQuests().entrySet()) {
                 quests.add(entry.getValue());
             }
+            Collections.sort(quests);
             QuestQMenu questQMenu = new QuestQMenu(plugin, qPlayer, quests, null, null);
             plugin.getMenuController().openMenu(player, questQMenu);
         }
@@ -96,6 +97,7 @@ public class MenuUtils {
                 quests.add(quest);
             }
         }
+        Collections.sort(quests);
         QuestQMenu questQMenu = new QuestQMenu(plugin, qPlayer, quests, category.getId(), superMenu);
         plugin.getMenuController().openMenu(player, questQMenu);
     }

@@ -11,6 +11,7 @@ import com.leonardobishop.quests.common.quest.Quest;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,6 +46,7 @@ public class CategoryQMenu extends PaginatedQMenu {
                     quests.add(quest);
                 }
             }
+            Collections.sort(quests);
             QuestQMenu questQMenu = new QuestQMenu(plugin, owner, quests, category.getId(), this);
             MenuElement menuElement = new CategoryMenuElement(plugin, owner.getPlayerUUID(), category, questQMenu);
             categoryMenuElements.add(menuElement);
