@@ -36,7 +36,7 @@ public class Chat {
             questsPlugin.getQuestsLogger().debug("Modern chat is not available, resorting to legacy chat.");
             miniMessageParser = null;
         }
-        legacyPattern = Pattern.compile("&(?:\\d|#|[a-f]|[k-o]|r)");
+        legacyPattern = Pattern.compile("(&|§)(?:\\d|#|[a-f]|[k-o]|r)");
     }
 
     @Contract("null -> null")
