@@ -143,4 +143,9 @@ public class MenuUtils {
         return placeholders;
     }
 
+    public static int getHigherOrEqualMultiple(int num, int base) {
+        int r = num % base;
+        return r == 0 ? num : num + base - r;
+    }
+
 }

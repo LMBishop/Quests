@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit.menu;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.menu.element.*;
+import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import com.leonardobishop.quests.bukkit.util.StringUtils;
 import com.leonardobishop.quests.common.player.QPlayer;
 import org.bukkit.Bukkit;
@@ -106,7 +107,7 @@ public abstract class PaginatedQMenu extends QMenu {
         int maxSize = pageSize - (backMenuElement == null ? 0 : 9);
         BukkitQuestsConfig config = (BukkitQuestsConfig) plugin.getQuestsConfig();
         if ((menuElements.isEmpty() ? 0 : Collections.max(menuElements.keySet())) + 1 > maxSize
-                || menuElements.keySet().size() + menuElementsToFill.size() + customStaticElements > maxSize) {
+                || menuElements.size() + menuElementsToFill.size() + customStaticElements > maxSize) {
             MenuElement pageNextMenuElement = new PageNextMenuElement(config, this);
             MenuElement pagePrevMenuElement = new PagePrevMenuElement(config, this);
             MenuElement pageDescMenuElement = new PageDescMenuElement(config, this);
@@ -122,8 +123,8 @@ public abstract class PaginatedQMenu extends QMenu {
 
             // else find a place for the back button if needed
         } else if (backMenuElement != null) {
-            int row = ((menuElements.keySet().size() + menuElementsToFill.size() + customStaticElements) / 9) + 1;
-            staticMenuElements[row * 9] = backMenuElement;
+            int slot = MenuUtils.getHigherOrEqualMultiple(menuElements.size() + menuElementsToFill.size() + customStaticElements, 9);
+            staticMenuElements[slot] = backMenuElement;
         }
 
         boolean staticMenuElementsIsFull = true;
