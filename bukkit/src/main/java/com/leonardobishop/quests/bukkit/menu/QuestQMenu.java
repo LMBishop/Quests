@@ -29,7 +29,9 @@ public class QuestQMenu extends PaginatedQMenu {
         BukkitQuestsConfig config = (BukkitQuestsConfig) plugin.getQuestsConfig();
         this.categoryName = categoryName;
 
-        MenuElement backMenuElement = new BackMenuElement(config, owner.getPlayerUUID(), plugin.getMenuController(), categoryQMenu);
+        MenuElement backMenuElement = categoryQMenu != null
+                ? new BackMenuElement(config, owner.getPlayerUUID(), plugin.getMenuController(), categoryQMenu)
+                : null;
 
         List<MenuElement> filteredQuests = new ArrayList<>();
         for (Quest quest : quests) {
