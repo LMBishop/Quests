@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.bukkit.menu;
 
+import com.google.common.primitives.Ints;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.menu.element.*;
@@ -12,7 +13,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 
 public abstract class PaginatedQMenu extends QMenu {
@@ -106,7 +106,7 @@ public abstract class PaginatedQMenu extends QMenu {
         // this won't check if static elements overlap normal ones first but i don't care
         int maxSize = pageSize - (backMenuElement == null ? 0 : 9);
         BukkitQuestsConfig config = (BukkitQuestsConfig) plugin.getQuestsConfig();
-        if ((menuElements.isEmpty() ? 0 : Collections.max(menuElements.keySet())) + 1 > maxSize
+        if ((menuElements.isEmpty() ? 0 : Ints.max(menuElements.keys)) + 1 > maxSize
                 || menuElements.size() + menuElementsToFill.size() + customStaticElements > maxSize) {
             MenuElement pageNextMenuElement = new PageNextMenuElement(config, this);
             MenuElement pagePrevMenuElement = new PagePrevMenuElement(config, this);
@@ -151,7 +151,7 @@ public abstract class PaginatedQMenu extends QMenu {
         }
 
         this.minPage = 1;
-        this.maxPage = (menuElements.isEmpty() ? 0 : Collections.max(menuElements.keySet())) / pageSize + 1;
+        this.maxPage = (menuElements.isEmpty() ? 0 : Ints.max(menuElements.keys)) / pageSize + 1;
     }
 
     private void fillStaticMenuElements(int slot, MenuElement[] staticMenuElements) {

@@ -48,19 +48,21 @@ repositories {
 dependencies {
     compileOnly project(':common')
     // Paper
-    compileOnly 'io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT'
+    compileOnly('io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT') {
+        exclude(group: 'it.unimi.dsi', module: 'fastutil') // exclude fastutil just to don't use it (for 1.8 support)
+    }
     // ASkyBlock
-    compileOnly ('com.wasteofplastic:askyblock:3.0.9.4') { transitive = false }
+    compileOnly('com.wasteofplastic:askyblock:3.0.9.4') { transitive = false }
     // AuthLib
-    compileOnly ('com.mojang:authlib:1.5.21') { transitive = false }
+    compileOnly('com.mojang:authlib:1.5.21') { transitive = false }
     // BentoBox
-    compileOnly ('world.bentobox:bentobox:1.22.0-SNAPSHOT') { transitive = false }
+    compileOnly('world.bentobox:bentobox:1.22.0-SNAPSHOT') { transitive = false }
     // Citizens
-    compileOnly ('net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT') { transitive = false }
+    compileOnly('net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT') { transitive = false }
     // CoreProtect
     compileOnly 'net.coreprotect:coreprotect:21.2'
     // EssentialsX
-    compileOnly ('net.essentialsx:EssentialsX:2.19.7') { transitive = false }
+    compileOnly('net.essentialsx:EssentialsX:2.19.7') { transitive = false }
     // FabledSkyblock
     compileOnly 'com.songoda:skyblock:2.3.30'
     // IridiumSkyblock TODO fix whenever repo is up
@@ -82,15 +84,15 @@ dependencies {
     // SCore
     compileOnly 'com.github.Ssomar-Developement:SCore:3.4.7'
     // ShopGUIPlus
-    compileOnly ('com.github.brcdev-minecraft:shopgui-api:3.0.0') { transitive = false }
+    compileOnly('com.github.brcdev-minecraft:shopgui-api:3.0.0') { transitive = false }
     // Slimefun4
     compileOnly 'com.github.Slimefun:Slimefun4:RC-32'
     // SuperiorSkyblock2
     compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:2022.9'
     // uSkyBlock
-    compileOnly ('com.github.rlf:uSkyBlock-API:2.8.3') { transitive = false }
+    compileOnly('com.github.rlf:uSkyBlock-API:2.8.3') { transitive = false }
     // VotingPlugin
-    compileOnly ('com.bencodez:votingplugin:6.9.5') { transitive = false }
+    compileOnly('com.bencodez:votingplugin:6.9.5') { transitive = false }
 
     // IridiumSkyblock
     compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
@@ -101,6 +103,8 @@ dependencies {
     implementation 'com.zaxxer:HikariCP:4.0.3'
     // slf4j
     implementation 'org.slf4j:slf4j-nop:1.7.36'
+    // hppc
+    implementation 'com.carrotsearch:hppc:0.9.1'
 }
 
 tasks.build {
@@ -111,5 +115,13 @@ shadowJar {
     relocate 'org.bstats', 'com.leonardobishop.quests.libs.bstats'
     relocate 'com.zaxxer.hikari', 'com.leonardobishop.quests.libs.hikaricp'
     relocate 'org.slf4j', 'com.leonardobishop.quests.libs.slf4j'
+    relocate 'com.carrotsearch.hppc', 'com.leonardobishop.quests.libs.hppc'
+
+    minimize {
+        exclude(dependency('org.bstats:.*:.*'))
+        exclude(dependency('com.zaxxer:.*:.*'))
+        exclude(dependency('org.slf4j:.*:.*'))
+    }
+
     archiveClassifier.set('')
 }
