@@ -52,6 +52,10 @@ public final class ShopGUIPlusBuyTaskType extends BukkitTaskType {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onShopPostTransaction(ShopPostTransactionEvent event) {
         ShopTransactionResult result = event.getResult();
+        if (result.getResult() != ShopTransactionResult.ShopTransactionResultType.SUCCESS) {
+            return;
+        }
+
         ShopAction shopAction = result.getShopAction();
         if (shopAction != ShopAction.BUY) {
             return;
