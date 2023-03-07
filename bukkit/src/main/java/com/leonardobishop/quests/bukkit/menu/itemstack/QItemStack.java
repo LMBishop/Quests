@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -136,8 +137,8 @@ public class QItemStack {
                 if (parts[1].equals("progress")) {
                     Object progress = questProgress.getTaskProgress(parts[0]).getProgress();
                     String str;
-                    if (progress instanceof Float || progress instanceof Double) {
-                        str = String.format(String.valueOf(progress), "%.2f");
+                    if (progress instanceof Float || progress instanceof Double || progress instanceof BigDecimal) {
+                        str = String.format("%.2f", progress);
                     } else {
                         str = String.valueOf(progress);
                     }

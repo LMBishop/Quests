@@ -13,6 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
 import java.util.function.Function;
@@ -194,6 +195,8 @@ public class MySqlStorageProvider implements StorageProvider {
                                 progress = Float.valueOf(encodedProgress);
                             } else if (type.equals("int")) {
                                 progress = Integer.valueOf(encodedProgress);
+                            } else if (type.equals("BigDecimal")) {
+                                progress = new BigDecimal(encodedProgress);
                             } else {
                                 throw new RuntimeException("unknown data type '" + type + "'");
                             }
@@ -280,6 +283,9 @@ public class MySqlStorageProvider implements StorageProvider {
                             encodedProgress = String.valueOf(progress);
                         } else if (progress instanceof Float) {
                             type = "float";
+                            encodedProgress = String.valueOf(progress);
+                        } else if (progress instanceof BigDecimal) {
+                            type = "BigDecimal";
                             encodedProgress = String.valueOf(progress);
                         } else {
                             plugin.getQuestsLogger().warning("Cannot store progress for task '"
