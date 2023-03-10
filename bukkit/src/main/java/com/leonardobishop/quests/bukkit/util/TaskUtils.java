@@ -49,18 +49,12 @@ public class TaskUtils {
             return true;
         }
 
-        if (configurationData instanceof List) {
-            List allowedWorlds = (List) configurationData;
-            if (!allowedWorlds.isEmpty() && allowedWorlds.get(0) instanceof String) {
-                List<String> allowedWorldNames = (List<String>) allowedWorlds;
-                return allowedWorldNames.contains(worldName);
-            }
-            return true;
+        if (configurationData instanceof List<?> allowedWorldNames) {
+            return allowedWorldNames.contains(worldName);
         }
 
-        if (configurationData instanceof String) {
-            String allowedWorld = (String) configurationData;
-            return worldName.equals(allowedWorld);
+        if (configurationData instanceof String allowedWorldName) {
+            return worldName.equals(allowedWorldName);
         }
 
         return true;
@@ -75,6 +69,7 @@ public class TaskUtils {
         } else if (configObject != null) {
             strings.add(String.valueOf(configObject));
         }
+
         return strings;
     }
 
