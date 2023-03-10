@@ -38,12 +38,13 @@ public final class BlockshearingTaskType extends BukkitTaskType {
             return;
         }
 
+        Block block = event.getBlock();
+
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            Block block = event.getBlock();
             super.debug("Player sheared a block, current block is " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
             if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
