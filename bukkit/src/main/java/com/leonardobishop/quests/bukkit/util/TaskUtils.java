@@ -137,6 +137,12 @@ public class TaskUtils {
         return progress;
     }
 
+    public static int decrementIntegerTaskProgress(TaskProgress taskProgress) {
+        int progress = getIntegerTaskProgress(taskProgress);
+        taskProgress.setProgress(--progress);
+        return progress;
+    }
+
     public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type, TaskConstraint... constraints) {
         List<PendingTask> tasks = new ArrayList<>();
         List<TaskConstraint> taskConstraints = Arrays.asList(constraints);
