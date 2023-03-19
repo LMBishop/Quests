@@ -13,6 +13,8 @@ import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter_1_13;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter_Late_1_8;
 import com.leonardobishop.quests.bukkit.hook.papi.AbstractPlaceholderAPIHook;
 import com.leonardobishop.quests.bukkit.hook.papi.PlaceholderAPIHook;
+import com.leonardobishop.quests.bukkit.hook.playerblocktracker.AbstractPlayerBlockTrackerHook;
+import com.leonardobishop.quests.bukkit.hook.playerblocktracker.PlayerBlockTrackerHook;
 import com.leonardobishop.quests.bukkit.hook.title.Title;
 import com.leonardobishop.quests.bukkit.hook.title.Title_Bukkit;
 import com.leonardobishop.quests.bukkit.hook.title.Title_BukkitNoTimings;
@@ -89,6 +91,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private AbstractPlaceholderAPIHook placeholderAPIHook;
     private AbstractCoreProtectHook coreProtectHook;
     private AbstractEssentialsHook essentialsHook;
+    private AbstractPlayerBlockTrackerHook playerBlockTrackerHook;
     private ItemGetter itemGetter;
     private Title titleHandle;
     private VersionSpecificHandler versionSpecificHandler;
@@ -276,6 +279,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
             if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
                 this.essentialsHook = new EssentialsHook();
+            }
+            if (Bukkit.getPluginManager().isPluginEnabled("PlayerBlockTracker")) {
+                this.playerBlockTrackerHook = new PlayerBlockTrackerHook();
             }
 
             taskTypeManager.registerTaskType(new MiningTaskType(this));
@@ -567,6 +573,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     public @Nullable AbstractEssentialsHook getEssentialsHook() {
         return essentialsHook;
+    }
+
+    public @Nullable AbstractPlayerBlockTrackerHook getPlayerBlockTrackerHook() {
+        return playerBlockTrackerHook;
     }
 
     public ItemGetter getItemGetter() {

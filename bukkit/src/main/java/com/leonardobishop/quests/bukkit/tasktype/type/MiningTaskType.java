@@ -2,6 +2,7 @@ package com.leonardobishop.quests.bukkit.tasktype.type;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.AbstractCoreProtectHook;
+import com.leonardobishop.quests.bukkit.hook.playerblocktracker.AbstractPlayerBlockTrackerHook;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -30,6 +31,7 @@ public final class MiningTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, TaskUtils.MaterialListConfigValidatorMode.BLOCK, "block", "blocks"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "check-playerblocktracker"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "check-coreprotect"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "check-coreprotect-time"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "reverse-if-placed"));
@@ -68,8 +70,24 @@ public final class MiningTaskType extends BukkitTaskType {
             super.debug("allow-silk-touch is disabled, checking block", quest.getId(), task.getId(), player.getUniqueId());
 
             if (TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
-                boolean coreProtectEnabled = (boolean) task.getConfigValue("check-coreprotect", false);
-                int coreProtectTime = (int) task.getConfigValue("check-coreprotect-time", 3600);
+                boolean playerBlockTrackerEnabled = (boolean) task.getConfigValue("check-playerblocktracker", false);
+
+                if (playerBlockTrackerEnabled) {
+                    AbstractPlayerBlockTrackerHook playerBlockTrackerHook = plugin.getPlayerBlockTrackerHook();
+                    if (playerBlockTrackerHook != null) {
+                        super.debug("Running PlayerBlockTracker lookup", quest.getId(), task.getId(), player.getUniqueId());
+
+                        boolean result = playerBlockTrackerHook.checkBlock(block);
+                        if (result) {
+                            super.debug("PlayerBlockTracker lookup indicates this is a player placed block, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                            continue;
+                        }
+
+                        super.debug("PlayerBlockTracker lookup OK", quest.getId(), task.getId(), player.getUniqueId());
+                    } else {
+                        super.debug("check-playerblocktracker is enabled, but PlayerBlockTracker is not detected on the server", quest.getId(), task.getId(), player.getUniqueId());
+                    }
+                }
 
                 Runnable increment = () -> {
                     int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
@@ -81,6 +99,9 @@ public final class MiningTaskType extends BukkitTaskType {
                         taskProgress.setCompleted(true);
                     }
                 };
+
+                boolean coreProtectEnabled = (boolean) task.getConfigValue("check-coreprotect", false);
+                int coreProtectTime = (int) task.getConfigValue("check-coreprotect-time", 3600);
 
                 if (coreProtectEnabled) {
                     AbstractCoreProtectHook coreProtectHook = plugin.getCoreProtectHook();

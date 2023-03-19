@@ -81,6 +81,8 @@ dependencies {
     compileOnly 'com.vexsoftware:NuVotifier:2.7.3'
     // PlaceholderAPI
     compileOnly 'me.clip:placeholderapi:2.11.3-DEV-160'
+    // PlayerBlockTracker
+    compileOnly('com.github.Flo0:PlayerBlockTracker:1.0.2') { transitive = false }
     // SCore
     compileOnly 'com.github.Ssomar-Developement:SCore:3.4.7'
     // ShopGUIPlus
