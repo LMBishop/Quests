@@ -32,7 +32,7 @@ repositories {
     maven { url = 'https://repo.leonardobishop.com/releases/' }
     // PlaceholderAPI
     maven { url = 'https://repo.extendedclip.com/content/repositories/dev/' }
-    // SCore, ShopGUIPlus, Slimefun4
+    // PlayerBlockTracker, SCore, ShopGUIPlus, Slimefun4
     maven { url = 'https://jitpack.io/' }
     // SuperiorSkyblock2
     maven { url = 'https://repo.bg-software.com/repository/api/' }
@@ -48,7 +48,7 @@ repositories {
 dependencies {
     compileOnly project(':common')
     // Paper
-    compileOnly('io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT') {
+    compileOnly('io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT') {
         exclude(group: 'it.unimi.dsi', module: 'fastutil') // exclude fastutil just to don't use it (for 1.8 support)
     }
     // ASkyBlock
