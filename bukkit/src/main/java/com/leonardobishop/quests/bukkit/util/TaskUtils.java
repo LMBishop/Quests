@@ -12,6 +12,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import com.leonardobishop.quests.common.tasktype.TaskType;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -23,7 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Colorable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -145,21 +145,18 @@ public class TaskUtils {
 
     public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type, TaskConstraint... constraints) {
         List<PendingTask> tasks = new ArrayList<>();
-        List<TaskConstraint> taskConstraints = Arrays.asList(constraints);
+        boolean containsWorldConstraint = ArrayUtils.contains(constraints, TaskConstraint.WORLD);
 
         for (Quest quest : type.getRegisteredQuests()) {
             if (qPlayer.hasStartedQuest(quest)) {
                 QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(type.getType())) {
-                    if (taskConstraints.contains(TaskConstraint.WORLD)) {
-                        if (!TaskUtils.validateWorld(player, task)) {
-                            continue;
-                        }
+                    if (containsWorldConstraint && !TaskUtils.validateWorld(player, task)) {
+                        continue;
                     }
 
                     TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
-
                     if (taskProgress.isCompleted()) {
                         continue;
                     }
