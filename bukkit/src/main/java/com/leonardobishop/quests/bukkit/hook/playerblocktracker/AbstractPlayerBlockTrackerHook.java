@@ -12,4 +12,9 @@ public interface AbstractPlayerBlockTrackerHook {
      */
     boolean checkBlock(Block block);
 
+    /**
+     * Changes PlayerBlockTracker listener to be called after the Quests' one is
+     */
+    void fixPlayerBlockTracker();
+
 }
