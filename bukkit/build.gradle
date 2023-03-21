@@ -23,7 +23,7 @@ repositories {
     // EssentialsX
     maven { url = 'https://repo.essentialsx.net/releases/' }
     // MMOItems, MythicLib
-    maven { url = 'https://nexus.phoenixdvpt.fr/repository/maven-public/' }
+    maven { url = 'https://nexus.phoenixdevt.fr/repository/maven-public/' }
     // MythicMobs 4, FabledSkyblock
     maven { url = 'https://repo.songoda.com/repository/public/' }
     // MythicMobs 5
@@ -70,9 +70,9 @@ dependencies {
     // JetBrains Annotations
     compileOnly 'org.jetbrains:annotations:23.0.0'
     // MMOItems
-    compileOnly 'net.Indyuce:MMOItems-API:6.8.3-SNAPSHOT'
+    compileOnly 'net.Indyuce:MMOItems-API:6.9.2-SNAPSHOT'
     // MythicLib
-    compileOnly 'io.lumine:MythicLib-dist:1.3.4-SNAPSHOT'
+    compileOnly 'io.lumine:MythicLib-dist:1.5.1-SNAPSHOT'
     // MythicMobs 4
     compileOnly 'io.lumine.xikage:MythicMobs:4.12.0'
     // MythicMobs 5
