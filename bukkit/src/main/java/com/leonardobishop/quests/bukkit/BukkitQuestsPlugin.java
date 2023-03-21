@@ -282,7 +282,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
             if (Bukkit.getPluginManager().isPluginEnabled("PlayerBlockTracker")) {
                 this.playerBlockTrackerHook = new PlayerBlockTrackerHook();
-                this.playerBlockTrackerHook.fixPlayerBlockTracker();
             }
 
             taskTypeManager.registerTaskType(new MiningTaskType(this));
@@ -383,6 +382,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.closeRegistrations();
             questsLogger.info(taskTypeManager.getTaskTypes().size() + " task types have been registered"
                     + (taskTypeManager.getSkipped() > 0 ? " (" + taskTypeManager.getSkipped() + " skipped due to exclusions or conflicting names)." : "."));
+
+            if (playerBlockTrackerHook != null) {
+                this.playerBlockTrackerHook.fixPlayerBlockTracker();
+            }
 
             reloadQuests();
             if (!this.getConfigProblems().isEmpty()) {
