@@ -282,6 +282,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             }
             if (Bukkit.getPluginManager().isPluginEnabled("PlayerBlockTracker")) {
                 this.playerBlockTrackerHook = new PlayerBlockTrackerHook();
+                this.playerBlockTrackerHook.fixPlayerBlockTracker();
             }
 
             taskTypeManager.registerTaskType(new MiningTaskType(this));
