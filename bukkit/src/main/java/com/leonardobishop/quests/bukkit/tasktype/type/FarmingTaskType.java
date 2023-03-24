@@ -50,7 +50,7 @@ public final class FarmingTaskType extends BukkitTaskType {
     }
 
     private void handle(Player player, Block block, BlockData blockData, String mode) {
-        if (!(blockData instanceof Ageable crop && crop.getAge() == crop.getMaximumAge())) {
+        if (!(blockData instanceof Ageable crop && crop.getAge() == crop.getMaximumAge() || plugin.getVersionSpecificHandler().isCaveVinesPlantWithBerries(blockData))) {
             return;
         }
 
