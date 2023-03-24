@@ -356,6 +356,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 taskTypeManager.registerTaskType(new EssentialsMoneyEarnTaskType(this));
                 taskTypeManager.registerTaskType(new EssentialsBalanceTaskType(this));
             }
+            if (Bukkit.getPluginManager().isPluginEnabled("PlayerPoints")) {
+                taskTypeManager.registerTaskType(new PlayerPointsEarnTaskType(this));
+            }
             if (Bukkit.getPluginManager().isPluginEnabled("ShopGUIPlus")) {
                 // not tested
                 String shopGUIPlusVersion = Bukkit.getPluginManager().getPlugin("ShopGUIPlus").getDescription().getVersion();
