@@ -8,14 +8,17 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.entity.Boat;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
 
 import java.util.Arrays;
+import java.util.List;
 
 public final class WalkingTaskType extends BukkitTaskType {
 
@@ -48,9 +51,32 @@ public final class WalkingTaskType extends BukkitTaskType {
             return;
         }
 
-        if (event.getPlayer().hasMetadata("NPC")) return;
-
         Player player = event.getPlayer();
+        if (player.isInsideVehicle()) {
+            return;
+        }
+
+        handle(player);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onVehicleMove(VehicleMoveEvent event) {
+        if (event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
+            return;
+        }
+
+        List<Entity> entities = event.getVehicle().getPassengers();
+        for (Entity entity : entities) {
+            if (entity instanceof Player player) {
+                handle(player);
+            }
+        }
+    }
+
+    private void handle(Player player) {
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
