@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -63,6 +64,11 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
     @Override
     public boolean isHotbarMoveAndReaddSupported() {
         return true;
+    }
+
+    @Override
+    public boolean isCaveVinesPlantWithBerries(BlockData blockData) {
+        return false;
     }
 
     @SuppressWarnings("deprecation")

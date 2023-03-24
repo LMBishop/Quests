@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -25,6 +26,8 @@ public interface VersionSpecificHandler {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean isHotbarMoveAndReaddSupported();
+
+    boolean isCaveVinesPlantWithBerries(BlockData blockData);
 
     ItemStack getItemInMainHand(Player player);
 }
