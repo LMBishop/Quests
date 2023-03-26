@@ -299,7 +299,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new ShearingTaskType(this));
             taskTypeManager.registerTaskType(new PositionTaskType(this));
             taskTypeManager.registerTaskType(new PlaytimeTaskType(this));
-            taskTypeManager.registerTaskType(new BrewingTaskType(this));
             taskTypeManager.registerTaskType(new ExpEarnTaskType(this));
             taskTypeManager.registerTaskType(new BreedingTaskType(this));
             taskTypeManager.registerTaskType(new EnchantingTaskType(this));
@@ -311,6 +310,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new BucketEmptyTaskType(this));
             taskTypeManager.registerTaskType(new BucketFillTaskType(this));
             taskTypeManager.registerTaskType(new InteractTaskType(this));
+            try {
+                Class.forName("org.bukkit.event.inventory.BrewEvent").getMethod("getResults");
+                taskTypeManager.registerTaskType(new BrewingTaskType(this));
+            } catch (ClassNotFoundException | NoSuchMethodException ignored) { } // server version cannot support task type
             try {
                 Class.forName("org.bukkit.event.inventory.SmithItemEvent");
                 taskTypeManager.registerTaskType(new SmithingTaskType(this));
