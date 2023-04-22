@@ -74,7 +74,7 @@ dependencies {
     // MMOItems
     compileOnly 'net.Indyuce:MMOItems-API:6.9.2-SNAPSHOT'
     // MythicLib
-    compileOnly 'io.lumine:MythicLib-dist:1.5.1-SNAPSHOT'
+    compileOnly 'io.lumine:MythicLib-dist:1.6-SNAPSHOT'
     // MythicMobs 4
     compileOnly 'io.lumine.xikage:MythicMobs:4.12.0'
     // MythicMobs 5
