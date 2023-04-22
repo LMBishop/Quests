@@ -31,11 +31,27 @@ public final class BreedingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useEntityListConfigValidator(this, "mob", "mobs"));
 
         try {
+            Class.forName("io.papermc.paper.event.entity.EntityFertilizeEggEvent");
+            plugin.getServer().getPluginManager().registerEvents(new EntityFertilizeEggListener(), plugin);
+        } catch (ClassNotFoundException ignored) {
+        } // server version cannot support the event
+
+        try {
             Class.forName("org.bukkit.event.entity.EntityBreedEvent");
             plugin.getServer().getPluginManager().registerEvents(new BreedingTaskType.EntityBreedListener(), plugin);
         } catch (ClassNotFoundException ignored) {
             // server version cannot support the event, so we use CreatureSpawnEvent instead
             plugin.getServer().getPluginManager().registerEvents(new BreedingTaskType.CreatureSpawnListener(), plugin);
+        }
+    }
+
+    private final class EntityFertilizeEggListener implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        public void onEntityFertilizeEgg(io.papermc.paper.event.entity.EntityFertilizeEggEvent event) {
+            Player player = event.getBreeder();
+            if (player != null) {
+                handle(player, event.getEntityType());
+            }
         }
     }
 
