@@ -44,6 +44,10 @@ public final class ReplenishingTaskType extends BukkitTaskType {
         }
 
         final LootableInventory inventory = event.getInventory();
+        if (!inventory.hasLootTable()) {
+            return;
+        }
+
         final Block block = inventory instanceof final LootableBlockInventory blockInventory ? blockInventory.getBlock() : null;
         final Entity entity = inventory instanceof final LootableEntityInventory entityInventory ? entityInventory.getEntity() : null;
 
