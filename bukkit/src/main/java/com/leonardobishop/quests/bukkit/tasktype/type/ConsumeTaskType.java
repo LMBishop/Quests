@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.ItemStack;
 
 public final class ConsumeTaskType extends BukkitTaskType {
 
@@ -29,6 +30,7 @@ public final class ConsumeTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
     }
 
     @Override
@@ -40,14 +42,16 @@ public final class ConsumeTaskType extends BukkitTaskType {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onItemPickup(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
-
-        if (!player.isOnline()) return;
-
-        if (player.hasMetadata("NPC")) return;
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+        if (qPlayer == null) {
+            return;
+        }
 
-        if (qPlayer == null) return;
+        ItemStack item = event.getItem();
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
             Quest quest = pendingTask.quest();
@@ -63,20 +67,23 @@ public final class ConsumeTaskType extends BukkitTaskType {
                 qi = fetchedItem;
             }
 
-            super.debug("Player consumed item of type " + event.getItem().getType(), quest.getId(), task.getId(), event.getPlayer().getUniqueId());
-            if (!qi.compareItemStack(event.getItem())) {
-                super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+            super.debug("Player consumed item of type " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
+
+            boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
+            if (!qi.compareItemStack(item, exactMatch)) {
+                super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
 
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+            int amount = (int) task.getConfigValue("amount");
 
             if (progress >= amount) {
-                super.debug("Marking task as complete", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
             }
         }
     }
-
 }
