@@ -35,9 +35,10 @@ public final class SmeltingTaskType extends BukkitTaskType {
         this.plugin = plugin;
 
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
-        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Arrays.asList(
                 "smoker",
                 "blast_furnace",
@@ -111,17 +112,18 @@ public final class SmeltingTaskType extends BukkitTaskType {
                     qi = fetchedItem;
                 }
 
-                if (!qi.compareItemStack(item)) {
+                boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
+                if (!qi.compareItemStack(item, exactMatch)) {
                     super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
             }
 
-            int amount = (int) task.getConfigValue("amount");
-
             int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
             taskProgress.setProgress(progress + eventAmount);
             super.debug("Updating task progress (now " + (progress + eventAmount) + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+            int amount = (int) task.getConfigValue("amount");
 
             if ((int) taskProgress.getProgress() >= amount) {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
