@@ -30,6 +30,8 @@ public final class MobkillingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useEntityListConfigValidator(this, "mob", "mobs"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "hostile"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
     }
 
     @Override
@@ -106,7 +108,8 @@ public final class MobkillingTaskType extends BukkitTaskType {
                     qi = fetchedItem;
                 }
 
-                if (!qi.compareItemStack(item)) {
+                boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
+                if (!qi.compareItemStack(item, exactMatch)) {
                     super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 } else {
