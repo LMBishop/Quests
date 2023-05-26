@@ -62,6 +62,11 @@ public final class EnchantingTaskType extends BukkitTaskType {
             if (task.hasConfigKey("enchantment")) {
                 hasEnchantment = false;
                 List<String> enchantments = TaskUtils.getConfigStringList(task, "enchantment");
+                if (enchantments == null) {
+                    // TODO use TaskUtils method to match enchant
+                    continue;
+                }
+
                 for (String enchantment : enchantments) {
                     Enchantment enchantmentObject = Enchantment.getByName(enchantment);
                     if (enchantmentObject == null) {
