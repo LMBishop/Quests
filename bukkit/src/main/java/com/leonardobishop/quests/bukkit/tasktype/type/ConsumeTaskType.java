@@ -38,9 +38,8 @@ public final class ConsumeTaskType extends BukkitTaskType {
         fixedQuestItemCache.clear();
     }
 
-    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onItemPickup(PlayerItemConsumeEvent event) {
+    public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
         if (player.hasMetadata("NPC")) {
             return;
@@ -57,8 +56,6 @@ public final class ConsumeTaskType extends BukkitTaskType {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
-
-            int amount = (int) task.getConfigValue("amount");
 
             QuestItem qi;
             if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
