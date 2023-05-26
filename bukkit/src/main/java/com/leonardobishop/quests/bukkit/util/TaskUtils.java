@@ -18,10 +18,13 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Colorable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,17 +63,16 @@ public class TaskUtils {
         return true;
     }
 
-    public static List<String> getConfigStringList(Task task, String key) {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static @Nullable List<String> getConfigStringList(Task task, String key) {
         Object configObject = task.getConfigValue(key);
-
-        List<String> strings = new ArrayList<>();
-        if (configObject instanceof List) {
-            strings.addAll((List) configObject);
-        } else if (configObject != null) {
-            strings.add(String.valueOf(configObject));
+        if (configObject instanceof List list) {
+            return List.copyOf(list);
+        } else if (configObject instanceof String s){
+            return List.of(s);
+        } else {
+            return null;
         }
-
-        return strings;
     }
 
     public static boolean getConfigBoolean(Task task, String key) {
@@ -175,76 +177,111 @@ public class TaskUtils {
         WORLD
     }
 
-    public static boolean matchBlock(BukkitTaskType type, PendingTask pendingTask, Block block, UUID player) {
+    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Block block, @NotNull UUID player) {
         Task task = pendingTask.task;
 
-        Material material;
+        List<String> checkBlocks = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("block") ? "block" : "blocks");
+        if (checkBlocks == null) {
+            return true;
+        } else if (checkBlocks.isEmpty()) {
+            return false;
+        }
 
         Object configData = task.getConfigValue("data");
 
-        List<String> checkBlocks = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("block") ? "block" : "blocks");
-        if (checkBlocks.isEmpty()) {
-            return true;
-        }
+        Material blockMaterial = block.getType();
+        //noinspection deprecation
+        byte blockData = block.getData();
+
+        Material material;
+        int comparableData;
 
         for (String materialName : checkBlocks) {
-            // LOG:1 LOG:2 LOG should all be supported with this
-            String[] split = materialName.split(":");
-            int comparableData = 0;
-            if (configData != null) {
+            String[] parts = materialName.split(":", 2);
+            if (parts.length == 2) {
+                comparableData = Integer.parseInt(parts[1]);
+            } else if (configData != null) {
                 comparableData = (int) configData;
-            }
-            if (split.length > 1) {
-                comparableData = Integer.parseInt(split[1]);
-            }
-
-            material = Material.getMaterial(String.valueOf(split[0]));
-
-
-            type.debug("Checking against block " + material, pendingTask.quest.getId(), task.getId(), player);
-
-            if (block != null && block.getType() == material) {
-                short blockData = block.getData();
-                if (((split.length == 1 && configData == null) || ((int) blockData) == comparableData)) {
-                    type.debug("Block match", pendingTask.quest.getId(), task.getId(), player);
-                    return true;
-                } else {
-                    type.debug("Data mismatch", pendingTask.quest.getId(), task.getId(), player);
-                }
             } else {
-                type.debug("Type mismatch", pendingTask.quest.getId(), task.getId(), player);
+                comparableData = 0;
+            }
+
+            material = Material.getMaterial(parts[0]);
+
+            type.debug("Checking against block " + material + ":" + comparableData, pendingTask.quest.getId(), task.getId(), player);
+
+            if (material == blockMaterial && ((parts.length == 1 && configData == null) || blockData == comparableData)) {
+                type.debug("Block match", pendingTask.quest.getId(), task.getId(), player);
+                return true;
+            } else {
+                type.debug("Block mismatch", pendingTask.quest.getId(), task.getId(), player);
             }
         }
+
         return false;
     }
 
-    public static boolean matchDyeColor(BukkitTaskType type, PendingTask pendingTask, Colorable colorable, UUID player) {
+    public static boolean matchColorable(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Colorable colorable, @NotNull UUID player) {
         Task task = pendingTask.task;
 
-        DyeColor color;
+        DyeColor colorableColor = colorable.getColor();
 
         List<String> checkColors = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("color") ? "color" : "colors");
-        if (checkColors.isEmpty()) {
+        if (checkColors == null) {
             return true;
+        } else if (checkColors.isEmpty()) {
+            return colorableColor == null;
         }
+
+        if (colorableColor == null) {
+            return false;
+        }
+
+        DyeColor color;
 
         for (String colorName : checkColors) {
             color = DyeColor.valueOf(colorName);
 
-            DyeColor entityColor = colorable.getColor();
-            if (entityColor == null) {
-                break;
-            }
+            type.debug("Checking against color " + color, pendingTask.quest.getId(), task.getId(), player);
 
-            type.debug("Checking against entity " + entityColor.name(), pendingTask.quest.getId(), task.getId(), player);
-
-            if (entityColor == color) {
-                type.debug("DyeColor match", pendingTask.quest.getId(), task.getId(), player);
+            if (color == colorableColor) {
+                type.debug("Color match", pendingTask.quest.getId(), task.getId(), player);
                 return true;
             } else {
-                type.debug("DyeColor mismatch", pendingTask.quest.getId(), task.getId(), player);
+                type.debug("Color mismatch", pendingTask.quest.getId(), task.getId(), player);
             }
         }
+
+        return false;
+    }
+
+    public static boolean matchEntity(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Entity entity, @NotNull UUID player) {
+        Task task = pendingTask.task;
+
+        List<String> checkMobs = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("mob") ? "mob" : "mobs");
+        if (checkMobs == null) {
+            return true;
+        } else if (checkMobs.isEmpty()) {
+            return false;
+        }
+
+        EntityType entityType = entity.getType();
+
+        EntityType mob;
+
+        for (final String mobName : checkMobs) {
+            mob = EntityType.valueOf(mobName);
+
+            type.debug("Checking against mob " + mob, pendingTask.quest.getId(), task.getId(), player);
+
+            if (mob == entityType) {
+                type.debug("Mob match", pendingTask.quest.getId(), task.getId(), player);
+                return true;
+            } else {
+                type.debug("Mob mismatch", pendingTask.quest.getId(), task.getId(), player);
+            }
+        }
+
         return false;
     }
 
