@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
+import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -269,7 +270,7 @@ public class TaskUtils {
 
         EntityType mob;
 
-        for (final String mobName : checkMobs) {
+        for (String mobName : checkMobs) {
             mob = EntityType.valueOf(mobName);
 
             type.debug("Checking against mob " + mob, pendingTask.quest.getId(), task.getId(), player);
@@ -279,6 +280,36 @@ public class TaskUtils {
                 return true;
             } else {
                 type.debug("Mob mismatch", pendingTask.quest.getId(), task.getId(), player);
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean matchName(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable String name, boolean legacyColor, boolean ignoreCase, @NotNull UUID player) {
+        Task task = pendingTask.task;
+
+        List<String> checkNames = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("name") ? "name" : "names");
+        if (checkNames == null) {
+            return true;
+        } else if (checkNames.isEmpty()) {
+            return name == null;
+        }
+
+        if (name == null) {
+            return false;
+        }
+
+        for (String s : checkNames) {
+            type.debug("Checking against name " + s, pendingTask.quest.getId(), task.getId(), player);
+
+            s = Chat.legacyColor(s);
+
+            if (StringUtils.equals(s, name, ignoreCase)) {
+                type.debug("Name match", pendingTask.quest.getId(), task.getId(), player);
+                return true;
+            } else {
+                type.debug("Name mismatch", pendingTask.quest.getId(), task.getId(), player);
             }
         }
 
