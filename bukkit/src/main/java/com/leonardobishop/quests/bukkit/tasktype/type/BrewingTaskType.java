@@ -12,13 +12,14 @@ import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.BrewEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.inventory.BrewerInventory;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -46,12 +47,19 @@ public final class BrewingTaskType extends BukkitTaskType {
         fixedQuestItemCache.clear();
     }
 
-    @SuppressWarnings("ConstantConditions")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.BREWING_STAND) {
-            brewingStands.put(event.getClickedBlock().getLocation(), event.getPlayer().getUniqueId());
+    public void onInventoryOpen(InventoryOpenEvent event) {
+        final Inventory inventory = event.getInventory();
+        if (!(inventory instanceof BrewerInventory)) {
+            return;
         }
+
+        final InventoryHolder holder = inventory.getHolder();
+        if (holder == null) {
+            return;
+        }
+
+        brewingStands.put(inventory.getLocation(), event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
