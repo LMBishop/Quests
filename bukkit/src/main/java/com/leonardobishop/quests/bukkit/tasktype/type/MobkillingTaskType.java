@@ -6,7 +6,6 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
-import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
@@ -16,8 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
 
 public final class MobkillingTaskType extends BukkitTaskType {
 
@@ -41,100 +38,66 @@ public final class MobkillingTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onMobKill(EntityDeathEvent event) {
-        Player killer = event.getEntity().getKiller();
-        Entity mob = event.getEntity();
-
-        if (mob == null || mob instanceof Player) {
+    public void onEntityDeath(EntityDeathEvent event) {
+        Player player = event.getEntity().getKiller();
+        if (player == null) {
             return;
         }
 
-        if (killer == null) {
+        if (player.hasMetadata("NPC")) {
             return;
         }
 
-        if (killer.hasMetadata("NPC")) return;
-
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(killer.getUniqueId());
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
         }
 
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(killer, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+        final LivingEntity entity = event.getEntity();
+        if (entity instanceof Player) {
+            return;
+        }
+
+        //noinspection deprecation
+        final String customName = entity.getCustomName();
+
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player killed " + mob.getType(), quest.getId(), task.getId(), killer.getUniqueId());
-
-            List<String> configEntities = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("mob") ? "mob" : "mobs");
+            super.debug("Player killed " + entity.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
             if (task.hasConfigKey("hostile")) {
                 boolean hostile = TaskUtils.getConfigBoolean(task, "hostile");
 
-                if (!hostile && !(mob instanceof Animals)) {
-                    super.debug("Mob must be passive, but is hostile, continuing...", quest.getId(), task.getId(), killer.getUniqueId());
+                if (!hostile && !(entity instanceof Animals)) {
+                    super.debug("Mob must be passive, but is hostile, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
-                } else if (hostile && !(mob instanceof Monster)) {
-                    super.debug("Mob must be hostile, but is passive, continuing...", quest.getId(), task.getId(), killer.getUniqueId());
-                    continue;
-                }
-
-            }
-
-            if (!configEntities.isEmpty()) {
-                super.debug("List of required names entities; mob type is " + mob.getType(), quest.getId(), task.getId(), killer.getUniqueId());
-
-                boolean validMob = false;
-                for (String entry : configEntities) {
-                    super.debug("Checking against mob '" + entry + "'", quest.getId(), task.getId(), killer.getUniqueId());
-                    try {
-                        EntityType entity = EntityType.valueOf(entry);
-                        if (mob.getType() == entity) {
-                            super.debug("Mob is valid", quest.getId(), task.getId(), killer.getUniqueId());
-                            validMob = true;
-                            break;
-                        }
-                    } catch (IllegalArgumentException ignored) {
-                    }
-                }
-
-                if (!validMob) {
-                    super.debug("Mob is not in list of required mobs, continuing...", quest.getId(), task.getId(), killer.getUniqueId());
+                } else if (hostile && !(entity instanceof Monster)) {
+                    super.debug("Mob must be hostile, but is passive, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
             }
 
-            List<String> configNames = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("name") ? "name" : "names");
+            if (!TaskUtils.matchEntity(this, pendingTask, entity, player.getUniqueId())) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-            if (!configNames.isEmpty()) {
-                super.debug("List of required names exists; mob name is '" + Chat.legacyStrip(mob.getCustomName()) + "'", quest.getId(), task.getId(), killer.getUniqueId());
-
-                boolean validName = false;
-                for (String name : configNames) {
-                    super.debug("Checking against name '" + name + "'", quest.getId(), task.getId(), killer.getUniqueId());
-                    name = Chat.legacyColor(name);
-                    if (mob.getCustomName() != null && !mob.getCustomName().equals(name)) {
-                        super.debug("Mob has valid name", quest.getId(), task.getId(), killer.getUniqueId());
-                        validName = true;
-                        break;
-                    }
-                }
-
-                if (!validName) {
-                    super.debug("Mob name is not in list of valid name, continuing...", quest.getId(), task.getId(), killer.getUniqueId());
-                    continue;
-                }
+            if (!TaskUtils.matchName(this, pendingTask, customName, true, false, player.getUniqueId())) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
             }
 
             if (task.hasConfigKey("item")) {
-                ItemStack item = plugin.getVersionSpecificHandler().getItemInMainHand(killer);
+                ItemStack item = plugin.getVersionSpecificHandler().getItemInMainHand(player);
                 if (item == null) {
-                    super.debug("Specific item is required, player has no item in hand; continuing...", quest.getId(), task.getId(), killer.getUniqueId());
+                    super.debug("Specific item is required, player has no item in hand; continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
 
-                super.debug("Specific item is required; player held item is of type '" + item.getType() + "'", quest.getId(), task.getId(), killer.getUniqueId());
+                super.debug("Specific item is required; player held item is of type '" + item.getType() + "'", quest.getId(), task.getId(), player.getUniqueId());
 
                 QuestItem qi;
                 if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
@@ -144,23 +107,22 @@ public final class MobkillingTaskType extends BukkitTaskType {
                 }
 
                 if (!qi.compareItemStack(item)) {
-                    super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), killer.getUniqueId());
+                    super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 } else {
-                    super.debug("Item matches required item", quest.getId(), task.getId(), killer.getUniqueId());
+                    super.debug("Item matches required item", quest.getId(), task.getId(), player.getUniqueId());
                 }
             }
 
-            int mobKillsNeeded = (int) task.getConfigValue("amount");
-
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), killer.getUniqueId());
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (progress >= mobKillsNeeded) {
-                super.debug("Marking task as complete", quest.getId(), task.getId(), killer.getUniqueId());
+            int amount = (int) task.getConfigValue("amount");
+
+            if (progress >= amount) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
             }
         }
     }
-
 }
