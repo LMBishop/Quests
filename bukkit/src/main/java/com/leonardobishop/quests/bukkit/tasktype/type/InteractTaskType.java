@@ -29,8 +29,9 @@ public final class InteractTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
-        super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, TaskUtils.MaterialListConfigValidatorMode.BLOCK, "block", "blocks"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
+        super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, TaskUtils.MaterialListConfigValidatorMode.BLOCK, "block", "blocks"));
     }
 
     @Override
@@ -40,6 +41,11 @@ public final class InteractTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
+        Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
+
         Player player = event.getPlayer();
         if (player.hasMetadata("NPC")) {
             return;
@@ -50,10 +56,7 @@ public final class InteractTaskType extends BukkitTaskType {
             return;
         }
 
-        Block block = event.getClickedBlock();
-        if (block == null) {
-            return;
-        }
+        ItemStack item = event.getItem();
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
             Quest quest = pendingTask.quest();
@@ -63,7 +66,6 @@ public final class InteractTaskType extends BukkitTaskType {
             super.debug("Player interacted", quest.getId(), task.getId(), player.getUniqueId());
 
             if (task.hasConfigKey("item")) {
-                ItemStack item = event.getItem();
                 if (item == null) {
                     super.debug("Specific item is required, player has no item in hand; continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
@@ -78,7 +80,8 @@ public final class InteractTaskType extends BukkitTaskType {
                     qi = fetchedItem;
                 }
 
-                if (!qi.compareItemStack(item)) {
+                boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
+                if (!qi.compareItemStack(item, exactMatch)) {
                     super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 } else {
@@ -87,7 +90,7 @@ public final class InteractTaskType extends BukkitTaskType {
             }
 
             super.debug("Player clicked block " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
-            if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) { // TODO
+            if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
@@ -103,5 +106,4 @@ public final class InteractTaskType extends BukkitTaskType {
             }
         }
     }
-
 }
