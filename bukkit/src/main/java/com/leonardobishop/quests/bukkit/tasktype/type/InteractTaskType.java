@@ -39,17 +39,23 @@ public final class InteractTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onInteract(PlayerInteractEvent event) {
-        if (event.getPlayer().hasMetadata("NPC")) return;
-
+    public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
         }
 
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+        Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
+
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
@@ -57,26 +63,31 @@ public final class InteractTaskType extends BukkitTaskType {
             super.debug("Player interacted", quest.getId(), task.getId(), player.getUniqueId());
 
             if (task.hasConfigKey("item")) {
-                ItemStack held = event.getItem();
-                super.debug("Item is required, current item is " + (held == null ? "null" : held.getType()) , quest.getId(), task.getId(), player.getUniqueId());
+                ItemStack item = event.getItem();
+                if (item == null) {
+                    super.debug("Specific item is required, player has no item in hand; continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+
+                super.debug("Specific item is required; player held item is of type '" + item.getType() + "'", quest.getId(), task.getId(), player.getUniqueId());
+
                 QuestItem qi;
                 if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
                     QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "item", "data");
                     fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
                     qi = fetchedItem;
                 }
-                if (held == null || !qi.compareItemStack(held)) {
-                    super.debug("Item is not the required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+
+                if (!qi.compareItemStack(item)) {
+                    super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 } else {
-                    super.debug("Item match", quest.getId(), task.getId(), player.getUniqueId());
+                    super.debug("Item matches required item", quest.getId(), task.getId(), player.getUniqueId());
                 }
             }
 
-            Block block = event.getClickedBlock();
-
-            super.debug("Current clicked block is " + (block == null ? "null" : block.getType()), quest.getId(), task.getId(), player.getUniqueId());
-            if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
+            super.debug("Player clicked block " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
+            if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) { // TODO
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
@@ -84,9 +95,9 @@ public final class InteractTaskType extends BukkitTaskType {
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
             super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-            int breedingNeeded = (int) task.getConfigValue("amount");
+            int amount = (int) task.getConfigValue("amount");
 
-            if (progress >= breedingNeeded) {
+            if (progress >= amount) {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
             }
