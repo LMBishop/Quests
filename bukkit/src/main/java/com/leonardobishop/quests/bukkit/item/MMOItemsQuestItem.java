@@ -18,17 +18,19 @@ public class MMOItemsQuestItem extends QuestItem {
 
     @Override
     public ItemStack getItemStack() {
-        return MMOItems.plugin.getItem(Type.get(mmoItemType), mmoItemId);
+        final Type type = Type.get(mmoItemType);
+        return MMOItems.plugin.getItem(type, mmoItemId);
     }
 
     @Override
-    public boolean compareItemStack(ItemStack other) {
+    public boolean compareItemStack(ItemStack other, boolean exactMatch) {
         NBTItem item = NBTItem.get(other);
-        if (!item.hasType()) return false;
+        if (!item.hasType()) {
+            return false;
+        }
 
         String type = item.getType();
         String id = item.getString("MMOITEMS_ITEM_ID");
         return mmoItemType.equals(type) && mmoItemId.equals(id);
     }
-
 }

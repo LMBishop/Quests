@@ -29,5 +29,5 @@ public abstract class QuestItem {
 
     public abstract ItemStack getItemStack();
 
-    public abstract boolean compareItemStack(ItemStack other);
+    public abstract boolean compareItemStack(ItemStack other, boolean exactMatch);
 }

@@ -15,20 +15,12 @@ public class SlimefunQuestItem extends QuestItem {
     @Override
     public ItemStack getItemStack() {
         SlimefunItem item = SlimefunItem.getById(slimefunId);
-        if (item == null) {
-            return null;
-        }
-        return item.getItem();
+        return item != null ? item.getItem() : null;
     }
 
     @Override
-    public boolean compareItemStack(ItemStack other) {
+    public boolean compareItemStack(ItemStack other, boolean exactMatch) {
         SlimefunItem item = SlimefunItem.getByItem(other);
-
-        if (item == null) return false;
-
-        String id = item.getId();
-        return slimefunId.equals(id);
+        return item != null && slimefunId.equals(item.getId());
     }
-
 }

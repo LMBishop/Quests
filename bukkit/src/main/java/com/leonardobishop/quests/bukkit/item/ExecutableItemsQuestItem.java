@@ -21,38 +21,27 @@ public class ExecutableItemsQuestItem extends QuestItem {
     @Override
     public ItemStack getItemStack() {
         ExecutableItemInterface item = getExecutableItem();
-
-        if (item == null) {
-            return null;
-        }
-
-        return item.buildItem(1, Optional.empty());
+        return item != null ? item.buildItem(1, Optional.empty()) : null;
     }
 
     @Override
-    public boolean compareItemStack(ItemStack other) {
+    public boolean compareItemStack(ItemStack other, boolean exactMatch) {
         ExecutableItemInterface item = getExecutableItem();
-
-        Optional<ExecutableItemInterface> otherItemOptional = executableItemsManager.getExecutableItem(other);
-        if (item == null|| otherItemOptional.isEmpty()) {
+        if (item == null) {
             return false;
         }
 
-        ExecutableItemInterface otherItem = otherItemOptional.get();
-
-        return otherItem.getId().equals(item.getId());
+        return executableItemsManager.getExecutableItem(other)
+                .map(executableItemInterface -> {
+                    final String itemId = item.getId();
+                    return executableItemInterface.getId().equals(itemId);
+                })
+                .orElse(false);
     }
 
     private ExecutableItemInterface getExecutableItem() {
-        if (!executableItemsManager.isValidID(executableItemsId)) {
-            return null;
-        }
-
-        Optional<ExecutableItemInterface> itemOptional = executableItemsManager.getExecutableItem(executableItemsId);
-        if (itemOptional.isEmpty()) {
-            return null;
-        }
-        return itemOptional.get();
+        return executableItemsManager.isValidID(executableItemsId)
+                ? executableItemsManager.getExecutableItem(executableItemsId).orElse(null)
+                : null;
     }
-
 }

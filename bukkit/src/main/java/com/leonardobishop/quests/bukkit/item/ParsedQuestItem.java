@@ -17,7 +17,7 @@ public class ParsedQuestItem extends QuestItem {
     }
 
     @Override
-    public boolean compareItemStack(ItemStack other) {
-        return other.isSimilar(itemStack);
+    public boolean compareItemStack(ItemStack other, boolean exactMatch) {
+        return exactMatch ? other.isSimilar(itemStack) : other.getType() == itemStack.getType();
     }
 }
