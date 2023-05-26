@@ -323,7 +323,7 @@ public class TaskUtils {
         // idx 36 = total
         for (int i = 0; i < 36; i++) {
             ItemStack slot = player.getInventory().getItem(i);
-            if (slot == null || !qi.compareItemStack(slot))
+            if (slot == null || !qi.compareItemStack(slot, true))
                 continue;
             slotToAmount[36] = slotToAmount[36] + slot.getAmount();
             slotToAmount[i] = slot.getAmount();
