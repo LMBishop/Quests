@@ -40,6 +40,7 @@ public final class BrewingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "ingredient"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
     }
 
     @Override
@@ -105,17 +106,18 @@ public final class BrewingTaskType extends BukkitTaskType {
 
                 super.debug("Player brewed " + eventAmount + " potions" + (ingredient != null ? " using " + ingredient.getType() : ""), quest.getId(), task.getId(), player.getUniqueId());
 
-                if (!qi.compareItemStack(ingredient)) {
+                boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
+                if (!qi.compareItemStack(ingredient, exactMatch)) {
                     super.debug("Ingredient does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
             }
 
-            int amount = (int) task.getConfigValue("amount");
-
             int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
             taskProgress.setProgress(progress + eventAmount);
             super.debug("Updating task progress (now " + (progress + eventAmount) + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+            int amount = (int) task.getConfigValue("amount");
 
             if ((int) taskProgress.getProgress() >= amount) {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
@@ -124,5 +126,4 @@ public final class BrewingTaskType extends BukkitTaskType {
             }
         }
     }
-
 }
