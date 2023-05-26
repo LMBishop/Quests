@@ -37,30 +37,27 @@ public final class CommandTaskType extends BukkitTaskType {
             return;
         }
 
+        String message = e.getMessage();
+        if (message.length() >= 1) {
+            message = message.substring(1);
+        }
+
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            boolean ignoreCasing = TaskUtils.getConfigBoolean(task, "ignore-case");
-            List<String> commands = TaskUtils.getConfigStringList(task, "command");
-
-            String message = e.getMessage();
-            if (message.length() >= 1) {
-                message = message.substring(1);
-            }
-
             super.debug("Player sent command '/" + message + "'", quest.getId(), task.getId(), player.getUniqueId());
 
-            for (String command : commands) {
-                super.debug("Checking command against '/" + command + "' (ignore case = " + ignoreCasing + ")", quest.getId(), task.getId(), player.getUniqueId());
-                if ((ignoreCasing && command.equalsIgnoreCase(message))
-                    || (!ignoreCasing && command.equals(message))) {
-                    super.debug("Command '/" + message + "' matches task command '" + command + "'", quest.getId(), task.getId(), player.getUniqueId());
-                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                    taskProgress.setCompleted(true);
-                }
+            boolean ignoreCase = TaskUtils.getConfigBoolean(task, "ignore-case");
+
+            if (!TaskUtils.matchString(this, pendingTask, "command", "commands", message, false, ignoreCase, player.getUniqueId())) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
             }
+
+            super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+            taskProgress.setCompleted(true);
         }
     }
 }

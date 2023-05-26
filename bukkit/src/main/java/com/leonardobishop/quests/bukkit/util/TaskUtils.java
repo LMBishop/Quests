@@ -286,26 +286,28 @@ public class TaskUtils {
         return false;
     }
 
-    public static boolean matchName(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable String name, boolean legacyColor, boolean ignoreCase, @NotNull UUID player) {
+    public static boolean matchString(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, final @NotNull String stringKey, final @NotNull String stringListKey, @Nullable String string, boolean legacyColor, boolean ignoreCase, @NotNull UUID player) {
         Task task = pendingTask.task;
 
-        List<String> checkNames = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("name") ? "name" : "names");
+        List<String> checkNames = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : stringListKey);
         if (checkNames == null) {
             return true;
         } else if (checkNames.isEmpty()) {
-            return name == null;
+            return string == null;
         }
 
-        if (name == null) {
+        if (string == null) {
             return false;
         }
 
-        for (String s : checkNames) {
-            type.debug("Checking against name " + s, pendingTask.quest.getId(), task.getId(), player);
+        for (String name : checkNames) {
+            type.debug("Checking against name " + string, pendingTask.quest.getId(), task.getId(), player);
 
-            s = Chat.legacyColor(s);
+            if (legacyColor) {
+                string = Chat.legacyColor(string);
+            }
 
-            if (StringUtils.equals(s, name, ignoreCase)) {
+            if (StringUtils.equals(string, name, ignoreCase)) {
                 type.debug("Name match", pendingTask.quest.getId(), task.getId(), player);
                 return true;
             } else {
