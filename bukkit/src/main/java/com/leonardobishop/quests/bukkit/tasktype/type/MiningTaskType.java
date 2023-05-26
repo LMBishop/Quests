@@ -69,67 +69,70 @@ public final class MiningTaskType extends BukkitTaskType {
 
             super.debug("allow-silk-touch is disabled, checking block", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
-                boolean playerBlockTrackerEnabled = (boolean) task.getConfigValue("check-playerblocktracker", false);
+            if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
-                if (playerBlockTrackerEnabled) {
-                    AbstractPlayerBlockTrackerHook playerBlockTrackerHook = plugin.getPlayerBlockTrackerHook();
-                    if (playerBlockTrackerHook != null) {
-                        super.debug("Running PlayerBlockTracker lookup", quest.getId(), task.getId(), player.getUniqueId());
+            boolean playerBlockTrackerEnabled = (boolean) task.getConfigValue("check-playerblocktracker", false);
 
-                        boolean result = playerBlockTrackerHook.checkBlock(block);
-                        if (result) {
-                            super.debug("PlayerBlockTracker lookup indicates this is a player placed block, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                            continue;
-                        }
+            if (playerBlockTrackerEnabled) {
+                AbstractPlayerBlockTrackerHook playerBlockTrackerHook = plugin.getPlayerBlockTrackerHook();
+                if (playerBlockTrackerHook != null) {
+                    super.debug("Running PlayerBlockTracker lookup", quest.getId(), task.getId(), player.getUniqueId());
 
-                        super.debug("PlayerBlockTracker lookup OK", quest.getId(), task.getId(), player.getUniqueId());
-                    } else {
-                        super.debug("check-playerblocktracker is enabled, but PlayerBlockTracker is not detected on the server", quest.getId(), task.getId(), player.getUniqueId());
-                    }
-                }
-
-                Runnable increment = () -> {
-                    int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-                    super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
-
-                    int amount = (int) task.getConfigValue("amount");
-                    if (progress >= amount) {
-                        super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                        taskProgress.setCompleted(true);
-                    }
-                };
-
-                boolean coreProtectEnabled = (boolean) task.getConfigValue("check-coreprotect", false);
-                int coreProtectTime = (int) task.getConfigValue("check-coreprotect-time", 3600);
-
-                if (coreProtectEnabled) {
-                    AbstractCoreProtectHook coreProtectHook = plugin.getCoreProtectHook();
-                    if (coreProtectHook != null) {
-                        super.debug("Running CoreProtect lookup (may take a while)", quest.getId(), task.getId(), player.getUniqueId());
-
-                        // Run CoreProtect lookup
-                        plugin.getCoreProtectHook().checkBlock(block, coreProtectTime).thenAccept(result -> {
-                            if (result) {
-                                super.debug("CoreProtect lookup indicates this is a player placed block, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                            } else {
-                                super.debug("CoreProtect lookup OK", quest.getId(), task.getId(), player.getUniqueId());
-                                increment.run();
-                            }
-                        }).exceptionally(throwable -> {
-                            super.debug("CoreProtect lookup failed: " + throwable.getMessage(), quest.getId(), task.getId(), player.getUniqueId());
-                            throwable.printStackTrace();
-                            return null;
-                        });
-
+                    boolean result = playerBlockTrackerHook.checkBlock(block);
+                    if (result) {
+                        super.debug("PlayerBlockTracker lookup indicates this is a player placed block, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                         continue;
                     }
 
-                    super.debug("check-coreprotect is enabled, but CoreProtect is not detected on the server", quest.getId(), task.getId(), player.getUniqueId());
+                    super.debug("PlayerBlockTracker lookup OK", quest.getId(), task.getId(), player.getUniqueId());
+                } else {
+                    super.debug("check-playerblocktracker is enabled, but PlayerBlockTracker is not detected on the server", quest.getId(), task.getId(), player.getUniqueId());
+                }
+            }
+
+            Runnable increment = () -> {
+                int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+                super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+                int amount = (int) task.getConfigValue("amount");
+                if (progress >= amount) {
+                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                    taskProgress.setCompleted(true);
+                }
+            };
+
+            boolean coreProtectEnabled = (boolean) task.getConfigValue("check-coreprotect", false);
+            int coreProtectTime = (int) task.getConfigValue("check-coreprotect-time", 3600);
+
+            if (coreProtectEnabled) {
+                AbstractCoreProtectHook coreProtectHook = plugin.getCoreProtectHook();
+                if (coreProtectHook != null) {
+                    super.debug("Running CoreProtect lookup (may take a while)", quest.getId(), task.getId(), player.getUniqueId());
+
+                    // Run CoreProtect lookup
+                    plugin.getCoreProtectHook().checkBlock(block, coreProtectTime).thenAccept(result -> {
+                        if (result) {
+                            super.debug("CoreProtect lookup indicates this is a player placed block, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                        } else {
+                            super.debug("CoreProtect lookup OK", quest.getId(), task.getId(), player.getUniqueId());
+                            increment.run();
+                        }
+                    }).exceptionally(throwable -> {
+                        super.debug("CoreProtect lookup failed: " + throwable.getMessage(), quest.getId(), task.getId(), player.getUniqueId());
+                        throwable.printStackTrace();
+                        return null;
+                    });
+
+                    continue;
                 }
 
-                increment.run();
+                super.debug("check-coreprotect is enabled, but CoreProtect is not detected on the server", quest.getId(), task.getId(), player.getUniqueId());
             }
+
+            increment.run();
         }
     }
 
@@ -163,10 +166,13 @@ public final class MiningTaskType extends BukkitTaskType {
 
             super.debug("reverse-if-placed is enabled, checking block", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
-                int progress = TaskUtils.decrementIntegerTaskProgress(taskProgress);
-                super.debug("Decrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+            if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
             }
+
+            int progress = TaskUtils.decrementIntegerTaskProgress(taskProgress);
+            super.debug("Decrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
         }
     }
 }
