@@ -24,7 +24,7 @@ public final class MythicMobsKillingTaskType extends BukkitTaskType {
         super("mythicmobs_killing", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of a MythicMobs entity.");
         this.plugin = plugin;
 
-        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "name"));
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "name", "names"));
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "level"));
@@ -99,14 +99,13 @@ public final class MythicMobsKillingTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            String configName = (String) task.getConfigValue("name");
             int minMobLevel = (int) task.getConfigValue("min-level", -1);
             int requiredLevel = (int) task.getConfigValue("level", -1);
 
             super.debug("Player killed mythic mob '" + mobName + "' (level = " + level + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (!mobName.equals(configName)) {
-                super.debug("Name does not match required name, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+            if (!TaskUtils.matchString(this, pendingTask, "name", "names", mobName, true, false, player.getUniqueId())) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
 
@@ -120,12 +119,12 @@ public final class MythicMobsKillingTaskType extends BukkitTaskType {
                 continue;
             }
 
-            int mobKillsNeeded = (int) task.getConfigValue("amount");
-
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
             super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (progress >= mobKillsNeeded) {
+            int amount = (int) task.getConfigValue("amount");
+
+            if (progress >= amount) {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
             }
