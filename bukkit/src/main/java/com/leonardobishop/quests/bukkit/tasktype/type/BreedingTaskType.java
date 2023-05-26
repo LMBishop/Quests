@@ -8,7 +8,6 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,7 +49,7 @@ public final class BreedingTaskType extends BukkitTaskType {
         public void onEntityFertilizeEgg(io.papermc.paper.event.entity.EntityFertilizeEggEvent event) {
             Player player = event.getBreeder();
             if (player != null) {
-                handle(player, event.getEntityType());
+                handle(player, event.getEntity());
             }
         }
     }
@@ -60,7 +59,7 @@ public final class BreedingTaskType extends BukkitTaskType {
         public void onEntityBreed(org.bukkit.event.entity.EntityBreedEvent event) {
             LivingEntity breeder = event.getBreeder();
             if (breeder instanceof Player player) {
-                handle(player, event.getEntityType());
+                handle(player, event.getEntity());
             }
         }
     }
@@ -75,13 +74,13 @@ public final class BreedingTaskType extends BukkitTaskType {
             List<Entity> entities = event.getEntity().getNearbyEntities(10.0d, 10.0d, 10.0d);
             for (Entity entity : entities) {
                 if (entity instanceof Player player) {
-                    handle(player, event.getEntityType());
+                    handle(player, event.getEntity());
                 }
             }
         }
     }
 
-    private void handle(Player player, EntityType entityType) {
+    private void handle(Player player, Entity entity) {
         if (player.hasMetadata("NPC")) {
             return;
         }
@@ -96,29 +95,11 @@ public final class BreedingTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player detected near bred animal", quest.getId(), task.getId(), player.getUniqueId());
+            super.debug("Player bred an entity", quest.getId(), task.getId(), player.getUniqueId());
 
-            List<String> configEntities = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("mob") ? "mob" : "mobs");
-            if (!configEntities.isEmpty()) {
-                super.debug("List of required entities exists; mob type is " + entityType.name(), quest.getId(), task.getId(), player.getUniqueId());
-
-                boolean validMob = false;
-                for (String configEntity : configEntities) {
-                    super.debug("Checking against mob '" + configEntity + "'", quest.getId(), task.getId(), player.getUniqueId());
-                    try {
-                        EntityType configEntityType = EntityType.valueOf(configEntity);
-                        if (configEntityType == entityType) {
-                            super.debug("Mob is valid", quest.getId(), task.getId(), player.getUniqueId());
-                            validMob = true;
-                            break;
-                        }
-                    } catch (IllegalArgumentException ignored) {}
-                }
-
-                if (!validMob) {
-                    super.debug("Mob is not in list of required mobs, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                    continue;
-                }
+            if (!TaskUtils.matchEntity(this, pendingTask, entity, player.getUniqueId())) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
             }
 
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
