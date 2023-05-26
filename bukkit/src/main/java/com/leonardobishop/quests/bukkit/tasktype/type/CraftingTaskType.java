@@ -33,6 +33,7 @@ public final class CraftingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
     }
 
     @Override
@@ -94,16 +95,17 @@ public final class CraftingTaskType extends BukkitTaskType {
 
             super.debug("Player crafted " + eventAmount + " of " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
-            if (!qi.compareItemStack(item)) {
+            boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
+            if (!qi.compareItemStack(item, exactMatch)) {
                 super.debug("Item does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
 
-            int amount = (int) task.getConfigValue("amount");
-
             int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
             taskProgress.setProgress(progress + eventAmount);
             super.debug("Updating task progress (now " + (progress + eventAmount) + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+            int amount = (int) task.getConfigValue("amount");
 
             if ((int) taskProgress.getProgress() >= amount) {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
