@@ -62,7 +62,7 @@ public final class MiningTaskType extends BukkitTaskType {
 
             super.debug("Player mined block " + material.name(), quest.getId(), task.getId(), event.getPlayer().getUniqueId());
 
-            boolean allowSilkTouch = (boolean) task.getConfigValue("allow-silk-touch", true);
+            boolean allowSilkTouch = TaskUtils.getConfigBoolean(task, "allow-silk-touch", true);
             if (!allowSilkTouch && silkTouchPresent) {
                 continue;
             }
@@ -74,7 +74,7 @@ public final class MiningTaskType extends BukkitTaskType {
                 continue;
             }
 
-            boolean playerBlockTrackerEnabled = (boolean) task.getConfigValue("check-playerblocktracker", false);
+            boolean playerBlockTrackerEnabled = TaskUtils.getConfigBoolean(task, "check-playerblocktracker");
 
             if (playerBlockTrackerEnabled) {
                 AbstractPlayerBlockTrackerHook playerBlockTrackerHook = plugin.getPlayerBlockTrackerHook();
@@ -104,7 +104,7 @@ public final class MiningTaskType extends BukkitTaskType {
                 }
             };
 
-            boolean coreProtectEnabled = (boolean) task.getConfigValue("check-coreprotect", false);
+            boolean coreProtectEnabled = TaskUtils.getConfigBoolean(task, "check-coreprotect");
             int coreProtectTime = (int) task.getConfigValue("check-coreprotect-time", 3600);
 
             if (coreProtectEnabled) {
@@ -159,7 +159,7 @@ public final class MiningTaskType extends BukkitTaskType {
 
             super.debug("Player placed block " + material.name(), quest.getId(), task.getId(), player.getUniqueId());
 
-            boolean reverseIfPlaced = (boolean) task.getConfigValue("reverse-if-placed", false);
+            boolean reverseIfPlaced = TaskUtils.getConfigBoolean(task, "reverse-if-placed");
             if (!reverseIfPlaced) {
                 continue;
             }

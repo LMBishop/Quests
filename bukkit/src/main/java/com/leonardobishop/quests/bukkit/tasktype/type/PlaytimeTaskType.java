@@ -45,7 +45,7 @@ public final class PlaytimeTaskType extends BukkitTaskType {
 
                             PlaytimeTaskType.super.debug("Polling playtime for player", quest.getId(), task.getId(), player.getUniqueId());
 
-                            boolean ignoreAfk = (boolean) task.getConfigValue("ignore-afk", false);
+                            boolean ignoreAfk = TaskUtils.getConfigBoolean(task, "ignore-afk");
 
                             if (ignoreAfk && plugin.getEssentialsHook() == null) {
                                 PlaytimeTaskType.super.debug("ignore-afk is enabled, but Essentials is not detected on the server", quest.getId(), task.getId(), player.getUniqueId());
