@@ -81,13 +81,7 @@ public class TaskUtils {
     }
 
     public static boolean getConfigBoolean(Task task, String key, boolean def) {
-        Object configObject = task.getConfigValue(key);
-
-        boolean bool = def;
-        if (configObject != null) {
-            bool = (boolean) task.getConfigValue(key, def);
-        }
-        return bool;
+        return task.getConfigValue(key) instanceof Boolean configBoolean ? configBoolean : def;
     }
 
     public static QuestItem getConfigQuestItem(Task task, String itemKey, String dataKey) {
