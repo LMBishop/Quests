@@ -96,7 +96,7 @@ public final class BuildingTaskType extends BukkitTaskType {
 
             super.debug("reverse-if-broken is enabled, checking block", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
 
-            if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) { // TODO
+            if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }

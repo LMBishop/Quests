@@ -294,12 +294,12 @@ public class TaskUtils {
             return false;
         }
 
+        if (legacyColor) {
+            string = Chat.legacyColor(string);
+        }
+
         for (String name : checkNames) {
             type.debug("Checking against name " + string, pendingTask.quest.getId(), task.getId(), player);
-
-            if (legacyColor) {
-                string = Chat.legacyColor(string);
-            }
 
             if (StringUtils.equals(string, name, ignoreCase)) {
                 type.debug("Name match", pendingTask.quest.getId(), task.getId(), player);
