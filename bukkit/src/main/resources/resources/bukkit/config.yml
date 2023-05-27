@@ -208,6 +208,8 @@ options:
   record-log-history: true
   # Replace placeholders from PlaceholderAPI in rewards, rewardstrings and start strings
   quests-use-placeholderapi: false
+  # PlayerBlockTracker class to be used with the hook
+  playerblocktracker-class-name: "com.gestankbratwurst.playerblocktracker.PlayerBlockTracker"
   # Verify quests exist when a player's data is loaded - inconsistencies may arise when
   # players progress on specific quests and those quests are later removed. The problem is that their progress
   # is still kept in the quest progress file, which may lead to issues such as players reaching a quest started

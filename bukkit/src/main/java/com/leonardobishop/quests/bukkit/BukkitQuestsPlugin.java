@@ -53,16 +53,19 @@ import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
 import com.leonardobishop.quests.common.updater.Updater;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -281,8 +284,14 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
                 this.essentialsHook = new EssentialsHook();
             }
-            if (Bukkit.getPluginManager().isPluginEnabled("PlayerBlockTracker")) {
-                this.playerBlockTrackerHook = new PlayerBlockTrackerHook();
+            try {
+                String className = questsConfig.getString("options.playerblocktracker-class-name", "com.gestankbratwurst.playerblocktracker.PlayerBlockTracker");
+
+                //noinspection unchecked
+                Class<? extends Plugin> pluginClazz = (Class<? extends Plugin>) Class.forName(className);
+                Method isTrackedMethod = pluginClazz.getMethod("isTracked", Block.class);
+                this.playerBlockTrackerHook = new PlayerBlockTrackerHook(pluginClazz, isTrackedMethod);
+            } catch (ClassCastException | ClassNotFoundException | NoSuchMethodException ignored) {
             }
 
             taskTypeManager.registerTaskType(new MiningTaskType(this));

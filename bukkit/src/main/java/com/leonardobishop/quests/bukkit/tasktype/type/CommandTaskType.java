@@ -12,8 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-import java.util.List;
-
 public final class CommandTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
