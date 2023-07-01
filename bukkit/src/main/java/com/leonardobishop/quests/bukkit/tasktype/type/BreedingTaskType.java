@@ -22,7 +22,7 @@ public final class BreedingTaskType extends BukkitTaskType {
     private final BukkitQuestsPlugin plugin;
 
     public BreedingTaskType(BukkitQuestsPlugin plugin) {
-        super("breeding", TaskUtils.TASK_ATTRIBUTION_STRING, "Breed a set amount of animals.");
+        super("breeding", TaskUtils.TASK_ATTRIBUTION_STRING, "Breed a set amount of certain animals.");
         this.plugin = plugin;
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
