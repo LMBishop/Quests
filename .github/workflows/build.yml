@@ -28,8 +28,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Grant execute permission on gradlew file
-        run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew
       - name: Upload the plugin JAR
