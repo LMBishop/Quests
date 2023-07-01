@@ -78,7 +78,6 @@ public final class InventoryTaskType extends BukkitTaskType {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private void checkInventory(Player player) {
         if (player == null || !player.isOnline()) {
             return;
