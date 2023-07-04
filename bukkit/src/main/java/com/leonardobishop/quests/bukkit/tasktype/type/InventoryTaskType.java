@@ -11,6 +11,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 
 public final class InventoryTaskType extends BukkitTaskType {
@@ -50,36 +52,49 @@ public final class InventoryTaskType extends BukkitTaskType {
 
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onItemPickup(PlayerPickupItemEvent event) {
-        if (event.getPlayer().hasMetadata("NPC")) return;
-
-        Bukkit.getScheduler().runTaskLater(plugin, () -> this.checkInventory(event.getPlayer()), 1L);
+    public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+        checkInventory(event.getPlayer(), 1L);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory((Player) event.getPlayer()), 1L); //Still some work to do as it doesn't really work
+        checkInventory(event.getPlayer(), 1L); // Still some work to do as it doesn't really work
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(event.getPlayer()), 1L);
+        checkInventory(event.getPlayer(), 1L);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBucketFill(PlayerBucketFillEvent event) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(event.getPlayer()), 1L);
+        checkInventory(event.getPlayer(), 1L);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerFish(PlayerFishEvent event) {
+        checkInventory(event.getPlayer(), 1L);
     }
 
     private final class BucketEntityListener implements Listener {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         public void onBucketEntity(org.bukkit.event.player.PlayerBucketEntityEvent event) {
-            Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(event.getPlayer()), 1L);
+            checkInventory(event.getPlayer(), 1L);
         }
     }
 
+    private void checkInventory(HumanEntity humanEntity, long delay) {
+        if (!(humanEntity instanceof Player player)) return;
+        checkInventory(player, delay);
+    }
+
+    private void checkInventory(Player player, long delay) {
+        if (player.hasMetadata("NPC")) return;
+        Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(player), delay);
+    }
+
     private void checkInventory(Player player) {
-        if (player == null || !player.isOnline()) {
+        if (!player.isOnline()) {
             return;
         }
 
