@@ -39,6 +39,7 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "remove-items-when-complete"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "allow-partial-completion"));
     }
@@ -49,19 +50,28 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onNPCClick(NPCRightClickEvent event) {
-        Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(event.getClicker(), event.getNPC()), 1L);
+    public void onNPCRightClick(NPCRightClickEvent event) {
+        checkInventory(event.getClicker(), event.getNPC(), 1L);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private void checkInventory(Player player, NPC npc, long delay) {
+        if (player.hasMetadata("NPC")) return;
+        Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(player, npc), delay);
     }
 
     @SuppressWarnings("deprecation")
     private void checkInventory(Player player, NPC npc) {
-        if (player == null || !player.isOnline()) {
+        if (!player.isOnline()) {
             return;
         }
+
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
         }
+
+        String npcName = null;
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
             Quest quest = pendingTask.quest();
@@ -70,21 +80,26 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
 
             super.debug("Player clicked NPC", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (task.getConfigValue("npc-id") != null) {
-                if (!task.getConfigValue("npc-id").equals(npc.getId())) {
-                    super.debug("NPC id ('" + npc.getId() + "') does not match required id, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+            Integer configNPCId = (Integer) task.getConfigValue("npc-id");
+            if (configNPCId != null) {
+                if (npc.getId() != configNPCId) {
+                    super.debug("NPC id " + npc.getId() + " does not match required id, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
-            } else if (task.getConfigValue("npc-name") != null) {
-                String npcName = Chat.legacyStrip(Chat.legacyColor(npc.getName()));
-                super.debug("NPC name is required, current name = '" + npcName + "'", quest.getId(), task.getId(), player.getUniqueId());
-                if (!Chat.legacyStrip(Chat.legacyColor(String.valueOf(task.getConfigValue("npc-name"))))
-                        .equals(npcName)) {
-                    super.debug("NPC name does not match required name, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                    continue;
+            } else {
+                String configNPCName = (String) task.getConfigValue("npc-name");
+                if (configNPCName != null) {
+                    if (npcName == null) {
+                        npcName = Chat.legacyStrip(Chat.legacyColor(npc.getName()));
+                    }
+
+                    if (!configNPCName.equals(npcName)) {
+                        super.debug("NPC name " + npcName + " does not match required name, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                        continue;
+                    }
                 }
             }
-            int itemsNeeded = (int) task.getConfigValue("amount");
+
             boolean remove = TaskUtils.getConfigBoolean(task, "remove-items-when-complete");
             boolean allowPartial = TaskUtils.getConfigBoolean(task, "allow-partial-completion");
 
@@ -95,14 +110,15 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
                 qi = fetchedItem;
             }
 
-            int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
-
-            int total;
-            int[] amountPerSlot = TaskUtils.getAmountsPerSlot(player, qi);
+            boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
+            int[] amountPerSlot = TaskUtils.getAmountsPerSlot(player, qi, exactMatch);
             super.debug("Player has " + amountPerSlot[36] + " of the required item", quest.getId(), task.getId(), player.getUniqueId());
 
+            int amount = (int) task.getConfigValue("amount");
+
             if (allowPartial) {
-                total = Math.min(amountPerSlot[36], itemsNeeded - progress);
+                int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
+                int total = Math.min(amountPerSlot[36], amount - progress);
 
                 if (total == 0) {
                     continue;
@@ -111,26 +127,27 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
                 // We must ALWAYS remove items if partial completion is allowed
                 // https://github.com/LMBishop/Quests/issues/375
                 TaskUtils.removeItemsInSlots(player, amountPerSlot, total);
-                super.debug("Removing items from inventory", quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("Removing " + total + " items from inventory", quest.getId(), task.getId(), player.getUniqueId());
 
                 progress += total;
                 taskProgress.setProgress(progress);
-                super.debug("Updating task progress (now " + (progress) + ")", quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("Updating task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                if (progress >= itemsNeeded) {
+                if (progress >= amount) {
                     taskProgress.setCompleted(true);
                     super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 }
             } else {
-                total = Math.min(amountPerSlot[36], itemsNeeded);
+                int progress = Math.min(amountPerSlot[36], amount);
+                taskProgress.setProgress(progress);
+                super.debug("Updating task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                taskProgress.setProgress(total);
-                if (total >= itemsNeeded) {
+                if (progress >= amount) {
                     taskProgress.setCompleted(true);
                     super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
 
                     if (remove) {
-                        TaskUtils.removeItemsInSlots(player, amountPerSlot, total);
+                        TaskUtils.removeItemsInSlots(player, amountPerSlot, progress);
                         super.debug("Removing items from inventory", quest.getId(), task.getId(), player.getUniqueId());
                     }
                 }

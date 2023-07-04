@@ -10,6 +10,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,13 +32,19 @@ public final class CitizensInteractTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onNPCClick(NPCRightClickEvent event) {
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(event.getClicker().getUniqueId());
+    public void onNPCRightClick(NPCRightClickEvent event) {
+        Player player = event.getClicker();
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
+
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
         }
 
-        Player player = event.getClicker();
+        NPC npc = event.getNPC();
+        String npcName = null;
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
             Quest quest = pendingTask.quest();
@@ -46,18 +53,23 @@ public final class CitizensInteractTaskType extends BukkitTaskType {
 
             super.debug("Player clicked NPC", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (task.getConfigValue("npc-id") != null) {
-                if (!task.getConfigValue("npc-id").equals(event.getNPC().getId())) {
-                    super.debug("NPC id ('" + event.getNPC().getId() + "') does not match required id, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+            Integer configNPCId = (Integer) task.getConfigValue("npc-id");
+            if (configNPCId != null) {
+                if (npc.getId() != configNPCId) {
+                    super.debug("NPC id " + npc.getId() + " does not match required id, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
-            } else if (task.getConfigValue("npc-name") != null) {
-                String npcName = Chat.legacyStrip(Chat.legacyColor(event.getNPC().getName()));
-                super.debug("NPC name is required, current name = '" + npcName + "'", quest.getId(), task.getId(), player.getUniqueId());
-                if (!Chat.legacyStrip(Chat.legacyColor(String.valueOf(task.getConfigValue("npc-name"))))
-                        .equals(npcName)) {
-                    super.debug("NPC name does not match required name, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                    continue;
+            } else {
+                String configNPCName = (String) task.getConfigValue("npc-name");
+                if (configNPCName != null) {
+                    if (npcName == null) {
+                        npcName = Chat.legacyStrip(Chat.legacyColor(npc.getName()));
+                    }
+
+                    if (!configNPCName.equals(npcName)) {
+                        super.debug("NPC name " + npcName + " does not match required name, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                        continue;
+                    }
                 }
             }
 

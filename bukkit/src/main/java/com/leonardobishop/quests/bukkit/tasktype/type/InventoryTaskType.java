@@ -41,6 +41,7 @@ public final class InventoryTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "remove-items-when-complete"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "allow-partial-completion"));
     }
@@ -110,7 +111,6 @@ public final class InventoryTaskType extends BukkitTaskType {
 
             super.debug("Inventory check triggered", quest.getId(), task.getId(), player.getUniqueId());
 
-            int itemsNeeded = (int) task.getConfigValue("amount");
             boolean remove = TaskUtils.getConfigBoolean(task, "remove-items-when-complete");
             boolean allowPartial = TaskUtils.getConfigBoolean(task, "allow-partial-completion");
 
@@ -121,14 +121,15 @@ public final class InventoryTaskType extends BukkitTaskType {
                 qi = fetchedItem;
             }
 
-            int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
-
-            int total;
-            int[] amountPerSlot = TaskUtils.getAmountsPerSlot(player, qi);
+            boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
+            int[] amountPerSlot = TaskUtils.getAmountsPerSlot(player, qi, exactMatch);
             super.debug("Player has " + amountPerSlot[36] + " of the required item", quest.getId(), task.getId(), player.getUniqueId());
 
+            int amount = (int) task.getConfigValue("amount");
+
             if (allowPartial) {
-                total = Math.min(amountPerSlot[36], itemsNeeded - progress);
+                int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
+                int total = Math.min(amountPerSlot[36], amount - progress);
 
                 if (total == 0) {
                     continue;
@@ -137,26 +138,27 @@ public final class InventoryTaskType extends BukkitTaskType {
                 // We must ALWAYS remove items if partial completion is allowed
                 // https://github.com/LMBishop/Quests/issues/375
                 TaskUtils.removeItemsInSlots(player, amountPerSlot, total);
-                super.debug("Removing items from inventory", quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("Removing " + total + " items from inventory", quest.getId(), task.getId(), player.getUniqueId());
 
                 progress += total;
                 taskProgress.setProgress(progress);
-                super.debug("Updating task progress (now " + (progress) + ")", quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("Updating task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                if (progress >= itemsNeeded) {
+                if (progress >= amount) {
                     taskProgress.setCompleted(true);
                     super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 }
             } else {
-                total = Math.min(amountPerSlot[36], itemsNeeded);
+                int progress = Math.min(amountPerSlot[36], amount);
+                taskProgress.setProgress(progress);
+                super.debug("Updating task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                taskProgress.setProgress(total);
-                if (total >= itemsNeeded) {
+                if (progress >= amount) {
                     taskProgress.setCompleted(true);
                     super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
 
                     if (remove) {
-                        TaskUtils.removeItemsInSlots(player, amountPerSlot, total);
+                        TaskUtils.removeItemsInSlots(player, amountPerSlot, progress);
                         super.debug("Removing items from inventory", quest.getId(), task.getId(), player.getUniqueId());
                     }
                 }

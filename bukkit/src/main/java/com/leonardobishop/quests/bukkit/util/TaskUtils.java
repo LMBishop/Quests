@@ -312,13 +312,12 @@ public class TaskUtils {
         return false;
     }
 
-    public static int[] getAmountsPerSlot(Player player, QuestItem qi) {
+    public static int[] getAmountsPerSlot(Player player, QuestItem qi, boolean exactMatch) {
         int[] slotToAmount = new int[37];
         // idx 36 = total
         for (int i = 0; i < 36; i++) {
             ItemStack slot = player.getInventory().getItem(i);
-            if (slot == null || !qi.compareItemStack(slot, true))
-                continue;
+            if (slot == null || !qi.compareItemStack(slot, exactMatch)) continue;
             slotToAmount[36] = slotToAmount[36] + slot.getAmount();
             slotToAmount[i] = slot.getAmount();
         }
