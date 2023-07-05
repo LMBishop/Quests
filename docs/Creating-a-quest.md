@@ -1,4 +1,4 @@
-\_\_NOTOC\_\_ Each file inside the `quests` subfolder represents a
+Each file inside the `quests` subfolder represents a
 single quest. The **name** of the file represents the **quest id** and
 must be alphanumeric (excluding the .yml extension).
 

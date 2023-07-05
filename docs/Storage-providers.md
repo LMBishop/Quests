@@ -1,4 +1,4 @@
-\_\_NOTOC\_\_ A **storage provider** is a source for player data
+A **storage provider** is a source for player data
 (sometimes referred to as quest progress files). Quests requires that
 one storage system be configured to allow the plugin to initialise. If
 there is no storage system configured, the plugin will default to

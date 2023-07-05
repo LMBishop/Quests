@@ -1,4 +1,4 @@
-\_\_NOTOC\_\_ Release builds of Quests are officially distributed at the
+Release builds of Quests are officially distributed at the
 sites on this page. Sources not listed here may contain modified, or
 outdated versions.
 

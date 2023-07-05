@@ -1,5 +1,3 @@
-\_\_NOTOC\_\_
-
 An **ItemStack** is a **representation of an item** in an inventory.
 Every configured ItemStack in Quests is parsed the exact same way. This
 page gives guidance on how to define items with specific attributes.

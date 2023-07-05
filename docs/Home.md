@@ -1,7 +1,3 @@
-\_\_NOTOC\_\_
-
-# Quests
-
 Welcome to the Quests Wiki! Please use the sidebar for navigation around
 the wiki.
 

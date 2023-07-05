@@ -1,4 +1,4 @@
-\_\_NOTOC\_\_ Quests allows you to configure **basic options** for the
+Quests allows you to configure **basic options** for the
 plugin. These can all be located in the `config.yml`.
 
 ## Table of contents

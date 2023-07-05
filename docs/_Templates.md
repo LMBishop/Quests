@@ -1,4 +1,4 @@
-\_\_NOTOC\_\_ This page contains wikicode templates for use through the
+This page contains wikicode templates for use through the
 wiki. GitHub does not support page transclusion so instead they should
 be simply copied from here.
 
