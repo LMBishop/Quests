@@ -1,51 +1,27 @@
+---
+title: Defining items
+parent: Configuration
+nav_order: 5
+---
+
+# Defining items
+{: .no_toc }
+
 An **ItemStack** is a **representation of an item** in an inventory.
 Every configured ItemStack in Quests is parsed the exact same way. This
 page gives guidance on how to define items with specific attributes.
 
+{: .note }
+The information on this page describes how to define items across every
+configuration file.
+
 ## Table of contents
+{: .no_toc .text-delta }
 
-- [Configurable options](Defining_items#Configurable_options "wikilink")
-  - [Configuration
-    layout](Defining_items#Configuration_layout "wikilink")
-  - [Examples](Defining_items#Examples "wikilink")
-    - [Name](Defining_items#Name "wikilink")
-    - [Item](Defining_items#Item "wikilink")
-    - [Lore](Defining_items#Lore "wikilink")
-    - [Enchantments](Defining_items#Enchantments "wikilink")
-    - [Item flags](Defining_items#Item_flags "wikilink")
-    - [Unbreakable](Defining_items#Unbreakable "wikilink")
-    - [Attribute
-      modifiers](Defining_items#Attribute_modifiers "wikilink")
-    - [Custom model data](Defining_items#Custom_model_data "wikilink")
-    - [Owner](Defining_items#Owner "wikilink")
-- [Quest items](Defining_items#Quest_items "wikilink")
-  - [Importing items](Defining_items#Importing_items "wikilink")
-  - [Manually defined
-    items](Defining_items#Manually_defined_items "wikilink")
-    - [Defined](Defining_items#Defined "wikilink")
-    - [MMOItems](Defining_items#MMOItems "wikilink")
-    - [Slimefun](Defining_items#Slimefun "wikilink")
-    - [ExecutableItems](Defining_items#ExecutableItems "wikilink")
-  - [Referencing a quest
-    item](Defining_items#Referencing_a_quest_item "wikilink")
+1. TOC
+{:toc}
 
-## Configurable options
-
-| Field                | Optional         | Minecraft Version | More Information                                      |
-|----------------------|------------------|-------------------|-------------------------------------------------------|
-| `item`               | ❌               | \-                | [Jump](Defining_items#Item "wikilink")                |
-| `name`               | ✅ <sup>\*</sup> | \-                | [Jump](Defining_items#Name "wikilink")                |
-| `lore`               | ✅               | \-                | [Jump](Defining_items#Lore "wikilink")                |
-| `enchantments`       | ✅               | \-                | [Jump](Defining_items#Enchantments "wikilink")        |
-| `itemflags`          | ✅               | 1.8+              | [Jump](Defining_items#Item_flags "wikilink")          |
-| `unbreakable`        | ✅               | 1.13+             | [Jump](Defining_items#Unbreakable "wikilink")         |
-| `attributemodifiers` | ✅               | 1.13+             | [Jump](Defining_items#Attribute_modifiers "wikilink") |
-| `custommodeldata`    | ✅               | 1.14+             | [Jump](Defining_items#Custom_model_data "wikilink")   |
-| `owner-[...]`        | ✅               | 1.8+              | [Jump](Defining_items#Owner_(skulls) "wikilink")      |
-
-<sup>\*: The name must be defined for the display item of Quests.</sup>
-
-### Configuration layout
+## Layout
 
 ``` yaml
 item:
@@ -57,12 +33,26 @@ item:
   # etc.
 ```
 
-### Examples
+## Options
 
-#### Item
+| Field                | Optional        | Minecraft Version | More Information                        |
+|----------------------|-----------------|-------------------|-----------------------------------------|
+| `item`               | ❌               | \-                | [Jump](#item "wikilink")                |
+| `name`               | ✅ <sup>\*</sup> | \-                | [Jump](#name "wikilink")                |
+| `lore`               | ✅               | \-                | [Jump](#lore "wikilink")                |
+| `enchantments`       | ✅               | \-                | [Jump](#enchantments "wikilink")        |
+| `itemflags`          | ✅               | 1.8+              | [Jump](#item-flags "wikilink")          |
+| `unbreakable`        | ✅               | 1.13+             | [Jump](#unbreakable "wikilink")         |
+| `attributemodifiers` | ✅               | 1.13+             | [Jump](#attribute-modifiers "wikilink") |
+| `custommodeldata`    | ✅               | 1.14+             | [Jump](#custom-model-data "wikilink")   |
+| `owner-[...]`        | ✅               | 1.8+              | [Jump](#owner "wikilink")               |
+
+<sup>\*: The name must be defined for the display item of Quests.</sup>
+
+### Item
 
   
-*`item` or `type`material</code>*
+*`item` or `type` or `material`*
 
 The item is the material the itemstack is made out of. Please see the
 [latest
@@ -78,7 +68,7 @@ item:
   ...
 ```
 
-#### Name
+### Name
 
   
 *`name`*
@@ -92,7 +82,7 @@ item:
   ...
 ```
 
-#### Lore
+### Lore
 
   
 *`lore`*
@@ -108,7 +98,7 @@ item:
   ...
 ```
 
-#### Enchantments
+### Enchantments
 
 The format of enchantments depends on your Minecraft version.
 
@@ -127,7 +117,7 @@ item:
   ...
 ```
 
-#### Item flags
+### Item flags
 
 Item flags can be added to hide enchantment names, etc. A full list of
 itemflags is available on the [Spigot
@@ -140,7 +130,7 @@ item:
   ...
 ```
 
-#### Unbreakable
+### Unbreakable
 
 - *1.13+*'
 
@@ -150,7 +140,7 @@ item:
   ...
 ```
 
-#### Attribute modifiers
+### Attribute modifiers
 
 **1.13+** Adds specific attribute modifiers to the items. The UUID
 should always be specified otherwise the server will randomly generate
@@ -179,7 +169,7 @@ item:
   ...
 ```
 
-#### Custom model data
+### Custom model data
 
 **1.14+**
 
@@ -189,7 +179,7 @@ item:
   ...
 ```
 
-#### Owner
+### Owner
 
 This only applies if you have a skull item stack (`PLAYER_HEAD` 1.13+,
 `SKULL_ITEM` 1.8-1.12). There are three ways to define the player for
@@ -251,7 +241,7 @@ item. Your item will be saved to file items/\<id\>.yml, **with the type
 
 <https://i.imgur.com/6lsld61.png> <https://i.imgur.com/Pg2eO9a.png>
 
-### Manually defining items
+### Defining items
 
 You can manually define an item by creating a new `yml` file within the
 items/ directory. You must specify a `type` and the item itself under

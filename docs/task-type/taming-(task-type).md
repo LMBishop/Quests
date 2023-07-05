@@ -1,3 +1,14 @@
+---
+title: taming
+parent: Task types
+nav_order: 25
+---
+
+# taming (task type)
+
+Since v3.13
+{: .label .label-green }
+
 Tame a set amount of animals.
 
 ## Options

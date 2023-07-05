@@ -1,8 +1,20 @@
-  
-*Requires the ShopGUI+ plugin to activate.*
+---
+title: shopguiplus_sell
+parent: Task types
+nav_order: 38
+---
+
+# shopguiplus_sell (task type)
+
+Since v2.15
+{: .label .label-green }
+
+Plugin 'ShopGUI+' required
+{: .label }
 
 Sell a certain number of items to a ShopGUI+ shop.
 
+{: .note }
 Since Quests v3.13, `shopguiplus_sellcertain` and `shopguiplus_sell`
 have been merged into one. Both names can be used to refer to this task.
 

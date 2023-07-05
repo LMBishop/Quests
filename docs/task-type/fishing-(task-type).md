@@ -1,7 +1,19 @@
+---
+title: fishing
+parent: Task types
+nav_order: 15
+---
+
+# fishing (task type)
+
+Since v2.0
+{: .label .label-green }
+
 Fish a set amount of items.
 
+{: .note }
 Since Quests v3.13, `fishingcertain` and `fishing` have been merged into
-one.
+one. Both names can be used to refer to this task.
 
 ## Options
 

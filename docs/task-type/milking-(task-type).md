@@ -1,3 +1,14 @@
+---
+title: milking
+parent: Task types
+nav_order: 17
+---
+
+# milking (task type)
+
+Since v2.0
+{: .label .label-green }
+
 Milk a set amount of cows.
 
 ## Options

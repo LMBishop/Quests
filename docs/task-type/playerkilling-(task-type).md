@@ -1,3 +1,15 @@
+---
+title: playerkilling
+parent: Task types
+nav_order: 20
+---
+
+# playerkilling (task type)
+
+Since v2.0
+{: .label .label-green }
+
+
 Kill a set amount of players.
 
 ## Options

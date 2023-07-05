@@ -1,5 +1,16 @@
-  
-*Requires the SuperiorSkyblock plugin to activate.*
+---
+title: superiorskyblock_worth
+parent: Task types
+nav_order: 40
+---
+
+# superiorskyblock_worth (task type)
+
+Since v3.7
+{: .label .label-green }
+
+Plugin 'SuperiorSkyblock' required
+{: .label }
 
 Reach a certain SuperiorSkyblock worth.
 
@@ -7,7 +18,7 @@ Reach a certain SuperiorSkyblock worth.
 
 | Key     | Description         | Type    | Required | Default | Notes |
 |---------|---------------------|---------|----------|---------|-------|
-| `worth` | The worth to worth. | Integer | Yes      | \-      | \-    |
+| `worth` | The worth to reach. | Integer | Yes      | \-      | \-    |
 
 ## Examples
 

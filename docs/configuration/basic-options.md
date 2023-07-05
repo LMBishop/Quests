@@ -1,47 +1,32 @@
+---
+title: Basic options
+parent: Configuration
+nav_order: 1
+---
+# Basic options
+{: .no_toc }
+
 Quests allows you to configure **basic options** for the
 plugin. These can all be located in the `config.yml`.
 
-## Table of contents
+{: .how-to-read }
+> Each option is laid out with its path underneath the title.
+> A dot in the path means an extra level of indentation, for example
+> `options.categories-enabled` represents:
+> 
+> ```yaml
+> options:
+>   categories-enabled: [value]
+> ```
+> 
+> You should have a working knowledge of how to format YAML files
+> before configuring this plugin.
 
-- [Categories enabled](Basic_options#Categories_enabled "wikilink")
-- [Trim gui size](Basic_options#Trim_gui_size "wikilink")
-- [Titles enabled](Basic_options#Titles_enabled "wikilink")
-- [Quest started limit](Basic_options#Quest_started_limit "wikilink")
-- [Quset limit](Basic_options#Quest_limit "wikilink")
-- [Allow quest cancel](Basic_options#Allow_quest_cancel "wikilink")
-- [Allow quest track](Basic_options#Allow_quest_track "wikilink")
-- [Task type exclusions](Basic_options#Task_type_exclusions "wikilink")
-- [Guinames](Basic_options#Guinames "wikilink")
-- [Sounds](Basic_options#Sounds "wikilink")
-- [GUI hide locked](Basic_options#GUI_hide_locked "wikilink")
-- [GUI confirm cancel](Basic_options#GUI_confirm_cancel "wikilink")
-- [GUI hide quests if no
-  permission](Basic_options#GUI_hide_quests_if_no_permission "wikilink")
-- [GUI hide categoires if no
-  permission](Basic_options#GUI_hide_categories_if_no_permission "wikilink")
-- [GUI use
-  PlaceholderAPI](Basic_options#GUI_use_PlaceholderAPI "wikilink")
-- [GUI truncate
-  requirements](Basic_options#GUI_truncate_requirements "wikilink")
-- [GUI actions](Basic_options#GUI_actions "wikilink")
-- [Quest autostart](Basic_options#Quest_autostart "wikilink")
-- [Quest autotrack](Basic_options#Quest_autotrack "wikilink")
-- [Verbose logging
-  level](Basic_options#Verbose_logging_level "wikilink")
-- [Quests use
-  PlaceholderAPI](Basic_options#Quests_use_PlaceholderAPI "wikilink")
-- [Verify quest exists on
-  load](Basic_options#Verify_quest_exists_on_load "wikilink")
-- [Performance tweaking](Basic_options#Performance_tweaking "wikilink")
-- [Tab completion](Basic_options#Tab_completion "wikilink")
-- [Error checking](Basic_options#Error_checking "wikilink")
-- [Placeholder cache
-  time](Basic_options#Placeholder_cache_time "wikilink")
-- [Global task configuration
-  override](Basic_options#Global_task_configuration_override "wikilink")
-- [Global quest display configuration
-  override](Basic_options#Global_quest_display_configuration_override "wikilink")
-- [Storage](Basic_options#Storage "wikilink")
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
 
 ## Categories enabled
 
@@ -88,12 +73,12 @@ options:
 
 ## Quest started limit
 
-  
 *`options.quest-started-limit`*
 
-⛔️ **This option has been removed in version 3.8 and this wiki entry is
-subject to removal.** *Please see [Basic options#Quest
-limit](Basic_options#Quest_limit "wikilink") instead.*
+{: .warning }
+**This option has been removed in version 3.8 and this wiki entry is
+subject to removal.** Please see [quest limit](#quest-limit "wikilink")
+instead.
 
 Choose the number of quests players can start at one time. This will
 include quests which have [quest-specific
@@ -135,7 +120,7 @@ options:
 ```
 
 Group permissions are also documented in [Commands and permissions §
-Permissions](Commands-and-permissions#permissions "wikilink").
+Permissions](commands-and-permissions#permissions "wikilink").
 
 ## Allow quest cancel
 

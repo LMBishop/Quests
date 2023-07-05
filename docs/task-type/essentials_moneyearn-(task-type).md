@@ -1,5 +1,16 @@
-  
-*Requires the Essentials plugin to activate.*
+---
+title: essentials_moneyearn
+parent: Task types
+nav_order: 32
+---
+
+# essentials_moneyearn (task type)
+
+Since v2.12
+{: .label .label-green }
+
+Plugin 'Essentials' required
+{: .label }
 
 Earn a certain amount of money after starting quest.
 

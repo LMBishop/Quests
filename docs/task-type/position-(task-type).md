@@ -1,3 +1,14 @@
+---
+title: position
+parent: Task types
+nav_order: 22
+---
+
+# position (task type)
+
+Since v2.0.3
+{: .label .label-green }
+
 Reach a set of co-ordinates.
 
 ## Options

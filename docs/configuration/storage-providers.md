@@ -1,3 +1,12 @@
+---
+title: Storage providers
+parent: Configuration
+nav_order: 10
+---
+
+# Storage providers
+{: .no_toc }
+
 A **storage provider** is a source for player data
 (sometimes referred to as quest progress files). Quests requires that
 one storage system be configured to allow the plugin to initialise. If
@@ -12,16 +21,10 @@ When changing storage systems, **the plugin must be restarted for the
 changes to have effect**.
 
 ## Table of contents
+{: .no_toc .text-delta }
 
-- [Supported storage
-  systems](Storage_providers#Supported_storage_systems "wikilink")
-  - [Flatfile](Storage_providers#Flatfile "wikilink")
-    - [YAML](Storage_providers#YAML "wikilink")
-  - [Network](Storage_providers#Network "wikilink")
-    - [MySQL](Storage_providers#MySQL "wikilink")
-- [Data
-  synchronisation](Storage_providers#Data_synchronisation "wikilink")
-  - [Delay loading](Storage_providers#Delay_loading "wikilink")
+1. TOC
+{:toc}
 
 ## Supported storage systems
 
@@ -46,24 +49,21 @@ consistency issues.
 
 ### Network
 
-  
-⚠️ **Using Quests on a BungeeCord network may lead to a possible race
-condition.** Allowing players to to connect directly to another server
-running Quests may result in the new server loading old data. This
-occurs as BungeeCord establishes a connection with the new server before
-disconnecting the player from the old one, leading to the new server
-loading player data before the old server has saved it.
-
-<!-- -->
-
-  
-Quests offers a workaround, which is to [delay the loading of player
-data](Storage_providers#Delay_loading "wikilink"). You may want to
-consider forcing players to switch servers through a hub server, or
-decreasing the autosave period. In either case, the race condition still
-exists; there is not an easy way to coordinate the loading/saving due to
-how BungeeCord works. **You must understand this warning before using
-Quests in this way.**
+{: .warning } 
+> ️**Using Quests on a BungeeCord network may lead to a possible race
+> condition.** Allowing players to to connect directly to another server
+> running Quests may result in the new server loading old data. This
+> happens because BungeeCord establishes a connection with the new server 
+> before disconnecting the player from the old one, leading to the new 
+> server loading player data before the old server has saved it.
+> 
+> Quests offers a workaround, which is to [delay the loading of player
+> data](#delay-loading "wikilink"). You may also want to
+> consider forcing players to switch servers through a hub server, or
+> decreasing the autosave period. In either case, the race condition still
+> exists; there is not an easy way to coordinate the loading/saving due to
+> how BungeeCord works. **You must understand this warning before using
+> Quests in this way.**
 
 #### MySQL
 
@@ -134,4 +134,4 @@ same network as your Minecraft server. Again, this **does not solve the
 race condition**, but it should help mitigate it.
 
 See the issue in the issue tracker:
-[1](https://github.com/LMBishop/Quests/issues/180)
+[Issue 180](https://github.com/LMBishop/Quests/issues/180)

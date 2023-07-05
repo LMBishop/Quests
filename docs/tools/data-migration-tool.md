@@ -1,3 +1,10 @@
+---
+title: Data migration tool
+parent: Tools
+---
+
+# Data migration tool
+
 The **data migration tool** is a tool that allows you to migrate your
 data from one [storage provider](Storage_providers "wikilink") to
 another. This can also be used as a backup tool. The tool can be
@@ -16,7 +23,8 @@ migration, run the following command:
      /quests admin migratedata execute
 
   
-⚠️ **It is advised that you do this process on a server with no players
+{: .warning }
+**It is advised that you do this process on a server with no players
 online.** You should set a whitelist, or turn on maintenence mode,
 before migrating data, and these commands should be done through your
 server console. Trying this process with players online may result in

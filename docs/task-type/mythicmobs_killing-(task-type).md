@@ -1,5 +1,16 @@
-  
-*Requires the MythicMobs plugin to activate.*
+---
+title: mythicmobs_killing
+parent: Task types
+nav_order: 35
+---
+
+# mythicmobs_killing (task type)
+
+Since v2.3
+{: .label .label-green }
+
+Plugin 'MythicMobs' required
+{: .label }
 
 Kill a certain MythicMobs mob.
 

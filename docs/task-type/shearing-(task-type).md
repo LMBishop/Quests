@@ -1,3 +1,15 @@
+---
+title: shearing
+parent: Task types
+nav_order: 23
+---
+
+# shearing (task type)
+
+Since v2.0
+{: .label .label-green }
+
+
 Shear a set amount of sheep.
 
 ## Options

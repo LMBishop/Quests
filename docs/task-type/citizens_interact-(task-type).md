@@ -1,5 +1,16 @@
-  
-*This requires the Citizens plugin to activate.*
+---
+title: citizens_interact
+parent: Task types
+nav_order: 30
+---
+
+# citizens_interact (task type)
+
+Since v2.0.15
+{: .label .label-green }
+
+Plugin 'Citizens' required
+{: .label }
 
 Interact with a Citizens NPC.
 

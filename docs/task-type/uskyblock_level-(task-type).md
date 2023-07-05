@@ -1,5 +1,16 @@
-  
-*Requires the uSkyBlock plugin to activate.*
+---
+title: uskyblock_level
+parent: Task types
+nav_order: 41
+---
+
+# uskyblock_level (task type)
+
+Since v1.7.1
+{: .label .label-green }
+
+Plugin 'uSkyBlock' required
+{: .label }
 
 Reach a certain uSkyBlock level.
 

@@ -1,3 +1,14 @@
+---
+title: crafting
+parent: Task types
+nav_order: 9
+---
+
+# crafting (task type)
+
+Since v3.0
+{: .label .label-green }
+
 Craft a set of items.
 
 ## Options

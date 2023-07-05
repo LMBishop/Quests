@@ -1,5 +1,16 @@
-  
-*Requires the FabledSkyblock plugin to activate.*
+---
+title: fabledskyblock_level
+parent: Task types
+nav_order: 33
+---
+
+# fabledskyblock_level (task type)
+
+Since v3.5
+{: .label .label-green }
+
+Plugin 'FabledSkyblock' required
+{: .label }
 
 Reach a certain FabledSkyblock level.
 

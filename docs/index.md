@@ -1,15 +1,25 @@
+---
+title: Home
+nav_order: 1
+---
+<div style="float: right">
+<img src="https://leonardobishop.com/~/artwork/questcompass2-256.png" width="200" height="200"><br>
+</div>
+
+# Quests documentation
+
 Welcome to the Quests Wiki! Please use the sidebar for navigation around
 the wiki.
 
 **🌟 New & Highlighted Articles**
 
-- [Tips](Tips "wikilink")
+- [Tips](tips "wikilink")
 - [Basic options](Basic_options "wikilink")
 - [Creating a quest](Creating_a_quest "wikilink")
 - [Creating a category](Creating_a_category "wikilink")
 - [Custom GUI items](Custom_GUI_items "wikilink")
 - [Task types](Task_types "wikilink")
-- [PlaceholderAPI](PlaceholderAPI "wikilink")
+- [PlaceholderAPI](tools/placeholderapi.md "wikilink")
 
 Spot a mistake or ambiguous information? Please consider [contributing
 to the wiki](contributing_to_the_wiki "wikilink").
@@ -91,7 +101,7 @@ Q. Does this plugin support PlaceholderAPI?
 <!-- -->
 
   
-Yes, see [PlaceholderAPI](PlaceholderAPI "wikilink").
+Yes, see [PlaceholderAPI](tools/placeholderapi.md "wikilink").
 
 <!-- -->
 

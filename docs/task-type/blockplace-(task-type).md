@@ -1,5 +1,17 @@
+---
+title: blockplace
+parent: Task types
+nav_order: 2
+---
+
+# blockplace (task type)
+
+Since v1.0
+{: .label .label-green}
+
 Place a set amount of blocks.
 
+{: .note }
 Since Quests v3.13, `blockplacecertain` and `blockplace` have been
 merged into one. Both names can be used to refer to this task.
 

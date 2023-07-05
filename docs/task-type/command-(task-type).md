@@ -1,3 +1,14 @@
+---
+title: command
+parent: Task types
+nav_order: 7
+---
+
+# command (task type)
+
+Since v2.12
+{: .label .label-green }
+
 Execute a specific command.
 
 This task may not work for commands not properly registered with the

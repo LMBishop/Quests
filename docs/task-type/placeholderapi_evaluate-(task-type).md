@@ -1,7 +1,18 @@
-  
-*Requires the PlaceholderAPI plugin to activate.*
+---
+title: placeholderapi_evaluate
+parent: Task types
+nav_order: 36
+---
 
-Reach a certain PlaceholderAPI level.
+# placeholderapi_evaluate (task type)
+
+Since v2.9.5
+{: .label .label-green }
+
+Plugin 'PlaceholderAPI' required
+{: .label }
+
+Evaluate a certain PlaceholderAPI placeholder and compare it against a given condition.
 
 ## Options
 

@@ -1,4 +1,11 @@
-  
+---
+title: GUI configuration
+parent: Configuration
+nav_order: 6
+---
+
+# GUI configuration
+
 *See also [Custom GUI items](Custom_GUI_items "wikilink") and [Defining
 items](Defining_items "wikilink").*
 
@@ -114,7 +121,7 @@ The `{requirements}` variable represents the display names of the quests
 needed to unlock this quest. By default, this name is truncated to show
 only the first quest, with a number after (e.g. "Example II +4 more").
 This behaviour is defined at [Basic options § GUI-truncate
-requirements](Basic-options#GUI-truncate-requirements "wikilink")
+requirements](basic-options.md#GUI-truncate-requirements "wikilink")
 
 ## Quest permission display
 

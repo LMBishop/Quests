@@ -1,5 +1,16 @@
-  
-*Requires the SuperiorSkyblock plugin to activate.*
+---
+title: superiorskyblock_level
+parent: Task types
+nav_order: 39
+---
+
+# superiorskyblock_level (task type)
+
+Since v3.7
+{: .label .label-green }
+
+Plugin 'SuperiorSkyblock' required
+{: .label }
 
 Reach a certain SuperiorSkyblock level.
 

@@ -1,3 +1,14 @@
+---
+title: enchanting
+parent: Task types
+nav_order: 12
+---
+
+# enchanting (task type)
+
+Since v2.2
+{: .label .label-green }
+
 Enchant an item.
 
 ## Options

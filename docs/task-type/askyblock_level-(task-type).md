@@ -1,5 +1,16 @@
-  
-*Requires the ASkyBlock plugin to activate.*
+---
+title: askyblock_level
+parent: Task types
+nav_order: 27
+---
+
+# askyblock_level (task type)
+
+Since v1.7.1
+{: .label .label-green }
+
+Plugin 'ASkyBlock' required
+{: .label }
 
 Reach a certain ASkyBlock level.
 

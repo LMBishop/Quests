@@ -1,3 +1,14 @@
+---
+title: distancefrom
+parent: Task types
+nav_order: 11
+---
+
+# distancefrom (task type)
+
+Since v2.12
+{: .label .label-green }
+
 Travel away from a set of co-ordinates.
 
 ## Options

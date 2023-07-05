@@ -1,3 +1,10 @@
+---
+title: Custom GUI items
+parent: Configuration
+nav_order: 7
+---
+# Custom GUI items
+
 **Custom GUI items** are dummy items added to the category menu and the
 quest menu. This can be used to help stylise your quests GUI.
 
@@ -46,7 +53,7 @@ These custom elements take precedence over quest items, as quests and
 categories will fill empty slots once all the custom items have been
 set.
 
-<https://i.imgur.com/5odcqM9.png>
+![Example of how custom GUI items are laid out](https://i.imgur.com/5odcqM9.png)
 
 To add a custom item within the quest menu itself, you must specify the
 category, or if categories are disabled you can specify "quests"

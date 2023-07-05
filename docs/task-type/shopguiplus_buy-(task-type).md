@@ -1,8 +1,20 @@
-  
-*Requires the ShopGUI+ plugin to activate.*
+---
+title: shopguiplus_buy
+parent: Task types
+nav_order: 37
+---
+
+# shopguiplus_buy (task type)
+
+Since v2.15
+{: .label .label-green }
+
+Plugin 'ShopGUI+' required
+{: .label }
 
 Buy a certain number of items from a ShopGUI+ shop.
 
+{: .note }
 Since Quests v3.13, `shopguiplus_buycertain` and `shopguiplus_buy` have
 been merged into one. Both names can be used to refer to this task.
 

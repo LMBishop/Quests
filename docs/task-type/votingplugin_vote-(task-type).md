@@ -1,5 +1,16 @@
-  
-*Requires the VotingPlugin plugin to activate.*
+---
+title: votingplugin_vote
+parent: Task types
+nav_order: 42
+---
+
+# votingplugin_vote (task type)
+
+Since v3.7
+{: .label .label-green }
+
+Plugin 'VotingPlugin' required
+{: .label }
 
 Vote a number of times using VotingPlugin.
 

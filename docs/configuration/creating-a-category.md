@@ -1,8 +1,22 @@
+---
+title: Creating a category
+parent: Configuration
+nav_order: 3
+---
+
 # Creating a category
+{: .no_toc }
 
 Categories are stored in `categories.yml`. On older versions of Quests
 they were stored in the main `config.yml`; quests will read categories
 from `config.yml` if a `categories.yml` file is not present.
+
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
 
 ## Category ID
 

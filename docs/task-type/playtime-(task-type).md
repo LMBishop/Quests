@@ -1,4 +1,18 @@
+---
+title: playtime
+parent: Task types
+nav_order: 21
+---
+
+# playtime (task type)
+
+Since v1.8
+{: .label .label-green }
+
 Play for a certain amount of time after starting the quest.
+
+{: .note }
+Before Quests v2.0, this task was known as `TIMEPLAYED`.
 
 ## Options
 

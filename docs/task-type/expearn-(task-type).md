@@ -1,3 +1,14 @@
+---
+title: expearn
+parent: Task types
+nav_order: 13
+---
+
+# expearn (task type)
+
+Since v2.2
+{: .label .label-green }
+
 Earn a set amount of exp after starting the quest.
 
 ## Options

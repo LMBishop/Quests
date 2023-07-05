@@ -1,10 +1,14 @@
-Jump to section:
-* [Using Colour Codes](#using-colour-codes)
-* [Using Hexadecimal Colour](#using-hexadecimal-colour)
+---
+title: Colour codes
+parent: Configuration
+nav_order: 8
+---
+# Colour (color) codes
 
 You can use colour codes anywhere the plugin accepts a message (plugin messages, display items, and in task configurations themselves).
 
-Your server version dictates which codes are allowed:
+The following table shows the colour capabilities of specific server versions:
+
 |  | Before 1.16 | 1.16+ |
 | ---- | ---- | ---- |
 | Colour Codes  | ✔️ | ✔️ |
@@ -41,7 +45,10 @@ The plugin will automatically translate colour codes from '&' to '§' for you.
 ## Hexadecimal colour
 For compatible Minecraft versions, the plugin will also translate hex colour codes for you.
 
-You can include a hex colour code as you would with a normal colour code: `&#<hex colour code>`. **Note: the `#` is important and must be there.**
+You can include a hex colour code as you would with a normal colour code: `&#<hex colour code>`. 
+
+{: .important }
+The `#` symbol indicates a hexadecimal colour code. These must be exactly six characters long.
 
 For example, the following messages are identical:
 ```

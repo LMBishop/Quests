@@ -1,41 +1,25 @@
+---
+title: Creating a quest
+parent: Configuration
+nav_order: 2
+---
+
+# Creating a quest
+{: .no_toc }
+
 Each file inside the `quests` subfolder represents a
 single quest. The **name** of the file represents the **quest id** and
 must be alphanumeric (excluding the .yml extension).
 
-An example can be seen with the [default
+{: .note }
+An example can be seen in the [default
 configuration](https://github.com/LMBishop/Quests/blob/master/bukkit/src/main/resources/resources/bukkit/quests/example1.yml).
 
 ## Table of contents
+{: .no_toc .text-delta }
 
-- [Quest ID](Creating_a_quest#Quest_ID "wikilink")
-- [Tasks](Creating_a_quest#Tasks "wikilink")
-- [Display](Creating_a_quest#Display "wikilink")
-  - [Name](Creating_a_quest#Name "wikilink")
-  - [Normal lore](Creating_a_quest#Normal_lore "wikilink")
-  - [Started lore](Creating_a_quest#Started_lore "wikilink")
-  - [Type](Creating_a_quest#Type "wikilink")
-- [Rewards](Creating_a_quest#Rewards "wikilink")
-- [Start commands](Creating_a_quest#Start_commands "wikilink")
-- [Start string](Creating_a_quest#Start_string "wikilink")
-- [Reward string](Creating_a_quest#Reward_string "wikilink")
-- [Placeholders](Creating_a_quest#Placeholders "wikilink")
-- [Options](Creating_a_quest#Options "wikilink")
-  - [Category](Creating_a_quest#Category "wikilink")
-  - [Requirements](Creating_a_quest#Requirements "wikilink")
-  - [Permission
-    required](Creating_a_quest#Permission_required "wikilink")
-  - [Cancellable](Creating_a_quest#Cancellable "wikilink")
-  - [Counts towards
-    limit](Creating_a_quest#Counts_towards_limit "wikilink")
-  - [Repeatable](Creating_a_quest#Repeatable "wikilink")
-  - [Cooldown](Creating_a_quest#Cooldown "wikilink")
-  - [Time limit](Creating_a_quest#Time_limit "wikilink")
-  - [Sort order](Creating_a_quest#Sort_order "wikilink")
-  - [Autostart](Creating_a_quest#Autostart "wikilink")
-  - [Completed display](Creating_a_quest#completed_display "wikilink")
-  - [Cooldown display](Creating_a_quest#cooldown_display "wikilink")
-  - [Permission display](Creating_a_quest#permission_display "wikilink")
-  - [Locked display](Creating_a_quest#locked_display "wikilink")
+1. TOC
+{:toc}
 
 ## Quest ID
 
@@ -375,7 +359,7 @@ options:
 completed. This accepts the standard ItemStack definition format
 described in [Defining items](Defining_items "wikilink"). If this option
 is not specified, the display item [defined in the main
-config.yml](GUI-configuration#quest-completed-display "wikilink") will
+config.yml](gui-configuration#quest-completed-display "wikilink") will
 be used.
 
 ``` yaml
@@ -394,7 +378,7 @@ options:
 cooldown. This accepts the standard ItemStack definition format
 described in [Defining items](Defining_items "wikilink"). If this option
 is not specified, the display item [defined in the main
-config.yml](GUI-configuration#quest-cooldown-display "wikilink") will be
+config.yml](gui-configuration#quest-cooldown-display "wikilink") will be
 used.
 
 ``` yaml
@@ -414,7 +398,7 @@ not have permission to start it. This accepts the standard ItemStack
 definition format described in [Defining
 items](Defining_items "wikilink"). If this option is not specified, the
 display item [defined in the main
-config.yml](GUI-configuration#quest-permission-display "wikilink") will
+config.yml](gui-configuration#quest-permission-display "wikilink") will
 be used.
 
 ``` yaml
@@ -433,7 +417,7 @@ options:
 not unlocked it. This accepts the standard ItemStack definition format
 described in [Defining items](Defining_items "wikilink"). If this option
 is not specified, the display item [defined in the main
-config.yml](GUI-configuration#quest-locked-display "wikilink") will be
+config.yml](gui-configuration#quest-locked-display "wikilink") will be
 used.
 
 ``` yaml

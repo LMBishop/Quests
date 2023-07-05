@@ -1,3 +1,14 @@
+---
+title: walking
+parent: Task types
+nav_order: 26
+---
+
+# walking (task type)
+
+Since v2.0
+{: .label .label-green }
+
 Walk a set distance.
 
 ## Options

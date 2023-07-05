@@ -1,3 +1,14 @@
+---
+title: consume
+parent: Task types
+nav_order: 8
+---
+
+# consume (task type)
+
+Since v3.9
+{: .label .label-green }
+
 Consume a specific item.
 
 ## Options

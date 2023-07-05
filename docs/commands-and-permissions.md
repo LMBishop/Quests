@@ -1,3 +1,11 @@
+---
+title: Commands and permissions
+nav_order: 4
+---
+# Commands and permissions
+This page lists all commands and permissions for Quests. Commands can
+also be viewed in-game by simply running `/quests`.
+
 ## Commands
 
 - **/quests \[or /q\]** - opens quest GUI

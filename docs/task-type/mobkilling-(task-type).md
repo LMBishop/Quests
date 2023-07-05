@@ -1,5 +1,17 @@
+---
+title: mobkilling
+parent: Task types
+nav_order: 18
+---
+
+# mobkilling (task type)
+
+Since v2.0
+{: .label .label-green }
+
 Kill a set amount of mobs.
 
+{: .note }
 Since Quests v3.13, `mobkillingcertain` and `mobkilling` have been
 merged into one. Both names can be used to refer to this task.
 

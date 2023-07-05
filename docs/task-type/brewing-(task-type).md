@@ -1,3 +1,14 @@
+---
+title: brewing
+parent: Task types
+nav_order: 4
+---
+
+# brewing (task type)
+
+Since v2.0.13
+{: .label .label-green }
+
 Brew a set amount of potions.
 
 ## Options

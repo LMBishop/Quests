@@ -1,7 +1,35 @@
-title: Quests documentation
+title: Quests
 description: Documentation for the Quests plugin
-
 theme: just-the-docs
+
+url: https://lmbishop.github.io
+
+callouts_level: quiet
+callouts:
+  highlight:
+    color: yellow
+  how-to-read:
+    title: How to read this page
+    color: grey-dk
+  important:
+    title: Important
+    color: blue
+  new:
+    title: New
+    color: green
+  note:
+    title: Note
+    color: purple
+  caution:
+    title: Caution
+    color: yellow
+  warning:
+    title: Warning
+    color: red
+
+nav_external_links:
+  - title: Quests on GitHub
+    url: https://github.com/LMBishop/Quests
 
 plugins:
   - jekyll-default-layout

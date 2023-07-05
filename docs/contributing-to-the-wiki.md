@@ -1,3 +1,13 @@
+---
+title: Contributing to the wiki
+nav_order: 10
+---
+
+# Contributing to the wiki
+
+{: .caution }
+This information is out of date since the wiki migration.
+
 If you spot any errors in the wiki, or want to add more information of
 you own, then we would be happy to review potential changes. Due to the
 restrictions of the GitHub wiki pages, it is not possible to open pull
@@ -6,10 +16,6 @@ submitted through the [on the issue
 tracker](https://github.com/LMBishop/Quests/issues/new?assignees=&labels=docs%2Cstatus%3A+needs+investigating&template=documentation.yml).
 
 ## Submitting edits
-
-  
-✍️ **The primary wiki format is Wikitext, edits using Markdown will not
-be accepted.**
 
 If you want to add information or edit the wiki, it would be beneficial
 if you submitted the source code of the page within backticks to make it

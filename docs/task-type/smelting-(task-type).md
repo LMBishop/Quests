@@ -1,5 +1,17 @@
+---
+title: smelting
+parent: Task types
+nav_order: 24
+---
+
+# smelting (task type)
+
+Since v3.12
+{: .label .label-green }
+
 Cook a set amount of an item.
 
+{: .note }
 Since Quests v3.13, `smeltingcertain` and `smelting` have been merged
 into one. Both names can be used to refer to this task.
 

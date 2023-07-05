@@ -1,5 +1,16 @@
-  
-*Requires the BentoBox plugin to activate.*
+---
+title: bentobox_level
+parent: Task types
+nav_order: 28
+---
+
+# bentobox_level (task type)
+
+Since v2.12
+{: .label .label-green }
+
+Plugin 'BentoBox' required
+{: .label }
 
 Reach a certain BentoBox level.
 

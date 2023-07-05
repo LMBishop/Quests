@@ -1,5 +1,16 @@
-  
-*This requires the Citizens plugin to activate.*
+---
+title: citizens_deliver
+parent: Task types
+nav_order: 29
+---
+
+# citizens_deliver (task type)
+
+Since v2.0.15
+{: .label .label-green }
+
+Plugin 'Citizens' required
+{: .label }
 
 Deliver a set of items to a Citizens NPC.
 

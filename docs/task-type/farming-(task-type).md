@@ -1,9 +1,22 @@
-  
-*Requires Minecraft 1.13+. For previous versions, use
-[blockbreak](blockbreak_(task_type) "wikilink").*
+---
+title: farming
+parent: Task types
+nav_order: 14
+---
+
+# farming (task type)
+
+Since v3.5
+{: .label .label-green }
+
+Minecraft 1.13+ required
+{: .label .label-purple }
+
+*For previous versions, use [blockbreak](blockbreak_(task_type) "wikilink").*
 
 Farm a set amount of crops.
 
+{: .note }
 Since Quests v3.13, `farmingcertain` and `farming` have been merged into
 one. Both names can be used to refer to this task.
 

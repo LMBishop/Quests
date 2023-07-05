@@ -1,3 +1,10 @@
+---
+title: Quest progress in scoreboard
+parent: Guides
+---
+
+# Quest progress in scoreboard
+
 This guide will show you how to show quest progress in a scoreboard. The
 plugin
 [<https://www.spigotmc.org/resources/animatedscoreboard.20848/>](AnimatedScoreboard "wikilink")
@@ -12,7 +19,7 @@ accepting PlaceholderAPI.
 
 The final result will look like this:
 
-<https://i.imgur.com/NkcZTB2.png> <https://i.imgur.com/EIWAwb2.png>
+<img src="https://i.imgur.com/NkcZTB2.png"> <img src="https://i.imgur.com/EIWAwb2.png">
 
 ## Adding local quest placeholders
 
@@ -37,7 +44,7 @@ These placeholders will be called using PlaceholderAPI using the
 AnimatedScoreboard plugin. For example, using the placeholder
 `%quests_q:example1_p:description%` with PlaceholderAPI will return
 `&7Break &f30 blocks &7of any type.`. These are known as [local quest
-placeholders](PlaceholderAPI#Quest_details "wikilink").
+placeholders](../tools/placeholderapi.md#Quest_details "wikilink").
 
 Our `description` placeholder provides a description of the quest. The
 \`progress\` placeholder will show the players progression with the
@@ -53,8 +60,9 @@ To see the full quest (with comments), click
 
 ## Configuring AnimatedScoreboard
 
-⚠️ **This guide assumes you have a basic understanding of the plugin
-[<https://www.spigotmc.org/resources/animatedscoreboard.20848/>](AnimatedScoreboard "wikilink").**
+{: .note }
+This guide assumes you have a basic understanding of the plugin
+[<https://www.spigotmc.org/resources/animatedscoreboard.20848/>](AnimatedScoreboard "wikilink").
 
 For our config with AnimatedScoreboard, we will create two seperate
 scoreboards: one with tracked quest information and one informing the

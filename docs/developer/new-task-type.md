@@ -1,9 +1,13 @@
-***
+---
+title: New task type
+parent: Developer
+---
 
-### 🔨 ***This page is under construction***
-*The information contained here may be inaccurate or incomplete. You can help by [contributing information to the wiki](https://github.com/LMBishop/Quests/wiki/Contributing-to-the-wiki).*
+# New task type
 
-***
+{: .highlight }
+**This page is under construction.** The information contained here may be inaccurate or incomplete. You can help by [contributing information to the wiki](https://github.com/LMBishop/Quests/wiki/Contributing-to-the-wiki).
+
 
 The following information is for developers who are interested in integrating Quests into their own plugin.
 
@@ -24,9 +28,10 @@ How a task type works generally follows this format:
 
 Quests handles the completion of all tasks within a quest and dispatches rewards. **A task type simply handles the events which increment a single task.**
 
-⚠ Task Types **MUST** be registered before the actual quests from the config are registered. They can be registered in between Quests inital activation and before the server is fully started. For example: you can register new Task Types inside of the `onEnable()` and add Quests to the `depend` or `softdepend` section of your `plugin.yml` to make sure that Quests is ready to accept your registration.
-
-Attempting to register a task type after the registration period has closed will throw a `IllegalStateException`. The registration period closes and quests are loaded after every plugin has finished loading (on the first server [tick](https://github.com/LMBishop/Quests/blob/master/src/main/java/com/leonardobishop/quests/Quests.java#L129)). 
+{: .caution }
+> Task Types **MUST** be registered before the actual quests from the config are registered. They can be registered in between Quests inital activation and before the server is fully started. For example: you can register new Task Types inside of the `onEnable()` and add Quests to the `depend` or `softdepend` section of your `plugin.yml` to make sure that Quests is ready to accept your registration.
+> 
+> Attempting to register a task type after the registration period has closed will throw a `IllegalStateException`. The registration period closes and quests are loaded after every plugin has finished loading (on the first server [tick](https://github.com/LMBishop/Quests/blob/master/src/main/java/com/leonardobishop/quests/Quests.java#L129)). 
 
 ## Writing task types
 Your new Task Type must extend the [`TaskType`](https://github.com/LMBishop/Quests/blob/master/common/src/main/java/com/leonardobishop/quests/common/tasktype/TaskType.java) class. **`BukkitTaskType` implements `Listener` and automatically registers as an event listener if used with the `BukkitTaskTypeManager`.** Your subclass must pass the name of the Task Type into the constructor, and optionally the authors name and a brief description of the task. 

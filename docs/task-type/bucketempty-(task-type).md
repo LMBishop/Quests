@@ -1,3 +1,14 @@
+---
+title: bucketempty
+parent: Task types
+nav_order: 5
+---
+
+# bucketempty (task type)
+
+Since v3.9
+{: .label .label-green }
+
 Empty a bucket.
 
 ## Options

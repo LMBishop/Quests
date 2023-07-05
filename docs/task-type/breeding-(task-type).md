@@ -1,3 +1,14 @@
+---
+title: breeding
+parent: Task types
+nav_order: 3
+---
+
+# breeding (task type)
+
+Since v2.2 
+{: .label .label-green }
+
 Breed a certain amount of animals.
 
 ## Options

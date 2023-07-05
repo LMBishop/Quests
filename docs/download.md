@@ -1,3 +1,9 @@
+---
+title: Download
+nav_order: 3
+---
+# Download
+
 Release builds of Quests are officially distributed at the
 sites on this page. Sources not listed here may contain modified, or
 outdated versions.

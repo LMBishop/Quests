@@ -1,3 +1,10 @@
+---
+title: Tips
+nav_order: 11
+---
+
+# Tips
+
 Creating and editing quests can seem daunting at first, but the plugin
 is designed to be as easy as possible to use.
 

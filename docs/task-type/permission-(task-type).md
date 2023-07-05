@@ -1,4 +1,17 @@
+---
+title: permission
+parent: Task types
+nav_order: 19
+---
+
+# permission (task type)
+
+Since v2.9.5
+{: .label .label-green }
+
 Test if a player has a permission.
+
+This task works by regularly polling a player at a certain interval.
 
 ## Options
 

@@ -1,6 +1,17 @@
+# Java
 .gradle/
 .idea/
 build/
 *.iml
 .java-version
+
+# Jekyll (docs)
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Bundler (docs)
+.bundle/
+vendor/
 

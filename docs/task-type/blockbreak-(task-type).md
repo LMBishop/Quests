@@ -1,5 +1,17 @@
-Breaka set amount of blocks.
+---
+title: blockbreak
+parent: Task types
+nav_order: 1
+---
 
+# blockbreak (task type)
+
+Since v1.0
+{: .label .label-green }
+
+Break a set amount of blocks.
+
+{: .note }
 Since Quests v3.13, `blockbreakcertain` and `blockbreak` have been
 merged into one. Both names can be used to refer to this task.
 

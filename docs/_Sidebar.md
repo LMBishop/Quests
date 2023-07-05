@@ -4,24 +4,24 @@
 
 ## [Home / FAQs](https://github.com/LMBishop/Quests/wiki)
 
-[Getting started](Getting-started)
+[Getting started](getting-started)
 
 [Downloading](download)
 
-[Tips](Tips)
+[Tips](tips)
 
-[Commands and permissions](Commands-and-permissions)
+[Commands and permissions](commands-and-permissions)
 ### **Configuration**
-* [Basic options](Basic-options)
-* [Creating a quest](Creating-a-quest)
-* [Creating a category](Creating-a-category)
+* [Basic options](configuration/basic-options.md)
+* [Creating a quest](configuration/creating-a-quest.md)
+* [Creating a category](configuration/creating-a-category.md)
 * [Global configurations](Global-Configurations)
-* [GUI configuration](GUI-configuration)
-* [Custom GUI items](Custom-GUI-items)
-* [Configuration problems](Configuration-problems)
-* [Storage providers](Storage-providers)
-* [Defining items](Defining-items)
-* [Colour (color) codes](Colour-codes)
+* [GUI configuration](configuration/gui-configuration.md)
+* [Custom GUI items](configuration/custom-gui-items.md)
+* [Configuration problems](configuration/configuration-problems.md)
+* [Storage providers](configuration/storage-providers.md)
+* [Defining items](configuration/defining-items.md)
+* [Colour (color) codes](configuration/colour-codes.md)
 * [Default configuration](Default-configuration)
 
 ### **Task Types**
@@ -72,16 +72,16 @@
 
 ### **API**
 
-* [API](API)
-* [New task type](New-task-type)
+* [API](developer/api.md)
+* [New task type](developer/new-task-type.md)
 
 ### **Guides**
 
-* [Quest progress in scoreboard](Quest-progress-in-scoreboard)
+* [Quest progress in scoreboard](guides/quest-progress-in-scoreboard.md)
 
 ### **Other**
 
-* [PlaceholderAPI](PlaceholderAPI)
-* [Quest debugger](Quest-debugger)
-* [Data migration tool](Data-migration-tool)
-* [Contributing to the wiki](Contributing-to-the-wiki)
+* [PlaceholderAPI](tools/placeholderapi.md)
+* [Quest debugger](tools/quest-debugger.md)
+* [Data migration tool](tools/data-migration-tool.md)
+* [Contributing to the wiki](contributing-to-the-wiki)

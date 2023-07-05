@@ -1,5 +1,16 @@
-  
-*Requires the IridiumSkyblock plugin to activate.*
+---
+title: iridiumskyblock_value
+parent: Task types
+nav_order: 34
+---
+
+# iridiumskyblock_value (task type)
+
+Since v3.5
+{: .label .label-green }
+
+Plugin 'IridiumSkyblock' required - version 2.x only
+{: .label }
 
 Reach a certain IridiumSkyblock value.
 

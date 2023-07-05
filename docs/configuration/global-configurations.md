@@ -1,3 +1,11 @@
+---
+title: Global configurations
+parent: Configuration
+nav_order: 4
+---
+
+# Global configurations
+
 **Global configurations** are intended to be used in place of
 **quest-specific configurations**. This helps reduce repetition across
 your configuration as you copy common elements from quest to quest, and
@@ -20,9 +28,11 @@ global-task-configuration:
 ```
 
 This will add to *all* tasks configurations with `type: inventory`
-across *all* quests the following: `update-progress: true`. *'Note that
-any errors coming from here will appear as if they are coming from
-individual quests.*
+across *all* quests the following: `update-progress: true`. 
+
+{: .note }
+Any errors which arise from global task configurations will appear as
+if they are coming from individual quests.
 
 Quest-level configurations will override anything set here. To change
 this behaviour, modify the [global task configuration
@@ -53,20 +63,17 @@ global-quest-display:
       - "&eRight Click &7to cancel this quest."
 ```
 
-<https://i.imgur.com/l0FI5Ma.png>
+<img src="https://i.imgur.com/l0FI5Ma.png" width="450px">
 
 If you do not want this, simply remove the section.
 
 ## Global macros
 
-Global macros are designed to help you reduce repetition across your
-configuration files by centralizing values in your config.yml. Think of
-them as your own variables/placeholders which you can use in your quest
-files.
+Global macros help you reduce repetition across your configuration 
+files by centralizing values in your config.yml. Think of them as your 
+own variables/placeholders which you can use in your quest files.
 
-To explain this feature, an example is more appropriate.
-
-In your config.yml, you can add a macro under the `global-macros`
+You can define macros in your `config.yml`, under the `global-macros`
 section:
 
     global-macros:
@@ -74,7 +81,7 @@ section:
       # <name of macro>: <string value of macro>
       top-bar: "&6---&7---&6---"
 
-To use these in your quests, simply reference it by using
+To use these in your quests, reference it by using
 `<$m name-of-macro $m>`. Macro names **cannot have spaces**.
 
 For example, to use the `top-bar` macro in `example-quest.yml`:
@@ -89,3 +96,8 @@ display:
     - "..."
   ...
 ```
+
+{: .caution }
+Macros are replaced by a pre-processor before a configuration is
+parsed. This means they have the ability to cause syntax errors in
+ways you do not expect if you are not careful. 

@@ -1,3 +1,14 @@
+---
+title: bucketfill
+parent: Task types
+nav_order: 6
+---
+
+# bucketfill (task type)
+
+Since v3.9
+{: .label .label-green }
+
 Fill a bucket up.
 
 ## Options

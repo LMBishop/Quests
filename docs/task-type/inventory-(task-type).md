@@ -1,3 +1,15 @@
+---
+title: inventory
+parent: Task types
+nav_order: 16
+---
+
+# inventory (task type)
+
+Since v1.4
+{: .label .label-green }
+
+
 Obtain a set of items.
 
 ## Options
