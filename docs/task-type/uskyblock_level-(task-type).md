@@ -1,0 +1,20 @@
+  
+*Requires the uSkyBlock plugin to activate.*
+
+Reach a certain uSkyBlock level.
+
+## Options
+
+| Key     | Description         | Type    | Required | Default | Notes |
+|---------|---------------------|---------|----------|---------|-------|
+| `level` | The level to reach. | Integer | Yes      | \-      | \-    |
+
+## Examples
+
+Reach island level 10:
+
+``` yaml
+askyblock:
+  type: "uskyblock_level"
+  level: 10                             # island level needed
+```

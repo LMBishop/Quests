@@ -1,0 +1,20 @@
+Deal a certain amount of damage.
+
+## Options
+
+| Key      | Description                                     | Type                | Required | Default | Notes                                                                                                    |
+|----------|-------------------------------------------------|---------------------|----------|---------|----------------------------------------------------------------------------------------------------------|
+| `amount` | The amount of damage needed.                    | Integer             | Yes      | \-      | Damage is measured in HP, 1 heart = 2 HP. A player has 20 HP by default, with no status effects applied. |
+| `worlds` | Worlds which should count towards the progress. | List of world names | No       | \-      | \-                                                                                                       |
+
+## Examples
+
+Deal 100 HP of damage:
+
+``` yaml
+dealdamage:
+  type: "dealdamage"
+  amount: 100                           # amount of damage inflicted (HP)
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```

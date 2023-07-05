@@ -1,0 +1,21 @@
+If you spot any errors in the wiki, or want to add more information of you own, then we would be happy to review potential changes. Due to the restrictions of the GitHub wiki pages, it is not possible to open pull requests to the wiki repository, instead changes will have to be submitted through the [https://github.com/LMBishop/Quests/issues/new?assignees=&labels=docs%2Cstatus%3A+needs+investigating&template=documentation.yml on the issue tracker].
+
+== Submitting edits ==
+:✍️ '''The primary wiki format is Wikitext, edits using Markdown will not be accepted.'''
+
+If you want to add information or edit the wiki, it would be beneficial if you submitted the source code of the page within backticks to make it easy to change the wiki. 
+<br><br>
+You can view the raw source code of a wiki page by adding <code>.mediawiki</code> to the url, for example: <code>https://github.com/LMBishop/Quests/wiki/Storage-providers.mediawiki</code>. '''Note that some pages are edited using Markdown, if <code>.mediawiki</code> does not resolve then use <code>.md</code> instead. These pages do not use Wikitext but will soon be converted to it.'''
+<br><br>
+Please make your edits to the page there, and submit the '''full page''' in the issue tracker. Due to constraints of the GitHub wiki, there is no way to easily submit revisions for review. 
+
+== Editing guidelines ==
+The Quests wiki loosely follows some conventions:
+* Article titles and headers should be written in lower case, with only the first word being capitalised. The only exception to this is with names (e.g. PlaceholderAPI, AnimatedScoreboard).
+* Headings should not used to restate the page name. Pages usually open with a short description at the top, they should never start with another heading.
+* British English should be used. 
+* Top-level headings should start at H2 (<code>## Heading</code> or <code>== Heading ==</code>). H1 (<code># Heading</code> or <code>= Heading =</code>) is never used as this conflicts with the article title. The only exception to this is on the home page, where the plugin name is displayed.
+* Longer articles should have their contents listed at the top, with wikilinks to each section of the page. 
+* Incomplete pages should have a warning at the top saying so. GitHub wikis have no support for templates, or for transclusion, so you must copy it manually from a different wiki page. 
+
+These conventions may or may not be wholly followed throughout the wiki, though it would be beneficial for new pages and new revisions to follow this convention.

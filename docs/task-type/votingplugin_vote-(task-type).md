@@ -1,0 +1,20 @@
+  
+*Requires the VotingPlugin plugin to activate.*
+
+Vote a number of times using VotingPlugin.
+
+## Options
+
+| Key      | Description          | Type    | Required | Default | Notes |
+|----------|----------------------|---------|----------|---------|-------|
+| `amount` | The number of votes. | Integer | Yes      | \-      | \-    |
+
+## Examples
+
+Vote 10 times:
+
+``` yaml
+votingplugin:
+  type: "votingplugin_vote"
+  amount: 10                             # number of times to vote
+```

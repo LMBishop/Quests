@@ -1,0 +1,102 @@
+Obtain a set of items.
+
+== Options ==
+{|
+|-
+! Key
+! Description
+! Type
+! Required
+! Default
+! Notes
+|-
+| <code>amount</code>
+| The number of items to obtain.
+| Integer
+| Yes
+| -
+| -
+|-
+| <code>item</code>
+| The specific item to obtain.
+| Material, or ItemStack
+| Yes
+| -
+| Accepts standard [[defining items|item definition]]. Please see [https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html this list] (1.13+) or [https://helpch.at/docs/1.12.2/org/bukkit/Material.html this list] (1.8-1.12) for material names.
+|-
+| <code>data</code>
+| The data code for the item.
+| Integer
+| No
+| 0
+| This field is not used in Minecraft versions 1.13+, nor is it compatible with ItemStack definitions.
+|-
+| <code>remove-items-when-complete</code>
+| Whether the items should be taken from the player when complete.
+| Boolean
+| No
+| false
+| If <code>allow-partial-completion</code> is true, then this will also be set to true.
+|-
+| <code>allow-partial-completion</code>
+| Whether any number of items counts towards the task progress.
+| Boolean
+| No
+| true
+| Setting to true will force <code>remove-items-when-complete</code> to true as well. If a player obtains any matching item, it will be immediately taken away from them and added towards the quest progress.
+|-
+| <code>worlds</code>
+| Worlds which should count towards the progress.
+| List of world names
+| No
+| -
+| -
+|}
+
+== Examples ==
+Obtain 8 of <code>BEEF</code>:
+
+```yaml
+beef:
+  type: "inventory"
+  item: BEEF                           # name of item (can be id or minecraft name)
+  amount: 8                             # amount of item needed
+  data: 0                               # (OPTIONAL) data code
+  remove-items-when-complete: false     # (OPTIONAL) take the items away from the player on completion - default: false
+  allow-partial-completion: false       # (OPTIONAL) allow partial deliveries - default: true
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```
+
+Obtain 8 of a specific item:
+
+```yaml
+beef:
+  type: "inventory"
+  item:                                 # SPECIFIC item with name and lore
+    name: "&cSpecial Beef"
+    type: "RAW_BEEF"
+    lore:
+     - "&7This is a special type of beef"
+  amount: 8                             # amount of item needed
+  data: 0                               # (OPTIONAL) data code
+  remove-items-when-complete: false     # (OPTIONAL) take the items away from the player on completion - default: false
+  allow-partial-completion: false       # (OPTIONAL) allow partial deliveries - default: true
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```
+
+Obtain 8 of [[Defining-items#quest-item|quest item]] <code>special_beef</code>:
+
+```yaml
+beef:
+  type: "inventory"
+  item:                                 # USING quest-item
+    quest-item: "specialbeef"
+  amount: 8                             # amount of item needed
+  data: 0                               # (OPTIONAL) data code
+  remove-items-when-complete: false     # (OPTIONAL) take the items away from the player on completion - default: false
+  allow-partial-completion: false       # (OPTIONAL) allow partial deliveries - default: true
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```

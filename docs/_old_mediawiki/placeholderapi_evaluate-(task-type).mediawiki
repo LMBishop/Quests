@@ -1,0 +1,67 @@
+: ''Requires the PlaceholderAPI plugin to activate.''
+
+Reach a certain PlaceholderAPI level.
+
+== Options ==
+{|
+|-
+! Key
+! Description
+! Type
+! Required
+! Default
+! Notes
+|-
+| <code>placeholder</code>
+| The placeholder to evaluate.
+| String
+| Yes
+| -
+| -
+|-
+| <code>evaluates</code>
+| The string the placeholder should evaluate to.
+| String
+| Yes
+| -
+| -
+|-
+| <code>operator</code>
+| The comparative operator to use for numeric placeholders.
+| String
+| No
+| -
+| One of: <code>GREATER_THAN</code>, <code>LESS_THAN</code>, <code>GREATER_THAN_OR_EQUAL_TO</code>, <code>LESS_THAN_OR_EQUAL_TO</code>. The value in <code>evaluates</code> '''must''' be numeric. If this is not specified, then exact equality will be assumed.
+|-
+| <code>worlds</code>
+| Worlds which should count towards the progress.
+| List of world names
+| No
+| -
+| -
+|}
+
+== Examples ==
+Have a player name of "fatpigsarefat":
+
+```yaml
+papieval:
+  type: "placeholderapi_evaluate"
+  placeholder: "%player_name%"          # placeholder string
+  evaluates: "fatpigsarefat"            # what it should evaluate as to be marked as complete
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```
+
+Be online when there are more than 20 empty slots on the server:
+
+```yaml
+papieval:
+  type: "placeholderapi_evaluate"
+  placeholder: "%player_empty_slots%"   # placeholder string
+  evaluates: "20"                       # number to compare to
+  operator: "GREATER_THAN"              # (OPTIONAL) numerical operator, "evaluates" MUST be an integer
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```
+

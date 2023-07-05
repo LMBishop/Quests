@@ -1,0 +1,32 @@
+Walk a set distance.
+
+## Options
+
+| Key        | Description                                     | Type                | Required | Default | Notes                                                                                                                                                                                 |
+|------------|-------------------------------------------------|---------------------|----------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `distance` | The distance in metres to walk.                 | Integer             | Yes      | \-      | 1 metre is equivalent to 1 block.                                                                                                                                                     |
+| `mode`     | The specific mode to travel                     | String              | No       | \-      | One of: `boat`, `horse`, `pig`, `minecart` `strider`, `sneaking`, `walking`, `running`, `swimming`, `flying`, `elytra`. Not specifying a mode will allow any of these modes to count. |
+| `worlds`   | Worlds which should count towards the progress. | List of world names | No       | \-      | \-                                                                                                                                                                                    |
+
+## Examples
+
+Travel 1000 metres:
+
+``` yaml
+walking:
+  type: "walking"
+  distance: 1000                        # distance in blocks travelled
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```
+
+Travel 1000 metres by sprinting only:
+
+``` yaml
+walking:
+  type: "walking"
+  distance: 1000                        # distance in blocks travelled
+  mode: running                         # (OPTIONAL) specific mode of transport
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```

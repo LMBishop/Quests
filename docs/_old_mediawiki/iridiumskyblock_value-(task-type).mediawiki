@@ -1,0 +1,30 @@
+: ''Requires the IridiumSkyblock plugin to activate.''
+
+Reach a certain IridiumSkyblock value.
+
+== Options ==
+{|
+|-
+! Key
+! Description
+! Type
+! Required
+! Default
+! Notes
+|-
+| <code>value</code>
+| The valueto reach.
+| Integer
+| Yes
+| -
+| -
+|}
+
+== Examples ==
+Reach island value 10:
+
+```yaml
+iridiumskyblock:
+  type: "iridiumskyblock_value"
+  value: 10                             # island level needed
+```

@@ -1,0 +1,30 @@
+: ''Requires the SuperiorSkyblock plugin to activate.''
+
+Reach a certain SuperiorSkyblock level.
+
+== Options ==
+{|
+|-
+! Key
+! Description
+! Type
+! Required
+! Default
+! Notes
+|-
+| <code>level</code>
+| The level to reach.
+| Integer
+| Yes
+| -
+| -
+|}
+
+== Examples ==
+Reach island level 10:
+
+```yaml
+superiorskyblock:
+  type: "superiorskyblock_level"
+  level: 10                             # island level needed
+```

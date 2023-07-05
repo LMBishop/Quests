@@ -1,0 +1,20 @@
+  
+*Requires the SuperiorSkyblock plugin to activate.*
+
+Reach a certain SuperiorSkyblock worth.
+
+## Options
+
+| Key     | Description         | Type    | Required | Default | Notes |
+|---------|---------------------|---------|----------|---------|-------|
+| `worth` | The worth to worth. | Integer | Yes      | \-      | \-    |
+
+## Examples
+
+Reach island worth 100:
+
+``` yaml
+superiorskyblock:
+  type: "superiorskyblock_worth"
+  level: 100                             # island worth needed
+```

@@ -1,0 +1,20 @@
+  
+*Requires the BentoBox plugin to activate.*
+
+Reach a certain BentoBox level.
+
+## Options
+
+| Key     | Description         | Type    | Required | Default | Notes |
+|---------|---------------------|---------|----------|---------|-------|
+| `level` | The level to reach. | Integer | Yes      | \-      | \-    |
+
+## Examples
+
+Reach island level 10:
+
+``` yaml
+bentobox:
+  type: "bentobox_level"
+  level: 10                             # island level needed
+```
