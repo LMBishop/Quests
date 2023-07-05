@@ -1,5 +1,7 @@
 title: Quests documentation
 description: Documentation for the Quests plugin
-remote_theme: pages-themes/minimal@v0.2.0
+
+theme: just-the-docs
+
 plugins:
-  - jekyll-remote-theme
+  - jekyll-default-layout
