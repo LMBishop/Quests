@@ -15,3 +15,9 @@ _site/
 .bundle/
 vendor/
 
+# Changelog generator
+CHANGELOG_BBCODE
+CHANGELOG_MD
+CHANGELOG_GFM
+UPDATE_MESSAGE
+
