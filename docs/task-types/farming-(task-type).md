@@ -1,7 +1,7 @@
 ---
 title: farming
-parent: Task types
-nav_order: 14
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # farming (task type)

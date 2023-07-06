@@ -1,7 +1,7 @@
 ---
 title: breeding
-parent: Task types
-nav_order: 3
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # breeding (task type)

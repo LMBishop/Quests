@@ -1,7 +1,7 @@
 ---
 title: smelting
-parent: Task types
-nav_order: 24
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # smelting (task type)
@@ -17,12 +17,13 @@ into one. Both names can be used to refer to this task.
 
 ## Options
 
-| Key      | Description                                     | Type                   | Required | Default | Notes                                                                                                                                                                                                                                                                                                                       |
-|----------|-------------------------------------------------|------------------------|----------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `amount` | The number of items to smelt.                   | Integer                | Yes      | \-      | \-                                                                                                                                                                                                                                                                                                                          |
-| `item`   | The specific item to smelt.                     | Material, or ItemStack | No       | \-      | Accepts standard [item definition](../configuration/defining-items). Please see [this list](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html) (1.13+) or [this list](https://helpch.at/docs/1.12.2/org/bukkit/Material.html) (1.8-1.12) for material names. If this is not specified, any item will count. |
-| `mode`   | The specific mode of smelting.                  | String                 | No       | \-      | One of: `smoker`, `blast_furnace`, `furnace`. If this is not specified, any furnace will count.                                                                                                                                                                                                                             |
-| `worlds` | Worlds which should count towards the progress. | List of world names    | No       | \-      | \-                                                                                                                                                                                                                                                                                                                          |
+| Key           | Description                                            | Type                   | Required | Default | Notes                                                                                                                                                                                                                                                                                                                       |
+|---------------|--------------------------------------------------------|------------------------|----------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `amount`      | The number of items to smelt.                          | Integer                | Yes      | \-      | \-                                                                                                                                                                                                                                                                                                                          |
+| `item`        | The specific item to smelt.                            | Material, or ItemStack | No       | \-      | Accepts standard [item definition](../configuration/defining-items). Please see [this list](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html) (1.13+) or [this list](https://helpch.at/docs/1.12.2/org/bukkit/Material.html) (1.8-1.12) for material names. If this is not specified, any item will count. |
+| `mode`        | The specific mode of smelting.                         | String                 | No       | \-      | One of: `smoker`, `blast_furnace`, `furnace`. If this is not specified, any furnace will count.                                                                                                                                                                                                                             |
+| `worlds`      | Worlds which should count towards the progress.        | List of world names    | No       | \-      | \-                                                                                                                                                                                                                                                                                                                          |
+| `exact-match` | Whether the item should exactly match what is defined. | Boolean                | No       | true    | \-                                                                                                                                                                                                                                                                                                                          |
 
 ## Examples
 

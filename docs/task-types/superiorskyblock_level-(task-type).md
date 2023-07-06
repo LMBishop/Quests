@@ -1,7 +1,7 @@
 ---
 title: superiorskyblock_level
-parent: Task types
-nav_order: 39
+parent: External task types
+grand_parent: Task types
 ---
 
 # superiorskyblock_level (task type)

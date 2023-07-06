@@ -1,7 +1,7 @@
 ---
 title: shopguiplus_buy
-parent: Task types
-nav_order: 37
+parent: External task types
+grand_parent: Task types
 ---
 
 # shopguiplus_buy (task type)

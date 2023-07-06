@@ -1,7 +1,7 @@
 ---
 title: distancefrom
-parent: Task types
-nav_order: 11
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # distancefrom (task type)

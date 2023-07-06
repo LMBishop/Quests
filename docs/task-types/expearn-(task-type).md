@@ -1,7 +1,7 @@
 ---
 title: expearn
-parent: Task types
-nav_order: 13
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # expearn (task type)

@@ -1,7 +1,7 @@
 ---
 title: permission
-parent: Task types
-nav_order: 19
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # permission (task type)

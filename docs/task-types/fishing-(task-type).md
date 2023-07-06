@@ -1,7 +1,7 @@
 ---
 title: fishing
-parent: Task types
-nav_order: 15
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # fishing (task type)
@@ -17,11 +17,12 @@ one. Both names can be used to refer to this task.
 
 ## Options
 
-| Key      | Description                                      | Type                | Required | Default | Notes                                                          |
-|----------|--------------------------------------------------|---------------------|----------|---------|----------------------------------------------------------------|
-| `amount` | The number of fish to catch.                     | Integer             | Yes      | \-      | \-                                                             |
-| `item`   | Specific item which should be used to kill mobs. | ItemStack           | No       | \-      | Accepts standard [item definition](defining_items "wikilink"). |
-| `worlds` | Worlds which should count towards the progress.  | List of world names | No       | \-      | \-                                                             |
+| Key           | Description                                            | Type                | Required | Default | Notes                                                          |
+|---------------|--------------------------------------------------------|---------------------|----------|---------|----------------------------------------------------------------|
+| `amount`      | The number of fish to catch.                           | Integer             | Yes      | \-      | \-                                                             |
+| `item`        | Specific item which should be used to kill mobs.       | ItemStack           | No       | \-      | Accepts standard [item definition](defining_items "wikilink"). |
+| `worlds`      | Worlds which should count towards the progress.        | List of world names | No       | \-      | \-                                                             |
+| `exact-match` | Whether the item should exactly match what is defined. | Boolean             | No       | true    | \-                                                             |
 
 ## Examples
 

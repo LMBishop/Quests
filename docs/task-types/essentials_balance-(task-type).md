@@ -1,7 +1,7 @@
 ---
 title: essentials_balance
-parent: Task types
-nav_order: 31
+parent: External task types
+grand_parent: Task types
 ---
 
 # essentials_balance (task type)

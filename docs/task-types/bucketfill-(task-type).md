@@ -1,7 +1,7 @@
 ---
 title: bucketfill
-parent: Task types
-nav_order: 6
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # bucketfill (task type)

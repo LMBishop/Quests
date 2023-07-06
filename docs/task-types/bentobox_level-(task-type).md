@@ -1,7 +1,7 @@
 ---
 title: bentobox_level
-parent: Task types
-nav_order: 28
+parent: External task types
+grand_parent: Task types
 ---
 
 # bentobox_level (task type)

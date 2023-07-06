@@ -1,7 +1,7 @@
 ---
 title: mythicmobs_killing
-parent: Task types
-nav_order: 35
+parent: External task types
+grand_parent: Task types
 ---
 
 # mythicmobs_killing (task type)

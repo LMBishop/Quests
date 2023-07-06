@@ -1,7 +1,7 @@
 ---
 title: command
-parent: Task types
-nav_order: 7
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # command (task type)

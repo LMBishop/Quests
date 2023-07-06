@@ -1,7 +1,7 @@
 ---
 title: citizens_interact
-parent: Task types
-nav_order: 30
+parent: External task types
+grand_parent: Task types
 ---
 
 # citizens_interact (task type)

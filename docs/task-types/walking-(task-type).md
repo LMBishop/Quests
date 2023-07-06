@@ -1,7 +1,7 @@
 ---
 title: walking
-parent: Task types
-nav_order: 26
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # walking (task type)

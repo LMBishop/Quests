@@ -1,7 +1,7 @@
 ---
 title: dealdamage
-parent: Task types
-nav_order: 10
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # dealdamage (task type)

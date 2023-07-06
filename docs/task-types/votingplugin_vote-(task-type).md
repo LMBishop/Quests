@@ -1,7 +1,7 @@
 ---
 title: votingplugin_vote
-parent: Task types
-nav_order: 42
+parent: External task types
+grand_parent: Task types
 ---
 
 # votingplugin_vote (task type)

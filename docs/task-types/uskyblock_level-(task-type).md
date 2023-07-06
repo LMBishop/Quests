@@ -1,7 +1,7 @@
 ---
 title: uskyblock_level
-parent: Task types
-nav_order: 41
+parent: External task types
+grand_parent: Task types
 ---
 
 # uskyblock_level (task type)

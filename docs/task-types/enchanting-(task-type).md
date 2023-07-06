@@ -1,7 +1,7 @@
 ---
 title: enchanting
-parent: Task types
-nav_order: 12
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # enchanting (task type)

@@ -1,7 +1,7 @@
 ---
 title: playtime
-parent: Task types
-nav_order: 21
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # playtime (task type)

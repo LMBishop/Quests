@@ -1,7 +1,7 @@
 ---
 title: bucketempty
-parent: Task types
-nav_order: 5
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # bucketempty (task type)

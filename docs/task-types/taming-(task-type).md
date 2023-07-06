@@ -1,7 +1,7 @@
 ---
 title: taming
-parent: Task types
-nav_order: 25
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # taming (task type)

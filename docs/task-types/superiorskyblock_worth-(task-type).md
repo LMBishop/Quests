@@ -1,7 +1,7 @@
 ---
 title: superiorskyblock_worth
-parent: Task types
-nav_order: 40
+parent: External task types
+grand_parent: Task types
 ---
 
 # superiorskyblock_worth (task type)

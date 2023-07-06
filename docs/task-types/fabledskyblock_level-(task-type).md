@@ -1,7 +1,7 @@
 ---
 title: fabledskyblock_level
-parent: Task types
-nav_order: 33
+parent: External task types
+grand_parent: Task types
 ---
 
 # fabledskyblock_level (task type)

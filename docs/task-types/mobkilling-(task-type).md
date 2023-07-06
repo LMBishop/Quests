@@ -1,7 +1,7 @@
 ---
 title: mobkilling
-parent: Task types
-nav_order: 18
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # mobkilling (task type)
@@ -17,14 +17,15 @@ merged into one. Both names can be used to refer to this task.
 
 ## Options
 
-| Key              | Description                                      | Type                             | Required | Default | Notes                                                                                                                                                                                              |
-|------------------|--------------------------------------------------|----------------------------------|----------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `amount`         | The number of mobs to kill.                      | Integer                          | Yes      | \-      | \-                                                                                                                                                                                                 |
-| `mob`            | The specific mob(s) to kill.                     | Entity type, or list of entities | No       | \-      | Not specifying this field will allow all mob types to count towards the task. Please see [this list](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html) for entity types. |
-| `name` / `names` | The specific name(s) of mobs to kill.            | String, or list of strings       | No       | \-      | Not specifying this field will allow mobs with any names to count towards the task. Ensure any colour codes in the name of the entity are specified, otherwise the match will not work.            |
-| `hostile`        | Whether the mob must be hostile.                 | Boolean                          | No       | \-      | If specified and set to false, only non-hostile mobs will count.                                                                                                                                   |
-| `item`           | Specific item which should be used to kill mobs. | ItemStack                        | No       | \-      | Accepts standard [item definition](defining_items "wikilink").                                                                                                                                     |
-| `worlds`         | Worlds which should count towards the progress.  | List of world names              | No       | \-      | \-                                                                                                                                                                                                 |
+| Key              | Description                                            | Type                             | Required | Default | Notes                                                                                                                                                                                              |
+|------------------|--------------------------------------------------------|----------------------------------|----------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `amount`         | The number of mobs to kill.                            | Integer                          | Yes      | \-      | \-                                                                                                                                                                                                 |
+| `mob`            | The specific mob(s) to kill.                           | Entity type, or list of entities | No       | \-      | Not specifying this field will allow all mob types to count towards the task. Please see [this list](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html) for entity types. |
+| `name` / `names` | The specific name(s) of mobs to kill.                  | String, or list of strings       | No       | \-      | Not specifying this field will allow mobs with any names to count towards the task. Ensure any colour codes in the name of the entity are specified, otherwise the match will not work.            |
+| `hostile`        | Whether the mob must be hostile.                       | Boolean                          | No       | \-      | If specified and set to false, only non-hostile mobs will count.                                                                                                                                   |
+| `item`           | Specific item which should be used to kill mobs.       | ItemStack                        | No       | \-      | Accepts standard [item definition](defining_items "wikilink").                                                                                                                                     |
+| `worlds`         | Worlds which should count towards the progress.        | List of world names              | No       | \-      | \-                                                                                                                                                                                                 |
+| `exact-match`    | Whether the item should exactly match what is defined. | Boolean                          | No       | true    | \-                                                                                                                                                                                                 |
 
 ## Examples
 

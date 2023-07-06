@@ -1,7 +1,7 @@
 ---
 title: position
-parent: Task types
-nav_order: 22
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # position (task type)

@@ -1,7 +1,7 @@
 ---
 title: essentials_moneyearn
-parent: Task types
-nav_order: 32
+parent: External task types
+grand_parent: Task types
 ---
 
 # essentials_moneyearn (task type)

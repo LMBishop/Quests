@@ -1,7 +1,7 @@
 ---
 title: playerkilling
-parent: Task types
-nav_order: 20
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # playerkilling (task type)

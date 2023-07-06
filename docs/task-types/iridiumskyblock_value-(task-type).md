@@ -1,7 +1,7 @@
 ---
 title: iridiumskyblock_value
-parent: Task types
-nav_order: 34
+parent: External task types
+grand_parent: Task types
 ---
 
 # iridiumskyblock_value (task type)
@@ -16,9 +16,9 @@ Reach a certain IridiumSkyblock value.
 
 ## Options
 
-| Key     | Description        | Type    | Required | Default | Notes |
-|---------|--------------------|---------|----------|---------|-------|
-| `value` | The valueto reach. | Integer | Yes      | \-      | \-    |
+| Key     | Description         | Type    | Required | Default | Notes |
+|---------|---------------------|---------|----------|---------|-------|
+| `value` | The value to reach. | Integer | Yes      | \-      | \-    |
 
 ## Examples
 

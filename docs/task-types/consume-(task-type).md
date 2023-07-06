@@ -1,7 +1,7 @@
 ---
 title: consume
-parent: Task types
-nav_order: 8
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # consume (task type)
@@ -13,12 +13,13 @@ Consume a specific item.
 
 ## Options
 
-| Key      | Description                                     | Type                   | Required | Default | Notes                                                                                                                                                                                                                                                                  |
-|----------|-------------------------------------------------|------------------------|----------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `amount` | The number of items to consume.                 | Integer                | Yes      | \-      | \-                                                                                                                                                                                                                                                                     |
-| `item`   | The specific item to obtain.                    | Material, or ItemStack | Yes      | \-      | Accepts standard [item definition](defining_items "wikilink"). Please see [this list](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html) (1.13+) or [this list](https://helpch.at/docs/1.12.2/org/bukkit/Material.html) (1.8-1.12) for material names. |
-| `data`   | The data code for the item.                     | Integer                | No       | 0       | This field is not used in Minecraft versions 1.13+, nor is it compatible with ItemStack definitions.                                                                                                                                                                   |
-| `worlds` | Worlds which should count towards the progress. | List of world names    | No       | \-      | \-                                                                                                                                                                                                                                                                     |
+| Key           | Description                                            | Type                   | Required | Default | Notes                                                                                                                                                                                                                                                                  |
+|---------------|--------------------------------------------------------|------------------------|----------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `amount`      | The number of items to consume.                        | Integer                | Yes      | \-      | \-                                                                                                                                                                                                                                                                     |
+| `item`        | The specific item to obtain.                           | Material, or ItemStack | Yes      | \-      | Accepts standard [item definition](defining_items "wikilink"). Please see [this list](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html) (1.13+) or [this list](https://helpch.at/docs/1.12.2/org/bukkit/Material.html) (1.8-1.12) for material names. |
+| `data`        | The data code for the item.                            | Integer                | No       | 0       | This field is not used in Minecraft versions 1.13+, nor is it compatible with ItemStack definitions.                                                                                                                                                                   |
+| `worlds`      | Worlds which should count towards the progress.        | List of world names    | No       | \-      | \-                                                                                                                                                                                                                                                                     |
+| `exact-match` | Whether the item should exactly match what is defined. | Boolean                | No       | true    | \-                                                                                                                                                                                                                                                                     |
 
 ## Examples
 

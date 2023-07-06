@@ -1,7 +1,7 @@
 ---
 title: inventory
-parent: Task types
-nav_order: 16
+parent: Built-in task types
+grand_parent: Task types
 ---
 
 # inventory (task type)
@@ -22,6 +22,7 @@ Obtain a set of items.
 | `remove-items-when-complete` | Whether the items should be taken from the player when complete. | Boolean                | No       | false   | If `allow-partial-completion` is true, then this will also be set to true.                                                                                                                                                                                             |
 | `allow-partial-completion`   | Whether any number of items counts towards the task progress.    | Boolean                | No       | true    | Setting to true will force `remove-items-when-complete` to true as well. If a player obtains any matching item, it will be immediately taken away from them and added towards the quest progress.                                                                      |
 | `worlds`                     | Worlds which should count towards the progress.                  | List of world names    | No       | \-      | \-                                                                                                                                                                                                                                                                     |
+| `exact-match`                | Whether the item should exactly match what is defined.           | Boolean                | No       | true    | \-                                                                                                                                                                                                                                                                     |
 
 ## Examples
 
