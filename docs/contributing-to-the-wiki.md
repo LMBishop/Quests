@@ -5,32 +5,23 @@ nav_order: 10
 
 # Contributing to the wiki
 
-{: .caution }
-This information is out of date since the wiki migration.
-
 If you spot any errors in the wiki, or want to add more information of
-you own, then we would be happy to review potential changes. Due to the
-restrictions of the GitHub wiki pages, it is not possible to open pull
-requests to the wiki repository, instead changes will have to be
-submitted through the [on the issue
-tracker](https://github.com/LMBishop/Quests/issues/new?assignees=&labels=docs%2Cstatus%3A+needs+investigating&template=documentation.yml).
+you own, then we would be happy to review changes. This documentation 
+is built directly from 
+[the `docs` directory on the `master` branch on GitHub](https://github.com/LMBishop/Quests/tree/master/docs),
+using GitHub pages. 
 
 ## Submitting edits
 
-If you want to add information or edit the wiki, it would be beneficial
-if you submitted the source code of the page within backticks to make it
-easy to change the wiki.  
-  
-You can view the raw source code of a wiki page by adding `.mediawiki`
-to the url, for example:
-[`https://github.com/LMBishop/Quests/wiki/Storage-providers.mediawiki`](https://github.com/LMBishop/Quests/wiki/Storage-providers.mediawiki).
-**Note that some pages are edited using Markdown, if `.mediawiki` does
-not resolve then use `.md` instead. These pages do not use Wikitext but
-will soon be converted to it.**  
-  
-Please make your edits to the page there, and submit the **full page**
-in the issue tracker. Due to constraints of the GitHub wiki, there is no
-way to easily submit revisions for review.
+{: .new }
+It is no longer necessary to submit edits through the issue tracker,
+as documentation is now maintained within the repository itself.
+
+If you want to add information or edit the wiki, please fork this
+repository and make your changes.
+
+If you need guidance, check out the [CONTRIBUTING.md](https://github.com/LMBishop/Quests/blob/master/CONTRIBUTING.md)
+file in the main repository.
 
 ## Editing guidelines
 
@@ -43,15 +34,15 @@ The Quests wiki loosely follows some conventions:
   with a short description at the top, they should never start with
   another heading.
 - British English should be used.
-- Top-level headings should start at H2 (`## Heading` or
-  `== Heading ==`). H1 (`# Heading` or `= Heading =`) is never used as
-  this conflicts with the article title. The only exception to this is
-  on the home page, where the plugin name is displayed.
-- Longer articles should have their contents listed at the top, with
-  wikilinks to each section of the page.
-- Incomplete pages should have a warning at the top saying so. GitHub
-  wikis have no support for templates, or for transclusion, so you must
-  copy it manually from a different wiki page.
+- Top-level headings should start at H2 (`## Heading`). H1 (`# Heading`) 
+  is reserved for the article title itself.
+- Longer articles should have a table of contents.
+- Incomplete pages should have a warning at the top stating so.
+  You can transclude a pre-made banner by adding
+  `{% raw %}{% include incomplete.md %}{% endraw %}` to the page.
+- Most files have an 80 character line limit, to assist with readability
+  in a split view, except links or source code / 
+  configuration files. 
 
 These conventions may or may not be wholly followed throughout the wiki,
 though it would be beneficial for new pages and new revisions to follow

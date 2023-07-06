@@ -37,7 +37,7 @@ Quests, and is a type of 'flatfile' storage.
 
 ``` yaml
 options:
-  ...
+  # ...
   storage:
     provider: "yaml"
 ```
@@ -58,7 +58,7 @@ consistency issues.
 > server loading player data before the old server has saved it.
 > 
 > Quests offers a workaround, which is to [delay the loading of player
-> data](#delay-loading "wikilink"). You may also want to
+> data](#delay-loading). You may also want to
 > consider forcing players to switch servers through a hub server, or
 > decreasing the autosave period. In either case, the race condition still
 > exists; there is not an easy way to coordinate the loading/saving due to
@@ -73,7 +73,7 @@ player data.
 
 ``` yaml
 options:
-  ...
+  # ...
   storage:
     provider: "mysql"
 ```
@@ -112,7 +112,7 @@ README](https://github.com/brettwooldridge/HikariCP).
 ### Delay loading
 
 Quests offers a workaround to the [race
-condition](Storage_providers#Network "wikilink"), which is to delay the
+condition](#network), which is to delay the
 loading of player data in hopes that the server before has enough time
 to save the data.
 
@@ -120,12 +120,12 @@ You can enable this in your config here:
 
 ``` yaml
 options:
-  ...
+  # ...
   storage:
     provider: "mysql"
     synchronisation:
       delay-loading: 0 # (ticks - change to any value above 0)
-    ...
+    # ...
 ```
 
 A value of 50 (2.5 seconds) should be enough for most servers, however

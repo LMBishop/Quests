@@ -5,8 +5,7 @@ parent: Developer
 
 # API
 
-{: .highlight }
-**This page is under construction.** The information contained here may be inaccurate or incomplete. You can help by [contributing information to the wiki](https://github.com/LMBishop/Quests/wiki/Contributing-to-the-wiki).
+{% include incomplete.md %}
 
 Quests provides an API for other people to use. **This API is experimental and may be subject to change.** For usages, it is best to take a look into the plugin itself.
 

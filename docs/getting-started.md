@@ -1,11 +1,10 @@
 ---
 title: Getting started
-nav_order: 2
+nav_order: 3
 ---
 # Getting started
 
-{: .highlight }
-**This page is under construction.** The information contained here may be inaccurate or incomplete. You can help by [contributing information to the wiki](https://github.com/LMBishop/Quests/wiki/Contributing-to-the-wiki).
+{% include incomplete.md %}
 
 Welcome to Quests! This wiki should help you with creating your own custom quests on your server.
 

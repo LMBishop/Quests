@@ -37,7 +37,7 @@ Simalar to quest IDs, there are task IDs. They can be identical to the
 quest ID but must be unique to each other.
 
 For help on adding the tasks, refer to [task configuration
-layout](Task_configuration_layout "wikilink")
+layout](../task-types)
 
 ## Display
 
@@ -93,7 +93,7 @@ is complete.
 
 ``` yaml
 display:
-  ...
+  # ...
   lore-started:
     - ""
     - "&7Your current progression:"
@@ -109,7 +109,7 @@ The type (material name) of item.
 
 ``` yaml
 display:
-  ...
+  # ...
   type: "WOODEN_PICKAXE"
 ```
 
@@ -187,7 +187,7 @@ placeholders:
 ```
 
 These placeholders will be called using PlaceholderAPI. See [quest
-progress in scoreboard](Quest_progress_in_scoreboard "wikilink") for a
+progress in scoreboard](../guides/quest-progress-in-scoreboard) for a
 guide which utilises this feature.
 
 ## Options
@@ -207,7 +207,7 @@ of the category here.
 
 ``` yaml
 options:
-  ...
+  # ...
   category: "example"
 ```
 
@@ -221,7 +221,7 @@ able to start this quest.
 
 ``` yaml
 options:
-  ...
+  # ...
   requires:
    - "quest-id"
 ```
@@ -236,7 +236,7 @@ start. The permission will be `quests.quest.<id>`.
 
 ``` yaml
 options:
-  ...
+  # ...
   permission-required: false
 ```
 
@@ -251,7 +251,7 @@ then this option is ignored.
 
 ``` yaml
 options:
-  ...
+  # ...
   cancellable: false
 ```
 
@@ -266,7 +266,7 @@ effect as quest limits are disabled.
 
 ``` yaml
 options:
-  ...
+  # ...
   counts-towards-limit: false
 ```
 
@@ -279,7 +279,7 @@ options:
 
 ``` yaml
 options:
-  ...
+  # ...
   repeatable: false
 ```
 
@@ -293,7 +293,7 @@ immediately replayable.
 
 ``` yaml
 options:
-  ...
+  # ...
   cooldown:
     enabled: true
     time: 1440     # minutes
@@ -310,7 +310,7 @@ reset.
 
 ``` yaml
 options:
-  ...
+  # ...
   time-limit:
     enabled: true
     time: 1440     # minutes
@@ -326,7 +326,7 @@ come first.
 
 ``` yaml
 options:
-  ...
+  # ...
   sort-order: 1
 ```
 
@@ -341,12 +341,12 @@ specific only to this quest, meaning it cannot be cancelled and counts
 towards the players quest started limit.
 
 See [§ counts towards
-limit](Creating_a_quest#Counts_towards_limit "wikilink") if you do not
+limit](#counts-towards-limit) if you do not
 want autostart quests to count towards the quest started limit.
 
 ``` yaml
 options:
-  ...
+  # ...
   autostart: true
 ```
 
@@ -357,14 +357,14 @@ options:
 
 **Optional.** The display item this quest should take if it is
 completed. This accepts the standard ItemStack definition format
-described in [Defining items](Defining_items "wikilink"). If this option
+described in [defining items](defining-items.md). If this option
 is not specified, the display item [defined in the main
-config.yml](gui-configuration#quest-completed-display "wikilink") will
+config.yml](gui-configuration#quest-completed-display) will
 be used.
 
 ``` yaml
 options:
-  ...
+  # ...
   completed-display:
     type: "STEAK"
 ```
@@ -376,14 +376,14 @@ options:
 
 **Optional.** The display item this quest should take if it is on
 cooldown. This accepts the standard ItemStack definition format
-described in [Defining items](Defining_items "wikilink"). If this option
+described in [defining items](defining-items). If this option
 is not specified, the display item [defined in the main
-config.yml](gui-configuration#quest-cooldown-display "wikilink") will be
+config.yml](gui-configuration#quest-cooldown-display) will be
 used.
 
 ``` yaml
 options:
-  ...
+  # ...
   cooldown-display:
     type: "STEAK"
 ```
@@ -395,15 +395,15 @@ options:
 
 **Optional.** The display item this quest should take if the player does
 not have permission to start it. This accepts the standard ItemStack
-definition format described in [Defining
-items](Defining_items "wikilink"). If this option is not specified, the
+definition format described in [defining
+items](defining-items). If this option is not specified, the
 display item [defined in the main
-config.yml](gui-configuration#quest-permission-display "wikilink") will
+config.yml](gui-configuration#quest-permission-display) will
 be used.
 
 ``` yaml
 options:
-  ...
+  # ...
   permission-display:
     type: "STEAK"
 ```
@@ -415,14 +415,14 @@ options:
 
 **Optional.** The display item this quest should take if the player has
 not unlocked it. This accepts the standard ItemStack definition format
-described in [Defining items](Defining_items "wikilink"). If this option
+described in [defining items](defining-items). If this option
 is not specified, the display item [defined in the main
-config.yml](gui-configuration#quest-locked-display "wikilink") will be
+config.yml](gui-configuration#quest-locked-display) will be
 used.
 
 ``` yaml
 options:
-  ...
+  # ...
   locked-display:
     type: "STEAK"
 ```

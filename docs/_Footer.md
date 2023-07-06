@@ -1,3 +1,0 @@
-*This wiki serves as a manual for Quests, however there is no guarantee that the information is up-to-date or complete. As per the license, this software provides absolutely no warranty, nor are the maintainers liable for any damages. Please see the license text for more information.*
-
-[🏠 Home page](https://github.com/LMBishop/Quests/wiki/) ~ [💻 Source code](https://github.com/LMBishop/Quests/) ~ [🤝 Contributing to the wiki](https://github.com/LMBishop/Quests/wiki/Contributing-to-the-wiki) ~ [📜 Full license text](https://github.com/LMBishop/Quests/blob/master/LICENSE.txt)

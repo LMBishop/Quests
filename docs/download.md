@@ -1,6 +1,6 @@
 ---
 title: Download
-nav_order: 3
+nav_order: 2
 ---
 # Download
 
@@ -12,11 +12,11 @@ outdated versions.
 
 - [SpigotMC
   (preferred)](https://www.spigotmc.org/resources/quests-1-8-1-19-set-up-goals-for-players.23696/)
+- [Hangar](https://hangar.papermc.io/LMBishop/Quests)
 - [Modrinth](https://modrinth.com/mod/quests)
+- [GitHub](https://github.com/LMBishop/Quests/releases)
 - [Polymart](https://polymart.org/resource/quests.938)
 - [Songoda](https://songoda.com/marketplace/product/quests-quests.544)
-- [GitHub](https://github.com/LMBishop/Quests/releases)
-- <s>[Hangar (testing)](https://hangar.benndorf.dev/LMBishop/Quests)</s>
 
 Please note Hangar is still in active development and testing. It may be
 removed at any time.
@@ -25,7 +25,7 @@ removed at any time.
 
 Some platforms may not be up-to-date yet.
 
-<img src="https://mcbadges.leonardobishop.com/quests.svg"/>
+<img src="https://mcbadges.leonardobishop.com/quests.svg">
 
 ## Development builds
 

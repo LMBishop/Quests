@@ -49,7 +49,7 @@ compass:
    - "world"
 ```
 
-Craft 5 of [quest item](Defining-items#quest-item "wikilink")
+Craft 5 of [quest item](../configuration/defining-items#quest-items)
 `super_compass`:
 
 ``` yaml

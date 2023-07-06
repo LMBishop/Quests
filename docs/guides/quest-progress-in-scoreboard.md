@@ -44,7 +44,7 @@ These placeholders will be called using PlaceholderAPI using the
 AnimatedScoreboard plugin. For example, using the placeholder
 `%quests_q:example1_p:description%` with PlaceholderAPI will return
 `&7Break &f30 blocks &7of any type.`. These are known as [local quest
-placeholders](../tools/placeholderapi.md#Quest_details "wikilink").
+placeholders](../tools/placeholderapi#quest-details).
 
 Our `description` placeholder provides a description of the quest. The
 \`progress\` placeholder will show the players progression with the
@@ -62,7 +62,7 @@ To see the full quest (with comments), click
 
 {: .note }
 This guide assumes you have a basic understanding of the plugin
-[<https://www.spigotmc.org/resources/animatedscoreboard.20848/>](AnimatedScoreboard "wikilink").
+[AnimatedScoreboard](https://www.spigotmc.org/resources/animatedscoreboard.20848/).
 
 For our config with AnimatedScoreboard, we will create two seperate
 scoreboards: one with tracked quest information and one informing the
@@ -185,4 +185,4 @@ quest placeholders for every quest.
 
 ## Further reading
 
-- [Creating a quest](Creating_a_quest "wikilink")
+- [Creating a quest](../configuration/creating-a-quest)

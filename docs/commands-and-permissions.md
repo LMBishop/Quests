@@ -45,7 +45,7 @@ also be viewed in-game by simply running `/quests`.
     - **/quests a/admin items give \<player\> \<id\> \[amount\]** - give
       a player a quest item.
   - **/quests a/admin debug** - view help for the [quest
-    debugger](quest_debugger "wikilink").
+    debugger](tools/quest-debugger).
     - **/quests a/admin debug report** - generate a debug report.
     - **/quests a/admin debug quest \<quest/\*\> \<all/self\>** - enable
       debug messages for a specific quest, or all of them.

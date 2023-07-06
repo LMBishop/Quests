@@ -6,7 +6,7 @@ parent: Tools
 # Data migration tool
 
 The **data migration tool** is a tool that allows you to migrate your
-data from one [storage provider](Storage_providers "wikilink") to
+data from one [storage provider](../configuration/storage-providers) to
 another. This can also be used as a backup tool. The tool can be
 accessed using `/quests admin migratedata`, which will generate a file
 [migrate_data.yml](https://github.com/LMBishop/Quests/blob/master/bukkit/src/main/resources/resources/bukkit/migrate_data.yml),

@@ -12,7 +12,7 @@ Since v3.5
 Minecraft 1.13+ required
 {: .label .label-purple }
 
-*For previous versions, use [blockbreak](blockbreak_(task_type) "wikilink").*
+*For previous versions, use [blockbreak](blockbreak-(task-type)).*
 
 Farm a set amount of crops.
 

@@ -39,7 +39,7 @@ only helping determine the order they are sorted.
 
 ``` yaml
 options:
-  ...
+  # ...
   categories-enabled: true
 ```
 
@@ -53,7 +53,7 @@ of rows) so that there are not any empty rows.
 
 ``` yaml
 options:
-  ...
+  # ...
   trim-gui-size: true
 ```
 
@@ -67,7 +67,7 @@ quests.
 
 ``` yaml
 options:
-  ...
+  # ...
   titles-enabled: true
 ```
 
@@ -77,18 +77,18 @@ options:
 
 {: .warning }
 **This option has been removed in version 3.8 and this wiki entry is
-subject to removal.** Please see [quest limit](#quest-limit "wikilink")
+subject to removal.** Please see [quest limit](#quest-limit)
 instead.
 
 Choose the number of quests players can start at one time. This will
 include quests which have [quest-specific
-autostart](Creating_a_quest#Autostart "wikilink") enabled, however this
+autostart](creating-a-quest#autostart) enabled, however this
 value will be ignored if [global
-`quest-autostart`](Basic_options#Quest_autostart "wikilink") is enabled.
+`quest-autostart`](#quest-autostart) is enabled.
 
 ``` yaml
 options:
-  ...
+  # ...
   quest-started-limit: 2
 ```
 
@@ -99,9 +99,9 @@ options:
 
 Choose the number of quests players can start at one time. This will
 include quests which have [quest-specific
-autostart](Creating_a_quest#Autostart "wikilink") enabled, however this
+autostart](creating-a-quest#autostart) enabled, however this
 value will be ignored if [global
-`quest-autostart`](Basic_options#Quest_autostart "wikilink") is enabled.
+`quest-autostart`](#quest-autostart) is enabled.
 
 Each key is called a **limit group** (sometimes referred to as a quest
 rank), and players can start the set number of quests depending on their
@@ -111,7 +111,7 @@ to everybody, however the rest can be granted through the permission
 
 ``` yaml
 options:
-  ...
+  # ...
   quest-limit: 
     default: 2
     group1: 5
@@ -120,7 +120,7 @@ options:
 ```
 
 Group permissions are also documented in [Commands and permissions §
-Permissions](commands-and-permissions#permissions "wikilink").
+Permissions](../commands-and-permissions#permissions).
 
 ## Allow quest cancel
 
@@ -131,11 +131,11 @@ Choose whether or not players can cancel quests themselves via command
 or by right-clicking in the GUI. If this is set to false, consider
 removing the right-click cancel instruction from the [global quest
 display
-configuration](Global_configurations#Global_quest_display_configuration "wikilink").
+configuration](global-configurations#global-quest-display-configuration).
 
 ``` yaml
 options:
-  ...
+  # ...
   allow-quest-cancel: true
 ```
 
@@ -148,11 +148,11 @@ Choose whether or not players can track quests themselves via command or
 by middle-clicking in the GUI. If this is set to false, consider
 removing the middle-click track instruction from the [global quest
 display
-configuration](Global_configurations#Global_quest_display_configuration "wikilink").
+configuration](global-configurations#global-quest-display-configuration).
 
 ``` yaml
 options:
-  ...
+  # ...
   allow-quest-track: true
 ```
 
@@ -168,7 +168,7 @@ leading to errors.
 
 ``` yaml
 options:
-  ...
+  # ...
   task-type-exclusions: []
 ```
 
@@ -176,7 +176,7 @@ options:
 
 ``` yaml
 options:
-  ...
+  # ...
   task-type-exclusions:
    - "blockbreak"
    - "blockbreakcertain"
@@ -191,7 +191,7 @@ Change and define specific GUI names for localization.
 
 ``` yaml
 options:
-  ...
+  # ...
   guinames:
     quests-category: "Quests Categories"
     quests-menu: "Quests"
@@ -209,7 +209,7 @@ Choose which sounds play at certain events.
 
 ``` yaml
 options:
-  ...
+  # ...
   sounds:
     quest-start: "ENTITY_PLAYER_LEVELUP:2:3"
     quest-cancel: "UI_TOAST_OUT:2:3"
@@ -230,7 +230,7 @@ for example:
 
 ``` yaml
 options:
-  ...
+  # ...
   sounds:
     quest-start: ""
 ```
@@ -254,7 +254,7 @@ or not.
 
 ``` yaml
 options:
-  ...
+  # ...
   gui-hide-locked: false
 ```
 
@@ -269,7 +269,7 @@ screen.
 
 ``` yaml
 options:
-  ...
+  # ...
   gui-confirm-cancel: true
 ```
 
@@ -283,7 +283,7 @@ have permission for the quest.
 
 ``` yaml
 options:
-  ...
+  # ...
   gui-hide-quests-nopermission: false
 ```
 
@@ -297,7 +297,7 @@ have permission for the category.
 
 ``` yaml
 options:
-  ...
+  # ...
   gui-hide-categories-nopermission: false
 ```
 
@@ -311,7 +311,7 @@ is disabled by default for performance reasons.
 
 ``` yaml
 options:
-  ...
+  # ...
   gui-use-placeholderapi: false
 ```
 
@@ -327,7 +327,7 @@ the requirement, rather than listing each quest "Quest 1, Quest 2, Quest
 
 ``` yaml
 options:
-  ...
+  # ...
   gui-truncate-requirements: true
 ```
 
@@ -342,7 +342,7 @@ page](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/ClickT
 
 ``` yaml
 options:
-  ...
+  # ...
   gui-actions:
     start-quest: "LEFT"
     track-quest: "MIDDLE"
@@ -356,12 +356,12 @@ options:
 
 Choose whether or not players need to start quests themselves. This will
 ignore the configured [quest started
-limit](#Quest_started_limit "wikilink"), and is different from the
-[autostart](#Autostart "wikilink") option.
+limit](#quest-started-limit), and is different from the
+[autostart](#quest-autostart) option.
 
 ``` yaml
 options:
-  ...
+  # ...
   quest-autostart: false
 ```
 
@@ -377,7 +377,7 @@ quest.
 
 ``` yaml
 options:
-  ...
+  # ...
   quest-autotrack: true
 ```
 
@@ -392,7 +392,7 @@ output based on the following options: 0 = errors only, 1 = warnings, 2
 
 ``` yaml
 options:
-  ...
+  # ...
   verbose-logging-level: 2
 ```
 
@@ -407,7 +407,7 @@ default for performance reasons.
 
 ``` yaml
 options:
-  ...
+  # ...
   quests-use-placeholderapi: false
 ```
 
@@ -426,7 +426,7 @@ progress.
 
 ``` yaml
 options:
-  ...
+  # ...
   verify-quest-exists-on-load: true
 ```
 
@@ -451,7 +451,7 @@ These options are measured in ticks, 1 second = 20 ticks.
 
 ``` yaml
 options:
-  ...
+  # ...
   performance-tweaking: 
     quest-queue-executor-interval: 1
     quest-autosave-interval: 12000
@@ -470,7 +470,7 @@ permission.)
 
 ``` yaml
 options:
-  ...
+  # ...
   tab-completion:
     enabled: true
 ```
@@ -482,13 +482,13 @@ options:
 
 Configure how Quests handles errors in your configuration. By default,
 Quests will not allow quests to be loaded if they contain an
-[error](Configuration_problems#Types_of_problem "wikilink"), since this
+[error](configuration-problems#types-of-problem), since this
 could lead to undefined behaviour. The option `override-errors` will
 ignore this behaviour and forcibly allow the quest to be registered.
 
 ``` yaml
 options:
-  ...
+  # ...
   error-checking:
     override-errors: false
 ```
@@ -496,16 +496,16 @@ options:
 ## Placeholder cache time
 
   
-''`options.placeholder-cache-time`"
+*`options.placeholder-cache-time`*
 
 Set how long Quests will retain parsed PlaceholderAPI strings in the
 cache, in seconds. See [PlaceholderAPI § Caching
-placeholders](PlaceholderAPI#Caching_placeholders "wikilink") for more
+placeholders](../tools/placeholderapi#caching-placeholders) for more
 information.
 
 ``` yaml
 options:
-  ...
+  # ...
   placeholder-cache-time: 10
 ```
 
@@ -515,12 +515,12 @@ options:
 *`options.global-task-configuration-override`*
 
 Choose whether or not options set in the [global task
-configuration](Global_configurations#Global_task_configuration "wikilink")
+configuration](global-configurations#global-task-configuration)
 will override per-quest specific options.
 
 ``` yaml
 options:
-  ...
+  # ...
   global-task-configuration-override: false
 ```
 
@@ -530,12 +530,12 @@ options:
 *`options.global-quest-display-configuration-override`*
 
 Choose whether or not the [global quest display
-configuration](Global_configurations#Global_quest_display_configuration "wikilink")
+configuration](global-configurations#global-quest-display-configuration)
 will override per-quest specific options.
 
 ``` yaml
 options:
-  ...
+  # ...
   global-quest-display-configuration-override: false
 ```
 
@@ -545,11 +545,11 @@ options:
 *`options.storage`*
 
 Configure how Quests will store playerdata. See [storage
-providers](Storage_providers "wikilink") for more info.
+providers](storage-providers) for more info.
 
 ``` yaml
 options:
-  ...
+  # ...
   storage:
     provider: "yaml"
     synchronisation:

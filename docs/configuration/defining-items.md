@@ -35,17 +35,17 @@ item:
 
 ## Options
 
-| Field                | Optional        | Minecraft Version | More Information                        |
-|----------------------|-----------------|-------------------|-----------------------------------------|
-| `item`               | ❌               | \-                | [Jump](#item "wikilink")                |
-| `name`               | ✅ <sup>\*</sup> | \-                | [Jump](#name "wikilink")                |
-| `lore`               | ✅               | \-                | [Jump](#lore "wikilink")                |
-| `enchantments`       | ✅               | \-                | [Jump](#enchantments "wikilink")        |
-| `itemflags`          | ✅               | 1.8+              | [Jump](#item-flags "wikilink")          |
-| `unbreakable`        | ✅               | 1.13+             | [Jump](#unbreakable "wikilink")         |
-| `attributemodifiers` | ✅               | 1.13+             | [Jump](#attribute-modifiers "wikilink") |
-| `custommodeldata`    | ✅               | 1.14+             | [Jump](#custom-model-data "wikilink")   |
-| `owner-[...]`        | ✅               | 1.8+              | [Jump](#owner "wikilink")               |
+| Field                | Optional        | Minecraft Version | More Information             |
+|----------------------|-----------------|-------------------|------------------------------|
+| `item`               | ❌               | \-                | [Jump](#item)                |
+| `name`               | ✅ <sup>\*</sup> | \-                | [Jump](#name)                |
+| `lore`               | ✅               | \-                | [Jump](#lore)                |
+| `enchantments`       | ✅               | \-                | [Jump](#enchantments)        |
+| `itemflags`          | ✅               | 1.8+              | [Jump](#item-flags)          |
+| `unbreakable`        | ✅               | 1.13+             | [Jump](#unbreakable)         |
+| `attributemodifiers` | ✅               | 1.13+             | [Jump](#attribute-modifiers) |
+| `custommodeldata`    | ✅               | 1.14+             | [Jump](#custom-model-data)   |
+| `owner-[...]`        | ✅               | 1.8+              | [Jump](#owner)               |
 
 <sup>\*: The name must be defined for the display item of Quests.</sup>
 
@@ -65,7 +65,7 @@ the end with a colon `:<code>`.
 ``` yaml
 item:
   item: "WHEAT"
-  ...
+  # ...
 ```
 
 ### Name
@@ -79,7 +79,7 @@ above the hotbar when selected.
 ``` yaml
 item:
   name: "&2&lSuper Cool Name"
-  ...
+  # ...
 ```
 
 ### Lore
@@ -95,7 +95,7 @@ item:
   lore:
    - "Line 1"
    - "Line 2"
-  ...
+  # ...
 ```
 
 ### Enchantments
@@ -114,7 +114,7 @@ names](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantm
 item:
   enchantments:
    - "minecraft:infinity:1"
-  ...
+  # ...
 ```
 
 ### Item flags
@@ -127,7 +127,7 @@ javadocs](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag
 item:
   itemflags:
    - "HIDE_ATTRIBUTES"
-  ...
+  # ...
 ```
 
 ### Unbreakable
@@ -137,7 +137,7 @@ item:
 ``` yaml
 item:
   unbreakable: true
-  ...
+  # ...
 ```
 
 ### Attribute modifiers
@@ -166,7 +166,7 @@ item:
         operation: ADD_NUMBER
         amount: 0.01
         equipmentslot: OFF_HAND
-  ...
+  # ...
 ```
 
 ### Custom model data
@@ -176,7 +176,7 @@ item:
 ``` yaml
 item:
   custommodeldata: 12345
-  ...
+  # ...
 ```
 
 ### Owner
@@ -201,19 +201,19 @@ You can specify each type by the following:
 ``` yaml
 item:
   owner-base64: "base64 encoded string"
-  ...
+  # ...
 ```
 
 ``` yaml
 item:
   owner-username: "username"
-  ...
+  # ...
 ```
 
 ``` yaml
 item:
   owner-uuid: "uuid"
-  ...
+  # ...
 ```
 
 ## Quest items
@@ -239,7 +239,9 @@ run `/q a items import <id>`, where `<id>` is the desired name of the
 item. Your item will be saved to file items/\<id\>.yml, **with the type
 'raw**'.
 
-<https://i.imgur.com/6lsld61.png> <https://i.imgur.com/Pg2eO9a.png>
+<img src="https://i.imgur.com/6lsld61.png" height=20>
+
+<img src="https://i.imgur.com/Pg2eO9a.png" height=40>
 
 ### Defining items
 
@@ -250,8 +252,7 @@ items/ directory. You must specify a `type` and the item itself under
 #### Defined
 
 **Defined quest items** are regular ItemStacks and follow the format
-defined under [§ Configurable
-options](Defined_items#Configurable_options "wikilink").
+defined under [§ options](#options).
 
     items/testitem.yml
 

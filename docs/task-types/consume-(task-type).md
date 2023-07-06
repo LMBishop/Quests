@@ -49,7 +49,7 @@ beef:
    - "world"
 ```
 
-Consume 8 of [quest item](Defining-items#quest-items "wikilink")
+Consume 8 of [quest item](../configuration/defining-items#quest-items)
 `special_beef`:
 
 ``` yaml

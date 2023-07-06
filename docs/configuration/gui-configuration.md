@@ -6,13 +6,13 @@ nav_order: 6
 
 # GUI configuration
 
-*See also [Custom GUI items](Custom_GUI_items "wikilink") and [Defining
-items](Defining_items "wikilink").*
+*See also [Custom GUI items](custom-gui-items) and [Defining
+items](defining-items).*
 
 The **GUI configuration** is defined in the `config.yml`. These define
 the static UI elements such as the back button, quest locked display
 etc. All options accept the standard ItemStack definition format
-described in [Defining items](Defining_items "wikilink").
+described in [defining items](defining-items).
 
 ## Back button
 
@@ -23,7 +23,7 @@ The back button displayed within sub menus.
 
 ``` yaml
 gui:
-  ...
+  # ...
   back-button:
     name: "&cReturn"
     lore:
@@ -40,7 +40,7 @@ The previous page button displayed on paiginated menus.
 
 ``` yaml
 gui:
-  ...
+  # ...
   page-prev:
     name: "&7Previous Page"
     lore:
@@ -60,7 +60,7 @@ The next page button displayed on paiginated menus.
 
 ``` yaml
 gui:
-  ...
+  # ...
   page-next:
     name: "&7Next Page"
     lore:
@@ -80,7 +80,7 @@ item will automatically update on the page number.
 
 ``` yaml
 gui:
-  ...
+  # ...
   page-desc:
     name: "&7Page &c{page}"
     lore:
@@ -96,11 +96,11 @@ The `{page}` variable represents the page number for the current page.
 *`gui.quest-locked-display`*
 
 The item is used to represent locked quests. A quest is locked if its
-[requirements](Creating_a_quest#Requirements "wikilink") are not met.
+[requirements](creating-a-quest#requirements) are not met.
 
 ``` yaml
 gui:
-  ...
+  # ...
   quest-locked-display:
     name: "&c&lQuest Locked"
     lore:
@@ -113,7 +113,7 @@ gui:
 ```
 
 The `{quest}` variable represents the quest [display
-name](Creating_a_quest#name "wikilink"), with its formatting stripped.
+name](creating-a-quest#name), with its formatting stripped.
 
 The `{questid}` variable represents the quest ID.
 
@@ -121,7 +121,7 @@ The `{requirements}` variable represents the display names of the quests
 needed to unlock this quest. By default, this name is truncated to show
 only the first quest, with a number after (e.g. "Example II +4 more").
 This behaviour is defined at [Basic options § GUI-truncate
-requirements](basic-options.md#GUI-truncate-requirements "wikilink")
+requirements](basic-options#gui-truncate-requirements)
 
 ## Quest permission display
 
@@ -133,7 +133,7 @@ permission to start.
 
 ``` yaml
 gui:
-  ...
+  # ...
   quest-permission-display:
     name: "&6&lNo Permission"
     lore:
@@ -143,7 +143,7 @@ gui:
 ```
 
 The `{quest}` variable represents the quest [display
-name](Creating_a_quest#name "wikilink"), with its formatting stripped.
+name](creating-a-quest#name), with its formatting stripped.
 
 The `{questid}` variable represents the quest ID.
 
@@ -157,7 +157,7 @@ has completed, but are on cooldown.
 
 ``` yaml
 gui:
-  ...
+  # ...
   quest-cooldown-display:
     name: "&e&lQuest On Cooldown"
     lore:
@@ -168,7 +168,7 @@ gui:
 ```
 
 The `{quest}` variable represents the quest [display
-name](Creating_a_quest#name "wikilink"), with its formatting stripped.
+name](creating-a-quest#name), with its formatting stripped.
 
 The `{questid}` variable represents the quest ID.
 
@@ -185,7 +185,7 @@ repeatable.
 
 ``` yaml
 gui:
-  ...
+  # ...
   quest-completed-display:
     name: "&a&lQuest Complete"
     lore:
@@ -196,7 +196,7 @@ gui:
 ```
 
 The `{quest}` variable represents the quest [display
-name](Creating_a_quest#name "wikilink"), with its formatting stripped.
+name](creating-a-quest#name), with its formatting stripped.
 
 The `{questid}` variable represents the quest ID.
 
@@ -210,7 +210,7 @@ has not started any quests.
 
 ``` yaml
 gui:
-  ...
+  # ...
   no-started-quests:
     name: "&c&lNo Started Quests"
     lore:
@@ -227,7 +227,7 @@ Confirmation item in the quest cancel menu.
 
 ``` yaml
 gui:
-  ...
+  # ...
   quest-cancel-yes:
     name: "&a&lConfirm Cancel"
     lore:
@@ -246,7 +246,7 @@ Cancellation item in the quest cancel menu.
 
 ``` yaml
 gui:
-  ...
+  # ...
   quest-cancel-no:
     name: "&c&lAbort Cancel"
     lore:
@@ -263,7 +263,7 @@ Background item in the quest cancel menu.
 
 ``` yaml
 gui:
-  ...
+  # ...
   quest-cancel-background:
     type: "GRAY_STAINED_GLASS_PANE"
 ```

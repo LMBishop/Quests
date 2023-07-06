@@ -46,7 +46,7 @@ fishingcertain:
    - "world"
 ```
 
-Fish 10 of [quest item](Defining-items#Quest-items "wikilink")
+Fish 10 of [quest item](../configuration/defining-items#quest-items)
 `super_fish`:
 
 ``` yaml

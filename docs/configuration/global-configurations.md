@@ -36,7 +36,7 @@ if they are coming from individual quests.
 
 Quest-level configurations will override anything set here. To change
 this behaviour, modify the [global task configuration
-override](Basic_options#Global_task_configuration_override "wikilink").
+override](basic-options#global-task-configuration-override).
 
 ## Global quest display configuration
 
@@ -77,7 +77,7 @@ You can define macros in your `config.yml`, under the `global-macros`
 section:
 
     global-macros:
-      ...
+      # ...
       # <name of macro>: <string value of macro>
       top-bar: "&6---&7---&6---"
 
@@ -88,13 +88,13 @@ For example, to use the `top-bar` macro in `example-quest.yml`:
 
 ``` yaml
 tasks:
-  ...
+  # ...
 display:
-  ...
+  # ...
   lore-normal:
     - "<$m top-bar $>"
     - "..."
-  ...
+  # ...
 ```
 
 {: .caution }

@@ -5,9 +5,7 @@ parent: Developer
 
 # New task type
 
-{: .highlight }
-**This page is under construction.** The information contained here may be inaccurate or incomplete. You can help by [contributing information to the wiki](https://github.com/LMBishop/Quests/wiki/Contributing-to-the-wiki).
-
+{% include incomplete.md %}
 
 The following information is for developers who are interested in integrating Quests into their own plugin.
 
