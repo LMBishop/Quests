@@ -21,7 +21,7 @@ public class AdminAboutCommandHandler implements CommandHandler {
         sender.sendMessage(ChatColor.RED + "Quests " + ChatColor.BOLD + "v" + plugin.getDescription().getVersion());
         sender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Source code: " + ChatColor.GRAY + "https://github.com/LMBishop/Quests/");
         sender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Report an issue: " + ChatColor.GRAY + "https://github.com/LMBishop/Quests/issues");
-        sender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Wiki: " + ChatColor.GRAY + "https://github.com/LMBishop/Quests/wiki");
+        sender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Documentation: " + ChatColor.GRAY + "https://quests.leonardobishop.com/");
         sender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Licensed under the GPLv3");
         sender.sendMessage(ChatColor.GRAY + "Many contributors have written source code and task types for Quests," +
                 " please see the GitHub link for an up-to-date list of contributors.");

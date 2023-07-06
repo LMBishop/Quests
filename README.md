@@ -17,7 +17,7 @@
 - [Wiki](#-wiki)
 
 ## 💾 Downloads / Building
-The latest release version of Quests can be found [here](https://github.com/LMBishop/Quests/wiki/download).
+The latest release version of Quests can be found [here](https://quests.leonardobishop.com/download.html).
 The latest build of Quests (development version) can be found on [GitHub](https://github.com/LMBishop/Quests/actions).
 
 <img src="https://mcbadges.leonardobishop.com/quests.svg"/>
@@ -32,7 +32,7 @@ Alternatively, you can build Quests via Gradle. Release versions of Quests are b
 
 
 #### 🧰 Custom Task
-Creating new Task Types within Quests is supported, [see the wiki](https://github.com/LMBishop/Quests/wiki/New-Task-Type) for help.
+Creating new Task Types within Quests is supported, [see the wiki](https://quests.leonardobishop.com/developer/new-task-type.html) for help.
 
 Quests can be found on the Maven repository listed below, or alternatively on [JitPack](https://jitpack.io/#LMBishop/Quests).
 
@@ -70,16 +70,9 @@ See https://github.com/LMBishop/Quests/graphs/contributors
 See [CONTRIBUTING.md](https://github.com/LMBishop/Quests/blob/master/CONTRIBUTING.md)
 
 ## 📖 Wiki
-Quests provides a highly detailed and well maintained [wiki](https://github.com/LMBishop/Quests/wiki/). The information there is very useful to new users of the plugin.
+Full documentation can be found at [https://quests.leonardobishop.com/](https://quests.leonardobishop.com/).
 
-#### 🌟 Highlighted Articles
-- [FAQs](https://github.com/LMBishop/Quests/wiki)
-- [Tips](https://github.com/LMBishop/Quests/wiki/Tips)
-- [Basic options](https://github.com/LMBishop/Quests/wiki/Basic-Options)
-- [Creating a quest or category](https://github.com/LMBishop/Quests/wiki/Creating-A-Quest-Or-Category)
-- [Custom GUI items](https://github.com/LMBishop/Quests/wiki/Custom-GUI-Items)
-- [Task types](https://github.com/LMBishop/Quests/wiki/Task-Types)
-- [PlaceholderAPI](https://github.com/LMBishop/Quests/wiki/PlaceholderAPI)
+Documentation is built directly from this repository, from the `/docs` directory.
 
 ## 💡 Support
 For support please open a [GitHub issue](https://github.com/LMBishop/Quests/issues) or join our [Discord server](https://discord.gg/mQ2RcJC). Please provide information of the issue, any errors that may come up and make sure you are using the latest version of the plugin.
