@@ -368,6 +368,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 taskTypeManager.registerTaskType(new PlaceholderAPIEvaluateTaskType(this));
             }
+            if (Bukkit.getPluginManager().isPluginEnabled("EcoBosses")) {
+                taskTypeManager.registerTaskType(new EcoBossesKillingTaskType(this));
+            }
             if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
                 taskTypeManager.registerTaskType(new EssentialsMoneyEarnTaskType(this));
                 taskTypeManager.registerTaskType(new EssentialsBalanceTaskType(this));
