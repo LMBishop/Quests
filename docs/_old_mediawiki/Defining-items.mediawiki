@@ -1,0 +1,259 @@
+__NOTOC__
+
+An '''ItemStack''' is a '''representation of an item''' in an inventory. Every configured ItemStack in Quests is parsed the exact same way. This page gives guidance on how to define items with specific attributes.
+
+== Table of contents ==
+* [[Defining items#Configurable options|Configurable options]]
+** [[Defining items#Configuration layout|Configuration layout]]
+** [[Defining items#Examples|Examples]]
+*** [[Defining items#Name|Name]]
+*** [[Defining items#Item|Item]]
+*** [[Defining items#Lore|Lore]]
+*** [[Defining items#Enchantments|Enchantments]]
+*** [[Defining items#Item flags|Item flags]]
+*** [[Defining items#Unbreakable|Unbreakable]]
+*** [[Defining items#Attribute modifiers|Attribute modifiers]]
+*** [[Defining items#Custom model data|Custom model data]]
+*** [[Defining items#Owner|Owner]]
+* [[Defining items#Quest items|Quest items]]
+** [[Defining items#Importing items|Importing items]]
+** [[Defining items#Manually defined items|Manually defined items]]
+*** [[Defining items#Defined|Defined]]
+*** [[Defining items#MMOItems|MMOItems]]
+*** [[Defining items#Slimefun|Slimefun]]
+*** [[Defining items#ExecutableItems|ExecutableItems]]
+** [[Defining items#Referencing a quest item|Referencing a quest item]]
+
+== Configurable options ==
+{|
+|-
+! Field !! Optional !! Minecraft Version !! More Information
+|-
+| <code>item</code> || ❌ || - || [[Defining items#Item|Jump]]
+|-
+| <code>name</code> || ✅ <sup>*</sup> || - || [[Defining items#Name|Jump]]
+|-
+| <code>lore</code> || ✅ || - || [[Defining items#Lore|Jump]]
+|-
+| <code>enchantments</code> || ✅ || - || [[Defining items#Enchantments|Jump]]
+|-
+| <code>itemflags</code> || ✅ || 1.8+ || [[Defining items#Item flags|Jump]]
+|-
+| <code>unbreakable</code> || ✅ || 1.13+ || [[Defining items#Unbreakable|Jump]]
+|-
+| <code>attributemodifiers</code> || ✅ || 1.13+ || [[Defining items#Attribute modifiers|Jump]]
+|-
+| <code>custommodeldata</code> || ✅ || 1.14+ || [[Defining items#Custom model data|Jump]]
+|-
+| <code>owner-<nowiki>[...]</nowiki></code> || ✅ || 1.8+ || [[Defining items#Owner (skulls)|Jump]]
+|}
+<sup>*: The name must be defined for the display item of Quests.</sup>
+
+=== Configuration layout ===
+```yaml
+item:
+  name: "&6&lSuper Cool Stick"
+  item: STICK
+  lore: 
+   - "&7Really cool lore."
+  # field4: value4
+  # etc.
+```
+=== Examples ===
+
+==== Item ====
+:''<code>item</code> or <code>type</code or <code>material</code>''
+
+The item is the material the itemstack is made out of. Please see the [https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html latest javadocs] (1.13+) or the [https://helpch.at/docs/1.12.2/org/bukkit/Material.html 1.12 javadocs] (1.8-1.12) for item names. For 1.8-1.12, data codes can be added on at the end with a colon <code>:<nowiki><code></nowiki></code>.
+```yaml
+item:
+  item: "WHEAT"
+  ...
+```
+
+==== Name ====
+:''<code>name</code>''
+
+The name is displayed at the top of the item when hovered over, or just above the hotbar when selected.
+
+```yaml
+item:
+  name: "&2&lSuper Cool Name"
+  ...
+```
+
+==== Lore ====
+:''<code>lore</code>''
+The lore is the description of the item seen when hovering over it. You can remove this omit entirely if a lore is not desired.
+```yaml
+item:
+  lore:
+   - "Line 1"
+   - "Line 2"
+  ...
+```
+==== Enchantments ====
+The format of enchantments depends on your Minecraft version.  
+:'''Pre-1.13''': Use [https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html spigot names] -> format "{enchantment}:{level}"  
+:'''1.13+''': Use Vanilla names -> namespace for vanilla enchantments is "minecraft" -> format "{namespace}:{enchantment}:{level}"
+```yaml
+item:
+  enchantments:
+   - "minecraft:infinity:1"
+  ...
+```
+
+==== Item flags ====
+Item flags can be added to hide enchantment names, etc. A full list of itemflags is available on the [https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html Spigot javadocs].
+```yaml
+item:
+  itemflags:
+   - "HIDE_ATTRIBUTES"
+  ...
+```
+
+==== Unbreakable ====
+*''1.13+'''
+```yaml
+item:
+  unbreakable: true
+  ...
+```
+
+==== Attribute modifiers ====
+'''1.13+''' Adds specific attribute modifiers to the items. The UUID should always be specified otherwise the server will randomly generate one on each restart. Full list of attributes is available on the [https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/Attribute.html Spigot javadocs], along with full list of [https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/AttributeModifier.Operation.html operations].
+```yaml
+item:
+  attributemodifiers:
+    - attribute: GENERIC_MOVEMENT_SPEED
+      modifier:
+        uuid: "49dc07dc-bfdb-4dc7-85d3-66ef52b51858"
+        name: "generic.movementSpeed"
+        operation: ADD_NUMBER
+        amount: 0.03
+        equipmentslot: HAND
+    - attribute: GENERIC_MOVEMENT_SPEED
+      modifier:
+        uuid: "e22513cf-b15f-4443-9e2f-103c0ff9731b"
+        name: "generic.movementSpeed"
+        operation: ADD_NUMBER
+        amount: 0.01
+        equipmentslot: OFF_HAND
+  ...
+```
+
+==== Custom model data ====
+'''1.14+'''
+```yaml
+item:
+  custommodeldata: 12345
+  ...
+```
+
+==== Owner ====
+This only applies if you have a skull item stack (<code>PLAYER_HEAD</code> 1.13+, <code>SKULL_ITEM</code> 1.8-1.12). There are three ways to define the player for the skull: by '''username'''; '''uuid'''; or, '''base64 encoded string'''.
+
+The '''preferred method''' is to '''explicitly specify a base64 encoded string'''. Using any of the other two methods require that the player has joined the server before, and may possibly make a request to Mojang (locking the server thread) depending on which server software you use.
+
+You can get the base64 encoded representation of a player skin here: https://mineskin.org/. It will look like the following (may be referred to as 'texture data'):
+
+```
+ewogICJ0aW1lc3RhbXAiIDogMTYyNTgzNjU0OTAxNCwKICAicHJvZmlsZUlkIiA6ICJlMmNlNzA0ZWVjNGE0YjE4YTNlYjA4MTRiMzdmYTFkNCIsCiAgInByb2ZpbGVOYW1lIiA6ICJmYXRwaWdzYXJlZmF0IiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzJiMTIzMWEyZjNkYTQ2OTQxZDY1OWI4NDNjZWZhNDljOGE1NTA0ZjE4MzNlOTA3YzY3YmJiMTQ2NTE0OTlhNyIKICAgIH0KICB9Cn0=
+```
+
+You can specify each type by the following:
+
+```yaml
+item:
+  owner-base64: "base64 encoded string"
+  ...
+```
+
+```yaml
+item:
+  owner-username: "username"
+  ...
+```
+
+```yaml
+item:
+  owner-uuid: "uuid"
+  ...
+```
+
+== Quest items ==
+'''Quest items''' can help simplify your configuration by putting individual itemstacks inside a named file (under directory items/), to allow for easy referencing from a task configuration and reducing configuration duplication across your quests.
+
+The types of quest items are as follows:
+* <code>raw</code> (items imported using /q a items import)
+* <code>defined</code> (items manually written following the format above)
+* <code>mmoitems</code> (items from MMOItems)
+* <code>slimefun</code> (items from Slimefun)
+* <code>executableitems</code> (items from ExecutableItems)
+
+=== Importing items ===
+'''Importing''' an item means creating a new quest item '''from the item you are holding''' in game. To do this, simply hold the desired item and run <code>/q a items import <nowiki><id></nowiki></code>, where <code><nowiki><id></nowiki></code> is the desired name of the item. Your item will be saved to file items/<nowiki><id></nowiki>.yml, '''with the type 'raw''''.
+
+[[https://i.imgur.com/6lsld61.png]]
+[[https://i.imgur.com/Pg2eO9a.png]]
+
+=== Manually defining items ===
+You can manually define an item by creating a new <code>yml</code> file within the items/ directory. You must specify a <code>type</code> and the item itself under <code>item</code>.
+
+==== Defined ====
+'''Defined quest items''' are regular ItemStacks and follow the format defined under [[Defined items#Configurable options|§ Configurable options]].
+```
+items/testitem.yml
+```
+```yaml
+type: "defined"
+item:
+  name: "Cool item"
+  type: DIAMOND_SWORD
+  lore:
+   - "Really cool lore"
+```
+
+==== MMOItems ====
+'''MMOItems quest items''' are ItemStacks which belong to the MMOItems plugin.
+```
+items/testitem.yml
+```
+```yaml
+type: "mmoitems"
+item:
+  type: "BOW"     #mmoitems type
+  id: "HELL_BOW"  #mmoitems id
+```
+
+==== Slimefun ====
+'''Slimefun quest items''' are ItemStacks which belong to the Slimefun plugin.
+```
+items/testitem.yml
+```
+```yaml
+type: "slimefun"
+item:
+  id: "slimefun_item_id"  #slimefun id
+```
+
+==== ExecutableItems ====
+'''ExecutableItems quest items''' are ItemStacks which belong to the ExecutableItems plugin.
+```
+items/testitem.yml
+```
+```yaml
+type: "executableitems"
+item:
+  id: "executableitems_id"  #executableitems id
+```
+
+=== Referencing a quest item ===
+In most cases where an ItemStack is accepted in Quests, you can simply provide the ID of the quest item under the key <code><nowiki>quest-item</nowiki></code>.
+
+```yaml
+# Within a task
+type: "inventory"
+item:
+  quest-item: "testitem"
+```

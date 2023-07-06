@@ -1,0 +1,54 @@
+== Commands ==
+
+* '''/quests <nowiki>[or /q]</nowiki>''' - opens quest GUI
+* '''/quests help''' - view help screen for quests commands
+* '''/quests started''' - view a menu of started quests
+* '''/quests random <nowiki>[category]</nowiki>''' - start a random quest <nowiki>[in a random category]</nowiki>
+* '''/quests cancel <nowiki><questid/*></nowiki>''' - cancel quest by id
+* '''/quests q/quest <nowiki><questid></nowiki> <nowiki><start|track|cancel></nowiki>''' - start quest directly by ID.
+* '''/quests c/category <nowiki><categoryid></nowiki>''' - open category directly by ID.
+* '''/quests a/admin''' - view help for admins
+** '''/quests a/admin opengui''' - view help for opengui
+*** '''/quests a/admin opengui q/quest <nowiki><player></nowiki>''' - forcefully open quests GUI for player (bypassing quests.command permission)
+*** '''/quests a/admin opengui c/category <nowiki><player></nowiki> <nowiki><categoryid></nowiki>''' - forcefully open category by ID for player (bypassing quests.command permission)
+*** '''/quests a/admin opengui started <nowiki><player></nowiki>''' - forcefully open the started menu for player (bypassing quests.command permission)
+** '''/quests a/admin moddata''' - view help for opengui
+*** '''/quests a/admin moddata fullreset <nowiki><player></nowiki>''' - fully clear a players data file
+*** '''/quests a/admin moddata reset <nowiki><player></nowiki> <nowiki><questid></nowiki>''' - clear a players data for a specifc quest
+*** '''/quests a/admin moddata start <nowiki><player></nowiki> <nowiki><questid></nowiki>''' - start a quest for a player
+*** '''/quests a/admin moddata complete <nowiki><player></nowiki> <nowiki><questid></nowiki>''' - complete a quest for a player
+*** '''/quests a/admin moddata random <nowiki><player></nowiki> [category]''' - start a random a quest for a player <nowiki>[in a category]</nowiki>
+*** ''These commands modify quest progress for players. Use them cautiously. Changes are irreversible.''
+** '''/quests a/admin items''' - view registered quest items.
+*** '''/quests a/admin items <nowiki>import <id></nowiki>''' - import a held quest item.
+*** '''/quests a/admin items <nowiki>give <player> <id> [amount]</nowiki>''' - give a player a quest item.
+** '''/quests a/admin debug''' - view help for the [[quest debugger]].
+*** '''/quests a/admin debug report''' - generate a debug report.
+*** '''/quests a/admin debug <nowiki>quest <quest/*> <all/self></nowiki>''' - enable debug messages for a specific quest, or all of them.
+** '''/quests a/admin types <nowiki>[type]</nowiki>''' - view activated task types, and information on a specific one.
+** '''/quests a/admin info <nowiki>[quest]</nowiki>''' - view loaded quests, and information on a specific one.
+** '''/quests a/admin reload''' - reload Quests.
+** '''/quests a/admin config''' - see config problems.
+** '''/quests a/admin update''' - check for updates.
+** '''/quests a/admin wiki''' - get a link to the wiki.
+** '''/quests a/admin about''' - view plugin information.
+
+== Permissions ==
+* <code>quests.command</code> - to view the quest menu (/quests)
+* <code>quests.command.category</code> - to view a specific category (/q category)
+* <code>quests.command.started</code> - to view quest started menu (/q started)
+* <code>quests.command.quest</code> - to use /q quest
+* <code>quests.command.start</code> - to start a quest by command (/q start)
+* <code>quests.command.track</code> - to cancel a quest by command (q track)
+* <code>quests.command.cancel</code> - to cancel a quest by command (/q cancel)
+* <code>quests.command.random</code> - to starting a random quest (/q random)
+* <code>quests.admin</code> - for admin commands
+
+The following are dependent on specific quests & categories:
+
+* <code>quests.category.<nowiki><category></nowiki></code> - permission to start quests within <code>(category)</code>, if <code>permission-required</code> for the category is set to <code>true</code>
+* <code>quests.quest.<nowiki><quest id></nowiki></code> - permission to start quest <code>(quest id)</code>, if <code>permission-required</code> for the quest is set to <code>true</code>
+
+The following are dependent on your configuration:
+
+* <code>quests.limit.<nowiki><limit group></nowiki></code> - permission to start a configured amount of quests for members of this limit group

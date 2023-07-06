@@ -1,0 +1,73 @@
+'''Global configurations''' are intended to be used in place of '''quest-specific configurations'''. This helps reduce repetition across your configuration as you copy common elements from quest to quest, and also allows you to quickly propagate edits across quests.
+
+== Global task configuration ==
+A global task configuration will add configuration values to all tasks of a specified type.
+
+For example (in <code>config.yml</code>),
+```yaml
+...
+global-task-configuration:
+  types:
+    inventory:
+      update-progress: true
+...
+```
+
+This will add to ''all'' tasks configurations with <code>type: inventory</code> across ''all'' quests the following: <code>update-progress: true</code>. '''Note that any errors coming from here will appear as if they are coming from individual quests.''
+
+Quest-level configurations will override anything set here. To change this behaviour, modify the [[Basic options#Global task configuration override|global task configuration override]].
+
+== Global quest display configuration ==
+A global quest display configuration adds text to the display items of items in the GUI.
+
+By default, this is already configured:
+```yaml
+global-quest-display:
+  lore:
+    append-not-started:
+      - ""
+      - "&eLeft Click &7to start this quest."
+    append-started:
+      - ""
+      - "&aYou have started this quest."
+      - "&eMiddle Click &7to track this quest."
+      - "&eRight Click &7to cancel this quest."
+    append-tracked:
+      - ""
+      - "&aYou are &etracking &athis quest."
+      - "&eMiddle Click &7to stop tracking this quest."
+      - "&eRight Click &7to cancel this quest."
+```
+
+[[https://i.imgur.com/l0FI5Ma.png]]
+
+If you do not want this, simply remove the section.
+
+== Global macros ==
+Global macros are designed to help you reduce repetition across your configuration files by centralizing values in your config.yml. Think of them as your own variables/placeholders which you can use in your quest files.
+
+To explain this feature, an example is more appropriate.
+
+In your config.yml, you can add a macro under the <code>global-macros</code> section:
+```
+global-macros:
+  ...
+  # <name of macro>: <string value of macro>
+  top-bar: "&6---&7---&6---"
+```
+
+To use these in your quests, simply reference it by using <code><nowiki><$m name-of-macro $m></nowiki></code>. Macro names '''cannot have spaces'''.
+
+For example, to use the <code>top-bar</code> macro in <code>example-quest.yml</code>:
+```yaml
+tasks:
+  ...
+display:
+  ...
+  lore-normal:
+    - "<$m top-bar $>"
+    - "..."
+  ...
+```
+
+

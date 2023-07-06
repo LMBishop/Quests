@@ -1,0 +1,91 @@
+Cook a set amount of an item.
+
+Since Quests v3.13, <code>smeltingcertain</code> and <code>smelting</code> have been merged into one. Both names can be used to refer to this task.
+
+== Options ==
+{|
+|-
+! Key
+! Description
+! Type
+! Required
+! Default
+! Notes
+|-
+| <code>amount</code>
+| The number of items to smelt.
+| Integer
+| Yes
+| -
+| -
+|-
+| <code>item</code>
+| The specific item to smelt.
+| Material, or ItemStack
+| No
+| -
+| Accepts standard [[defining items|item definition]]. Please see [https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html this list] (1.13+) or [https://helpch.at/docs/1.12.2/org/bukkit/Material.html this list] (1.8-1.12) for material names. If this is not specified, any item will count.
+|-
+| <code>mode</code>
+| The specific mode of smelting.
+| String
+| No
+| -
+| One of: <code>smoker</code>, <code>blast_furnace</code>, <code>furnace</code>. If this is not specified, any furnace will count.
+|-
+| <code>worlds</code>
+| Worlds which should count towards the progress.
+| List of world names
+| No
+| -
+| -
+|}
+
+== Examples ==
+Smelt 10 items:
+
+```yaml
+smelting:
+  type: "smelting"
+  amount: 10                            # amount to smelt
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```
+
+Cook 10 steak:
+
+```yaml
+smeltingcertain:
+  type: "smeltingcertain"
+  amount: 10                            # amount to smelt
+  item: STEAK                           # type of item 
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```
+
+Cook 10 of a specific item:
+
+```yaml
+smeltingcertain:
+  type: "smeltingcertain"
+  amount: 10                            # amount to smelt
+  item:                                 # SPECIFIC item with name and lore
+    name: "&cSpecial Beef"
+    type: "RAW_BEEF"
+    lore:
+     - "&7This is a special type of beef"
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```
+
+Cook 10 of [[Defining-items#quest-item|quest item]] <code>special_beef</code>:
+
+```yaml
+smeltingcertain:
+  type: "smeltingcertain"
+  amount: 10                            # amount to smelt
+  item:                                 # type of item 
+    quest-item: "special_beef"
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```

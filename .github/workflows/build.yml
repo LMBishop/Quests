@@ -1,4 +1,4 @@
-name: Build
+name: Build plugin
 on: [pull_request, push]
 jobs:
   build:

@@ -1,0 +1,43 @@
+---
+title: Tips
+nav_order: 11
+---
+
+# Tips
+
+Creating and editing quests can seem daunting at first, but the plugin
+is designed to be as easy as possible to use.
+
+Here's some tips which may help you with your quest creation.
+
+- **The wiki is your Bible.** This wiki details out how to create each
+  type of quest and the many different types of quests you can create.
+  There is a lot of information in this wiki (and it also took ages to
+  write)!
+- **Use a dedicated editor, such as VSCode.** This will make life much
+  easier if you open the quests directory in VSCode, as you have access
+  to all the files at once within one editor and you can easily copy /
+  paste / replace across many files.
+- **Plan out your quests.** It might be a wise idea to plan how you want
+  to create your quests, what categories they will be in and what the
+  requirements will be like.
+- **Back up the /quests/ and /playerdata/ folder.** Things may go wrong
+  sometimes. You may lose data. On top of whatever backup system you
+  have, you should back up your quests folder and the playerdata folder,
+  \*especially\* on a live server. If you use a database, ensure that is
+  backed up too!
+- **Name your quests in a way which makes sense.** Prefix each quest
+  file with the name of the category for organisation. Name your tasks
+  in a way which makes sense.
+- **Organise your quests into folders.** The /quests/ directory is read
+  recursively, which means you can sort your quests into folders. (It is
+  advised you organise them by category, though you should be warned
+  that file names must still be unique, no matter what directory it is
+  under.)
+- **Follow the advice of the error checker.** You will be informed of
+  any issues in your config when you reload Quests, along with the exact
+  location of the problem. Use this information!
+- **Be patient.** Creating quests may be a bit boring, there might be a
+  lot of copying and pasting, but once you get into the rhythm it can
+  take you less than a few hours to get the plugin fully configured to
+  how you want it to be.

@@ -1,0 +1,52 @@
+title: Quests
+description: Documentation for the Quests plugin
+theme: just-the-docs
+
+url: "https://quests.leonardobishop.com"
+baseurl: ""
+repository: LMBishop/Quests
+
+callouts_level: quiet
+callouts:
+  highlight:
+    color: yellow
+  how-to-read:
+    title: How to read this page
+    color: grey-dk
+  important:
+    title: Important
+    color: blue
+  new:
+    title: New
+    color: green
+  note:
+    title: Note
+    color: purple
+  caution:
+    title: Caution
+    color: yellow
+  warning:
+    title: Warning
+    color: red
+
+back_to_top: true
+back_to_top_text: "Back to top"
+
+gh_edit_link: true
+gh_edit_link_text: "Edit this page on GitHub"
+gh_edit_repository: "https://github.com/LMBishop/Quests"
+gh_edit_branch: "master"
+gh_edit_source: docs
+gh_edit_view_mode: "tree"
+
+footer_content: >
+  This wiki serves as a manual for Quests however there is no guarantee that the information is up-to-date or complete. 
+  As per the license, this software provides absolutely no warranty, nor are the maintainers liable for any damages. 
+  Please see the license text for more information.
+
+nav_external_links:
+  - title: Quests on GitHub
+    url: https://github.com/LMBishop/Quests
+
+plugins:
+  - jekyll-default-layout

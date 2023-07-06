@@ -1,0 +1,36 @@
+= Creating a category =
+
+Categories are stored in <code>categories.yml</code>. On older versions of Quests they were stored in the main <code>config.yml</code>; quests will read categories from <code>config.yml</code> if a <code>categories.yml</code> file is not present. 
+
+== Category ID ==
+ID of category, this is the text you should enter when putting quests inside a category.
+
+== Display ==
+:''<code>display</code>''
+
+The item that is shown in the GUI.
+
+=== Name ===
+:''<code>display.name</code>''
+
+The name of the item.
+
+=== Lore ===
+:''<code>display.lore</code>''
+
+The lore (description) of the item.
+
+=== Type ===
+:''<code>display.type</code>''
+
+The type (material name/id) of item.
+
+== Permission required ==
+:''<code>permission-required</code>''
+
+Whether permission is needed to open this category, or start quests within it. This permission will follow this format: <code><nowiki>quests.category.<category></nowiki></code>`.
+
+== Hidden ==
+:''<code>hidden</code>''
+
+Whether this category is shown in the main quests menu.

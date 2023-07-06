@@ -1,0 +1,47 @@
+: ''This requires the Citizens plugin to activate.''
+
+Interact with a Citizens NPC.
+
+== Options ==
+{|
+|-
+! Key
+! Description
+! Type
+! Required
+! Default
+! Notes
+|-
+| <code>npc-name</code>
+| The name of the NPC to deliver to.
+| Boolean
+| No
+| -
+| Mutually exclusive with <code>npc-id</code>.
+|-
+| <code>npc-id</code>
+| The id of the NPC to deliver to.
+| Boolean
+| No
+| -
+| Mutually exclusive with <code>npc-name</code>.
+|-
+| <code>worlds</code>
+| Worlds which should count towards the progress.
+| List of world names
+| No
+| -
+| -
+|}
+
+== Examples ==
+Interact with an NPC named Gerald:
+
+```yaml
+citizensinteract:
+  type: "citizens_interact"
+  npc-name: "Gerald"                    # name of NPC
+  # OR npc-id: "npc1"                     ID of NPC (mutally exclusive with npc-name)
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```

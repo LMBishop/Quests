@@ -1,0 +1,16 @@
+__NOTOC__
+This page contains wikicode templates for use through the wiki. GitHub does not support page transclusion so instead they should be simply copied from here.
+
+== Dev build ==
+:'''⚙️ This section describes a feature currently only available in a [https://github.com/LMBishop/Quests/actions development build] of quests.'''
+
+== Under construction ==
+-----
+
+=== 🔨 '''This page is under construction''' ===
+''The information contained here may be inaccurate or incomplete. You can help by [https://github.com/LMBishop/Quests/wiki/Contributing-to-the-wiki contributing information to the wiki].''
+
+-----
+
+== Removed option ==
+: ⛔️ '''This option has been removed in version {{{version}}} and this wiki entry is subject to removal.''' ''Please see [[{{{other}}}]] instead.''

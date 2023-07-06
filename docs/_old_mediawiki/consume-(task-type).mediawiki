@@ -1,0 +1,81 @@
+Consume a specific item.
+
+== Options ==
+{|
+|-
+! Key
+! Description
+! Type
+! Required
+! Default
+! Notes
+|-
+| <code>amount</code>
+| The number of items to consume.
+| Integer
+| Yes
+| -
+| -
+|-
+| <code>item</code>
+| The specific item to obtain.
+| Material, or ItemStack
+| Yes
+| -
+| Accepts standard [[defining items|item definition]]. Please see [https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html this list] (1.13+) or [https://helpch.at/docs/1.12.2/org/bukkit/Material.html this list] (1.8-1.12) for material names.
+|-
+| <code>data</code>
+| The data code for the item.
+| Integer
+| No
+| 0
+| This field is not used in Minecraft versions 1.13+, nor is it compatible with ItemStack definitions.
+|-
+| <code>worlds</code>
+| Worlds which should count towards the progress.
+| List of world names
+| No
+| -
+| -
+|}
+
+== Examples ==
+Consume 8 of <code>BEEF</code>:
+
+```yaml
+beef:
+  type: "consume"
+  item: BEEF                            # name of item (can be id or minecraft name)
+  amount: 8                             # amount of item consumed
+  data: 0                               # (OPTIONAL) data code
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```
+
+Consume 8 of a specific item:
+
+```yaml
+beef:
+  type: "consume"
+  item:                                 # SPECIFIC item with name and lore
+    name: "&cSpecial Beef"
+    type: "RAW_BEEF"
+    lore:
+     - "&7This is a special type of beef"
+  amount: 8                             # amount of item consumed
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```
+
+Consume 8 of [[Defining-items#quest-items|quest item]] <code>special_beef</code>:
+
+```yaml
+beef:
+  type: "consume"
+  item:                                 # USING quest-item
+    quest-item: "special_beef"
+  amount: 8                             # amount of item needed
+  remove-items-when-complete: false     # (OPTIONAL) take the items away from the player on completion - default: false
+  worlds:                               # (OPTIONAL) restrict to certain worlds
+   - "world"
+```

@@ -1,0 +1,59 @@
+__NOTOC__
+= Quests =
+
+Welcome to the Quests Wiki! Please use the sidebar for navigation around the wiki. 
+
+'''🌟 New & Highlighted Articles'''
+* [[Tips]]
+* [[Basic options]]
+* [[Creating a quest]]
+* [[Creating a category]]
+* [[Custom GUI items]]
+* [[Task types]]
+* [[PlaceholderAPI]]
+
+Spot a mistake or ambiguous information? Please consider [[contributing to the wiki]].
+
+== FAQs ==
+
+;Q. What task types are there?
+
+:Many different [[task types]] are provided. Follow the links there to see how to format them.
+
+;Q. Can I use this plugin on a BungeeCord network/use MySQL?
+
+:Yes, refer to [[storage providers]].
+
+;Q. Players are able to place blocks then break them to advance tasks! How do I stop this?
+
+:Take a look at the [[Task configuration layout#blockbreakcertain|Task configuration layout § blockbreakcertain]]. You can enable CoreProtect functionality to detect if a player has placed a block, or enable the <code>reverse-if-broken</code> flag which will subtract from task progress if a block is placed.
+
+;Q. How do I limit a quest to a certain world?
+
+:Most task types support world restrictions. Take a look at the task configuration in [[task configuration layout]] to see if your task does.
+
+;Q. How do I organise quests in the GUI?
+
+:Quests can have a <code>sort-order</code>, which organises them within the GUI. You can see it at [[creating a quest]].
+
+:If you want to add custom elements to a quest GUI, you can refer to [[custom GUI items]].
+
+;Q. How to I only let specific players do specific quests?
+
+:Specific quests can have permissions enabled for them. Take a look at [[creating a quest]] for more information. Alternatively, entire categories can have permissions enabled.
+
+;Q. Does this plugin support PlaceholderAPI?
+
+:Yes, see [[PlaceholderAPI]].
+
+;Q. How do I get quest progress on a scoreboard?
+
+:I have written a guide for this: [[Quest progress in scoreboard]]
+
+;Q. I found a bug or have a feature request! Where do I report it?
+
+:Great! Go to the [https://github.com/LMBishop/Quests/issues issue tracker] to report bugs or create feature requests. Please avoid using Spigot's discussion pages or Discord for requests as I will most likely forget about it!
+
+;Q. I have a sizeable portion of money and I feel the need to donate it to you, where do I go?
+
+:Consider giving your money to [https://www.mind.org.uk/donate Mind]; [https://www.helpforheroes.org.uk/donate-online/ Help for Heroes]; [https://www.cancerresearchuk.org/ Cancer Research UK]; or, any other good cause in your country/local area. Or, if you are programmatically gifted, donating some of [https://github.com/LMBishop/Quests/pulls your time] instead.
