@@ -67,6 +67,8 @@ dependencies {
     compileOnly 'net.coreprotect:coreprotect:21.2'
     // EcoBosses
     compileOnly 'com.willfp:EcoBosses:9.14.0'
+    compileOnly 'com.willfp:eco:6.65.1'
+    compileOnly 'com.willfp:libreforge:4.21.1'
     // EssentialsX
     compileOnly('net.essentialsx:EssentialsX:2.19.7') { transitive = false }
     // FabledSkyblock
