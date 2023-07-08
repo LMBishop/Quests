@@ -18,103 +18,15 @@ import org.bukkit.event.EventPriority;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public final class ShopGUIPlusSellTaskType extends BukkitTaskType {
-
-    private final BukkitQuestsPlugin plugin;
-    private Method getShopItemMethod;
-    private Method getShopMethod;
-    private Method getIdMethod;
+public final class ShopGUIPlusSellTaskType extends ShopGUIPlusInteractionTaskType {
 
     public ShopGUIPlusSellTaskType(BukkitQuestsPlugin plugin, String shopGUIPlusVersion) {
-        super("shopguiplus_sell", TaskUtils.TASK_ATTRIBUTION_STRING, "Sell a given item to a ShopGUIPlus shop", "shopguiplus_sellcertain");
-        this.plugin = plugin;
-
-        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
-        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
-        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "shop-id"));
-        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item-id"));
-
-        try {
-            Class<?> clazz = Class.forName("net.brcdev.shopgui.shop.ShopTransactionResult");
-            this.getShopItemMethod = clazz.getDeclaredMethod("getShopItem");
-
-            Class<?> returnType = this.getShopItemMethod.getReturnType();
-            this.getShopMethod = returnType.getDeclaredMethod("getShop");
-            this.getIdMethod = returnType.getDeclaredMethod("getId");
-
-            return;
-        } catch (ClassNotFoundException | NoSuchMethodException ignored) { }
-
-        plugin.getLogger().severe("Failed to register event handler for ShopGUIPlus task type!");
-        plugin.getLogger().severe("ShopGUIPlus version detected: " + shopGUIPlusVersion);
+        super(plugin, shopGUIPlusVersion, "shopguiplus_sell", TaskUtils.TASK_ATTRIBUTION_STRING, "Sell a given item to a ShopGUIPlus shop", "shopguiplus_sellcertain");
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onShopPostTransaction(ShopPostTransactionEvent event) {
-        ShopTransactionResult result = event.getResult();
-        if (result.getResult() != ShopTransactionResult.ShopTransactionResultType.SUCCESS) {
-            return;
-        }
-
+    @Override
+    public boolean isCorrectInteraction(ShopTransactionResult result) {
         ShopAction shopAction = result.getShopAction();
-        if (shopAction != ShopAction.SELL && shopAction != ShopAction.SELL_ALL) {
-            return;
-        }
-
-        Player player = result.getPlayer();
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
-        if (qPlayer == null) {
-            return;
-        }
-
-        Shop shop;
-        String itemId;
-        String shopId;
-
-        try {
-            Object shopItem = getShopItemMethod.invoke(result);
-            shop = (Shop) getShopMethod.invoke(shopItem);
-            itemId = (String) getIdMethod.invoke(shopItem);
-            shopId = shop.getId();
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            // It should never happen
-            return;
-        }
-
-        int amountBought = result.getAmount();
-
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
-            Quest quest = pendingTask.quest();
-            Task task = pendingTask.task();
-            TaskProgress taskProgress = pendingTask.taskProgress();
-
-            super.debug("Player sold item (shop = " + shopId + ", item id = " + itemId + ")", quest.getId(), task.getId(), player.getUniqueId());
-
-            String taskShopId = (String) task.getConfigValue("shop-id");
-            if (taskShopId == null || !taskShopId.equals(shopId)) {
-                super.debug("Shop id does not match required id, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                continue;
-            }
-
-            String taskItemId = (String) task.getConfigValue("item-id");
-            if (taskItemId == null || !taskItemId.equals(itemId)) {
-                super.debug("Item id does not match required id, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                continue;
-            }
-
-            int amountNeeded = (int) task.getConfigValue("amount");
-
-            int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
-            int newProgress = progress + amountBought;
-            taskProgress.setProgress(newProgress);
-
-            super.debug("Updating task progress (now " + newProgress + ")", quest.getId(), task.getId(), player.getUniqueId());
-
-            if (newProgress >= amountNeeded) {
-                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                taskProgress.setProgress(amountNeeded);
-                taskProgress.setCompleted(true);
-            }
-        }
+        return shopAction == ShopAction.SELL || shopAction == ShopAction.SELL_ALL;
     }
 }
