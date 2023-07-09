@@ -16,6 +16,10 @@ public final class TaskConstraintSet {
         this.rawValue = rawValue;
     }
 
+    public TaskConstraintSet(final @NotNull TaskConstraint constraint) {
+        this.rawValue = constraint.getValue();
+    }
+
     public TaskConstraintSet(final int rawValue) {
         this.rawValue = rawValue;
     }
