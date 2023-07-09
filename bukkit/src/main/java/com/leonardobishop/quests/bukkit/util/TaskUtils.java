@@ -5,6 +5,8 @@ import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraint;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -27,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -140,16 +141,19 @@ public class TaskUtils {
         return progress;
     }
 
-    public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type, TaskConstraint... constraints) {
+    public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type) {
+        return getApplicableTasks(player, qPlayer, type, TaskConstraintSet.NONE);
+    }
+
+    public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type, TaskConstraintSet constraintSet) {
         List<PendingTask> tasks = new ArrayList<>();
-        List<TaskConstraint> taskConstraints = Arrays.asList(constraints);
 
         for (Quest quest : type.getRegisteredQuests()) {
             if (qPlayer.hasStartedQuest(quest)) {
                 QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(type.getType())) {
-                    if (taskConstraints.contains(TaskConstraint.WORLD)) {
+                    if (constraintSet.contains(TaskConstraint.WORLD)) {
                         if (!TaskUtils.validateWorld(player, task)) {
                             continue;
                         }
@@ -170,10 +174,6 @@ public class TaskUtils {
     }
 
     public record PendingTask(Quest quest, Task task, QuestProgress questProgress, TaskProgress taskProgress) { }
-
-    public enum TaskConstraint {
-        WORLD
-    }
 
     public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Block block, @NotNull UUID player) {
         Task task = pendingTask.task;
