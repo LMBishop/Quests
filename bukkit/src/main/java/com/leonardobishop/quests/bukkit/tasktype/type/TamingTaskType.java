@@ -30,7 +30,7 @@ public final class TamingTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityTame(EntityTameEvent event) {
-        final AnimalTamer tamer = event.getOwner();
+        AnimalTamer tamer = event.getOwner();
         if (!(tamer instanceof Player player)) {
             return;
         }
@@ -44,7 +44,7 @@ public final class TamingTaskType extends BukkitTaskType {
             return;
         }
 
-        final Entity entity = event.getEntity();
+        Entity entity = event.getEntity();
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();

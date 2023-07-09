@@ -30,7 +30,7 @@ public final class DealDamageTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDamage(EntityDamageByEntityEvent event) {
-        final Entity damager = event.getDamager();
+        Entity damager = event.getDamager();
         if (!(damager instanceof Player player)) {
             return;
         }

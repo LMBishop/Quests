@@ -59,7 +59,7 @@ public final class MobkillingTaskType extends BukkitTaskType {
             return;
         }
 
-        final LivingEntity entity = event.getEntity();
+        LivingEntity entity = event.getEntity();
         if (entity instanceof Player) {
             return;
         }
