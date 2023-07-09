@@ -7,6 +7,7 @@ import com.destroystokyo.paper.loottable.LootableInventoryReplenishEvent;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
@@ -51,7 +52,7 @@ public final class ReplenishingTaskType extends BukkitTaskType {
         final Block block = inventory instanceof final LootableBlockInventory blockInventory ? blockInventory.getBlock() : null;
         final Entity entity = inventory instanceof final LootableEntityInventory entityInventory ? entityInventory.getEntity() : null;
 
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(event.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(event.getPlayer(), qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();

@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit.tasktype.type;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
@@ -25,22 +26,23 @@ public final class CommandTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onCommand(PlayerCommandPreprocessEvent e) {
-        if (e.getPlayer().hasMetadata("NPC")) return;
-
-        Player player = e.getPlayer();
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        Player player = event.getPlayer();
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
         }
 
-        String message = e.getMessage();
+        String message = event.getMessage();
         if (message.length() >= 1) {
             message = message.substring(1);
         }
 
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
