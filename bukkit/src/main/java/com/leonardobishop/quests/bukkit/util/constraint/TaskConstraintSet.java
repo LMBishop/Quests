@@ -16,6 +16,10 @@ public final class TaskConstraintSet {
         this.rawValue = rawValue;
     }
 
+    public TaskConstraintSet(final int rawValue) {
+        this.rawValue = rawValue;
+    }
+
     public boolean contains(final @NotNull TaskConstraint constraint) {
         return (this.rawValue & constraint.getValue()) != 0;
     }
