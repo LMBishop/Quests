@@ -49,13 +49,15 @@ public final class DistancefromTaskType extends BukkitTaskType {
 //    }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onMove(PlayerMoveEvent event) {
-        if (event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
+    public void onPlayerMove(PlayerMoveEvent event) {
+        if (event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockY() == event.getTo().getBlockY() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
             return;
         }
 
-        if (event.getPlayer().hasMetadata("NPC")) return;
         Player player = event.getPlayer();
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
@@ -93,5 +95,4 @@ public final class DistancefromTaskType extends BukkitTaskType {
             }
         }
     }
-
 }

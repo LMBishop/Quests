@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit.tasktype.type;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
@@ -29,22 +30,24 @@ public final class DealDamageTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) {
+        final Entity damager = event.getDamager();
+        if (!(damager instanceof Player player)) {
             return;
         }
 
-        Player player = (Player) event.getDamager();
-        Entity entity = event.getEntity();
-        double damage = event.getDamage();
-
-        if (player.hasMetadata("NPC")) return;
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
         }
 
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+        Entity entity = event.getEntity();
+        double damage = event.getDamage();
+
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
@@ -52,20 +55,19 @@ public final class DealDamageTaskType extends BukkitTaskType {
             super.debug("Player damaged " + entity.getType() + " for " + damage, quest.getId(), task.getId(), player.getUniqueId());
 
             boolean allowOnlyCreatures = TaskUtils.getConfigBoolean(task, "allow-only-creatures", true);
-            if (allowOnlyCreatures && !(event.getEntity() instanceof Creature)) {
+            if (allowOnlyCreatures && !(entity instanceof Creature)) {
                 super.debug(entity.getType() + " is not a creature but allow-only-creatures is true, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
 
-            double progressDamage = TaskUtils.getDecimalTaskProgress(taskProgress);
-            int damageNeeded = (int) task.getConfigValue("amount");
+            int amount = (int) task.getConfigValue("amount");
+            double progress = Math.min(amount, TaskUtils.getDecimalTaskProgress(taskProgress) + damage);
 
-            taskProgress.setProgress(progressDamage + damage);
-            super.debug("Updating task progress (now " + (progressDamage + damage) + ")", quest.getId(), task.getId(), player.getUniqueId());
+            taskProgress.setProgress(progress);
+            super.debug("Updating task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (((double) taskProgress.getProgress()) >= (double) damageNeeded) {
+            if (progress >= amount) {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                taskProgress.setProgress(damageNeeded);
                 taskProgress.setCompleted(true);
             }
         }

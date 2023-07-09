@@ -3,11 +3,13 @@ package com.leonardobishop.quests.bukkit.tasktype.type;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.AnimalTamer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,39 +30,32 @@ public final class TamingTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityTame(EntityTameEvent event) {
-        if (!(event.getOwner() instanceof Player)) {
+        final AnimalTamer tamer = event.getOwner();
+        if (!(tamer instanceof Player player)) {
             return;
         }
 
-        Player player = (Player) event.getOwner();
-
-        if (player.hasMetadata("NPC")) return;
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
         }
 
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
+        final Entity entity = event.getEntity();
+
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player.getPlayer(), qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
             super.debug("Played tamed entity", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (task.hasConfigKey("mob")) {
-                EntityType entityType;
-                try {
-                    entityType = EntityType.valueOf((String) task.getConfigValue("mob"));
-                } catch (IllegalArgumentException ex) {
-                    super.debug("Invalid entity in configuration, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                    continue;
-                }
-
-                if (event.getEntity().getType() != entityType) {
-                    super.debug("Tamed entity is not the correct type, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                    continue;
-                }
+            if (!TaskUtils.matchEntity(this, pendingTask, entity, player.getUniqueId())) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
             }
 
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
@@ -74,5 +69,4 @@ public final class TamingTaskType extends BukkitTaskType {
             }
         }
     }
-
 }
