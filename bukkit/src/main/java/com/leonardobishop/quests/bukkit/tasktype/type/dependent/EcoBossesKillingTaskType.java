@@ -10,6 +10,8 @@ import com.leonardobishop.quests.common.quest.Task;
 import com.willfp.ecobosses.bosses.EcoBoss;
 import com.willfp.ecobosses.events.BossKillEvent;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 
 public final class EcoBossesKillingTaskType extends BukkitTaskType {
 
@@ -24,6 +26,7 @@ public final class EcoBossesKillingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBossKill(BossKillEvent event) {
         Player killer = event.getKiller();
         EcoBoss boss = event.getBoss().getBoss();
