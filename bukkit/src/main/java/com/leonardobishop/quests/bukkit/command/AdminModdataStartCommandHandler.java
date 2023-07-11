@@ -25,42 +25,43 @@ public class AdminModdataStartCommandHandler implements CommandHandler {
     @Override
     public void handle(CommandSender sender, String[] args) {
         if (args.length > 4) {
-            QPlayer qPlayer = CommandUtils.getOtherPlayerSync(sender, args[3], plugin);
-            if (qPlayer == null) return;
-            QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
             Quest quest = plugin.getQuestManager().getQuestById(args[4]);
             if (quest == null) {
                 Messages.COMMAND_QUEST_START_DOESNTEXIST.send(sender, "{quest}", args[4]);
                 return;
             }
-            QuestStartResult response = qPlayer.startQuest(quest);
-            switch (response) {
-                case QUEST_LIMIT_REACHED:
-                    Messages.COMMAND_QUEST_ADMIN_START_FAILLIMIT.send(sender, "{player}", args[3], "{quest}", quest.getId());
-                    return;
-                case QUEST_ALREADY_COMPLETED:
-                    Messages.COMMAND_QUEST_ADMIN_START_FAILCOMPLETE.send(sender, "{player}", args[3], "{quest}", quest.getId());
-                    return;
-                case QUEST_COOLDOWN:
-                    Messages.COMMAND_QUEST_ADMIN_START_FAILCOOLDOWN.send(sender, "{player}", args[3], "{quest}", quest.getId());
-                    return;
-                case QUEST_LOCKED:
-                    Messages.COMMAND_QUEST_ADMIN_START_FAILLOCKED.send(sender, "{player}", args[3], "{quest}", quest.getId());
-                    return;
-                case QUEST_ALREADY_STARTED:
-                    Messages.COMMAND_QUEST_ADMIN_START_FAILSTARTED.send(sender, "{player}", args[3], "{quest}", quest.getId());
-                    return;
-                case QUEST_NO_PERMISSION:
-                    Messages.COMMAND_QUEST_ADMIN_START_FAILPERMISSION.send(sender, "{player}", args[3], "{quest}", quest.getId());
-                    return;
-                case NO_PERMISSION_FOR_CATEGORY:
-                    Messages.COMMAND_QUEST_ADMIN_START_FAILCATEGORYPERMISSION.send(sender, "{player}", args[3], "{quest}", quest.getId());
-                    return;
-            }
 
-            Messages.COMMAND_QUEST_ADMIN_START_SUCCESS.send(sender, "{player}", args[3], "{quest}", quest.getId());
+            CommandUtils.useOtherPlayer(sender, args[3], plugin, qPlayer -> {
+                QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+                QuestStartResult response = qPlayer.startQuest(quest);
+                switch (response) {
+                    case QUEST_LIMIT_REACHED:
+                        Messages.COMMAND_QUEST_ADMIN_START_FAILLIMIT.send(sender, "{player}", args[3], "{quest}", quest.getId());
+                        return;
+                    case QUEST_ALREADY_COMPLETED:
+                        Messages.COMMAND_QUEST_ADMIN_START_FAILCOMPLETE.send(sender, "{player}", args[3], "{quest}", quest.getId());
+                        return;
+                    case QUEST_COOLDOWN:
+                        Messages.COMMAND_QUEST_ADMIN_START_FAILCOOLDOWN.send(sender, "{player}", args[3], "{quest}", quest.getId());
+                        return;
+                    case QUEST_LOCKED:
+                        Messages.COMMAND_QUEST_ADMIN_START_FAILLOCKED.send(sender, "{player}", args[3], "{quest}", quest.getId());
+                        return;
+                    case QUEST_ALREADY_STARTED:
+                        Messages.COMMAND_QUEST_ADMIN_START_FAILSTARTED.send(sender, "{player}", args[3], "{quest}", quest.getId());
+                        return;
+                    case QUEST_NO_PERMISSION:
+                        Messages.COMMAND_QUEST_ADMIN_START_FAILPERMISSION.send(sender, "{player}", args[3], "{quest}", quest.getId());
+                        return;
+                    case NO_PERMISSION_FOR_CATEGORY:
+                        Messages.COMMAND_QUEST_ADMIN_START_FAILCATEGORYPERMISSION.send(sender, "{player}", args[3], "{quest}", quest.getId());
+                        return;
+                }
 
-            CommandUtils.doSafeSave(qPlayer, questProgressFile, plugin);
+                Messages.COMMAND_QUEST_ADMIN_START_SUCCESS.send(sender, "{player}", args[3], "{quest}", quest.getId());
+
+                CommandUtils.doSafeSave(qPlayer, questProgressFile, plugin);
+            });
             return;
         }
 
