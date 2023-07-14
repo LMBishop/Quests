@@ -460,6 +460,10 @@ public class BukkitQuestsLoader implements QuestsLoader {
                             if (!Bukkit.getPluginManager().isPluginEnabled("ExecutableItems")) return FileVisitResult.CONTINUE;
                             item = new ExecutableItemsQuestItem(id, config.getString("item.id"));
                             break;
+                        case "itemsadder":
+                            if (!Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")) return FileVisitResult.CONTINUE;
+                            item = new ItemsAdderQuestItem(id, config.getString("item.id"));
+                            break;
                     }
 
                     questItemRegistry.registerItem(id, item);
