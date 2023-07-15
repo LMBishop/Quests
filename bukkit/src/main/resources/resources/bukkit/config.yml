@@ -216,21 +216,29 @@ global-macros:
 # -----------------------------------------------------------
 gui:
   back-button:
+    enabled: true
+    slot: 45
     name: "&cReturn"
     lore:
       - "&7Return to the categories menu."
     type: "ARROW"
   page-prev:
+    enabled: true
+    slot: 48
     name: "&7Previous Page"
     lore:
       - "&7Switch the page to page &c{prevpage}."
     type: "FEATHER"
   page-next:
+    enabled: true
+    slot: 50
     name: "&7Next Page"
     lore:
       - "&7Switch the page to page &c{nextpage}."
     type: "FEATHER"
   page-desc:
+    enabled: true
+    slot: 49
     name: "&7Page &c{page}"
     lore:
       - "&7You are currently viewing page &c{page}."

@@ -19,13 +19,10 @@ import java.util.List;
  */
 public class CategoryQMenu extends PaginatedQMenu {
 
-    private final BukkitQuestsPlugin plugin;
-
     public CategoryQMenu(BukkitQuestsPlugin plugin, QPlayer owner) {
         super(owner, Chat.legacyColor(plugin.getQuestsConfig().getString("options.guinames.quests-category")),
                 plugin.getQuestsConfig().getBoolean("options.trim-gui-size"), 54, plugin);
 
-        this.plugin = plugin;
         BukkitQuestsConfig config = (BukkitQuestsConfig) plugin.getQuestsConfig();
 
         List<MenuElement> categoryMenuElements = new ArrayList<>();

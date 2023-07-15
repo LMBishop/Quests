@@ -34,4 +34,13 @@ public class PageNextMenuElement extends MenuElement {
         menu.setCurrentPage(menu.getCurrentPage() + 1);
         return ClickResult.REFRESH_PANE;
     }
+    
+    public int getSlot() {
+    	return config.getInt("gui.page-next.slot", 50);
+    }
+    
+    @Override
+    public boolean isEnabled() {
+    	return config.getBoolean("gui.page-next.enabled", true);
+    }
 }

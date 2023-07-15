@@ -21,3 +21,5 @@ CHANGELOG_MD
 CHANGELOG_GFM
 UPDATE_MESSAGE
 
+*.classpath
+*.project
