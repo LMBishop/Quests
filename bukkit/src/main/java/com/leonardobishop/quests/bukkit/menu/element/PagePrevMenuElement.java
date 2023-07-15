@@ -34,4 +34,13 @@ public class PagePrevMenuElement extends MenuElement {
         menu.setCurrentPage(menu.getCurrentPage() - 1);
         return ClickResult.REFRESH_PANE;
     }
+    
+    public int getSlot() {
+    	return config.getInt("gui.page-prev.slot", 48);
+    }
+    
+    @Override
+    public boolean isEnabled() {
+    	return config.getBoolean("gui.page-prev.enabled", true);
+    }
 }

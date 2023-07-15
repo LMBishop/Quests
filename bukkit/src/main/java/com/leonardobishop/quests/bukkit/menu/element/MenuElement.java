@@ -16,4 +16,7 @@ public abstract class MenuElement {
      */
     public abstract ClickResult handleClick(ClickType clickType);
 
+    public boolean isEnabled() {
+    	return true;
+    }
 }

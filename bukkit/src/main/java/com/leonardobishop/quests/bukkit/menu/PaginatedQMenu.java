@@ -60,7 +60,7 @@ public abstract class PaginatedQMenu extends QMenu {
         this.maxPage = maxPage;
     }
 
-    public void populate(String customElementsPath, List<MenuElement> menuElementsToFill, MenuElement backMenuElement) {
+    public void populate(String customElementsPath, List<MenuElement> menuElementsToFill, BackMenuElement backMenuElement) {
         Player player = Bukkit.getPlayer(owner.getPlayerUUID());
         if (player == null) {
             return;
@@ -68,7 +68,7 @@ public abstract class PaginatedQMenu extends QMenu {
 
         MenuElement[] staticMenuElements = new MenuElement[pageSize];
         int customStaticElements = 0;
-        MenuElement spacer = new SpacerMenuElement();
+        SpacerMenuElement spacer = new SpacerMenuElement();
 
         // populate custom elements first
         if (customElementsPath != null) {
@@ -100,7 +100,6 @@ public abstract class PaginatedQMenu extends QMenu {
             }
         }
 
-        // TODO: make these page controls configurable
         // if the amount of predicted menu elements is greater than the size of a page, add
         // the page controls as menu elements
         // this won't check if static elements overlap normal ones first but i don't care
@@ -108,21 +107,26 @@ public abstract class PaginatedQMenu extends QMenu {
         BukkitQuestsConfig config = (BukkitQuestsConfig) plugin.getQuestsConfig();
         if ((menuElements.isEmpty() ? 0 : Ints.max(menuElements.keys)) + 1 > maxSize
                 || menuElements.size() + menuElementsToFill.size() + customStaticElements > maxSize) {
-            MenuElement pageNextMenuElement = new PageNextMenuElement(config, this);
-            MenuElement pagePrevMenuElement = new PagePrevMenuElement(config, this);
-            MenuElement pageDescMenuElement = new PageDescMenuElement(config, this);
-            staticMenuElements[45] = backMenuElement == null ? spacer : backMenuElement;
+        	PageNextMenuElement pageNextMenuElement = new PageNextMenuElement(config, this);
+        	PagePrevMenuElement pagePrevMenuElement = new PagePrevMenuElement(config, this);
+        	PageDescMenuElement pageDescMenuElement = new PageDescMenuElement(config, this);
+        	// add manually spacer then let people change item
             staticMenuElements[46] = spacer;
             staticMenuElements[47] = spacer;
-            staticMenuElements[48] = pagePrevMenuElement;
-            staticMenuElements[49] = pageDescMenuElement;
-            staticMenuElements[50] = pageNextMenuElement;
             staticMenuElements[51] = spacer;
             staticMenuElements[52] = spacer;
             staticMenuElements[53] = spacer;
+        	if(backMenuElement != null && backMenuElement.isEnabled())
+        		staticMenuElements[backMenuElement.getSlot()] = backMenuElement == null ? spacer : backMenuElement;
+            if(pagePrevMenuElement.isEnabled())
+            	staticMenuElements[pagePrevMenuElement.getSlot()] = pagePrevMenuElement;
+            if(pageDescMenuElement.isEnabled())
+            	staticMenuElements[pageDescMenuElement.getSlot()] = pageDescMenuElement;
+            if(pageNextMenuElement.isEnabled())
+            	staticMenuElements[pageNextMenuElement.getSlot()] = pageNextMenuElement;
 
             // else find a place for the back button if needed
-        } else if (backMenuElement != null) {
+        } else if (backMenuElement != null && backMenuElement.isEnabled()) {
             int slot = MenuUtils.getHigherOrEqualMultiple(menuElements.size() + menuElementsToFill.size() + customStaticElements, 9);
             staticMenuElements[slot] = backMenuElement;
         }

@@ -31,4 +31,13 @@ public class PageDescMenuElement extends MenuElement {
     public ClickResult handleClick(ClickType clickType) {
         return ClickResult.DO_NOTHING;
     }
+    
+    public int getSlot() {
+    	return config.getInt("gui.page-desc.slot", 49);
+    }
+    
+    @Override
+    public boolean isEnabled() {
+    	return config.getBoolean("gui.page-desc.enabled", true);
+    }
 }
