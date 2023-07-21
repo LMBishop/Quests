@@ -5,7 +5,6 @@ import com.leonardobishop.quests.bukkit.scheduler.ServerScheduler;
 import com.leonardobishop.quests.bukkit.scheduler.WrappedTask;
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
-import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +30,6 @@ public class FoliaServerScheduler implements ServerScheduler {
 
     private final GlobalRegionScheduler globalRegionScheduler;
     private final AsyncScheduler asyncScheduler;
-    private final RegionScheduler regionScheduler;
 
     public FoliaServerScheduler(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -39,7 +37,6 @@ public class FoliaServerScheduler implements ServerScheduler {
         final Server server = plugin.getServer();
         this.globalRegionScheduler = server.getGlobalRegionScheduler();
         this.asyncScheduler = server.getAsyncScheduler();
-        this.regionScheduler = server.getRegionScheduler();
     }
 
     @Override
