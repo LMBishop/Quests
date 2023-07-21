@@ -9,6 +9,7 @@ author: "LMBishop & contributors"
 softdepend: [ASkyBlock, BentoBox, Citizens, CoreProtect, Essentials, FabledSkyblock, IridiumSkyblock, MythicMobs, PlaceholderAPI, PlayerBlockTracker, PlayerPoints, ShopGUIPlus, SuperiorSkyblock2, uSkyBlock, Votifier, VotingPlugin]
 prefix: Quests
 api-version: "1.13" # allows new API features but Quests will still work pre-1.13
+folia-supported: true
 
 commands:
   quests:

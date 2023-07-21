@@ -55,6 +55,10 @@ dependencies {
     compileOnly('io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT') {
         exclude(group: 'it.unimi.dsi', module: 'fastutil') // exclude fastutil just to don't use it (for 1.8 support)
     }
+    // Folia
+    compileOnly('dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT') {
+        exclude(group: 'it.unimi.dsi', module: 'fastutil') // exclude fastutil just to don't use it (for 1.8 support)
+    }
     // ASkyBlock
     compileOnly('com.wasteofplastic:askyblock:3.0.9.4') { transitive = false }
     // AuthLib

@@ -285,7 +285,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
             final Map<String, String> map = new HashMap<>();
             map.put(params, result);
             cache.put(player, map);
-            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> cache.get(player).remove(params), plugin.getConfig().getInt("options.placeholder-cache-time", 10) * 20L);
+            plugin.getScheduler().runTaskLaterAsynchronously(() -> cache.get(player).remove(params), plugin.getConfig().getInt("options.placeholder-cache-time", 10) * 20L);
         }
         return result;
     }

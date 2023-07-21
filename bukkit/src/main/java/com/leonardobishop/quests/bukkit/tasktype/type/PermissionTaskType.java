@@ -1,6 +1,8 @@
 package com.leonardobishop.quests.bukkit.tasktype.type;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.scheduler.WrappedRunnable;
+import com.leonardobishop.quests.bukkit.scheduler.WrappedTask;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -9,13 +11,11 @@ import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 public final class PermissionTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
-    private BukkitTask poll;
+    private WrappedTask poll;
 
     public PermissionTaskType(BukkitQuestsPlugin plugin) {
         super("permission", TaskUtils.TASK_ATTRIBUTION_STRING, "Test if a player has a permission");
@@ -26,7 +26,7 @@ public final class PermissionTaskType extends BukkitTaskType {
 
     @Override
     public void onReady() {
-        this.poll = new BukkitRunnable() {
+        this.poll = new WrappedRunnable() {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
@@ -55,7 +55,7 @@ public final class PermissionTaskType extends BukkitTaskType {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 30L, 30L);
+        }.runTaskTimer(plugin.getScheduler(), 30L, 30L);
     }
 
     @Override

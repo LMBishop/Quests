@@ -21,7 +21,7 @@ public class AdminUpdateCommandHandler implements CommandHandler {
     @Override
     public void handle(CommandSender sender, String[] args) {
         sender.sendMessage(ChatColor.GRAY + "Checking for updates...");
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
+        plugin.getScheduler().doAsync(() -> {
             plugin.getUpdater().check();
             if (plugin.getUpdater().isUpdateReady()) {
                 Messages.QUEST_UPDATER.send(sender,

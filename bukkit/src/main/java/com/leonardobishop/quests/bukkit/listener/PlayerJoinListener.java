@@ -28,12 +28,12 @@ public class PlayerJoinListener implements Listener {
                     .replace("{newver}", plugin.getUpdater().getReturnedVersion())
                     .replace("{oldver}", plugin.getUpdater().getInstalledVersion())
                     .replace("{link}", plugin.getUpdater().getUpdateLink());
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> event.getPlayer().sendMessage(updateMessage), 50L);
+            plugin.getScheduler().runTaskLaterAtEntity(event.getPlayer(), () -> event.getPlayer().sendMessage(updateMessage), 50L);
         }
 
         final Player player = event.getPlayer();
         plugin.getQuestsLogger().debug("PlayerJoinListener: " + player.getUniqueId() + " (" + player.getName() + ")");
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+        plugin.getScheduler().runTaskLater(() -> {
             if (!player.isOnline()) return;
             plugin.getPlayerManager().loadPlayer(player.getUniqueId()).thenAccept(qPlayer -> {
                 if (qPlayer == null) return;
