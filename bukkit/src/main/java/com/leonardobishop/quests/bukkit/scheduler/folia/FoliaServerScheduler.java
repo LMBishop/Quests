@@ -55,7 +55,9 @@ public class FoliaServerScheduler implements ServerScheduler {
 
     @Override
     public @NotNull WrappedTask runTaskTimer(@NotNull Runnable runnable, long delay, long period) {
-        return new FoliaWrappedTask(globalRegionScheduler.runAtFixedRate(plugin, task -> runnable.run(), delay, period));
+        return new FoliaWrappedTask(globalRegionScheduler.runAtFixedRate(plugin, task -> {
+            if (runnable != null) runnable.run();
+        }, delay, period));
     }
 
     @Override

@@ -14,14 +14,12 @@ public class QuestsAutoSaveRunnable extends WrappedRunnable {
     private final Queue<UUID> queue = new LinkedList<>();
     private final BukkitQuestsPlugin plugin;
 
-    public QuestsAutoSaveRunnable(BukkitQuestsPlugin plugin, long autoSaveInterval) {
+    public QuestsAutoSaveRunnable(BukkitQuestsPlugin plugin) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             queue.add(player.getUniqueId());
         }
 
         this.plugin = plugin;
-
-        this.runTaskTimer(plugin.getScheduler(), autoSaveInterval, autoSaveInterval);
     }
 
     @Override

@@ -81,7 +81,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private TaskTypeManager taskTypeManager;
     private QPlayerManager qPlayerManager;
     private QuestController questController;
-    private QuestCompleter questCompleter;
+    private BukkitQuestCompleter questCompleter;
     private BukkitQuestsConfig questsConfig;
     private Updater updater;
     private ServerScheduler serverScheduler;
@@ -102,7 +102,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private VersionSpecificHandler versionSpecificHandler;
 
     private LogHistory logHistory;
-    private QuestsAutoSaveRunnable questAutoSaveTask;
+    private WrappedTask questAutoSaveTask;
     private WrappedTask questQueuePollTask;
     private BiFunction<Player, String, String> placeholderAPIProcessor;
 
@@ -508,7 +508,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             long autoSaveInterval = this.getConfig().getLong("options.performance-tweaking.quest-autosave-interval", 12000);
             try {
                 if (questAutoSaveTask != null) questAutoSaveTask.cancel();
-                questAutoSaveTask = new QuestsAutoSaveRunnable(this, autoSaveInterval);
+                questAutoSaveTask = new QuestsAutoSaveRunnable(this).runTaskTimer(getScheduler(), autoSaveInterval, autoSaveInterval);
             } catch (Exception ex) {
                 questsLogger.debug("Cannot cancel and restart quest autosave task");
             }
@@ -516,7 +516,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             long queueExecuteInterval = this.getConfig().getLong("options.performance-tweaking.quest-queue-executor-interval", 1);
             try {
                 if (questQueuePollTask != null) questQueuePollTask.cancel();
-                questQueuePollTask = serverScheduler.runTaskTimer((BukkitQuestCompleter) questCompleter, queueExecuteInterval, queueExecuteInterval);
+                questQueuePollTask = serverScheduler.runTaskTimer(questCompleter, queueExecuteInterval, queueExecuteInterval);
             } catch (Exception ex) {
                 questsLogger.debug("Cannot cancel and restart queue executor task");
             }

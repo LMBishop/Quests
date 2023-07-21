@@ -33,6 +33,7 @@ public abstract class WrappedRunnable implements Runnable {
      */
     @NotNull
     public WrappedTask runTaskTimer(@NotNull ServerScheduler serverScheduler, long delay, long period) {
+        checkNotYetScheduled();
         return setupTask(serverScheduler.runTaskTimer(this, delay, period));
     }
 
