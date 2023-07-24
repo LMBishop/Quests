@@ -5,6 +5,8 @@ import com.leonardobishop.quests.bukkit.scheduler.ServerScheduler;
 import com.leonardobishop.quests.bukkit.scheduler.WrappedTask;
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
+import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
+import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +32,7 @@ public class FoliaServerScheduler implements ServerScheduler {
 
     private final GlobalRegionScheduler globalRegionScheduler;
     private final AsyncScheduler asyncScheduler;
+    private final RegionScheduler regionScheduler;
 
     public FoliaServerScheduler(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -37,6 +40,7 @@ public class FoliaServerScheduler implements ServerScheduler {
         final Server server = plugin.getServer();
         this.globalRegionScheduler = server.getGlobalRegionScheduler();
         this.asyncScheduler = server.getAsyncScheduler();
+        this.regionScheduler = server.getRegionScheduler();
     }
 
     @Override
@@ -51,6 +55,26 @@ public class FoliaServerScheduler implements ServerScheduler {
     }
 
     @Override
+    public @NotNull WrappedTask runTask(@NotNull Runnable runnable) {
+        return new FoliaWrappedTask(globalRegionScheduler.run(plugin, task -> runnable.run()));
+    }
+
+    @Override
+    public @NotNull WrappedTask runTaskAsynchronously(@NotNull Runnable runnable) {
+        return new FoliaWrappedTask(asyncScheduler.runNow(plugin, task -> runnable.run()));
+    }
+
+    @Override
+    public @NotNull WrappedTask runTaskAtEntity(@NotNull Entity entity, @NotNull Runnable runnable) {
+        return new FoliaWrappedTask(Objects.requireNonNull(entity.getScheduler().run(plugin, task -> runnable.run(), () -> {})));
+    }
+
+    @Override
+    public @NotNull WrappedTask runTaskAtLocation(@NotNull Location location, @NotNull Runnable runnable) {
+        return new FoliaWrappedTask(regionScheduler.run(plugin, location, task -> runnable.run()));
+    }
+
+    @Override
     public @NotNull WrappedTask runTaskTimer(@NotNull Runnable runnable, long delay, long period) {
         return new FoliaWrappedTask(globalRegionScheduler.runAtFixedRate(plugin, task -> {
             if (runnable != null) runnable.run();
@@ -60,6 +84,16 @@ public class FoliaServerScheduler implements ServerScheduler {
     @Override
     public @NotNull WrappedTask runTaskTimerAsynchronously(@NotNull Runnable runnable, long delay, long period) {
         return new FoliaWrappedTask(asyncScheduler.runAtFixedRate(plugin, task -> runnable.run(), delay * 50L, period * 50L, TimeUnit.MILLISECONDS));
+    }
+
+    @Override
+    public @NotNull WrappedTask runTaskTimerAtEntity(@NotNull Entity entity, @NotNull Runnable runnable, long delay, long period) {
+        return new FoliaWrappedTask(Objects.requireNonNull(entity.getScheduler().runAtFixedRate(plugin, task -> runnable.run(), () -> {}, delay, period)));
+    }
+
+    @Override
+    public @NotNull WrappedTask runTaskTimerAtLocation(@NotNull Location location, @NotNull Runnable runnable, long delay, long period) {
+        return new FoliaWrappedTask(regionScheduler.runAtFixedRate(plugin, location, task -> runnable.run(), delay, period));
     }
 
     @Override
@@ -78,12 +112,7 @@ public class FoliaServerScheduler implements ServerScheduler {
     }
 
     @Override
-    public void doSync(Runnable runnable) {
-        globalRegionScheduler.run(plugin, task -> runnable.run());
-    }
-
-    @Override
-    public void doAsync(Runnable runnable) {
-        asyncScheduler.runNow(plugin, task -> runnable.run());
+    public @NotNull WrappedTask runTaskLaterAtLocation(@NotNull Location location, @NotNull Runnable runnable, long delay) {
+        return new FoliaWrappedTask(regionScheduler.runDelayed(plugin, location, task -> runnable.run(), delay));
     }
 }
