@@ -15,14 +15,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class MobkillingTaskType extends BukkitTaskType {
+
+    public static final String TASK_TYPE_NAME = "mobkilling";
 
     private final BukkitQuestsPlugin plugin;
     private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
 
     public MobkillingTaskType(BukkitQuestsPlugin plugin) {
-        super("mobkilling", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of a entity type.", "mobkillingcertain");
+        super(TASK_TYPE_NAME, TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of a entity type.", "mobkillingcertain");
         this.plugin = plugin;
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
@@ -62,27 +66,33 @@ public final class MobkillingTaskType extends BukkitTaskType {
 
         //noinspection deprecation
         final String customName = entity.getCustomName();
+        handleEntityDeath(player, qPlayer, entity.getType(), customName, entity instanceof Animals, entity instanceof Monster);
+    }
 
+    /**
+     * Targeted handler for entity deaths, to avoid using the Bukkit API wrappers.
+     */
+    public void handleEntityDeath(@NotNull Player player, @NotNull QPlayer qPlayer, @NotNull EntityType entityType, @Nullable String customName, boolean animal, boolean monster) {
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskUtils.TaskConstraint.WORLD)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player killed " + entity.getType(), quest.getId(), task.getId(), player.getUniqueId());
+            super.debug("Player killed " + entityType, quest.getId(), task.getId(), player.getUniqueId());
 
             if (task.hasConfigKey("hostile")) {
                 boolean hostile = TaskUtils.getConfigBoolean(task, "hostile");
 
-                if (!hostile && !(entity instanceof Animals)) {
+                if (!hostile && !animal) {
                     super.debug("Mob must be passive, but is hostile, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
-                } else if (hostile && !(entity instanceof Monster)) {
+                } else if (hostile && !monster) {
                     super.debug("Mob must be hostile, but is passive, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
             }
 
-            if (!TaskUtils.matchEntity(this, pendingTask, entity, player.getUniqueId())) {
+            if (!TaskUtils.matchEntityType(this, pendingTask, entityType, player.getUniqueId())) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }

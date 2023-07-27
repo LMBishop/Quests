@@ -56,10 +56,10 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = project.findProperty('mavenUser') ?: System.getenv('MAVEN_USER')
-                password = project.findProperty('mavenPassword') ?: System.getenv('MAVEN_PASSWORD')
+                username = project.findProperty('lgNexusUser') ?: System.getenv('MAVEN_USER')
+                password = project.findProperty('lgNexusPass') ?: System.getenv('MAVEN_PASSWORD')
             }
-            url = "https://repo.leonardobishop.com/releases/"
+            url = "https://repo.lemongaming.ltd/repository/maven-snapshots/"
         }
     }
 }

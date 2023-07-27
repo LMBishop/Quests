@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit;
 import com.leonardobishop.quests.bukkit.command.QuestsCommandSwitcher;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsLoader;
+import com.leonardobishop.quests.bukkit.hook.asyncentities.LGAsyncEntitiesHook;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.AbstractCoreProtectHook;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.CoreProtectHook;
 import com.leonardobishop.quests.bukkit.hook.essentials.AbstractEssentialsHook;
@@ -400,6 +401,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             if (Bukkit.getPluginManager().isPluginEnabled("Votifier")) {
                 // not tested
                 taskTypeManager.registerTaskType(new NuVotifierVoteTaskType(this));
+            }
+            if (Bukkit.getPluginManager().isPluginEnabled("LGAsyncEntities")) {
+                super.getServer().getPluginManager().registerEvents(new LGAsyncEntitiesHook(this), this);
             }
 
             taskTypeManager.closeRegistrations();
