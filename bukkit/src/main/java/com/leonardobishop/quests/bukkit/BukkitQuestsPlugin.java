@@ -31,6 +31,10 @@ import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStackRegistry;
 import com.leonardobishop.quests.bukkit.questcompleter.BukkitQuestCompleter;
 import com.leonardobishop.quests.bukkit.questcontroller.NormalQuestController;
 import com.leonardobishop.quests.bukkit.runnable.QuestsAutoSaveRunnable;
+import com.leonardobishop.quests.bukkit.scheduler.WrappedTask;
+import com.leonardobishop.quests.bukkit.scheduler.bukkit.BukkitServerSchedulerAdapter;
+import com.leonardobishop.quests.bukkit.scheduler.ServerScheduler;
+import com.leonardobishop.quests.bukkit.scheduler.folia.FoliaServerScheduler;
 import com.leonardobishop.quests.bukkit.storage.MySqlStorageProvider;
 import com.leonardobishop.quests.bukkit.storage.YamlStorageProvider;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskTypeManager;
@@ -47,7 +51,6 @@ import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.quest.QuestCompleter;
 import com.leonardobishop.quests.common.quest.QuestManager;
 import com.leonardobishop.quests.common.questcontroller.QuestController;
-import com.leonardobishop.quests.common.scheduler.ServerScheduler;
 import com.leonardobishop.quests.common.storage.StorageProvider;
 import com.leonardobishop.quests.common.tasktype.TaskType;
 import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
@@ -61,7 +64,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,7 +82,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private TaskTypeManager taskTypeManager;
     private QPlayerManager qPlayerManager;
     private QuestController questController;
-    private QuestCompleter questCompleter;
+    private BukkitQuestCompleter questCompleter;
     private BukkitQuestsConfig questsConfig;
     private Updater updater;
     private ServerScheduler serverScheduler;
@@ -101,8 +103,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private VersionSpecificHandler versionSpecificHandler;
 
     private LogHistory logHistory;
-    private BukkitTask questAutoSaveTask;
-    private BukkitTask questQueuePollTask;
+    private WrappedTask questAutoSaveTask;
+    private WrappedTask questQueuePollTask;
     private BiFunction<Player, String, String> placeholderAPIProcessor;
 
     @Override
@@ -163,7 +165,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         this.generateConfigurations();
         this.questsConfig = new BukkitQuestsConfig(new File(super.getDataFolder() + File.separator + "config.yml"));
         this.questManager = new QuestManager(this);
-        this.serverScheduler = new BukkitServerSchedulerAdapter(this);
+
+        this.serverScheduler = FoliaServerScheduler.FOLIA ? new FoliaServerScheduler(this) : new BukkitServerSchedulerAdapter(this);
+        questsLogger.info("Running server scheduler: " + serverScheduler.getServerSchedulerName());
 
         // Load base configuration for use during rest of startup procedure
         if (!this.reloadBaseConfiguration()) {
@@ -272,7 +276,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         super.getServer().getPluginManager().registerEvents(new PlayerLeaveListener(this), this);
 
         // Register task types after the server has fully started
-        Bukkit.getScheduler().runTask(this, () -> {
+        getScheduler().doSync(() -> {
             // Setup external plugin hooks
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 this.placeholderAPIHook = new PlaceholderAPIHook();
@@ -452,6 +456,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         try {
             qPlayerManager.getStorageProvider().shutdown();
         } catch (Exception ignored) { }
+
+        serverScheduler.cancelAllTasks();
     }
 
     @Override
@@ -506,7 +512,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             long autoSaveInterval = this.getConfig().getLong("options.performance-tweaking.quest-autosave-interval", 12000);
             try {
                 if (questAutoSaveTask != null) questAutoSaveTask.cancel();
-                questAutoSaveTask = Bukkit.getScheduler().runTaskTimer(this, () -> new QuestsAutoSaveRunnable(this), autoSaveInterval, autoSaveInterval);
+                questAutoSaveTask = new QuestsAutoSaveRunnable(this).runTaskTimer(getScheduler(), autoSaveInterval, autoSaveInterval);
             } catch (Exception ex) {
                 questsLogger.debug("Cannot cancel and restart quest autosave task");
             }
@@ -514,7 +520,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             long queueExecuteInterval = this.getConfig().getLong("options.performance-tweaking.quest-queue-executor-interval", 1);
             try {
                 if (questQueuePollTask != null) questQueuePollTask.cancel();
-                questQueuePollTask = Bukkit.getScheduler().runTaskTimer(this, (BukkitQuestCompleter) questCompleter, queueExecuteInterval, queueExecuteInterval);
+                questQueuePollTask = serverScheduler.runTaskTimer(questCompleter, queueExecuteInterval, queueExecuteInterval);
             } catch (Exception ex) {
                 questsLogger.debug("Cannot cancel and restart queue executor task");
             }

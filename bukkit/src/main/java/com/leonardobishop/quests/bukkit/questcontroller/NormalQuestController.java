@@ -222,7 +222,7 @@ public class NormalQuestController implements QuestController {
             PlayerFinishQuestEvent questFinishEvent = new PlayerFinishQuestEvent(player, qPlayer, questProgress, questFinishMessage);
             Bukkit.getPluginManager().callEvent(questFinishEvent);
             // PlayerFinishQuestEvent -- end
-            Bukkit.getServer().getScheduler().runTask(plugin, () -> {
+            plugin.getScheduler().doSync(() -> {
                 for (String s : quest.getRewards()) {
                     s = s.replace("{player}", player.getName());
                     if (plugin.getConfig().getBoolean("options.quests-use-placeholderapi")) {

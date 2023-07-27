@@ -1,6 +1,8 @@
 package com.leonardobishop.quests.bukkit.tasktype.type.dependent;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.scheduler.WrappedRunnable;
+import com.leonardobishop.quests.bukkit.scheduler.WrappedTask;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
@@ -11,15 +13,13 @@ import com.leonardobishop.quests.common.quest.Task;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Arrays;
 
 public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
-    private BukkitTask poll;
+    private WrappedTask poll;
 
     public PlaceholderAPIEvaluateTaskType(BukkitQuestsPlugin plugin) {
         super("placeholderapi_evaluate", TaskUtils.TASK_ATTRIBUTION_STRING, "Evaluate the result of a placeholder");
@@ -52,7 +52,7 @@ public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
 
     @Override
     public void onReady() {
-        this.poll = new BukkitRunnable() {
+        this.poll = new WrappedRunnable() {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
@@ -136,7 +136,7 @@ public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 30L, 30L);
+        }.runTaskTimer(plugin.getScheduler(), 30L, 30L);
     }
 
     @Override

@@ -1,15 +1,15 @@
 package com.leonardobishop.quests.bukkit.runnable;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.scheduler.WrappedRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
 
-public class QuestsAutoSaveRunnable extends BukkitRunnable {
+public class QuestsAutoSaveRunnable extends WrappedRunnable {
 
     private final Queue<UUID> queue = new LinkedList<>();
     private final BukkitQuestsPlugin plugin;
@@ -20,8 +20,6 @@ public class QuestsAutoSaveRunnable extends BukkitRunnable {
         }
 
         this.plugin = plugin;
-
-        this.runTaskTimer(plugin, 2L, 2L);
     }
 
     @Override

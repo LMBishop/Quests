@@ -57,7 +57,7 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
     @SuppressWarnings("SameParameterValue")
     private void checkInventory(Player player, NPC npc, long delay) {
         if (player.hasMetadata("NPC")) return;
-        Bukkit.getScheduler().runTaskLater(plugin, () -> checkInventory(player, npc), delay);
+        plugin.getScheduler().runTaskLaterAtEntity(player, () -> checkInventory(player, npc), delay);
     }
 
     @SuppressWarnings("deprecation")
