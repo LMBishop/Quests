@@ -183,7 +183,7 @@ public class NormalQuestController implements QuestController {
         if (questProgress.isStarted() || quest.isAutoStartEnabled() || config.getBoolean("options.quest-autostart")) {
             return QuestStartResult.QUEST_ALREADY_STARTED;
         }
-        if (!config.getBoolean("options.quest-autostart") && !quest.doesCountTowardsLimit()) {
+        if (!config.getBoolean("options.quest-autostart") && quest.doesCountTowardsLimit()) {
             Set<Quest> startedQuests = getStartedQuestsForPlayer(qPlayer);
             int questLimitCount = 0;
             for (Quest q : startedQuests) {
