@@ -98,6 +98,9 @@ public class FoliaServerScheduler implements ServerScheduler {
 
     @Override
     public @NotNull WrappedTask runTaskLater(@NotNull Runnable runnable, long delay) {
+        if (delay <= 0) {
+            return runTask(runnable);
+        }
         return new FoliaWrappedTask(globalRegionScheduler.runDelayed(plugin, task -> runnable.run(), delay));
     }
 
