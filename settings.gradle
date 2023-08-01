@@ -1,5 +1,4 @@
 rootProject.name = 'Quests'
 include 'common'
-include 'bungee'
 include 'bukkit'
 
