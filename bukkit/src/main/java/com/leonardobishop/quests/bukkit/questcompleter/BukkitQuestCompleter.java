@@ -22,7 +22,6 @@ public class BukkitQuestCompleter implements QuestCompleter, Runnable {
     private final LinkedList<QuestProgressFile> fullCheckQueue = new LinkedList<>();
     private final LinkedList<UUID> expiredCheckQueue = new LinkedList<>();
     private final BukkitQuestsPlugin plugin;
-    private int expiredQuestsCheckCountdown;
 
     public BukkitQuestCompleter(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;

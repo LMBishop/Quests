@@ -7,11 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class AdminCommandSwitcher extends CommandSwitcher {
 
-    private final BukkitQuestsPlugin plugin;
-
     public AdminCommandSwitcher(BukkitQuestsPlugin plugin) {
         super(1);
-        this.plugin = plugin;
 
         super.subcommands.put("opengui", new AdminOpenguiCommandSwitcher(plugin));
         super.subcommands.put("moddata", new AdminModdataCommandSwitcher(plugin));

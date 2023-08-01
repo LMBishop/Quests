@@ -23,3 +23,5 @@ UPDATE_MESSAGE
 
 *.classpath
 *.project
+*/bin/
+*.settings/
