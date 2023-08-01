@@ -3,6 +3,9 @@ package com.leonardobishop.quests.bukkit;
 import com.leonardobishop.quests.bukkit.command.QuestsCommandSwitcher;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsLoader;
+import com.leonardobishop.quests.bukkit.hook.bossbar.BossBar;
+import com.leonardobishop.quests.bukkit.hook.bossbar.BossBar_Bukkit;
+import com.leonardobishop.quests.bukkit.hook.bossbar.BossBar_Nothing;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.AbstractCoreProtectHook;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.CoreProtectHook;
 import com.leonardobishop.quests.bukkit.hook.essentials.AbstractEssentialsHook;
@@ -99,6 +102,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private AbstractPlayerBlockTrackerHook playerBlockTrackerHook;
     private ItemGetter itemGetter;
     private Title titleHandle;
+    private BossBar bossBarHandle;
     private VersionSpecificHandler versionSpecificHandler;
 
     private LogHistory logHistory;
@@ -216,6 +220,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         } else {
             titleHandle = new Title_Bukkit();
         }
+        // (bossbar)
+        if(version <= 8)
+        	bossBarHandle = new BossBar_Nothing();
+        else
+        	bossBarHandle = new BossBar_Bukkit(this);
         // (itemstacks)
         if (version <= 12) {
             itemGetter = new ItemGetter_Late_1_8();
@@ -619,6 +628,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     public Title getTitleHandle() {
         return titleHandle;
     }
+    
+    public BossBar getBossBarHandle() {
+		return bossBarHandle;
+	}
 
     public VersionSpecificHandler getVersionSpecificHandler() {
         return versionSpecificHandler;

@@ -93,8 +93,7 @@ public final class SmithingTaskType extends BukkitTaskType {
                 continue;
             }
 
-            int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
-            taskProgress.setProgress(progress + eventAmount);
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress, eventAmount);
             super.debug("Updating task progress (now " + (progress + eventAmount) + ")", quest.getId(), task.getId(), player.getUniqueId());
 
             int amount = (int) task.getConfigValue("amount");
@@ -104,6 +103,7 @@ public final class SmithingTaskType extends BukkitTaskType {
                 taskProgress.setProgress(amount);
                 taskProgress.setCompleted(true);
             }
+            TaskUtils.sendTrackAdvancement(player, quest, taskProgress);
         }
     }
 }

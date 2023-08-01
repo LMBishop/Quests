@@ -46,16 +46,15 @@ public final class ExpEarnTaskType extends BukkitTaskType {
 
             int expNeeded = (int) task.getConfigValue("amount");
 
-            int progress = TaskUtils.getIntegerTaskProgress(taskProgress);
-            int newProgress = progress + amountEarned;
-            taskProgress.setProgress(newProgress);
-            super.debug("Updating task progress (now " + (newProgress) + ")", quest.getId(), task.getId(), player.getUniqueId());
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress, amountEarned);
+            super.debug("Updating task progress (now " + (progress) + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (newProgress >= expNeeded) {
+            if (progress >= expNeeded) {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                taskProgress.setProgress(newProgress);
+                taskProgress.setProgress(expNeeded);
                 taskProgress.setCompleted(true);
             }
+            TaskUtils.sendTrackAdvancement(player, quest, taskProgress);
         }
     }
 }

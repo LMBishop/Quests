@@ -7,6 +7,7 @@ import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
+import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
@@ -128,6 +129,39 @@ public class QItemStack {
         ism.setLore(formattedLore);
         is.setItemMeta(ism);
         return is;
+    }
+
+    public static String processPlaceholders(String s, TaskProgress taskProgress) {
+        Matcher m = Pattern.compile("\\{([^}]+)}").matcher(s);
+        while (m.find()) {
+            String[] parts = m.group(1).split(":");
+            if (parts.length > 1) {
+                if (taskProgress == null) {
+                    continue;
+                }
+                if (parts[1].equals("progress")) {
+                    Object progress = taskProgress.getProgress();
+                    String str;
+                    if (progress instanceof Float || progress instanceof Double || progress instanceof BigDecimal) {
+                        str = String.format("%.2f", progress);
+                    } else {
+                        str = String.valueOf(progress);
+                    }
+
+                    s = s.replace("{" + m.group(1) + "}", (progress == null ? String.valueOf(0) : str));
+                }
+                if (parts[1].equals("complete")) {
+                    String str;
+                    if (taskProgress.isCompleted()) {
+                        str = Chat.legacyColor(Messages.UI_PLACEHOLDERS_TRUE.getMessageLegacyColor());
+                    } else {
+                        str = Chat.legacyColor(Messages.UI_PLACEHOLDERS_FALSE.getMessageLegacyColor());
+                    }
+                    s = s.replace("{" + m.group(1) + "}", str);
+                }
+            }
+        }
+        return s;
     }
 
     public static String processPlaceholders(String s, QuestProgress questProgress) {

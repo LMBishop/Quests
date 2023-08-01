@@ -89,6 +89,7 @@ public final class FarmingTaskType extends BukkitTaskType {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
             }
+            TaskUtils.sendTrackAdvancement(player, quest, taskProgress);
         }
     }
 }

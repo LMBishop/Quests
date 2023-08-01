@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit.util;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
+import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraint;
@@ -15,6 +16,11 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import com.leonardobishop.quests.common.tasktype.TaskType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -28,10 +34,7 @@ import org.bukkit.material.Colorable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
+@SuppressWarnings("deprecation")
 public class TaskUtils {
 
     public static final String TASK_ATTRIBUTION_STRING = "<built-in>";
@@ -111,7 +114,7 @@ public class TaskUtils {
 
     public static double getDecimalTaskProgress(TaskProgress taskProgress) {
         double progress;
-        if (taskProgress.getProgress() == null) {
+        if (taskProgress.getProgress() == null || !(taskProgress.getProgress() instanceof Double)) {
             progress = 0.0;
         } else {
             progress = (double) taskProgress.getProgress();
@@ -121,7 +124,7 @@ public class TaskUtils {
 
     public static int getIntegerTaskProgress(TaskProgress taskProgress) {
         int progress;
-        if (taskProgress.getProgress() == null) {
+        if (taskProgress.getProgress() == null || !(taskProgress.getProgress() instanceof Integer)) {
             progress = 0;
         } else {
             progress = (int) taskProgress.getProgress();
@@ -135,10 +138,36 @@ public class TaskUtils {
         return progress;
     }
 
+    public static int incrementIntegerTaskProgress(TaskProgress taskProgress, int amount) {
+        int progress = getIntegerTaskProgress(taskProgress) + amount;
+        taskProgress.setProgress(progress);
+        return progress;
+    }
+
     public static int decrementIntegerTaskProgress(TaskProgress taskProgress) {
         int progress = getIntegerTaskProgress(taskProgress);
         taskProgress.setProgress(--progress);
         return progress;
+    }
+    
+	public static void sendTrackAdvancement(Player player, Quest q, TaskProgress progress) {
+    	String title = q.getPlaceholders().get("progress");
+    	if(title == null)
+    		return;
+    	title = ChatColor.translateAlternateColorCodes('&', QItemStack.processPlaceholders(title, progress));
+        if (plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
+        	title = plugin.getPlaceholderAPIProcessor().apply(player, title);
+        }
+        int progressAmount = getIntegerTaskProgress(progress);
+        if(progressAmount > 0) { // if has value
+        	progressAmount = (progressAmount * 100) / (int) q.getTaskById(progress.getTaskId()).getConfigValue("amount"); // convert into percent
+        }
+    	if((plugin.getConfig().getBoolean("options.bossbar.complete", true) && progress.isCompleted()) || plugin.getConfig().getBoolean("options.bossbar.progress", true)) {
+    		if(progressAmount > 0)
+    			plugin.getBossBarHandle().sendBossBar(player, q.getId(), title, progressAmount, plugin.getConfig().getInt("options.bossbar.time", 10));
+    		else
+    			plugin.getBossBarHandle().sendBossBar(player, q.getId(), title, plugin.getConfig().getInt("options.bossbar.time", 10));
+    	}
     }
 
     public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type) {

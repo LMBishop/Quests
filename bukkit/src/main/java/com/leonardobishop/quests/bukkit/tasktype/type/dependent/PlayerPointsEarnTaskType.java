@@ -61,6 +61,7 @@ public final class PlayerPointsEarnTaskType extends BukkitTaskType {
                 taskProgress.setProgress(amount);
                 taskProgress.setCompleted(true);
             }
+            TaskUtils.sendTrackAdvancement(player, quest, taskProgress);
         }
     }
 }

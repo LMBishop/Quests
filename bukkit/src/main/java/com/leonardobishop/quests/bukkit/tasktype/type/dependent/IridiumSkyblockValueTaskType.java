@@ -67,6 +67,7 @@ public final class IridiumSkyblockValueTaskType extends BukkitTaskType {
                     taskProgress.setProgress(islandValueNeeded);
                     taskProgress.setCompleted(true);
                 }
+                TaskUtils.sendTrackAdvancement(player, quest, taskProgress);
             }
         }
 

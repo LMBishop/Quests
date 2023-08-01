@@ -104,6 +104,7 @@ public final class MiningTaskType extends BukkitTaskType {
                     super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                     taskProgress.setCompleted(true);
                 }
+                TaskUtils.sendTrackAdvancement(player, quest, taskProgress);
             };
 
             boolean coreProtectEnabled = TaskUtils.getConfigBoolean(task, "check-coreprotect");

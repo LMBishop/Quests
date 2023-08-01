@@ -59,6 +59,7 @@ public final class SuperiorSkyblockLevelType extends BukkitTaskType {
                     super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                     taskProgress.setCompleted(true);
                 }
+                TaskUtils.sendTrackAdvancement(player, quest, taskProgress);
             }
         }
     }
