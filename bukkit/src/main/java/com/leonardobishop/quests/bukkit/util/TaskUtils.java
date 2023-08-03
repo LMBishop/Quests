@@ -160,7 +160,9 @@ public class TaskUtils {
         }
         int progressAmount = getIntegerTaskProgress(progress);
         if(progressAmount > 0) { // if has value
-        	progressAmount = (progressAmount * 100) / (int) q.getTaskById(progress.getTaskId()).getConfigValue("amount"); // convert into percent
+        	Object amount = q.getTaskById(progress.getTaskId()).getConfigValue("amount");
+        	if(amount != null && amount instanceof Integer)
+        		progressAmount = (progressAmount * 100) / (int) amount; // convert into percent
         }
     	if((plugin.getConfig().getBoolean("options.bossbar.complete", true) && progress.isCompleted()) || plugin.getConfig().getBoolean("options.bossbar.progress", true)) {
     		if(progressAmount > 0)
