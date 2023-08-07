@@ -35,6 +35,7 @@ public final class MiningTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "check-coreprotect"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "check-coreprotect-time"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "reverse-if-placed"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "allow-negative-progress"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "allow-silk-touch"));
     }
 
@@ -168,6 +169,13 @@ public final class MiningTaskType extends BukkitTaskType {
 
             if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
+
+            boolean allowNegativeProgress = TaskUtils.getConfigBoolean(task, "allow-negative-progress", true);
+            int currentProgress = TaskUtils.getIntegerTaskProgress(taskProgress);
+            if (currentProgress <= 0 && !allowNegativeProgress) {
+                super.debug("Task progress is already at zero and negative progress is disabled, skipping decrement", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
 
