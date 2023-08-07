@@ -139,11 +139,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                     } else {
                         if (qPlayer.getPlayerPreferences().getTrackedQuestId() == null ||
                                 plugin.getQuestManager().getQuestById(qPlayer.getPlayerPreferences().getTrackedQuestId()) == null) {
-                            if (args.length == 1) {
-                                return Messages.PLACEHOLDERAPI_NO_TRACKED_QUEST.getMessageLegacyColor();
-                            } else {
-                                return "";
-                            }
+                            return Messages.PLACEHOLDERAPI_NO_TRACKED_QUEST.getMessageLegacyColor();
                         }
                         quest = plugin.getQuestManager().getQuestById(qPlayer.getPlayerPreferences().getTrackedQuestId());
                     }
