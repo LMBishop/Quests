@@ -1,10 +1,12 @@
 package com.leonardobishop.quests.bukkit.menu.itemstack;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.util.Format;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
+import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.quest.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
@@ -16,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -115,6 +118,7 @@ public class QItemStack {
         if (questProgress != null) {
             for (String s : tempLore) {
                 s = processPlaceholders(s, questProgress);
+                s = processTimeLeft(s, quest, qPlayer.getQuestProgressFile());
                 if (plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
                     s = plugin.getPlaceholderAPIProcessor().apply(player, s);
                 }
@@ -157,5 +161,15 @@ public class QItemStack {
             }
         }
         return s;
+    }
+
+    public static String processTimeLeft(String s, Quest quest, QuestProgressFile questProgressFile) {
+        String timeLeft;
+        if (quest.isTimeLimitEnabled()) {
+            timeLeft = Format.formatTime(TimeUnit.SECONDS.convert(questProgressFile.getTimeRemainingFor(quest), TimeUnit.MILLISECONDS));
+        } else {
+            timeLeft = Chat.legacyColor(Messages.UI_PLACEHOLDERS_NO_TIME_LIMIT.getMessageLegacyColor());
+        }
+        return s.replace("{timeleft}", timeLeft);
     }
 }

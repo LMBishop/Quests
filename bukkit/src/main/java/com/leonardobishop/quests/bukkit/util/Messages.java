@@ -71,9 +71,12 @@ public enum Messages {
     UI_PLACEHOLDERS_TRUE("messages.ui-placeholder-completed-true", "true"),
     UI_PLACEHOLDERS_FALSE("messages.ui-placeholder-completed-false", "false"),
     UI_PLACEHOLDERS_TRUNCATED("messages.ui-placeholder-truncated", " +{amount} more"),
+    UI_PLACEHOLDERS_NO_TIME_LIMIT("messages.ui-placeholder-no-time-limit", "No time limit"),
     PLACEHOLDERAPI_TRUE("messages.placeholderapi-true", "true"),
     PLACEHOLDERAPI_FALSE("messages.placeholderapi-false", "false"),
     PLACEHOLDERAPI_NO_TRACKED_QUEST("messages.placeholderapi-no-tracked-quest", "No tracked quest"),
+    PLACEHOLDERAPI_QUEST_NOT_STARTED("messages.placeholderapi-quest-not-started", "Quest not started"),
+    PLACEHOLDERAPI_NO_TIME_LIMIT("messages.placeholderapi-no-time-limit", "No time limit"),
     PLACEHOLDERAPI_DATA_NOT_LOADED("messages.placeholderapi-data-not-loaded", "Data not loaded");
 
     static {

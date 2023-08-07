@@ -415,9 +415,12 @@ messages:
   ui-placeholder-completed-true: "true"
   ui-placeholder-completed-false: "false"
   ui-placeholder-truncated: " +{amount} more"
+  ui-placeholder-no-time-limit: "No time limit"
   placeholderapi-true: "true"
   placeholderapi-false: "false"
   placeholderapi-no-tracked-quest: "No tracked quest"
+  placeholderapi-quest-not-started: "Quest not started"
+  placeholderapi-no-time-limit: "No time limit"
   placeholderapi-data-not-loaded: "Data not loaded"
 
 

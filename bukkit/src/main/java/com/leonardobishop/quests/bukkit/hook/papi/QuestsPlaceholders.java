@@ -188,6 +188,14 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                     result = "0";
                                 }
                                 break;
+                            case "timeleft":
+                                if (qPlayer.hasStartedQuest(quest)) {
+                                    long timeLeft = qPlayer.getQuestProgressFile().getTimeRemainingFor(quest);
+                                    result = timeLeft != -1 ? Format.formatTime(TimeUnit.SECONDS.convert(timeLeft, TimeUnit.MILLISECONDS)) : Messages.PLACEHOLDERAPI_NO_TIME_LIMIT.getMessage();
+                                } else {
+                                    result = "0";
+                                }
+                                break;
                             case "canaccept":
                                 result = (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
                                 break;
