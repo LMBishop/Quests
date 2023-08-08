@@ -57,7 +57,7 @@ public class BossBar_Bukkit implements BossBar {
 			bar.setTitle(title);
 		}
 		players.put(spaceKey, System.currentTimeMillis() + time * 1000);
-		bar.setProgress(((double) percent) / 100);
+		bar.setProgress(percent > 100 ? 1 : ((double) percent) / 100);
 		bar.addPlayer(p); // be sure it see it
 	}
 
