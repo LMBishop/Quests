@@ -163,12 +163,17 @@ public class TaskUtils {
         	Object amount = q.getTaskById(progress.getTaskId()).getConfigValue("amount");
         	if(amount != null && amount instanceof Integer)
         		progressAmount = (progressAmount * 100) / (int) amount; // convert into percent
+        	else
+        		progressAmount = 0; // can't find max value
         }
     	if((plugin.getConfig().getBoolean("options.bossbar.complete", true) && progress.isCompleted()) || plugin.getConfig().getBoolean("options.bossbar.progress", true)) {
     		if(progressAmount > 0)
     			plugin.getBossBarHandle().sendBossBar(player, q.getId(), title, progressAmount, plugin.getConfig().getInt("options.bossbar.time", 10));
     		else
     			plugin.getBossBarHandle().sendBossBar(player, q.getId(), title, plugin.getConfig().getInt("options.bossbar.time", 10));
+    	}
+    	if((plugin.getConfig().getBoolean("options.actionbar.complete", true) && progress.isCompleted()) || plugin.getConfig().getBoolean("options.actionbar.progress", true)) {
+    		plugin.getActionBarHandle().sendActionBar(player, title);
     	}
     }
 
