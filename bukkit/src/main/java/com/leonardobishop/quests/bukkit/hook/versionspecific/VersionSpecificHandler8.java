@@ -4,6 +4,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -75,5 +76,15 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
     @Override
     public ItemStack getItemInMainHand(Player player) {
         return player.getItemInHand();
+    }
+
+    @Override
+    public ItemStack[] getSmithItems(SmithItemEvent event) {
+        return new ItemStack[0];
+    }
+
+    @Override
+    public String getSmithMode(SmithItemEvent event) {
+        return null;
     }
 }

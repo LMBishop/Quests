@@ -20,6 +20,8 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+
 public final class SmithingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
@@ -35,6 +37,10 @@ public final class SmithingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
+        super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Arrays.asList(
+                "transform",
+                "trim"
+        ), "mode"));
     }
 
     @Override
@@ -66,17 +72,27 @@ public final class SmithingTaskType extends BukkitTaskType {
         int eventAmount = item.getAmount();
         if (event.isShiftClick() && event.getClick() != ClickType.CONTROL_DROP) { // https://github.com/LMBishop/Quests/issues/317
             // https://cdn.discordapp.com/attachments/510553623022010371/1011483223446007849/unknown.png
-            eventAmount *= Math.min(event.getInventory().getInputEquipment().getAmount(), event.getInventory().getInputMineral().getAmount());
+            eventAmount *= getSmithItemMultiplier(event);
             eventAmount = Math.min(eventAmount, plugin.getVersionSpecificHandler().getAvailableSpace(player, item));
             if (eventAmount == 0) {
                 return;
             }
         }
 
+        final String recipeType = plugin.getVersionSpecificHandler().getSmithMode(event);
+
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
+
+            if (recipeType != null) {
+                final String mode = (String) task.getConfigValue("mode");
+                if (!recipeType.equals(mode)) {
+                    super.debug("Specific mode is required, but the actual mode '" + recipeType + "' does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+            }
 
             QuestItem qi;
             if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
@@ -85,7 +101,7 @@ public final class SmithingTaskType extends BukkitTaskType {
                 qi = fetchedItem;
             }
 
-            super.debug("Player smithed " + eventAmount +  " of " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
+            super.debug("Player smithed " + eventAmount + " of " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
             boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
             if (!qi.compareItemStack(item, exactMatch)) {
@@ -105,5 +121,19 @@ public final class SmithingTaskType extends BukkitTaskType {
             }
             TaskUtils.sendTrackAdvancement(player, quest, taskProgress);
         }
+    }
+
+    private int getSmithItemMultiplier(SmithItemEvent event) {
+        int min = -1;
+        for (ItemStack item : this.plugin.getVersionSpecificHandler().getSmithItems(event)) {
+            if (item == null) {
+                continue;
+            }
+            int amount = item.getAmount();
+            if ((min < 0 && amount > 0) || (min > 0 && amount < min)) {
+                min = amount;
+            }
+        }
+        return Math.max(min, 1);
     }
 }

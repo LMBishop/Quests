@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit.hook.versionspecific;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 //TODO move titles, itemgetter, other version specific shite in here
@@ -30,4 +31,8 @@ public interface VersionSpecificHandler {
     boolean isCaveVinesPlantWithBerries(BlockData blockData);
 
     ItemStack getItemInMainHand(Player player);
+
+    ItemStack[] getSmithItems(SmithItemEvent event);
+
+    String getSmithMode(SmithItemEvent event);
 }

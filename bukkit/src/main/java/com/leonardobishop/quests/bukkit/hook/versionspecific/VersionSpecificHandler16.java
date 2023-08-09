@@ -3,6 +3,10 @@ package com.leonardobishop.quests.bukkit.hook.versionspecific;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.SmithItemEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.SmithingInventory;
+import org.bukkit.inventory.SmithingRecipe;
 
 public class VersionSpecificHandler16 extends VersionSpecificHandler11 implements VersionSpecificHandler {
 
@@ -24,5 +28,13 @@ public class VersionSpecificHandler16 extends VersionSpecificHandler11 implement
     @Override
     public boolean isOffHandEmpty(Player player) {
         return player.getInventory().getItemInOffHand().getAmount() == 0;
+    }
+
+    @Override
+    public ItemStack[] getSmithItems(SmithItemEvent event) {
+        return new ItemStack[]{
+                event.getInventory().getInputEquipment(),
+                event.getInventory().getInputMineral()
+        };
     }
 }
