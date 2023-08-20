@@ -1,21 +1,5 @@
 package com.leonardobishop.quests.bukkit.util;
 
-import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
-import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
-import com.leonardobishop.quests.bukkit.item.QuestItem;
-import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
-import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
-import com.leonardobishop.quests.bukkit.util.chat.Chat;
-import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraint;
-import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
-import com.leonardobishop.quests.common.config.ConfigProblem;
-import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
-import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
-import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
-import com.leonardobishop.quests.common.quest.Quest;
-import com.leonardobishop.quests.common.quest.Task;
-import com.leonardobishop.quests.common.tasktype.TaskType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +17,23 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Colorable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
+import com.leonardobishop.quests.bukkit.item.QuestItem;
+import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
+import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
+import com.leonardobishop.quests.bukkit.util.chat.Chat;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraint;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
+import com.leonardobishop.quests.common.config.ConfigProblem;
+import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
+import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
+import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
+import com.leonardobishop.quests.common.quest.Quest;
+import com.leonardobishop.quests.common.quest.Task;
+import com.leonardobishop.quests.common.tasktype.TaskType;
 
 @SuppressWarnings("deprecation")
 public class TaskUtils {

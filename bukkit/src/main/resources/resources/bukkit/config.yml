@@ -38,14 +38,14 @@ options:
   titles-enabled: true
   # Enable/disable BossBars
   bossbar:
-    progress: true
-    complete: true
+    progress: false
+    complete: false
     # Time in seconds of bossbar showed
-    time: 10
+    time: 5
   # Enable/disable ActionBar
   actionbar:
-    progress: true
-    complete: true
+    progress: false
+    complete: false
   # Allow players to have multiple active quests.
   # You can set the default number of quests using the 'default' rank below.
   # To grant different quest limits to different people, you can define a 'quest-rank'
