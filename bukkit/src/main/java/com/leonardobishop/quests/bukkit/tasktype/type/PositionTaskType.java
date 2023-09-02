@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.util.NumberConversions;
 
 public final class PositionTaskType extends BukkitTaskType {
 
@@ -33,19 +34,22 @@ public final class PositionTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onMove(PlayerMoveEvent event) {
-        if (event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
+    public void onPlayerMove(PlayerMoveEvent event) {
+        if (!blockLocationsDiffer(event)) {
             return;
         }
 
-        if (event.getPlayer().hasMetadata("NPC")) return;
-
         Player player = event.getPlayer();
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
             return;
         }
+
+        Location to = event.getTo();
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
             Quest quest = pendingTask.quest();
@@ -54,38 +58,49 @@ public final class PositionTaskType extends BukkitTaskType {
 
             super.debug("Player moved", quest.getId(), task.getId(), player.getUniqueId());
 
+            String worldString = (String) task.getConfigValue("world");
+            if (worldString != null) {
+                World world = Bukkit.getWorld(worldString);
+                if (world == null) {
+                    super.debug("World " + worldString + " does not exist, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                } else if (!to.getWorld().equals(world)) {
+                    super.debug("Specific world is required, but the actual world " + to.getWorld().getName() + " does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+            }
+
             int x = (int) task.getConfigValue("x");
             int y = (int) task.getConfigValue("y");
             int z = (int) task.getConfigValue("z");
-            String worldString = (String) task.getConfigValue("world");
-            int padding = 0;
-            if (task.getConfigValue("distance-padding") != null) {
-                padding = (int) task.getConfigValue("distance-padding");
-            }
-            int paddingSquared = padding * padding;
-            World world = Bukkit.getWorld(worldString);
-            if (world == null) {
-                super.debug("World " + worldString + " does not exist, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                continue;
-            }
 
-            Location location = new Location(world, x, y, z);
-            if (player.getWorld().equals(world) && player.getLocation().getBlockX() == location.getBlockX() && player.getLocation().getBlockY() == location.getBlockY() && player.getLocation().getBlockZ() == location.getBlockZ()) {
+            Location location = new Location(null, x, y, z);
+            double distanceSquared = distanceSquared(location, to); // use own distanceSquared method to skip world validation
+            Integer padding = (Integer) task.getConfigValue("distance-padding");
+
+            super.debug("Player is " + distanceSquared + " meters squared away (padding = " + padding + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+            if (padding != null && (distanceSquared <= padding * padding)) {
+                super.debug("Player is within distance padding", quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("Marking task as complete", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+                taskProgress.setCompleted(true);
+            } else if (!blockLocationsDiffer(location, to, true)) {
                 super.debug("Player is precisely at location", quest.getId(), task.getId(), player.getUniqueId());
                 super.debug("Marking task as complete", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
                 taskProgress.setCompleted(true);
-            } else if (padding != 0 && player.getWorld().equals(world)) {
-                double playerDistanceSquared = player.getLocation().distanceSquared(location);
-
-                super.debug("Player is " + playerDistanceSquared + "m squared away (padding squared = " + paddingSquared + ")", quest.getId(), task.getId(), player.getUniqueId());
-
-                if (playerDistanceSquared <= paddingSquared) {
-                    super.debug("Player is within distance padding", quest.getId(), task.getId(), player.getUniqueId());
-                    super.debug("Marking task as complete", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
-                    taskProgress.setCompleted(true);
-                }
             }
         }
     }
 
+    private boolean blockLocationsDiffer(PlayerMoveEvent event) {
+        return blockLocationsDiffer(event.getFrom(), event.getTo(), false);
+    }
+
+    private boolean blockLocationsDiffer(Location from, Location to, boolean ignoreWorld) {
+        return from.getBlockX() != to.getBlockX() || from.getBlockY() != to.getBlockY() || from.getBlockZ() != to.getBlockZ() || !(ignoreWorld || from.getWorld().equals(to.getWorld()));
+    }
+
+    private double distanceSquared(Location from, Location to) {
+        return NumberConversions.square(from.getX() - to.getX()) + NumberConversions.square(from.getY() - to.getY()) + NumberConversions.square(from.getZ() - to.getZ());
+    }
 }
