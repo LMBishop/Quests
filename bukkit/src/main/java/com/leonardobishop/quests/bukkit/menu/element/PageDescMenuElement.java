@@ -33,11 +33,11 @@ public class PageDescMenuElement extends MenuElement {
     }
     
     public int getSlot() {
-    	return config.getInt("gui.page-desc.slot", 49);
+        return config.getInt("gui.page-desc.slot", 49);
     }
     
     @Override
     public boolean isEnabled() {
-    	return config.getBoolean("gui.page-desc.enabled", true);
+        return config.getBoolean("gui.page-desc.enabled", true);
     }
 }

@@ -38,11 +38,11 @@ public class BackMenuElement extends MenuElement {
     }
     
     public int getSlot() {
-    	return config.getInt("gui.back-button.slot", 45);
+        return config.getInt("gui.back-button.slot", 45);
     }
     
     @Override
     public boolean isEnabled() {
-    	return config.getBoolean("gui.back-button.enabled", true);
+        return config.getBoolean("gui.back-button.enabled", true);
     }
 }

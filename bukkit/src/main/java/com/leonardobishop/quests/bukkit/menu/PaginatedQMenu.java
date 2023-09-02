@@ -107,23 +107,23 @@ public abstract class PaginatedQMenu extends QMenu {
         BukkitQuestsConfig config = (BukkitQuestsConfig) plugin.getQuestsConfig();
         if ((menuElements.isEmpty() ? 0 : Ints.max(menuElements.keys)) + 1 > maxSize
                 || menuElements.size() + menuElementsToFill.size() + customStaticElements > maxSize) {
-        	PageNextMenuElement pageNextMenuElement = new PageNextMenuElement(config, this);
-        	PagePrevMenuElement pagePrevMenuElement = new PagePrevMenuElement(config, this);
-        	PageDescMenuElement pageDescMenuElement = new PageDescMenuElement(config, this);
-        	// add manually spacer then let people change item
+            PageNextMenuElement pageNextMenuElement = new PageNextMenuElement(config, this);
+            PagePrevMenuElement pagePrevMenuElement = new PagePrevMenuElement(config, this);
+            PageDescMenuElement pageDescMenuElement = new PageDescMenuElement(config, this);
+            // add manually spacer then let people change item
             staticMenuElements[46] = spacer;
             staticMenuElements[47] = spacer;
             staticMenuElements[51] = spacer;
             staticMenuElements[52] = spacer;
             staticMenuElements[53] = spacer;
-        	if(backMenuElement != null && backMenuElement.isEnabled())
-        		staticMenuElements[backMenuElement.getSlot()] = backMenuElement == null ? spacer : backMenuElement;
+            if(backMenuElement != null && backMenuElement.isEnabled())
+                staticMenuElements[backMenuElement.getSlot()] = backMenuElement == null ? spacer : backMenuElement;
             if(pagePrevMenuElement.isEnabled())
-            	staticMenuElements[pagePrevMenuElement.getSlot()] = pagePrevMenuElement;
+                staticMenuElements[pagePrevMenuElement.getSlot()] = pagePrevMenuElement;
             if(pageDescMenuElement.isEnabled())
-            	staticMenuElements[pageDescMenuElement.getSlot()] = pageDescMenuElement;
+                staticMenuElements[pageDescMenuElement.getSlot()] = pageDescMenuElement;
             if(pageNextMenuElement.isEnabled())
-            	staticMenuElements[pageNextMenuElement.getSlot()] = pageNextMenuElement;
+                staticMenuElements[pageNextMenuElement.getSlot()] = pageNextMenuElement;
 
             // else find a place for the back button if needed
         } else if (backMenuElement != null && backMenuElement.isEnabled()) {

@@ -151,31 +151,31 @@ public class TaskUtils {
         return progress;
     }
     
-	public static void sendTrackAdvancement(Player player, Quest q, TaskProgress progress) {
-    	String title = q.getPlaceholders().get("progress");
-    	if(title == null)
-    		return;
-    	title = ChatColor.translateAlternateColorCodes('&', QItemStack.processPlaceholders(title, progress));
+    public static void sendTrackAdvancement(Player player, Quest q, TaskProgress progress) {
+        String title = q.getPlaceholders().get("progress");
+        if(title == null)
+            return;
+        title = ChatColor.translateAlternateColorCodes('&', QItemStack.processPlaceholders(title, progress));
         if (plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
-        	title = plugin.getPlaceholderAPIProcessor().apply(player, title);
+            title = plugin.getPlaceholderAPIProcessor().apply(player, title);
         }
         int progressAmount = getIntegerTaskProgress(progress);
         if(progressAmount > 0) { // if has value
-        	Object amount = q.getTaskById(progress.getTaskId()).getConfigValue("amount");
-        	if(amount != null && amount instanceof Integer)
-        		progressAmount = (progressAmount * 100) / (int) amount; // convert into percent
-        	else
-        		progressAmount = 0; // can't find max value
+            Object amount = q.getTaskById(progress.getTaskId()).getConfigValue("amount");
+            if(amount != null && amount instanceof Integer)
+                progressAmount = (progressAmount * 100) / (int) amount; // convert into percent
+            else
+                progressAmount = 0; // can't find max value
         }
-    	if((plugin.getConfig().getBoolean("options.bossbar.complete", true) && progress.isCompleted()) || plugin.getConfig().getBoolean("options.bossbar.progress", true)) {
-    		if(progressAmount > 0)
-    			plugin.getBossBarHandle().sendBossBar(player, q.getId(), title, progressAmount, plugin.getConfig().getInt("options.bossbar.time", 10));
-    		else
-    			plugin.getBossBarHandle().sendBossBar(player, q.getId(), title, plugin.getConfig().getInt("options.bossbar.time", 10));
-    	}
-    	if((plugin.getConfig().getBoolean("options.actionbar.complete", true) && progress.isCompleted()) || plugin.getConfig().getBoolean("options.actionbar.progress", true)) {
-    		plugin.getActionBarHandle().sendActionBar(player, title);
-    	}
+        if((plugin.getConfig().getBoolean("options.bossbar.complete", true) && progress.isCompleted()) || plugin.getConfig().getBoolean("options.bossbar.progress", true)) {
+            if(progressAmount > 0)
+                plugin.getBossBarHandle().sendBossBar(player, q.getId(), title, progressAmount, plugin.getConfig().getInt("options.bossbar.time", 10));
+            else
+                plugin.getBossBarHandle().sendBossBar(player, q.getId(), title, plugin.getConfig().getInt("options.bossbar.time", 10));
+        }
+        if((plugin.getConfig().getBoolean("options.actionbar.complete", true) && progress.isCompleted()) || plugin.getConfig().getBoolean("options.actionbar.progress", true)) {
+            plugin.getActionBarHandle().sendActionBar(player, title);
+        }
     }
 
     public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type) {

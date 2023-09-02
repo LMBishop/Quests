@@ -36,11 +36,11 @@ public class PagePrevMenuElement extends MenuElement {
     }
     
     public int getSlot() {
-    	return config.getInt("gui.page-prev.slot", 48);
+        return config.getInt("gui.page-prev.slot", 48);
     }
     
     @Override
     public boolean isEnabled() {
-    	return config.getBoolean("gui.page-prev.enabled", true);
+        return config.getBoolean("gui.page-prev.enabled", true);
     }
 }

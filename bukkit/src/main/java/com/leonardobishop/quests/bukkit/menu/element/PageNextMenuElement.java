@@ -36,11 +36,11 @@ public class PageNextMenuElement extends MenuElement {
     }
     
     public int getSlot() {
-    	return config.getInt("gui.page-next.slot", 50);
+        return config.getInt("gui.page-next.slot", 50);
     }
     
     @Override
     public boolean isEnabled() {
-    	return config.getBoolean("gui.page-next.enabled", true);
+        return config.getBoolean("gui.page-next.enabled", true);
     }
 }

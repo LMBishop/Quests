@@ -692,12 +692,12 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
     
     public BossBar getBossBarHandle() {
-		return bossBarHandle;
-	}
+        return bossBarHandle;
+    }
     
     public ActionBar getActionBarHandle() {
-		return actionBarHandle;
-	}
+        return actionBarHandle;
+    }
 
     public VersionSpecificHandler getVersionSpecificHandler() {
         return versionSpecificHandler;
