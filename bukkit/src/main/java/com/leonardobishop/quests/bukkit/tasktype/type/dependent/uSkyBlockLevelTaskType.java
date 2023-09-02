@@ -50,7 +50,7 @@ public final class uSkyBlockLevelTaskType extends BukkitTaskType {
                 taskProgress.setProgress(islandLevelNeeded);
                 taskProgress.setCompleted(true);
             }
-            TaskUtils.sendTrackAdvancement(player, quest, taskProgress);
+            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress);
         }
     }
 

@@ -119,7 +119,7 @@ public final class SmithingTaskType extends BukkitTaskType {
                 taskProgress.setProgress(amount);
                 taskProgress.setCompleted(true);
             }
-            TaskUtils.sendTrackAdvancement(player, quest, taskProgress);
+            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress);
         }
     }
 

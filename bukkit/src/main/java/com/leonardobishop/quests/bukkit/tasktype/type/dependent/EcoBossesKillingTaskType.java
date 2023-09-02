@@ -57,7 +57,7 @@ public final class EcoBossesKillingTaskType extends BukkitTaskType {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), killer.getUniqueId());
                 taskProgress.setCompleted(true);
             }
-            TaskUtils.sendTrackAdvancement(killer, quest, taskProgress);
+            TaskUtils.sendTrackAdvancement(killer, quest, task, taskProgress);
         }
     }
 

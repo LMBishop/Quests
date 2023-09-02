@@ -1,76 +1,60 @@
 package com.leonardobishop.quests.bukkit.hook.bossbar;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalListener;
+import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
-import com.google.common.collect.Lists;
-import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
-public class BossBar_Bukkit implements BossBar {
+public class BossBar_Bukkit implements QuestsBossBar {
 
-    private BukkitQuestsPlugin plugin;
-    private final ConcurrentHashMap<NamespacedKey, Long> players = new ConcurrentHashMap<>();
+    private static final RemovalListener<String, BossBar> removalListener = removal -> removal.getValue().removeAll();
+
+    // use cache because of its concurrency and automatic player on quit removal
+    private final Cache<Player, Cache<String, BossBar>> playerQuestBarCache = CacheBuilder.newBuilder().weakKeys().build();
+    private final BukkitQuestsPlugin plugin;
 
     public BossBar_Bukkit(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
-        String pluginNamespace = new NamespacedKey(plugin, "test").getNamespace(); // get namespace
-        Lists.newArrayList(Bukkit.getBossBars()).forEach(bb -> { // copy list to prevent current modification
-            if(bb.getKey().namespace().equals(pluginNamespace)) {
-                bb.removeAll(); // hide it
-                Bukkit.removeBossBar(bb.getKey()); // remove it
-            }
+    }
+
+    @Override
+    public void sendBossBar(Player player, String questId, String title, int time) {
+        sendBossBar(player, questId, title, time, 1.0f);
+    }
+
+    @Override
+    public void sendBossBar(Player player, String questId, String title, int time, float progress) {
+        CompletableFuture<BossBar> future = new CompletableFuture<>();
+        future.thenAccept(bar -> bar.addPlayer(player));
+
+        this.plugin.getScheduler().runTaskAsynchronously(() -> {
+            Cache<String, BossBar> questBarCache = playerQuestBarCache.asMap()
+                    .computeIfAbsent(player, k -> {
+                        //noinspection CodeBlock2Expr (for readability)
+                        return CacheBuilder.newBuilder()
+                                .expireAfterAccess(time, TimeUnit.SECONDS)
+                                .removalListener(removalListener)
+                                .build();
+                    });
+
+            BossBar bar = questBarCache.asMap()
+                    .computeIfAbsent(questId, k -> {
+                        //noinspection CodeBlock2Expr (for readability)
+                        return Bukkit.createBossBar(null, BarColor.BLUE, BarStyle.SOLID);
+                    });
+
+            bar.setTitle(title);
+            bar.setProgress(progress);
+
+            future.complete(bar);
         });
-        plugin.getScheduler().runTaskTimer(() -> {
-            for (Entry<NamespacedKey, Long> entry : new HashMap<>(players).entrySet()) {
-                if (entry.getValue() < System.currentTimeMillis()) {
-                    NamespacedKey key = entry.getKey();
-                    players.remove(key);
-                    org.bukkit.boss.BossBar oldBar = Bukkit.getBossBar(key);
-                    if(oldBar != null) { // if exist
-                        oldBar.removeAll(); // remove all players on it
-                        Bukkit.removeBossBar(key); // remove it
-                    }
-                }
-            }
-        }, 20, 20);
-    }
-
-    @Override
-    public void sendBossBar(Player p, String questKey, String title, int time) {
-        NamespacedKey spaceKey = getKeyFor(p, questKey);
-        org.bukkit.boss.BossBar bar = Bukkit.getBossBar(spaceKey);
-        if (bar == null) {// if none exist
-            bar = Bukkit.createBossBar(spaceKey, title, BarColor.BLUE, BarStyle.SOLID);
-        } else {
-            bar.setTitle(title);
-        }
-        players.put(spaceKey, System.currentTimeMillis() + time * 1000);
-        bar.addPlayer(p); // be sure it see it
-    }
-
-    @Override
-    public void sendBossBar(Player p, String questKey, String title, int percent, int time) {
-        NamespacedKey spaceKey = getKeyFor(p, questKey);
-        org.bukkit.boss.BossBar bar = Bukkit.getBossBar(spaceKey);
-        if (bar == null) {// if none exist
-            bar = Bukkit.createBossBar(spaceKey, title, BarColor.BLUE, BarStyle.SOLID);
-        } else {
-            bar.setTitle(title);
-        }
-        players.put(spaceKey, System.currentTimeMillis() + time * 1000);
-        double progress = ((double) percent) / 100;
-        bar.setProgress(progress < 0 ? 0 : (progress > 1 ? 1 : progress));
-        bar.addPlayer(p); // be sure it see it
-    }
-
-    private NamespacedKey getKeyFor(Player p, String questKey) {
-        return new NamespacedKey(plugin, "bossbar_" + p.getName().toLowerCase() + "_" + questKey.toLowerCase().replace(" ", ""));
     }
 }

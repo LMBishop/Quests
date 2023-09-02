@@ -27,10 +27,10 @@ import org.jetbrains.annotations.Nullable;
 import com.leonardobishop.quests.bukkit.command.QuestsCommandSwitcher;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsLoader;
-import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar;
+import com.leonardobishop.quests.bukkit.hook.actionbar.QuestsActionBar;
 import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar_Bukkit;
 import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar_Nothing;
-import com.leonardobishop.quests.bukkit.hook.bossbar.BossBar;
+import com.leonardobishop.quests.bukkit.hook.bossbar.QuestsBossBar;
 import com.leonardobishop.quests.bukkit.hook.bossbar.BossBar_Bukkit;
 import com.leonardobishop.quests.bukkit.hook.bossbar.BossBar_Nothing;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.AbstractCoreProtectHook;
@@ -53,7 +53,6 @@ import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHand
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler11;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler16;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler17;
-import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler20;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler8;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler9;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
@@ -163,8 +162,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private AbstractPlayerBlockTrackerHook playerBlockTrackerHook;
     private ItemGetter itemGetter;
     private Title titleHandle;
-    private BossBar bossBarHandle;
-    private ActionBar actionBarHandle;
+    private QuestsBossBar bossBarHandle;
+    private QuestsActionBar actionBarHandle;
     private VersionSpecificHandler versionSpecificHandler;
 
     private LogHistory logHistory;
@@ -302,8 +301,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             case 9, 10 -> versionSpecificHandler = new VersionSpecificHandler9();
             case 11, 12, 13, 14, 15 -> versionSpecificHandler = new VersionSpecificHandler11();
             case 16 -> versionSpecificHandler = new VersionSpecificHandler16();
-            case 17, 18, 19 -> versionSpecificHandler = new VersionSpecificHandler17();
-            default -> versionSpecificHandler = new VersionSpecificHandler20();
+            default -> versionSpecificHandler = new VersionSpecificHandler17();
         }
 
         questsConfig.setItemGetter(itemGetter);
@@ -690,12 +688,12 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     public Title getTitleHandle() {
         return titleHandle;
     }
-    
-    public BossBar getBossBarHandle() {
+
+    public QuestsBossBar getBossBarHandle() {
         return bossBarHandle;
     }
-    
-    public ActionBar getActionBarHandle() {
+
+    public QuestsActionBar getActionBarHandle() {
         return actionBarHandle;
     }
 

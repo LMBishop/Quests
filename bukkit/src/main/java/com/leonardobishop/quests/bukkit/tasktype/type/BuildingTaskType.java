@@ -65,7 +65,7 @@ public final class BuildingTaskType extends BukkitTaskType {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
             }
-            TaskUtils.sendTrackAdvancement(player, quest, taskProgress);
+            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress);
         }
     }
 

@@ -151,29 +151,52 @@ public class TaskUtils {
         return progress;
     }
     
-    public static void sendTrackAdvancement(Player player, Quest q, TaskProgress progress) {
-        String title = q.getPlaceholders().get("progress");
-        if(title == null)
+	public static void sendTrackAdvancement(Player player, Quest quest, Task task, TaskProgress taskProgress) {
+        String title = quest.getPlaceholders().get("progress");
+        if (title == null) {
             return;
-        title = ChatColor.translateAlternateColorCodes('&', QItemStack.processPlaceholders(title, progress));
+        }
+
+        boolean useBossBarProgress = plugin.getConfig().getBoolean("options.bossbar.progress", false);
+        boolean useBossBarComplete = plugin.getConfig().getBoolean("options.bossbar.complete", false);
+        boolean useActionBarProgress = plugin.getConfig().getBoolean("options.actionbar.progress", false);
+        boolean useActionBarComplete = plugin.getConfig().getBoolean("options.actionbar.complete", false);
+
+        if (!(useBossBarProgress || useBossBarComplete || useActionBarProgress || useActionBarComplete)) {
+            return; // skip title coloring and placeholders application if all options are disabled
+        }
+
+        title = ChatColor.translateAlternateColorCodes('&', QItemStack.processPlaceholders(title, taskProgress));
         if (plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
             title = plugin.getPlaceholderAPIProcessor().apply(player, title);
         }
-        int progressAmount = getIntegerTaskProgress(progress);
-        if(progressAmount > 0) { // if has value
-            Object amount = q.getTaskById(progress.getTaskId()).getConfigValue("amount");
-            if(amount != null && amount instanceof Integer)
-                progressAmount = (progressAmount * 100) / (int) amount; // convert into percent
-            else
-                progressAmount = 0; // can't find max value
+
+        if (useBossBarProgress || (useBossBarComplete && taskProgress.isCompleted())) {
+            Object progress = taskProgress.getProgress();
+            Double bossBarProgress = null;
+
+            if (progress instanceof Number number) {
+                bossBarProgress = number.doubleValue();
+            }
+
+            if (bossBarProgress != null) { // if has value
+                Object amount = task.getConfigValue("amount");
+                if (amount instanceof Number amountNumber) {
+                    bossBarProgress /= amountNumber.doubleValue(); // calculate progress
+                }
+            }
+
+            int bossBarTime = plugin.getConfig().getInt("options.bossbar.time", 10);
+
+            if (bossBarProgress != null) {
+                float bossBarFloatProgress = (float) Math.min(1.0d, Math.max(0.0d, bossBarProgress));
+                plugin.getBossBarHandle().sendBossBar(player, quest.getId(), title, bossBarTime, bossBarFloatProgress);
+            } else {
+                plugin.getBossBarHandle().sendBossBar(player, quest.getId(), title, bossBarTime);
+            }
         }
-        if((plugin.getConfig().getBoolean("options.bossbar.complete", true) && progress.isCompleted()) || plugin.getConfig().getBoolean("options.bossbar.progress", true)) {
-            if(progressAmount > 0)
-                plugin.getBossBarHandle().sendBossBar(player, q.getId(), title, progressAmount, plugin.getConfig().getInt("options.bossbar.time", 10));
-            else
-                plugin.getBossBarHandle().sendBossBar(player, q.getId(), title, plugin.getConfig().getInt("options.bossbar.time", 10));
-        }
-        if((plugin.getConfig().getBoolean("options.actionbar.complete", true) && progress.isCompleted()) || plugin.getConfig().getBoolean("options.actionbar.progress", true)) {
+
+        if (useActionBarProgress || (useActionBarComplete && taskProgress.isCompleted())) {
             plugin.getActionBarHandle().sendActionBar(player, title);
         }
     }

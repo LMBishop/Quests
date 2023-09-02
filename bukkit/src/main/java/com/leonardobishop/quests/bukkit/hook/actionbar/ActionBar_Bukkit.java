@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 
-public class ActionBar_Bukkit implements ActionBar {
+public class ActionBar_Bukkit implements QuestsActionBar {
 
     @SuppressWarnings("deprecation")
     @Override
