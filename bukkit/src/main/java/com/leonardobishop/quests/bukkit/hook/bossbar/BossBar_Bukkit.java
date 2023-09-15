@@ -23,6 +23,13 @@ public class BossBar_Bukkit implements QuestsBossBar {
 
     public BossBar_Bukkit(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
+
+        //noinspection CodeBlock2Expr (for readability)
+        plugin.getScheduler().runTaskTimerAsynchronously(() -> {
+            playerQuestBarCache.asMap()
+                    .values()
+                    .forEach(Cache::cleanUp);
+        }, 0L, 2L);
     }
 
     @Override

@@ -150,26 +150,52 @@ public class TaskUtils {
         taskProgress.setProgress(--progress);
         return progress;
     }
-    
-	public static void sendTrackAdvancement(Player player, Quest quest, Task task, TaskProgress taskProgress) {
-        String title = quest.getPlaceholders().get("progress");
-        if (title == null) {
-            return;
-        }
 
+	public static void sendTrackAdvancement(Player player, Quest quest, Task task, TaskProgress taskProgress) {
         boolean useBossBarProgress = plugin.getConfig().getBoolean("options.bossbar.progress", false);
         boolean useBossBarComplete = plugin.getConfig().getBoolean("options.bossbar.complete", false);
         boolean useActionBarProgress = plugin.getConfig().getBoolean("options.actionbar.progress", false);
         boolean useActionBarComplete = plugin.getConfig().getBoolean("options.actionbar.complete", false);
 
         if (!(useBossBarProgress || useBossBarComplete || useActionBarProgress || useActionBarComplete)) {
-            return; // skip title coloring and placeholders application if all options are disabled
+            return; // skip title processing if all options are disabled
         }
 
-        title = ChatColor.translateAlternateColorCodes('&', QItemStack.processPlaceholders(title, taskProgress));
-        if (plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
+        String title;
+
+        titleSearch:
+        {
+            title = quest.getProgressPlaceholders().get(task.getId()); // custom title
+            if (title != null) {
+                break titleSearch;
+            }
+
+            title = quest.getProgressPlaceholders().get("*"); // one title for all tasks
+            if (title != null) {
+                break titleSearch;
+            }
+
+            boolean useProgressAsFallback = plugin.getQuestsConfig().getBoolean("options.use-progress-as-fallback", true);
+            if (!useProgressAsFallback) {
+                return;
+            }
+
+            title = quest.getPlaceholders().get("progress"); // fallback title
+            if (title != null) {
+                break titleSearch;
+            }
+
+            return; // no valid title format found
+        }
+
+        title = QItemStack.processPlaceholders(title, taskProgress);
+
+        boolean usePlaceholderAPI = plugin.getQuestsConfig().getBoolean("options.progress-use-placeholderapi", false);
+        if (usePlaceholderAPI) {
             title = plugin.getPlaceholderAPIProcessor().apply(player, title);
         }
+
+        title = Chat.legacyColor(title);
 
         if (useBossBarProgress || (useBossBarComplete && taskProgress.isCompleted())) {
             Object progress = taskProgress.getProgress();
@@ -186,7 +212,7 @@ public class TaskUtils {
                 }
             }
 
-            int bossBarTime = plugin.getConfig().getInt("options.bossbar.time", 10);
+            int bossBarTime = plugin.getConfig().getInt("options.bossbar.time", 5);
 
             if (bossBarProgress != null) {
                 float bossBarFloatProgress = (float) Math.min(1.0d, Math.max(0.0d, bossBarProgress));

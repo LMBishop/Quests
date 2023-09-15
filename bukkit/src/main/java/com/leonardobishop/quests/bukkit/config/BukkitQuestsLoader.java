@@ -265,6 +265,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         int sortOrder = config.getInt("options.sort-order", 1);
                         String category = config.getString("options.category");
                         Map<String, String> placeholders = new HashMap<>();
+                        Map<String, String> progressPlaceholders = new HashMap<>();
 
                         if (category != null && category.equals("")) category = null;
 
@@ -283,6 +284,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 .withStartString(startString)
                                 .withStartCommands(startCommands)
                                 .withPlaceholders(placeholders)
+                                .withProgressPlaceholders(progressPlaceholders)
                                 .withCooldown(cooldownTime)
                                 .withTimeLimit(timeLimtTime)
                                 .withSortOrder(sortOrder)
@@ -342,6 +344,11 @@ public class BukkitQuestsLoader implements QuestsLoader {
                             for (String p : config.getConfigurationSection("placeholders").getKeys(false)) {
                                 placeholders.put(p, config.getString("placeholders." + p));
                                 findInvalidTaskReferences(quest, config.getString("placeholders." + p), problems, "placeholders." + p);
+                            }
+                        }
+                        if (config.isConfigurationSection("progress-placeholders")) {
+                            for (String p : config.getConfigurationSection("progress-placeholders").getKeys(false)) {
+                                progressPlaceholders.put(p, config.getString("progress-placeholders." + p));
                             }
                         }
                         questManager.registerQuest(quest);

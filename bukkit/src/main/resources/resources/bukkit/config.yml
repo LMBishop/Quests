@@ -104,6 +104,12 @@ options:
   record-log-history: true
   # Replace placeholders from PlaceholderAPI in rewards, rewardstrings and start strings
   quests-use-placeholderapi: false
+  # Replace placeholders from PlaceholderAPI in boss bar and action bar progress strings
+  progress-use-placeholderapi: false
+  # If true, progress string from placeholders section will be used as fallback in boss bar
+  # and action bar in case there is no matching string set in progress-placeholders section.
+  # Otherwise, the bar will not appear at all.
+  use-progress-as-fallback: true
   # PlayerBlockTracker class to be used with the hook
   playerblocktracker-class-name: "com.gestankbratwurst.playerblocktracker.PlayerBlockTracker"
   # Verify quests exist when a player's data is loaded - inconsistencies may arise when

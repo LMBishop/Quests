@@ -53,6 +53,7 @@ import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHand
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler11;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler16;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler17;
+import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler20;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler8;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler9;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
@@ -301,7 +302,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             case 9, 10 -> versionSpecificHandler = new VersionSpecificHandler9();
             case 11, 12, 13, 14, 15 -> versionSpecificHandler = new VersionSpecificHandler11();
             case 16 -> versionSpecificHandler = new VersionSpecificHandler16();
-            default -> versionSpecificHandler = new VersionSpecificHandler17();
+            case 17, 18, 19 -> versionSpecificHandler = new VersionSpecificHandler17();
+            default -> versionSpecificHandler = new VersionSpecificHandler20();
         }
 
         questsConfig.setItemGetter(itemGetter);
