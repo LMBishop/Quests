@@ -4,7 +4,6 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.CommandUtils;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
-import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.quest.Quest;
 import org.bukkit.ChatColor;

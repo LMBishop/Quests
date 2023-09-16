@@ -2,7 +2,11 @@ package com.leonardobishop.quests.bukkit.item;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Used to store itemstacks which may be otherwise configured in specific

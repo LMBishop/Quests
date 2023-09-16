@@ -1,44 +1,15 @@
 package com.leonardobishop.quests.bukkit;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-
-import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar_Nothing;
-import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar_Paper;
-import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar_Spigot;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
-import org.bstats.bukkit.MetricsLite;
-import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarFlag;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.leonardobishop.quests.bukkit.command.QuestsCommandSwitcher;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsLoader;
+import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar_Nothing;
+import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar_Paper;
+import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar_Spigot;
 import com.leonardobishop.quests.bukkit.hook.actionbar.QuestsActionBar;
-import com.leonardobishop.quests.bukkit.hook.bossbar.QuestsBossBar;
 import com.leonardobishop.quests.bukkit.hook.bossbar.BossBar_Bukkit;
 import com.leonardobishop.quests.bukkit.hook.bossbar.BossBar_Nothing;
+import com.leonardobishop.quests.bukkit.hook.bossbar.QuestsBossBar;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.AbstractCoreProtectHook;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.CoreProtectHook;
 import com.leonardobishop.quests.bukkit.hook.essentials.AbstractEssentialsHook;
@@ -143,6 +114,34 @@ import com.leonardobishop.quests.common.storage.StorageProvider;
 import com.leonardobishop.quests.common.tasktype.TaskType;
 import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
 import com.leonardobishop.quests.common.updater.Updater;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import org.bstats.bukkit.MetricsLite;
+import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 

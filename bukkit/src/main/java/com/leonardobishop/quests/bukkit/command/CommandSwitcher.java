@@ -3,7 +3,11 @@ package com.leonardobishop.quests.bukkit.command;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import org.bukkit.command.CommandSender;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class CommandSwitcher implements CommandHandler {
 

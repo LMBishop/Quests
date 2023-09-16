@@ -5,8 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.SmithingInventory;
-import org.bukkit.inventory.SmithingRecipe;
 
 public class VersionSpecificHandler16 extends VersionSpecificHandler11 implements VersionSpecificHandler {
 
