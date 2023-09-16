@@ -4,6 +4,6 @@ import org.bukkit.entity.Player;
 
 public interface QuestsActionBar {
 
-    void sendActionBar(Player p, String line);
+    void sendActionBar(Player player, String title);
 
 }

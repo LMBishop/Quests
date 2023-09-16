@@ -2,9 +2,10 @@ package com.leonardobishop.quests.bukkit.hook.actionbar;
 
 import org.bukkit.entity.Player;
 
-public class ActionBar_Nothing implements QuestsActionBar {
+public class ActionBar_Paper implements QuestsActionBar {
+    @SuppressWarnings("deprecation")
     @Override
     public void sendActionBar(Player player, String title) {
-        // no compatible action bar impl found
+        player.sendActionBar(title);
     }
 }

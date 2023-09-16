@@ -12,9 +12,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar_Nothing;
+import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar_Paper;
+import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar_Spigot;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -28,8 +36,6 @@ import com.leonardobishop.quests.bukkit.command.QuestsCommandSwitcher;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsLoader;
 import com.leonardobishop.quests.bukkit.hook.actionbar.QuestsActionBar;
-import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar_Bukkit;
-import com.leonardobishop.quests.bukkit.hook.actionbar.ActionBar_Nothing;
 import com.leonardobishop.quests.bukkit.hook.bossbar.QuestsBossBar;
 import com.leonardobishop.quests.bukkit.hook.bossbar.BossBar_Bukkit;
 import com.leonardobishop.quests.bukkit.hook.bossbar.BossBar_Nothing;
@@ -45,10 +51,10 @@ import com.leonardobishop.quests.bukkit.hook.papi.AbstractPlaceholderAPIHook;
 import com.leonardobishop.quests.bukkit.hook.papi.PlaceholderAPIHook;
 import com.leonardobishop.quests.bukkit.hook.playerblocktracker.AbstractPlayerBlockTrackerHook;
 import com.leonardobishop.quests.bukkit.hook.playerblocktracker.PlayerBlockTrackerHook;
-import com.leonardobishop.quests.bukkit.hook.title.Title;
+import com.leonardobishop.quests.bukkit.hook.title.QuestsTitle;
 import com.leonardobishop.quests.bukkit.hook.title.Title_Bukkit;
 import com.leonardobishop.quests.bukkit.hook.title.Title_BukkitNoTimings;
-import com.leonardobishop.quests.bukkit.hook.title.Title_Other;
+import com.leonardobishop.quests.bukkit.hook.title.Title_Nothing;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler11;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler16;
@@ -162,7 +168,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private AbstractEssentialsHook essentialsHook;
     private AbstractPlayerBlockTrackerHook playerBlockTrackerHook;
     private ItemGetter itemGetter;
-    private Title titleHandle;
+    private QuestsTitle titleHandle;
     private QuestsBossBar bossBarHandle;
     private QuestsActionBar actionBarHandle;
     private VersionSpecificHandler versionSpecificHandler;
@@ -273,19 +279,18 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             questsLogger.warning("Failed to resolve server version - some features may not work!");
             version = 0;
         }
+
         questsLogger.info("Your server is running version 1." + version);
+
         // (titles)
-        if (version < 8) {
-            titleHandle = new Title_Other();
-        } else if (version <= 10) {
-            titleHandle = new Title_BukkitNoTimings();
-        } else {
-            titleHandle = new Title_Bukkit();
-        }
+        setTitleHandle();
+
         // (bossbar)
-        bossBarHandle = version <= 8 ? new BossBar_Nothing() : new BossBar_Bukkit(this);
+        setBossBarHandle();
+
         // (actionbar)
-        actionBarHandle = version <= 9 ? new ActionBar_Nothing() : new ActionBar_Bukkit();
+        setActionBarHandle();
+
         // (itemstacks)
         if (version <= 12) {
             itemGetter = new ItemGetter_Late_1_8();
@@ -294,6 +299,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         } else {
             itemGetter = new ItemGetterLatest();
         }
+
         // (version specific handler)
         // TODO move above to version specific handlers
         if (version <= 8) {
@@ -655,6 +661,54 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
     }
 
+    private void setTitleHandle() {
+        try {
+            Player.class.getMethod("sendTitle", String.class, String.class, int.class, int.class, int.class);
+            titleHandle = new Title_Bukkit();
+            return;
+        } catch (NoSuchMethodException ignored) {
+        }
+
+        try {
+            Player.class.getMethod("sendTitle", String.class, String.class);
+            titleHandle = new Title_BukkitNoTimings();
+            return;
+        } catch (NoSuchMethodException ignored) {
+        }
+
+        titleHandle = new Title_Nothing();
+    }
+
+    private void setBossBarHandle() {
+        try {
+            Bukkit.class.getMethod("createBossBar", String.class, BarColor.class, BarStyle.class, BarFlag[].class);
+            bossBarHandle = new BossBar_Bukkit(this);
+            return;
+        } catch (NoSuchMethodException ignored) {
+        }
+
+        bossBarHandle = new BossBar_Nothing();
+    }
+
+    @SuppressWarnings("deprecation")
+    private void setActionBarHandle() {
+        try {
+            Player.class.getMethod("sendActionBar", String.class);
+            actionBarHandle = new ActionBar_Paper();
+            return;
+        } catch (NoSuchMethodException ignored) {
+        }
+
+        try {
+            Player.Spigot.class.getMethod("sendMessage", ChatMessageType.class, BaseComponent.class);
+            actionBarHandle = new ActionBar_Spigot();
+            return;
+        } catch (NoSuchMethodException ignored) {
+        }
+
+        actionBarHandle = new ActionBar_Nothing();
+    }
+
     public boolean isValidConfiguration() {
         return validConfiguration;
     }
@@ -687,7 +741,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return itemGetter;
     }
 
-    public Title getTitleHandle() {
+    public QuestsTitle getTitleHandle() {
         return titleHandle;
     }
 
