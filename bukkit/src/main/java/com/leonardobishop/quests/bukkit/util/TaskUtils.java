@@ -151,13 +151,12 @@ public class TaskUtils {
     }
 
 	public static void sendTrackAdvancement(Player player, Quest quest, Task task, TaskProgress taskProgress) {
-        boolean useBossBarProgress = plugin.getConfig().getBoolean("options.bossbar.progress", false);
-        boolean useBossBarComplete = plugin.getConfig().getBoolean("options.bossbar.complete", false);
-        boolean useActionBarProgress = plugin.getConfig().getBoolean("options.actionbar.progress", false);
-        boolean useActionBarComplete = plugin.getConfig().getBoolean("options.actionbar.complete", false);
-
-        if (!(useBossBarProgress || useBossBarComplete || useActionBarProgress || useActionBarComplete)) {
-            return; // skip title processing if all options are disabled
+        boolean useActionBar = plugin.getConfig().getBoolean("options.actionbar.progress", false)
+                || (taskProgress.isCompleted() && plugin.getConfig().getBoolean("options.actionbar.complete", false));
+        boolean useBossBar = plugin.getConfig().getBoolean("options.bossbar.progress", false)
+                || (taskProgress.isCompleted() && plugin.getConfig().getBoolean("options.bossbar.complete", false));
+        if (!useActionBar && !useBossBar) {
+            return;
         }
 
         String title;
@@ -196,10 +195,24 @@ public class TaskUtils {
 
         title = Chat.legacyColor(title);
 
-        if (useBossBarProgress || (useBossBarComplete && taskProgress.isCompleted())) {
-            Object progress = taskProgress.getProgress();
-            Double bossBarProgress = null;
+        if (useActionBar) {
+            sendTrackAdvancementActionBar(player, title);
+        }
 
+        if (useBossBar) {
+            sendTrackAdvancementBossBar(player, quest, task, taskProgress, title);
+        }
+    }
+
+    private static void sendTrackAdvancementActionBar(Player player, String title) {
+        plugin.getActionBarHandle().sendActionBar(player, title);
+    }
+
+    private static void sendTrackAdvancementBossBar(Player player, Quest quest, Task task, TaskProgress taskProgress, String title) {
+        Double bossBarProgress = null;
+
+        if (!taskProgress.isCompleted()) {
+            Object progress = taskProgress.getProgress();
             if (progress instanceof Number number) {
                 bossBarProgress = number.doubleValue();
             }
@@ -210,19 +223,15 @@ public class TaskUtils {
                     bossBarProgress /= amountNumber.doubleValue(); // calculate progress
                 }
             }
-
-            int bossBarTime = plugin.getConfig().getInt("options.bossbar.time", 5);
-
-            if (bossBarProgress != null) {
-                float bossBarFloatProgress = (float) Math.min(1.0d, Math.max(0.0d, bossBarProgress));
-                plugin.getBossBarHandle().sendBossBar(player, quest.getId(), title, bossBarTime, bossBarFloatProgress);
-            } else {
-                plugin.getBossBarHandle().sendBossBar(player, quest.getId(), title, bossBarTime);
-            }
         }
 
-        if (useActionBarProgress || (useActionBarComplete && taskProgress.isCompleted())) {
-            plugin.getActionBarHandle().sendActionBar(player, title);
+        int bossBarTime = plugin.getConfig().getInt("options.bossbar.time", 5);
+
+        if (bossBarProgress != null) {
+            float bossBarFloatProgress = (float) Math.min(1.0d, Math.max(0.0d, bossBarProgress));
+            plugin.getBossBarHandle().sendBossBar(player, quest.getId(), title, bossBarTime, bossBarFloatProgress);
+        } else {
+            plugin.getBossBarHandle().sendBossBar(player, quest.getId(), title, bossBarTime);
         }
     }
 
