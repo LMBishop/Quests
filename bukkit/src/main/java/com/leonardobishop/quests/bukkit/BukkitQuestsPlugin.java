@@ -407,37 +407,37 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new WalkingTaskType(this));
 
             // Register task types with class/method compatibility requirement
-            taskTypeManager.registerTaskType(new BrewingTaskType(this), () -> CompatUtils.classWithMethodExists("org.bukkit.event.inventory.BrewEvent", "getResults"));
-            taskTypeManager.registerTaskType(new SmithingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.inventory.SmithItemEvent"));
-            taskTypeManager.registerTaskType(new FarmingTaskType(this), () -> CompatUtils.classExists("org.bukkit.block.data.Ageable"));
-            taskTypeManager.registerTaskType(new BlockshearingTaskType(this), () -> CompatUtils.classExists("io.papermc.paper.event.block.PlayerShearBlockEvent"));
-            taskTypeManager.registerTaskType(new ReplenishingTaskType(this), () -> CompatUtils.classExists("com.destroystokyo.paper.loottable.LootableInventoryReplenishEvent"));
-            taskTypeManager.registerTaskType(new BlockItemdroppingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.block.BlockDropItemEvent"));
+            taskTypeManager.registerTaskType(() -> new BrewingTaskType(this), () -> CompatUtils.classWithMethodExists("org.bukkit.event.inventory.BrewEvent", "getResults"));
+            taskTypeManager.registerTaskType(() -> new SmithingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.inventory.SmithItemEvent"));
+            taskTypeManager.registerTaskType(() -> new FarmingTaskType(this), () -> CompatUtils.classExists("org.bukkit.block.data.Ageable"));
+            taskTypeManager.registerTaskType(() -> new BlockshearingTaskType(this), () -> CompatUtils.classExists("io.papermc.paper.event.block.PlayerShearBlockEvent"));
+            taskTypeManager.registerTaskType(() -> new ReplenishingTaskType(this), () -> CompatUtils.classExists("com.destroystokyo.paper.loottable.LootableInventoryReplenishEvent"));
+            taskTypeManager.registerTaskType(() -> new BlockItemdroppingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.block.BlockDropItemEvent"));
 
             // Register task types with enabled plugin compatibility requirement
-            taskTypeManager.registerTaskType(new ASkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("ASkyBlock"));
-            taskTypeManager.registerTaskType(new CitizensDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));
-            taskTypeManager.registerTaskType(new CitizensInteractTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));
-            taskTypeManager.registerTaskType(new EcoBossesKillingTaskType(this), () -> CompatUtils.isPluginEnabled("EcoBosses"));
-            taskTypeManager.registerTaskType(new EssentialsBalanceTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
-            taskTypeManager.registerTaskType(new EssentialsMoneyEarnTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
-            taskTypeManager.registerTaskType(new FabledSkyblockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("FabledSkyblock")); // not tested
-            taskTypeManager.registerTaskType(new PlaceholderAPIEvaluateTaskType(this), () -> CompatUtils.isPluginEnabled("PlaceholderAPI"));
-            taskTypeManager.registerTaskType(new PlayerPointsEarnTaskType(this), () -> CompatUtils.isPluginEnabled("PlayerPoints"));
-            taskTypeManager.registerTaskType(new ShopGUIPlusBuyTaskType(this), () -> CompatUtils.isPluginEnabled("ShopGUIPlus")); // not tested
-            taskTypeManager.registerTaskType(new ShopGUIPlusSellTaskType(this), () -> CompatUtils.isPluginEnabled("ShopGUIPlus")); // not tested
-            taskTypeManager.registerTaskType(new SuperiorSkyblockLevelType(this), () -> CompatUtils.isPluginEnabled("SuperiorSkyblock2")); // not tested
-            taskTypeManager.registerTaskType(new SuperiorSkyblockWorthType(this), () -> CompatUtils.isPluginEnabled("SuperiorSkyblock2")); // not tested
-            taskTypeManager.registerTaskType(new uSkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("uSkyBlock"));
-            taskTypeManager.registerTaskType(new NuVotifierVoteTaskType(this), () -> CompatUtils.isPluginEnabled("Votifier")); // not tested
-            taskTypeManager.registerTaskType(new VotingPluginVoteType(this), () -> CompatUtils.isPluginEnabled("VotingPlugin")); // not tested
+            taskTypeManager.registerTaskType(() -> new ASkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("ASkyBlock"));
+            taskTypeManager.registerTaskType(() -> new CitizensDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));
+            taskTypeManager.registerTaskType(() -> new CitizensInteractTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));
+            taskTypeManager.registerTaskType(() -> new EcoBossesKillingTaskType(this), () -> CompatUtils.isPluginEnabled("EcoBosses"));
+            taskTypeManager.registerTaskType(() -> new EssentialsBalanceTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
+            taskTypeManager.registerTaskType(() -> new EssentialsMoneyEarnTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
+            taskTypeManager.registerTaskType(() -> new FabledSkyblockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("FabledSkyblock")); // not tested
+            taskTypeManager.registerTaskType(() -> new PlaceholderAPIEvaluateTaskType(this), () -> CompatUtils.isPluginEnabled("PlaceholderAPI"));
+            taskTypeManager.registerTaskType(() -> new PlayerPointsEarnTaskType(this), () -> CompatUtils.isPluginEnabled("PlayerPoints"));
+            taskTypeManager.registerTaskType(() -> new ShopGUIPlusBuyTaskType(this), () -> CompatUtils.isPluginEnabled("ShopGUIPlus")); // not tested
+            taskTypeManager.registerTaskType(() -> new ShopGUIPlusSellTaskType(this), () -> CompatUtils.isPluginEnabled("ShopGUIPlus")); // not tested
+            taskTypeManager.registerTaskType(() -> new SuperiorSkyblockLevelType(this), () -> CompatUtils.isPluginEnabled("SuperiorSkyblock2")); // not tested
+            taskTypeManager.registerTaskType(() -> new SuperiorSkyblockWorthType(this), () -> CompatUtils.isPluginEnabled("SuperiorSkyblock2")); // not tested
+            taskTypeManager.registerTaskType(() -> new uSkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("uSkyBlock"));
+            taskTypeManager.registerTaskType(() -> new NuVotifierVoteTaskType(this), () -> CompatUtils.isPluginEnabled("Votifier")); // not tested
+            taskTypeManager.registerTaskType(() -> new VotingPluginVoteType(this), () -> CompatUtils.isPluginEnabled("VotingPlugin")); // not tested
 
             // Register task types with enabled specific version plugin compatibility requirement
-            taskTypeManager.registerTaskType(new IridiumSkyblockValueTaskType(this), () -> { // TODO FIX
+            taskTypeManager.registerTaskType(() -> new IridiumSkyblockValueTaskType(this), () -> { // TODO FIX
                 String pluginVersion = CompatUtils.getPluginVersion("IridiumSkyblock");
                 return pluginVersion != null && pluginVersion.startsWith("2");
             });
-            taskTypeManager.registerTaskType(new MythicMobsKillingTaskType(this), () -> {
+            taskTypeManager.registerTaskType(() -> new MythicMobsKillingTaskType(this), () -> {
                 String pluginVersion = CompatUtils.getPluginVersion("MythicMobs");
                 return pluginVersion != null && (pluginVersion.startsWith("4") || pluginVersion.startsWith("5"));
             });

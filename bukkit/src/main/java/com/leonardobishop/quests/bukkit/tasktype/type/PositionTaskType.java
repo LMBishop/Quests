@@ -82,11 +82,11 @@ public final class PositionTaskType extends BukkitTaskType {
 
             if (padding != null && (distanceSquared <= padding * padding)) {
                 super.debug("Player is within distance padding", quest.getId(), task.getId(), player.getUniqueId());
-                super.debug("Marking task as complete", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
             } else if (!blockLocationsDiffer(location, to, true)) {
                 super.debug("Player is precisely at location", quest.getId(), task.getId(), player.getUniqueId());
-                super.debug("Marking task as complete", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
             }
         }

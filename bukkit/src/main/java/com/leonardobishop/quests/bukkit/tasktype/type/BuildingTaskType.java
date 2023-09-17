@@ -89,14 +89,14 @@ public final class BuildingTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player mined block " + block.getType(), quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+            super.debug("Player mined block " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
             boolean reverseIfBroken = TaskUtils.getConfigBoolean(task, "reverse-if-broken");
             if (!reverseIfBroken) {
                 return;
             }
 
-            super.debug("reverse-if-broken is enabled, checking block", quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+            super.debug("reverse-if-broken is enabled, checking block", quest.getId(), task.getId(), player.getUniqueId());
 
             if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());

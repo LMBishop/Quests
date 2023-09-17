@@ -62,7 +62,7 @@ public final class MiningTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player mined block " + material.name(), quest.getId(), task.getId(), event.getPlayer().getUniqueId());
+            super.debug("Player mined block " + material.name(), quest.getId(), task.getId(), player.getUniqueId());
 
             boolean allowSilkTouch = TaskUtils.getConfigBoolean(task, "allow-silk-touch", true);
             if (!allowSilkTouch && silkTouchPresent) {

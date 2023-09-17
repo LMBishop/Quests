@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 /**
  * The task type manager stores all registered task types and registers individual quests to each task type.
@@ -68,26 +69,10 @@ public abstract class TaskTypeManager {
      * @param taskType the task type to register
      */
     public boolean registerTaskType(@NotNull TaskType taskType) {
-        return registerTaskType(taskType, new BooleanSupplier[]{});
-    }
-
-    /**
-     * Register a task type with the task type manager.
-     *
-     * @param taskType  the task type to register
-     * @param suppliers suppliers to check for task type compatibility
-     */
-    public boolean registerTaskType(@NotNull TaskType taskType, @NotNull BooleanSupplier... suppliers) {
         Objects.requireNonNull(taskType, "taskType cannot be null");
 
         if (!allowRegistrations) {
             throw new IllegalStateException("No longer accepting new task types (must be done before quests are loaded)");
-        }
-
-        for (BooleanSupplier supplier : suppliers) {
-            if (!supplier.getAsBoolean()) {
-                return false;
-            }
         }
 
         if (exclusions.contains(taskType.getType()) || taskTypes.containsKey(taskType.getType())) {
@@ -101,6 +86,28 @@ public abstract class TaskTypeManager {
         }
 
         return true;
+    }
+
+    /**
+     * Register a task type with the task type manager.
+     *
+     * @param taskTypeSupplier supplier of the task type to register
+     * @param compatibilitySuppliers suppliers to check for task type compatibility
+     */
+    public boolean registerTaskType(@NotNull Supplier<TaskType> taskTypeSupplier, @NotNull BooleanSupplier... compatibilitySuppliers) {
+        Objects.requireNonNull(taskTypeSupplier, "taskTypeSupplier cannot be null");
+
+        if (!allowRegistrations) {
+            throw new IllegalStateException("No longer accepting new task types (must be done before quests are loaded)");
+        }
+
+        for (BooleanSupplier supplier : compatibilitySuppliers) {
+            if (!supplier.getAsBoolean()) {
+                return false;
+            }
+        }
+
+        return registerTaskType(taskTypeSupplier.get());
     }
 
     /**
