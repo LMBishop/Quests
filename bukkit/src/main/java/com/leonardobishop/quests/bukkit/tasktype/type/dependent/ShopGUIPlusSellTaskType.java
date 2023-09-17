@@ -7,8 +7,8 @@ import net.brcdev.shopgui.shop.ShopTransactionResult;
 
 public final class ShopGUIPlusSellTaskType extends ShopGUIPlusInteractionTaskType {
 
-    public ShopGUIPlusSellTaskType(BukkitQuestsPlugin plugin, String shopGUIPlusVersion) {
-        super(plugin, shopGUIPlusVersion, "shopguiplus_sell", TaskUtils.TASK_ATTRIBUTION_STRING, "Sell a given item to a ShopGUIPlus shop", "shopguiplus_sellcertain");
+    public ShopGUIPlusSellTaskType(BukkitQuestsPlugin plugin) {
+        super(plugin, "shopguiplus_sell", TaskUtils.TASK_ATTRIBUTION_STRING, "Sell a given item to a ShopGUIPlus shop", "shopguiplus_sellcertain");
     }
 
     @Override

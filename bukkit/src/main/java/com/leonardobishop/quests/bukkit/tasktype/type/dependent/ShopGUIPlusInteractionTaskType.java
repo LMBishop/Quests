@@ -2,6 +2,7 @@ package com.leonardobishop.quests.bukkit.tasktype.type.dependent;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
+import com.leonardobishop.quests.bukkit.util.CompatUtils;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -26,7 +27,7 @@ public abstract class ShopGUIPlusInteractionTaskType extends BukkitTaskType {
     private Method getShopMethod;
     private Method getIdMethod;
 
-    public ShopGUIPlusInteractionTaskType(BukkitQuestsPlugin plugin, String shopGUIPlusVersion, @NotNull String type, String author, String description, String... aliases) {
+    public ShopGUIPlusInteractionTaskType(BukkitQuestsPlugin plugin, @NotNull String type, String author, String description, String... aliases) {
         super(type, author, description, aliases);
         this.plugin = plugin;
 
@@ -47,7 +48,7 @@ public abstract class ShopGUIPlusInteractionTaskType extends BukkitTaskType {
         } catch (ClassNotFoundException | NoSuchMethodException ignored) { }
 
         plugin.getLogger().severe("Failed to register event handler for ShopGUIPlus task type!");
-        plugin.getLogger().severe("ShopGUIPlus version detected: " + shopGUIPlusVersion);
+        plugin.getLogger().severe("ShopGUIPlus version detected: " + CompatUtils.getPluginVersion("ShopGUIPlus"));
     }
 
     public abstract boolean isCorrectInteraction(ShopTransactionResult result);

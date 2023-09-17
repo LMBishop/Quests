@@ -5,7 +5,15 @@ import com.leonardobishop.quests.common.quest.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.BooleanSupplier;
 
 /**
  * The task type manager stores all registered task types and registers individual quests to each task type.
@@ -60,19 +68,38 @@ public abstract class TaskTypeManager {
      * @param taskType the task type to register
      */
     public boolean registerTaskType(@NotNull TaskType taskType) {
+        return registerTaskType(taskType, new BooleanSupplier[]{});
+    }
+
+    /**
+     * Register a task type with the task type manager.
+     *
+     * @param taskType  the task type to register
+     * @param suppliers suppliers to check for task type compatibility
+     */
+    public boolean registerTaskType(@NotNull TaskType taskType, @NotNull BooleanSupplier... suppliers) {
         Objects.requireNonNull(taskType, "taskType cannot be null");
 
         if (!allowRegistrations) {
             throw new IllegalStateException("No longer accepting new task types (must be done before quests are loaded)");
         }
+
+        for (BooleanSupplier supplier : suppliers) {
+            if (!supplier.getAsBoolean()) {
+                return false;
+            }
+        }
+
         if (exclusions.contains(taskType.getType()) || taskTypes.containsKey(taskType.getType())) {
             skipped++;
             return false;
         }
+
         taskTypes.put(taskType.getType(), taskType);
         for (String alias : taskType.getAliases()) {
             aliases.put(alias, taskType.getType());
         }
+
         return true;
     }
 
@@ -121,7 +148,7 @@ public abstract class TaskTypeManager {
      * @return actual name
      */
     public @Nullable String resolveTaskTypeName(@NotNull String taskType) {
-            Objects.requireNonNull(taskType, "taskType cannot be null");
+        Objects.requireNonNull(taskType, "taskType cannot be null");
 
         if (taskTypes.containsKey(taskType)) {
             return taskType;

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BooleanSupplier;
 
 public class BukkitTaskTypeManager extends TaskTypeManager {
 
@@ -27,7 +28,7 @@ public class BukkitTaskTypeManager extends TaskTypeManager {
     }
 
     @Override
-    public boolean registerTaskType(@NotNull TaskType taskType) {
+    public boolean registerTaskType(@NotNull TaskType taskType, @NotNull BooleanSupplier... suppliers) {
         if (!(taskType instanceof BukkitTaskType bukkitTaskType)) throw new RuntimeException("BukkitTaskTypeManager implementation can only accept instances of BukkitTaskType!");
 
         if (super.registerTaskType(taskType)) {

@@ -7,8 +7,8 @@ import net.brcdev.shopgui.shop.ShopTransactionResult;
 
 public final class ShopGUIPlusBuyTaskType extends ShopGUIPlusInteractionTaskType {
 
-    public ShopGUIPlusBuyTaskType(BukkitQuestsPlugin plugin, String shopGUIPlusVersion) {
-        super(plugin, shopGUIPlusVersion, "shopguiplus_buy", TaskUtils.TASK_ATTRIBUTION_STRING, "Purchase a given item from a ShopGUIPlus shop", "shopguiplus_buycertain");
+    public ShopGUIPlusBuyTaskType(BukkitQuestsPlugin plugin) {
+        super(plugin, "shopguiplus_buy", TaskUtils.TASK_ATTRIBUTION_STRING, "Purchase a given item from a ShopGUIPlus shop", "shopguiplus_buycertain");
     }
 
     @Override

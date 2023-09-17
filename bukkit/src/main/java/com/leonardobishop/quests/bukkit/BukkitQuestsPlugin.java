@@ -100,6 +100,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.SuperiorSkyblock
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.SuperiorSkyblockWorthType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.VotingPluginVoteType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.uSkyBlockLevelTaskType;
+import com.leonardobishop.quests.bukkit.util.CompatUtils;
 import com.leonardobishop.quests.bukkit.util.LogHistory;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
@@ -354,17 +355,20 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         // Register task types after the server has fully started
         getScheduler().doSync(() -> {
             // Setup external plugin hooks
-            if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            if (CompatUtils.isPluginEnabled("PlaceholderAPI")) {
                 this.placeholderAPIHook = new PlaceholderAPIHook();
                 this.placeholderAPIHook.registerExpansion(this);
                 this.placeholderAPIProcessor = (player, s) -> placeholderAPIHook.replacePlaceholders(player, s);
             }
-            if (Bukkit.getPluginManager().isPluginEnabled("CoreProtect")) {
+
+            if (CompatUtils.isPluginEnabled("CoreProtect")) {
                 this.coreProtectHook = new CoreProtectHook(this);
             }
-            if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
+
+            if (CompatUtils.isPluginEnabled("Essentials")) {
                 this.essentialsHook = new EssentialsHook();
             }
+
             try {
                 String className = questsConfig.getString("options.playerblocktracker-class-name", "com.gestankbratwurst.playerblocktracker.PlayerBlockTracker");
 
@@ -375,119 +379,82 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             } catch (ClassCastException | ClassNotFoundException | NoSuchMethodException ignored) {
             }
 
-            taskTypeManager.registerTaskType(new MiningTaskType(this));
-            taskTypeManager.registerTaskType(new BuildingTaskType(this));
-            taskTypeManager.registerTaskType(new MobkillingTaskType(this));
-            taskTypeManager.registerTaskType(new PlayerkillingTaskType(this));
-            taskTypeManager.registerTaskType(new FishingTaskType(this));
-            taskTypeManager.registerTaskType(new SmeltingTaskType(this));
-            taskTypeManager.registerTaskType(new InventoryTaskType(this));
-            taskTypeManager.registerTaskType(new ConsumeTaskType(this));
-            taskTypeManager.registerTaskType(new WalkingTaskType(this));
-            taskTypeManager.registerTaskType(new TamingTaskType(this));
-            taskTypeManager.registerTaskType(new MilkingTaskType(this));
-            taskTypeManager.registerTaskType(new ShearingTaskType(this));
-            taskTypeManager.registerTaskType(new PositionTaskType(this));
-            taskTypeManager.registerTaskType(new PlaytimeTaskType(this));
-            taskTypeManager.registerTaskType(new ExpEarnTaskType(this));
+            // Register task types without compatibility requirement
             taskTypeManager.registerTaskType(new BreedingTaskType(this));
-            taskTypeManager.registerTaskType(new EnchantingTaskType(this));
-            taskTypeManager.registerTaskType(new DealDamageTaskType(this));
-            taskTypeManager.registerTaskType(new PermissionTaskType(this));
-            taskTypeManager.registerTaskType(new DistancefromTaskType(this));
-            taskTypeManager.registerTaskType(new CommandTaskType(this));
-            taskTypeManager.registerTaskType(new CraftingTaskType(this));
             taskTypeManager.registerTaskType(new BucketEmptyTaskType(this));
             taskTypeManager.registerTaskType(new BucketFillTaskType(this));
+            taskTypeManager.registerTaskType(new BuildingTaskType(this));
+            taskTypeManager.registerTaskType(new CommandTaskType(this));
+            taskTypeManager.registerTaskType(new ConsumeTaskType(this));
+            taskTypeManager.registerTaskType(new CraftingTaskType(this));
+            taskTypeManager.registerTaskType(new DealDamageTaskType(this));
+            taskTypeManager.registerTaskType(new DistancefromTaskType(this));
+            taskTypeManager.registerTaskType(new EnchantingTaskType(this));
+            taskTypeManager.registerTaskType(new ExpEarnTaskType(this));
+            taskTypeManager.registerTaskType(new FishingTaskType(this));
             taskTypeManager.registerTaskType(new InteractTaskType(this));
-            try {
-                Class.forName("org.bukkit.event.inventory.BrewEvent").getMethod("getResults");
-                taskTypeManager.registerTaskType(new BrewingTaskType(this));
-            } catch (ClassNotFoundException | NoSuchMethodException ignored) { } // server version cannot support task type
-            try {
-                Class.forName("org.bukkit.event.inventory.SmithItemEvent");
-                taskTypeManager.registerTaskType(new SmithingTaskType(this));
-            } catch (ClassNotFoundException ignored) { } // server version cannot support task type
-            try {
-                Class.forName("org.bukkit.block.data.Ageable");
-                taskTypeManager.registerTaskType(new FarmingTaskType(this));
-            } catch (ClassNotFoundException ignored) { } // server version cannot support task type
-            try {
-                Class.forName("io.papermc.paper.event.block.PlayerShearBlockEvent");
-                taskTypeManager.registerTaskType(new BlockshearingTaskType(this));
-            } catch (ClassNotFoundException ignored) { } // server version cannot support task type
-            try {
-                Class.forName("com.destroystokyo.paper.loottable.LootableInventoryReplenishEvent");
-                taskTypeManager.registerTaskType(new ReplenishingTaskType(this));
-            } catch (ClassNotFoundException ignored) { } // server version cannot support task type
-            try {
-                Class.forName("org.bukkit.event.block.BlockDropItemEvent");
-                taskTypeManager.registerTaskType(new BlockItemdroppingTaskType(this));
-            } catch (ClassNotFoundException ignored) { } // server version cannot support task type
-            if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
-                taskTypeManager.registerTaskType(new ASkyBlockLevelTaskType(this));
-            }
+            taskTypeManager.registerTaskType(new InventoryTaskType(this));
+            taskTypeManager.registerTaskType(new MilkingTaskType(this));
+            taskTypeManager.registerTaskType(new MiningTaskType(this));
+            taskTypeManager.registerTaskType(new MobkillingTaskType(this));
+            taskTypeManager.registerTaskType(new PermissionTaskType(this));
+            taskTypeManager.registerTaskType(new PlayerkillingTaskType(this));
+            taskTypeManager.registerTaskType(new PlaytimeTaskType(this));
+            taskTypeManager.registerTaskType(new PositionTaskType(this));
+            taskTypeManager.registerTaskType(new ShearingTaskType(this));
+            taskTypeManager.registerTaskType(new SmeltingTaskType(this));
+            taskTypeManager.registerTaskType(new TamingTaskType(this));
+            taskTypeManager.registerTaskType(new WalkingTaskType(this));
+
+            // Register task types with class/method compatibility requirement
+            taskTypeManager.registerTaskType(new BrewingTaskType(this), () -> CompatUtils.classWithMethodExists("org.bukkit.event.inventory.BrewEvent", "getResults"));
+            taskTypeManager.registerTaskType(new SmithingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.inventory.SmithItemEvent"));
+            taskTypeManager.registerTaskType(new FarmingTaskType(this), () -> CompatUtils.classExists("org.bukkit.block.data.Ageable"));
+            taskTypeManager.registerTaskType(new BlockshearingTaskType(this), () -> CompatUtils.classExists("io.papermc.paper.event.block.PlayerShearBlockEvent"));
+            taskTypeManager.registerTaskType(new ReplenishingTaskType(this), () -> CompatUtils.classExists("com.destroystokyo.paper.loottable.LootableInventoryReplenishEvent"));
+            taskTypeManager.registerTaskType(new BlockItemdroppingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.block.BlockDropItemEvent"));
+
+            // Register task types with enabled plugin compatibility requirement
+            taskTypeManager.registerTaskType(new ASkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("ASkyBlock"));
+            taskTypeManager.registerTaskType(new CitizensDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));
+            taskTypeManager.registerTaskType(new CitizensInteractTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));
+            taskTypeManager.registerTaskType(new EcoBossesKillingTaskType(this), () -> CompatUtils.isPluginEnabled("EcoBosses"));
+            taskTypeManager.registerTaskType(new EssentialsBalanceTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
+            taskTypeManager.registerTaskType(new EssentialsMoneyEarnTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
+            taskTypeManager.registerTaskType(new FabledSkyblockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("FabledSkyblock")); // not tested
+            taskTypeManager.registerTaskType(new PlaceholderAPIEvaluateTaskType(this), () -> CompatUtils.isPluginEnabled("PlaceholderAPI"));
+            taskTypeManager.registerTaskType(new PlayerPointsEarnTaskType(this), () -> CompatUtils.isPluginEnabled("PlayerPoints"));
+            taskTypeManager.registerTaskType(new ShopGUIPlusBuyTaskType(this), () -> CompatUtils.isPluginEnabled("ShopGUIPlus")); // not tested
+            taskTypeManager.registerTaskType(new ShopGUIPlusSellTaskType(this), () -> CompatUtils.isPluginEnabled("ShopGUIPlus")); // not tested
+            taskTypeManager.registerTaskType(new SuperiorSkyblockLevelType(this), () -> CompatUtils.isPluginEnabled("SuperiorSkyblock2")); // not tested
+            taskTypeManager.registerTaskType(new SuperiorSkyblockWorthType(this), () -> CompatUtils.isPluginEnabled("SuperiorSkyblock2")); // not tested
+            taskTypeManager.registerTaskType(new uSkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("uSkyBlock"));
+            taskTypeManager.registerTaskType(new NuVotifierVoteTaskType(this), () -> CompatUtils.isPluginEnabled("Votifier")); // not tested
+            taskTypeManager.registerTaskType(new VotingPluginVoteType(this), () -> CompatUtils.isPluginEnabled("VotingPlugin")); // not tested
+
+            // Register task types with enabled specific version plugin compatibility requirement
+            taskTypeManager.registerTaskType(new IridiumSkyblockValueTaskType(this), () -> { // TODO FIX
+                String pluginVersion = CompatUtils.getPluginVersion("IridiumSkyblock");
+                return pluginVersion != null && pluginVersion.startsWith("2");
+            });
+            taskTypeManager.registerTaskType(new MythicMobsKillingTaskType(this), () -> {
+                String pluginVersion = CompatUtils.getPluginVersion("MythicMobs");
+                return pluginVersion != null && (pluginVersion.startsWith("4") || pluginVersion.startsWith("5"));
+            });
+
+            // Register task types with even more weird requirements
             if (Bukkit.getPluginManager().isPluginEnabled("BentoBox")) {
                 BentoBoxLevelTaskType.register(this, taskTypeManager);
             }
-            //TODO FIX
-            if (Bukkit.getPluginManager().isPluginEnabled("IridiumSkyblock")
-                    && Bukkit.getPluginManager().getPlugin("IridiumSkyblock").getDescription().getVersion().startsWith("2")) {
-                taskTypeManager.registerTaskType(new IridiumSkyblockValueTaskType(this));
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("uSkyBlock")) {
-                taskTypeManager.registerTaskType(new uSkyBlockLevelTaskType(this));
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
-                taskTypeManager.registerTaskType(new CitizensDeliverTaskType(this));
-                taskTypeManager.registerTaskType(new CitizensInteractTaskType(this));
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
-                String mythicMobsVersion = Bukkit.getPluginManager().getPlugin("MythicMobs").getDescription().getVersion();
-                if (mythicMobsVersion.startsWith("4") || mythicMobsVersion.startsWith("5")) {
-                    taskTypeManager.registerTaskType(new MythicMobsKillingTaskType(this, mythicMobsVersion));
-                }
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                taskTypeManager.registerTaskType(new PlaceholderAPIEvaluateTaskType(this));
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("EcoBosses")) {
-                taskTypeManager.registerTaskType(new EcoBossesKillingTaskType(this));
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
-                taskTypeManager.registerTaskType(new EssentialsMoneyEarnTaskType(this));
-                taskTypeManager.registerTaskType(new EssentialsBalanceTaskType(this));
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("PlayerPoints")) {
-                taskTypeManager.registerTaskType(new PlayerPointsEarnTaskType(this));
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("ShopGUIPlus")) {
-                // not tested
-                String shopGUIPlusVersion = Bukkit.getPluginManager().getPlugin("ShopGUIPlus").getDescription().getVersion();
-                taskTypeManager.registerTaskType(new ShopGUIPlusBuyTaskType(this, shopGUIPlusVersion));
-                taskTypeManager.registerTaskType(new ShopGUIPlusSellTaskType(this, shopGUIPlusVersion));
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("FabledSkyblock")) {
-                // not tested
-                taskTypeManager.registerTaskType(new FabledSkyblockLevelTaskType(this));
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("SuperiorSkyblock2")) {
-                // not tested
-                taskTypeManager.registerTaskType(new SuperiorSkyblockLevelType(this));
-                taskTypeManager.registerTaskType(new SuperiorSkyblockWorthType(this));
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("VotingPlugin")) {
-                // not tested
-                taskTypeManager.registerTaskType(new VotingPluginVoteType(this));
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("Votifier")) {
-                // not tested
-                taskTypeManager.registerTaskType(new NuVotifierVoteTaskType(this));
-            }
 
+            // Close task type registrations
             taskTypeManager.closeRegistrations();
-            questsLogger.info(taskTypeManager.getTaskTypes().size() + " task types have been registered"
-                    + (taskTypeManager.getSkipped() > 0 ? " (" + taskTypeManager.getSkipped() + " skipped due to exclusions or conflicting names)." : "."));
+
+            // Inform about registered task types
+            String registrationMessage = taskTypeManager.getTaskTypes().size() + " task types have been registered";
+            int skipped = taskTypeManager.getSkipped();
+            registrationMessage += (skipped > 0) ? " (" + skipped + " skipped due to exclusions or conflicting names)." : ".";
+            questsLogger.info(registrationMessage);
 
             if (playerBlockTrackerHook != null) {
                 this.playerBlockTrackerHook.fixPlayerBlockTracker();
