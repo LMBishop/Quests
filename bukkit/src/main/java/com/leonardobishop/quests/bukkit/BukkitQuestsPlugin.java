@@ -50,6 +50,7 @@ import com.leonardobishop.quests.bukkit.scheduler.folia.FoliaServerScheduler;
 import com.leonardobishop.quests.bukkit.storage.MySqlStorageProvider;
 import com.leonardobishop.quests.bukkit.storage.YamlStorageProvider;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskTypeManager;
+import com.leonardobishop.quests.bukkit.tasktype.type.BlockItemdroppingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BlockshearingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BreedingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BrewingTaskType;
@@ -407,8 +408,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 Class.forName("org.bukkit.event.inventory.SmithItemEvent");
                 taskTypeManager.registerTaskType(new SmithingTaskType(this));
             } catch (ClassNotFoundException ignored) { } // server version cannot support task type
-            // TODO: FIX
-            // taskTypeManager.registerTaskType(new BrewingCertainTaskType());
             try {
                 Class.forName("org.bukkit.block.data.Ageable");
                 taskTypeManager.registerTaskType(new FarmingTaskType(this));
@@ -420,6 +419,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             try {
                 Class.forName("com.destroystokyo.paper.loottable.LootableInventoryReplenishEvent");
                 taskTypeManager.registerTaskType(new ReplenishingTaskType(this));
+            } catch (ClassNotFoundException ignored) { } // server version cannot support task type
+            try {
+                Class.forName("org.bukkit.event.block.BlockDropItemEvent");
+                taskTypeManager.registerTaskType(new BlockItemdroppingTaskType(this));
             } catch (ClassNotFoundException ignored) { } // server version cannot support task type
             if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
                 taskTypeManager.registerTaskType(new ASkyBlockLevelTaskType(this));

@@ -19,6 +19,7 @@ import com.leonardobishop.quests.common.tasktype.TaskType;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -260,6 +261,10 @@ public class TaskUtils {
     public record PendingTask(Quest quest, Task task, QuestProgress questProgress, TaskProgress taskProgress) { }
 
     public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Block block, @NotNull UUID player) {
+        return matchBlock(type, pendingTask, block.getState(), player);
+    }
+
+    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull BlockState state, @NotNull UUID player) {
         Task task = pendingTask.task;
 
         List<String> checkBlocks = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("block") ? "block" : "blocks");
@@ -271,9 +276,8 @@ public class TaskUtils {
 
         Object configData = task.getConfigValue("data");
 
-        Material blockMaterial = block.getType();
-        //noinspection deprecation
-        byte blockData = block.getData();
+        Material blockMaterial = state.getType();
+        byte blockData = state.getRawData();
 
         Material material;
         int comparableData;
