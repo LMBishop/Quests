@@ -10,6 +10,7 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.Lists;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 
 public class BossBar_Bukkit implements BossBar {
