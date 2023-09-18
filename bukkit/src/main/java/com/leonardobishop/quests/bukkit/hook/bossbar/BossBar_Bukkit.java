@@ -19,6 +19,13 @@ public class BossBar_Bukkit implements BossBar {
 
     public BossBar_Bukkit(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
+        String pluginNamespace = new NamespacedKey(plugin, "test").getNamespace(); // get namespace
+        Lists.newArrayList(Bukkit.getBossBars()).forEach(bb -> { // copy list to prevent current modification
+            if(bb.getKey().namespace().equals(pluginNamespace)) {
+                bb.removeAll(); // hide it
+                Bukkit.removeBossBar(bb.getKey()); // remove it
+            }
+        });
         plugin.getScheduler().runTaskTimer(() -> {
             for (Entry<NamespacedKey, Long> entry : new HashMap<>(players).entrySet()) {
                 if (entry.getValue() < System.currentTimeMillis()) {
