@@ -39,7 +39,7 @@ public class BossBar_Bukkit implements QuestsBossBar {
 
     @Override
     public void sendBossBar(Player player, String questId, String title, int time, float progress) {
-        this.plugin.getScheduler().runTaskAsynchronously(() -> {
+        plugin.getScheduler().runTaskAsynchronously(() -> {
             Cache<String, BossBar> questBarCache = playerQuestBarCache.asMap()
                     .computeIfAbsent(player, k -> {
                         //noinspection CodeBlock2Expr (for readability)

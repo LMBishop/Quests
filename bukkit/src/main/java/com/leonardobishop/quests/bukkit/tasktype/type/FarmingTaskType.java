@@ -8,7 +8,9 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -17,7 +19,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public final class FarmingTaskType extends BukkitTaskType {
 
@@ -35,26 +40,57 @@ public final class FarmingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, TaskUtils.MaterialListConfigValidatorMode.BLOCK, "block", "blocks"));
-        super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Arrays.asList("break", "harvest"), "mode"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Arrays.asList(
+                "break",
+                "harvest"
+        ), "mode"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        handle(event.getPlayer(), event.getBlock(), event.getBlock().getBlockData(), "break");
+        Block block = event.getBlock();
+        Material type = block.getType();
+
+        List<Block> brokenBlocks = new ArrayList<>();
+        brokenBlocks.add(block);
+
+        boolean performAgeCheck = true;
+
+        if (type == Material.BAMBOO || type == Material.CACTUS || type == Material.KELP || type == Material.SUGAR_CANE) {
+            performAgeCheck = false;
+
+            Block anotherBlock = block.getRelative(BlockFace.UP);
+
+            while (true) {
+                Material anotherType = anotherBlock.getType();
+
+                if (anotherType == type) {
+                    brokenBlocks.add(anotherBlock);
+                } else {
+                    break;
+                }
+
+                anotherBlock = anotherBlock.getRelative(BlockFace.UP);
+            }
+        }
+
+        handle(event.getPlayer(), brokenBlocks, "break", performAgeCheck);
     }
 
     private final class HarvestBlockListener implements Listener {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         public void onHarvestBlock(org.bukkit.event.player.PlayerHarvestBlockEvent event) {
-            handle(event.getPlayer(), event.getHarvestedBlock(), event.getHarvestedBlock().getBlockData(), "harvest");
+            handle(event.getPlayer(), event.getHarvestedBlock(), "harvest", true);
         }
     }
 
-    private void handle(Player player, Block block, BlockData blockData, String mode) {
-        if (!(blockData instanceof Ageable crop && crop.getAge() == crop.getMaximumAge() || plugin.getVersionSpecificHandler().isCaveVinesPlantWithBerries(blockData))) {
-            return;
-        }
+    @SuppressWarnings("SameParameterValue")
+    private void handle(Player player, Block block, String mode, boolean performAgeCheck) {
+        handle(player, Collections.singletonList(block), mode, performAgeCheck);
+    }
 
+    private void handle(Player player, List<Block> blocks, String mode, boolean performAgeCheck) {
         if (player.hasMetadata("NPC")) {
             return;
         }
@@ -64,6 +100,19 @@ public final class FarmingTaskType extends BukkitTaskType {
             return;
         }
 
+        for (Block block : blocks) {
+            handle(player, qPlayer, block, mode, performAgeCheck);
+        }
+    }
+
+    private void handle(Player player, QPlayer qPlayer, Block block, String mode, boolean performAgeCheck) {
+        if (performAgeCheck) {
+            BlockData blockData = block.getBlockData();
+            if (!(blockData instanceof Ageable crop && crop.getAge() == crop.getMaximumAge() || plugin.getVersionSpecificHandler().isCaveVinesPlantWithBerries(blockData))) {
+                return;
+            }
+        }
+
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
@@ -71,7 +120,7 @@ public final class FarmingTaskType extends BukkitTaskType {
 
             super.debug("Player farmed a crop " + block.getType() + " (mode = " + mode + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-            final String requiredMode = (String) task.getConfigValue("mode");
+            String requiredMode = (String) task.getConfigValue("mode");
             if (requiredMode != null && !mode.equals(requiredMode)) {
                 super.debug("Mode does not match the required mode, continuing...", quest.getId(), task.getId(), player.getUniqueId());
             }
