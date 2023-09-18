@@ -10,19 +10,19 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class BossBar_Bukkit implements QuestsBossBar {
 
-    private static final RemovalListener<String, BossBar> removalListener = removal -> removal.getValue().removeAll();
+    private final BukkitQuestsPlugin plugin;
+    private final RemovalListener<String, BossBar> removalListener;
 
     // use cache because of its concurrency and automatic player on quit removal
     private final Cache<Player, Cache<String, BossBar>> playerQuestBarCache = CacheBuilder.newBuilder().weakKeys().build();
-    private final BukkitQuestsPlugin plugin;
 
     public BossBar_Bukkit(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
+        this.removalListener = removal -> plugin.getScheduler().runTask(() -> removal.getValue().removeAll());
 
         //noinspection CodeBlock2Expr (for readability)
         plugin.getScheduler().runTaskTimerAsynchronously(() -> {
@@ -39,9 +39,6 @@ public class BossBar_Bukkit implements QuestsBossBar {
 
     @Override
     public void sendBossBar(Player player, String questId, String title, int time, float progress) {
-        CompletableFuture<BossBar> future = new CompletableFuture<>();
-        future.thenAccept(bar -> bar.addPlayer(player));
-
         this.plugin.getScheduler().runTaskAsynchronously(() -> {
             Cache<String, BossBar> questBarCache = playerQuestBarCache.asMap()
                     .computeIfAbsent(player, k -> {
@@ -61,7 +58,7 @@ public class BossBar_Bukkit implements QuestsBossBar {
             bar.setTitle(title);
             bar.setProgress(progress);
 
-            future.complete(bar);
+            plugin.getScheduler().runTask(() -> bar.addPlayer(player));
         });
     }
 }
