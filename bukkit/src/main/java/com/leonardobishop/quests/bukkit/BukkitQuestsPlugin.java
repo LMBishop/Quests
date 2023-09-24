@@ -275,7 +275,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         // Setup version specific compatibility layers
         int version;
         try {
-            version = Integer.parseInt(Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3].split("_")[1]);
+            version = Integer.parseInt(super.getServer().getBukkitVersion().split("\\.", 3)[1]);
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
             questsLogger.warning("Failed to resolve server version - some features may not work!");
             version = 0;
