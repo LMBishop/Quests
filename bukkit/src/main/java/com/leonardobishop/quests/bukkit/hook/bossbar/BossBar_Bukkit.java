@@ -11,11 +11,14 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class BossBar_Bukkit implements QuestsBossBar {
 
     private final BukkitQuestsPlugin plugin;
     private final RemovalListener<String, BossBar> removalListener;
+    private BarColor barColor = BarColor.BLUE;
+    private BarStyle barStyle = BarStyle.SOLID;
 
     // use cache because of its concurrency and automatic player on quit removal
     private final Cache<Player, Cache<String, BossBar>> playerQuestBarCache = CacheBuilder.newBuilder().weakKeys().build();
@@ -23,6 +26,16 @@ public class BossBar_Bukkit implements QuestsBossBar {
     public BossBar_Bukkit(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
         this.removalListener = removal -> plugin.getScheduler().runTask(() -> removal.getValue().removeAll());
+
+        try {
+            String barColorString = plugin.getQuestsConfig().getString("options.bossbar.color", this.barColor.name());
+            this.barColor = BarColor.valueOf(barColorString);
+
+            String barStyleString = plugin.getQuestsConfig().getString("options.bossbar.style", this.barStyle.name());
+            this.barStyle = BarStyle.valueOf(barStyleString);
+        } catch (IllegalArgumentException e) {
+            this.plugin.getLogger().log(Level.SEVERE, "Could not set color or style for the initialized boss bar implementation, using default instead!", e);
+        }
 
         //noinspection CodeBlock2Expr (for readability)
         plugin.getScheduler().runTaskTimerAsynchronously(() -> {
@@ -52,7 +65,7 @@ public class BossBar_Bukkit implements QuestsBossBar {
             BossBar bar = questBarCache.asMap()
                     .computeIfAbsent(questId, k -> {
                         //noinspection CodeBlock2Expr (for readability)
-                        return Bukkit.createBossBar(null, BarColor.BLUE, BarStyle.SOLID);
+                        return Bukkit.createBossBar(null, this.barColor, this.barStyle);
                     });
 
             bar.setTitle(title);

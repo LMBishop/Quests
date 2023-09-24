@@ -42,6 +42,10 @@ options:
     complete: false
     # Time in seconds of bossbar showed
     time: 5
+    # See https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarColor.html
+    color: BLUE
+    # See https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarStyle.html
+    style: SOLID
   # Enable/disable ActionBar
   actionbar:
     progress: false
