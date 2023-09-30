@@ -4,7 +4,8 @@
 <img src="https://img.shields.io/github/actions/workflow/status/LMBishop/Quests/build.yml?branch=master">
 <img src="https://img.shields.io/github/issues-raw/LMBishop/Quests">
 <img src="https://img.shields.io/spiget/version/23696?color=inactive&label=version">
-<img src="https://mcbadges.leonardobishop.com/all/downloads?spigot=23696&songoda=quests-quests&polymart=938">
+
+[//]: # (<img src="https://mcbadges.leonardobishop.com/all/downloads?spigot=23696&songoda=quests-quests&polymart=938">)
 <br>
 <h1 align="center">Quests</h1>
 </p>
@@ -19,8 +20,6 @@
 ## 💾 Downloads / Building
 The latest release version of Quests can be found [here](https://quests.leonardobishop.com/download.html).
 The latest build of Quests (development version) can be found on [GitHub](https://github.com/LMBishop/Quests/actions).
-
-<img src="https://mcbadges.leonardobishop.com/quests.svg"/>
 
 Alternatively, you can build Quests via Gradle. Release versions of Quests are built using **Gradle**, targeting **Java 17**. You can change the target version in ``build.gradle``.
 * Ensure Java is installed on your machine

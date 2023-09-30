@@ -16,16 +16,10 @@ outdated versions.
 - [Modrinth](https://modrinth.com/mod/quests)
 - [GitHub](https://github.com/LMBishop/Quests/releases)
 - [Polymart](https://polymart.org/resource/quests.938)
-- [Songoda](https://songoda.com/marketplace/product/quests-quests.544)
+- [~~Songoda~~](https://songoda.com/marketplace/product/quests-quests.544)
 
-Please note Hangar is still in active development and testing. It may be
-removed at any time.
-
-### Distribution status
-
-Some platforms may not be up-to-date yet.
-
-<img src="https://mcbadges.leonardobishop.com/quests.svg">
+Some sources may be out of date. Please check the version number
+before downloading.
 
 ## Development builds
 
