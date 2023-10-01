@@ -55,8 +55,8 @@ public final class VotingPluginVoteType extends BukkitTaskType {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
             }
-            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress);
+
+            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, votesNeeded);
         }
     }
-
 }

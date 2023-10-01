@@ -124,7 +124,8 @@ public final class BrewingTaskType extends BukkitTaskType {
                 taskProgress.setProgress(amount);
                 taskProgress.setCompleted(true);
             }
-            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress);
+
+            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, amount);
         }
     }
 }

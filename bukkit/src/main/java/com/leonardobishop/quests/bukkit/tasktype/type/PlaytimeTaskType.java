@@ -66,7 +66,8 @@ public final class PlaytimeTaskType extends BukkitTaskType {
                                 PlaytimeTaskType.super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                                 taskProgress.setCompleted(true);
                             }
-                            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress);
+
+                            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, minutes);
                         }
                     }
                 }
@@ -80,5 +81,4 @@ public final class PlaytimeTaskType extends BukkitTaskType {
 //            this.poll.cancel();
 //        }
     }
-
 }

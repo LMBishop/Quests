@@ -21,5 +21,4 @@ public final class BucketFillTaskType extends BucketInteractionTaskType {
 
         super.onBucket(event.getPlayer(), event.getItemStack().getType(), plugin);
     }
-
 }

@@ -71,7 +71,8 @@ public final class BentoBoxLevelTaskType extends BukkitTaskType {
                         taskProgress.setProgress(newLevel);
                         taskProgress.setCompleted(true);
                     }
-                    TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress);
+
+                    TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, islandLevelNeeded);
                 }
             }
         }
