@@ -77,5 +77,4 @@ public final class CitizensInteractTaskType extends BukkitTaskType {
             taskProgress.setCompleted(true);
         }
     }
-
 }

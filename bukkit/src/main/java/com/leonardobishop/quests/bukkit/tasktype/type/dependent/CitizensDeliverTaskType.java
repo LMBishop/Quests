@@ -151,8 +151,8 @@ public final class CitizensDeliverTaskType extends BukkitTaskType {
                     }
                 }
             }
-            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress);
+
+            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, amount);
         }
     }
-
 }

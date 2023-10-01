@@ -150,7 +150,7 @@ public class TaskUtils {
         return progress;
     }
 
-	public static void sendTrackAdvancement(Player player, Quest quest, Task task, TaskProgress taskProgress) {
+	public static void sendTrackAdvancement(Player player, Quest quest, Task task, TaskProgress taskProgress, Number amount) {
         boolean useActionBar = plugin.getConfig().getBoolean("options.actionbar.progress", false)
                 || (taskProgress.isCompleted() && plugin.getConfig().getBoolean("options.actionbar.complete", false));
         boolean useBossBar = plugin.getConfig().getBoolean("options.bossbar.progress", false)
@@ -200,7 +200,7 @@ public class TaskUtils {
         }
 
         if (useBossBar) {
-            sendTrackAdvancementBossBar(player, quest, task, taskProgress, title);
+            sendTrackAdvancementBossBar(player, quest, task, taskProgress, title, amount);
         }
     }
 
@@ -208,7 +208,7 @@ public class TaskUtils {
         plugin.getActionBarHandle().sendActionBar(player, title);
     }
 
-    private static void sendTrackAdvancementBossBar(Player player, Quest quest, Task task, TaskProgress taskProgress, String title) {
+    private static void sendTrackAdvancementBossBar(Player player, Quest quest, Task task, TaskProgress taskProgress, String title, Number amount) {
         Double bossBarProgress = null;
 
         if (!taskProgress.isCompleted()) {
@@ -218,10 +218,7 @@ public class TaskUtils {
             }
 
             if (bossBarProgress != null) { // if has value
-                Object amount = task.getConfigValue("amount");
-                if (amount instanceof Number amountNumber) {
-                    bossBarProgress /= amountNumber.doubleValue(); // calculate progress
-                }
+                bossBarProgress /= amount.doubleValue(); // calculate progress
             }
         }
 

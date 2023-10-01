@@ -19,5 +19,4 @@ public final class BucketEmptyTaskType extends BucketInteractionTaskType {
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
         super.onBucket(event.getPlayer(), event.getBucket(), plugin);
     }
-
 }

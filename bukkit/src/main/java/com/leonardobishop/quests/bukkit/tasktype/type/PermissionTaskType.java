@@ -64,5 +64,4 @@ public final class PermissionTaskType extends BukkitTaskType {
             this.poll.cancel();
         }
     }
-
 }
