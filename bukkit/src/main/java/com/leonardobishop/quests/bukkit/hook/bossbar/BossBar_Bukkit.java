@@ -8,8 +8,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -17,8 +23,8 @@ public class BossBar_Bukkit implements QuestsBossBar {
 
     private final BukkitQuestsPlugin plugin;
     private final RemovalListener<String, BossBar> removalListener;
-    private BarColor barColor = BarColor.BLUE;
-    private BarStyle barStyle = BarStyle.SOLID;
+    private final Map<Float, BarColor> barColorMap;
+    private final Map<Float, BarStyle> barStyleMap;
 
     // use cache because of its concurrency and automatic player on quit removal
     private final Cache<Player, Cache<String, BossBar>> playerQuestBarCache = CacheBuilder.newBuilder().weakKeys().build();
@@ -27,15 +33,11 @@ public class BossBar_Bukkit implements QuestsBossBar {
         this.plugin = plugin;
         this.removalListener = removal -> plugin.getScheduler().runTask(() -> removal.getValue().removeAll());
 
-        try {
-            String barColorString = plugin.getQuestsConfig().getString("options.bossbar.color", this.barColor.name());
-            this.barColor = BarColor.valueOf(barColorString);
+        // Load bossbar color config
+        this.barColorMap = loadConfig(BarColor.class, "color", BarColor.BLUE);
 
-            String barStyleString = plugin.getQuestsConfig().getString("options.bossbar.style", this.barStyle.name());
-            this.barStyle = BarStyle.valueOf(barStyleString);
-        } catch (IllegalArgumentException e) {
-            this.plugin.getLogger().log(Level.SEVERE, "Could not set color or style for the initialized boss bar implementation, using default instead!", e);
-        }
+        // Load bossbar style config
+        this.barStyleMap = loadConfig(BarStyle.class, "style", BarStyle.SOLID);
 
         //noinspection CodeBlock2Expr (for readability)
         plugin.getScheduler().runTaskTimerAsynchronously(() -> {
@@ -62,16 +64,83 @@ public class BossBar_Bukkit implements QuestsBossBar {
                                 .build();
                     });
 
+            BarColor color = getBest(barColorMap, progress);
+            BarStyle style = getBest(barStyleMap, progress);
+
             BossBar bar = questBarCache.asMap()
                     .computeIfAbsent(questId, k -> {
                         //noinspection CodeBlock2Expr (for readability)
-                        return Bukkit.createBossBar(null, this.barColor, this.barStyle);
+                        return Bukkit.createBossBar(null, color, style);
                     });
 
             bar.setTitle(title);
             bar.setProgress(progress);
 
+            if (bar.getColor() != color) {
+                bar.setColor(color);
+            }
+
+            if (bar.getStyle() != style) {
+                bar.setStyle(style);
+            }
+
             plugin.getScheduler().runTask(() -> bar.addPlayer(player));
         });
+    }
+
+    private <T extends Enum<T>> @NotNull Map<Float, T> loadConfig(Class<T> clazz, String type, T def) {
+        Map<Float, T> map;
+        try {
+            ConfigurationSection section = plugin.getConfig().getConfigurationSection("options.bossbar." + type);
+            if (section == null) {
+                throw new IllegalStateException(type + " section is missing");
+            }
+
+            map = new HashMap<>();
+
+            for (String progressString : section.getKeys(true)) {
+                if (!section.isString(progressString)) {
+                    continue;
+                }
+
+                float progress = Float.parseFloat(progressString);
+                if (progress < 0.0f || progress > 1.0f) {
+                    throw new IllegalArgumentException("dynamic " + type + " progress must be between 0.0 and 1.0");
+                }
+
+                String tString = section.getString(progressString);
+                if (tString == null) {
+                    throw new IllegalStateException(type + " for " + progressString + " is missing");
+                }
+
+                T t = Enum.valueOf(clazz, tString);
+                map.put(progress, t);
+            }
+
+            if (map.isEmpty()) {
+                throw new IllegalStateException(type + " section is empty");
+            }
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            plugin.getLogger().log(Level.SEVERE, "Could not set " + type + " for the initialized boss bar implementation, using default instead!", e);
+            map = Collections.singletonMap(0.0f, def);
+        }
+        return map;
+    }
+
+    private @NotNull <T> T getBest(Map<Float, T> map, float progress) {
+        Iterator<Float> it = map.keySet().iterator();
+        if (!it.hasNext()) {
+            throw new IllegalStateException("map cannot be empty");
+        }
+
+        Float best = it.next();
+        while (it.hasNext()) {
+            Float key = it.next();
+            if (key <= progress) {
+                best = Math.max(best, key);
+            }
+        }
+
+        return map.get(best);
     }
 }
