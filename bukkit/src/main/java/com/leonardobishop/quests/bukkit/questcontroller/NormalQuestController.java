@@ -294,6 +294,14 @@ public class NormalQuestController implements QuestController {
             Bukkit.getPluginManager().callEvent(questCancelEvent);
             // PlayerCancelQuestEvent -- end
             Messages.send(questCancelEvent.getQuestCancelMessage(), player);
+            for (String s : quest.getCancelCommands()) {
+                s = s.replace("{player}", player.getName());
+                if (plugin.getConfig().getBoolean("options.quests-use-placeholderapi")) {
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), plugin.getPlaceholderAPIProcessor().apply(player, s));
+                } else {
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), s);
+                }
+            }
             SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-cancel"));
         }
         if (config.getBoolean("options.allow-quest-track")
