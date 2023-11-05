@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit.hook.bossbar;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
+import com.google.common.collect.Lists;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
