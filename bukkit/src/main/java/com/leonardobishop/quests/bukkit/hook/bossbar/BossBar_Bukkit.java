@@ -26,7 +26,15 @@ public class BossBar_Bukkit implements QuestsBossBar {
     public BossBar_Bukkit(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
         this.removalListener = removal -> plugin.getScheduler().runTask(() -> removal.getValue().removeAll());
-
+        
+        String pluginNamespace = new NamespacedKey(plugin, "quest").getNamespace(); // get namespace
+        Lists.newArrayList(Bukkit.getBossBars()).forEach(bb -> { // copy list to prevent current modification
+            if(bb.getKey().namespace().equals(pluginNamespace)) {
+                bb.removeAll(); // hide it
+                Bukkit.removeBossBar(bb.getKey()); // remove it
+            }
+        });
+        
         try {
             String barColorString = plugin.getQuestsConfig().getString("options.bossbar.color", this.barColor.name());
             this.barColor = BarColor.valueOf(barColorString);
@@ -65,7 +73,7 @@ public class BossBar_Bukkit implements QuestsBossBar {
             BossBar bar = questBarCache.asMap()
                     .computeIfAbsent(questId, k -> {
                         //noinspection CodeBlock2Expr (for readability)
-                        return Bukkit.createBossBar(null, this.barColor, this.barStyle);
+                        return Bukkit.createBossBar(getKeyFor(player, questId), this.barColor, this.barStyle);
                     });
 
             bar.setTitle(title);
@@ -73,5 +81,9 @@ public class BossBar_Bukkit implements QuestsBossBar {
 
             plugin.getScheduler().runTask(() -> bar.addPlayer(player));
         });
+    }
+
+    private NamespacedKey getKeyFor(Player p, String questId) {
+        return new NamespacedKey(plugin, "bossbar_" + p.getName().toLowerCase() + "_" + questId.toLowerCase().replace(" ", ""));
     }
 }
