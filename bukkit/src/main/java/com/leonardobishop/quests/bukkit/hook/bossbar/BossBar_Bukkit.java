@@ -6,6 +6,7 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.collect.Lists;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
