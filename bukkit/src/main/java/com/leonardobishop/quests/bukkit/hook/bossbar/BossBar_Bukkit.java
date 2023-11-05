@@ -75,7 +75,7 @@ public class BossBar_Bukkit implements QuestsBossBar {
             BossBar bar = questBarCache.asMap()
                     .computeIfAbsent(questId, k -> {
                         //noinspection CodeBlock2Expr (for readability)
-                        return Bukkit.createBossBar(getKeyFor(player, questId), this.barColor, this.barStyle);
+                        return Bukkit.createBossBar(getKeyFor(player, questId), null, this.barColor, this.barStyle);
                     });
 
             bar.setTitle(title);
