@@ -1,46 +1,55 @@
 package com.leonardobishop.quests.bukkit.hook.itemgetter;
 
+import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
-public interface ItemGetter {
+public abstract class ItemGetter {
+
+    protected static final ItemStack invalidItemStack = new ItemStack(Material.STONE, 1);
+    protected final BukkitQuestsPlugin plugin;
+
+    public ItemGetter(BukkitQuestsPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     /**
      * Gets an ItemStack from a configuration.
      * Implementations should specific to the server version.
      *
-     * @param path the path to where the item is defined in the config (null if item is defined in second param)
-     * @param config the configuration file
+     * @param path     the path to where the item is defined in the config (null if item is defined in second param)
+     * @param config   the configuration file
      * @param excludes exclude certain fields in the configuration
      * @return {@link ItemStack}
      */
-    ItemStack getItem(String path, ConfigurationSection config, Filter... excludes);
+    public abstract ItemStack getItem(String path, ConfigurationSection config, Filter... excludes);
 
     /**
      * Gets an ItemStack from a given string (which represents a material).
      * For pre-1.13 server implementations, the string may use a data code.
      *
-     * @param material the string
+     * @param typeString the string
      * @return {@link ItemStack}
      */
-    ItemStack getItemStack(String material);
+    public abstract ItemStack getItemStack(String typeString);
 
     /**
      * Validates a material from a string.
      * For pre-1.13 server implementations, the string may use a data code.
      *
-     * @param material the string
+     * @param typeString the string
      * @return true if it a material
      */
-    boolean isValidMaterial(String material);
+    public abstract boolean isValidMaterial(String typeString);
 
-    enum Filter {
+    public enum Filter {
         DISPLAY_NAME,
         LORE,
         ENCHANTMENTS,
         ITEM_FLAGS,
         UNBREAKABLE,
         ATTRIBUTE_MODIFIER,
-        CUSTOM_MODEL_DATA;
+        CUSTOM_MODEL_DATA
     }
 }
