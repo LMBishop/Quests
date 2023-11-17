@@ -5,6 +5,8 @@ import org.bukkit.plugin.Plugin;
 
 public class CompatUtils {
 
+    private static final String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+
     public static boolean classExists(String className) {
         try {
             Class.forName(className);
@@ -15,8 +17,10 @@ public class CompatUtils {
     }
 
     public static boolean classWithMethodExists(String className, String methodName, Class<?>... methodParameterTypes) {
+        className = className.replace("{}", version);
+
         try {
-            Class.forName(className).getMethod(methodName, methodParameterTypes);
+            Class.forName(className).getDeclaredMethod(methodName, methodParameterTypes);
             return true;
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             return false;

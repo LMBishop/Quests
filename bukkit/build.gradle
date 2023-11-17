@@ -52,7 +52,7 @@ repositories {
 dependencies {
     compileOnly project(':common')
     // Paper
-    compileOnly('io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT') {
+    compileOnly('io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT') {
         exclude(group: 'it.unimi.dsi', module: 'fastutil') // exclude fastutil just to don't use it (for 1.8 support)
     }
     // Folia
