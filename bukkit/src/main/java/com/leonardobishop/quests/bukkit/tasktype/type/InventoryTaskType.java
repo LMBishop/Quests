@@ -84,6 +84,7 @@ public final class InventoryTaskType extends BukkitTaskType {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void checkInventory(HumanEntity humanEntity, long delay) {
         if (!(humanEntity instanceof Player player)) return;
         checkInventory(player, delay);
@@ -91,7 +92,7 @@ public final class InventoryTaskType extends BukkitTaskType {
 
     private void checkInventory(Player player, long delay) {
         if (player.hasMetadata("NPC") || !player.isOnline()) return;
-        plugin.getScheduler().runTaskLaterAtEntity(player, () -> checkInventory(player), delay);
+        plugin.getScheduler().runTaskLaterAtLocation(player.getLocation(), () -> checkInventory(player), delay);
     }
 
     private void checkInventory(Player player) {
