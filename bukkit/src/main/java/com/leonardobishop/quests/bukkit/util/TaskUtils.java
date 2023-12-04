@@ -266,18 +266,18 @@ public class TaskUtils {
 
     public record PendingTask(Quest quest, Task task, QuestProgress questProgress, TaskProgress taskProgress) { }
 
-    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Block block, @NotNull UUID player) {
-        return matchBlock(type, pendingTask, block.getState(), player);
+    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable Block block, @NotNull UUID player) {
+        return matchBlock(type, pendingTask, block != null ? block.getState() : null, player);
     }
 
-    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull BlockState state, @NotNull UUID player) {
+    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable BlockState state, @NotNull UUID player) {
         Task task = pendingTask.task;
 
         List<String> checkBlocks = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("block") ? "block" : "blocks");
         if (checkBlocks == null) {
             return true;
         } else if (checkBlocks.isEmpty()) {
-            return false;
+            return state == null;
         }
 
         Object configData = task.getConfigValue("data");
