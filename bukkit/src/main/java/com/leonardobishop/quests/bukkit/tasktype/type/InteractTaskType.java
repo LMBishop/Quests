@@ -42,11 +42,6 @@ public final class InteractTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        Block block = event.getClickedBlock();
-        if (block == null) {
-            return;
-        }
-
         Player player = event.getPlayer();
         if (player.hasMetadata("NPC")) {
             return;
@@ -57,6 +52,7 @@ public final class InteractTaskType extends BukkitTaskType {
             return;
         }
 
+        Block block = event.getClickedBlock();
         ItemStack item = event.getItem();
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
@@ -65,6 +61,11 @@ public final class InteractTaskType extends BukkitTaskType {
             TaskProgress taskProgress = pendingTask.taskProgress();
 
             super.debug("Player interacted", quest.getId(), task.getId(), player.getUniqueId());
+
+            if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
             if (task.hasConfigKey("item")) {
                 if (item == null) {
@@ -88,12 +89,6 @@ public final class InteractTaskType extends BukkitTaskType {
                 } else {
                     super.debug("Item matches required item", quest.getId(), task.getId(), player.getUniqueId());
                 }
-            }
-
-            super.debug("Player clicked block " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
-            if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
-                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                continue;
             }
 
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
