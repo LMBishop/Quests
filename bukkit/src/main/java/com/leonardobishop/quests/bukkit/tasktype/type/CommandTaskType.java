@@ -51,7 +51,7 @@ public final class CommandTaskType extends BukkitTaskType {
 
             boolean ignoreCase = TaskUtils.getConfigBoolean(task, "ignore-case");
 
-            if (!TaskUtils.matchString(this, pendingTask, "command", "commands", message, false, ignoreCase, player.getUniqueId())) {
+            if (!TaskUtils.matchString(this, pendingTask, message, player.getUniqueId(), "command", "commands", false, ignoreCase)) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }

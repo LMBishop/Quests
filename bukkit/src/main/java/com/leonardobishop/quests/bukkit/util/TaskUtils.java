@@ -267,13 +267,21 @@ public class TaskUtils {
     public record PendingTask(Quest quest, Task task, QuestProgress questProgress, TaskProgress taskProgress) { }
 
     public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable Block block, @NotNull UUID player) {
-        return matchBlock(type, pendingTask, block != null ? block.getState() : null, player);
+        return matchBlock(type, pendingTask, block, player, "block", "blocks");
+    }
+
+    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable Block block, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
+        return matchBlock(type, pendingTask, block != null ? block.getState() : null, player, stringKey, listKey);
     }
 
     public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable BlockState state, @NotNull UUID player) {
+        return matchBlock(type, pendingTask, state, player, "block", "blocks");
+    }
+
+    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable BlockState state, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
         Task task = pendingTask.task;
 
-        List<String> checkBlocks = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("block") ? "block" : "blocks");
+        List<String> checkBlocks = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
         if (checkBlocks == null) {
             return true;
         } else if (checkBlocks.isEmpty()) {
@@ -314,11 +322,15 @@ public class TaskUtils {
     }
 
     public static boolean matchColorable(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Colorable colorable, @NotNull UUID player) {
+        return matchColorable(type, pendingTask, colorable, player, "color", "colors");
+    }
+
+    public static boolean matchColorable(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Colorable colorable, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
         Task task = pendingTask.task;
 
         DyeColor colorableColor = colorable.getColor();
 
-        List<String> checkColors = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("color") ? "color" : "colors");
+        List<String> checkColors = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
         if (checkColors == null) {
             return true;
         } else if (checkColors.isEmpty()) {
@@ -348,9 +360,13 @@ public class TaskUtils {
     }
 
     public static boolean matchEntity(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Entity entity, @NotNull UUID player) {
+        return matchEntity(type, pendingTask, entity, player, "mob", "mobs");
+    }
+
+    public static boolean matchEntity(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Entity entity, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
         Task task = pendingTask.task;
 
-        List<String> checkMobs = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey("mob") ? "mob" : "mobs");
+        List<String> checkMobs = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
         if (checkMobs == null) {
             return true;
         } else if (checkMobs.isEmpty()) {
@@ -377,10 +393,10 @@ public class TaskUtils {
         return false;
     }
 
-    public static boolean matchString(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, final @NotNull String stringKey, final @NotNull String stringListKey, @Nullable String string, boolean legacyColor, boolean ignoreCase, @NotNull UUID player) {
+    public static boolean matchString(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable String string, @NotNull UUID player, final @NotNull String stringKey, final @NotNull String listKey, boolean legacyColor, boolean ignoreCase) {
         Task task = pendingTask.task;
 
-        List<String> checkNames = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : stringListKey);
+        List<String> checkNames = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
         if (checkNames == null) {
             return true;
         } else if (checkNames.isEmpty()) {

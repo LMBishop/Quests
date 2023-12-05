@@ -43,7 +43,7 @@ public final class EcoBossesKillingTaskType extends BukkitTaskType {
 
             super.debug("Player killed EcoBosses mob '" + boss.getDisplayName() + "' (id = " + boss.getID() + ")", quest.getId(), task.getId(), killer.getUniqueId());
 
-            if (!TaskUtils.matchString(this, pendingTask, "id", "ids", boss.getID(), false, false, killer.getUniqueId())) {
+            if (!TaskUtils.matchString(this, pendingTask, boss.getID(), killer.getUniqueId(), "id", "ids", false, false)) {
                 super.debug("Continuing...", quest.getId(), task.getId(), killer.getUniqueId());
                 continue;
             }
