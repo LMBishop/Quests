@@ -80,6 +80,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.PermissionTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.PlayerkillingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.PlaytimeTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.PositionTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.ProjectilelaunchingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.ReplenishingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.ShearingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.SmeltingTaskType;
@@ -406,6 +407,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new PlayerkillingTaskType(this));
             taskTypeManager.registerTaskType(new PlaytimeTaskType(this));
             taskTypeManager.registerTaskType(new PositionTaskType(this));
+            taskTypeManager.registerTaskType(new ProjectilelaunchingTaskType(this));
             taskTypeManager.registerTaskType(new ShearingTaskType(this));
             taskTypeManager.registerTaskType(new SmeltingTaskType(this));
             taskTypeManager.registerTaskType(new TamingTaskType(this));
