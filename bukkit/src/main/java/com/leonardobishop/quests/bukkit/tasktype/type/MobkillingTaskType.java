@@ -91,7 +91,7 @@ public final class MobkillingTaskType extends BukkitTaskType {
                 continue;
             }
 
-            if (!TaskUtils.matchString(this, pendingTask, "name", "names", customName, true, false, player.getUniqueId())) {
+            if (!TaskUtils.matchString(this, pendingTask, customName, player.getUniqueId(), "name", "names", true, false)) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
