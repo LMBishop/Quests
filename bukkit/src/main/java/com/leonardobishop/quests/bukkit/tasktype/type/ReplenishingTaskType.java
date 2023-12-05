@@ -52,7 +52,7 @@ public final class ReplenishingTaskType extends BukkitTaskType {
         final Block block = inventory instanceof final LootableBlockInventory blockInventory ? blockInventory.getBlock() : null;
         final Entity entity = inventory instanceof final LootableEntityInventory entityInventory ? entityInventory.getEntity() : null;
 
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(event.getPlayer(), qPlayer, this, TaskConstraintSet.ALL)) {
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
