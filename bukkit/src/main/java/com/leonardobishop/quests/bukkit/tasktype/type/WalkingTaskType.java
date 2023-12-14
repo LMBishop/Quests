@@ -10,9 +10,9 @@ import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.minecart.RideableMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -53,8 +53,8 @@ public final class WalkingTaskType extends BukkitTaskType {
         }
 
         Player player = event.getPlayer();
-        if (player.isInsideVehicle()) {
-            return;
+        if (player.getVehicle() instanceof RideableMinecart) {
+            return; // minecarts movement is already handled by VehicleMoveEvent
         }
 
         handle(player);
@@ -93,7 +93,7 @@ public final class WalkingTaskType extends BukkitTaskType {
 
             final String mode = (String) task.getConfigValue("mode");
             if (mode != null && !validateMode(player, mode)) {
-                super.debug("Player's mode does not match required mode, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("Player mode does not match required mode, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
 
@@ -116,7 +116,7 @@ public final class WalkingTaskType extends BukkitTaskType {
             case "boat" -> player.getVehicle() instanceof Boat;
             case "horse" -> plugin.getVersionSpecificHandler().isPlayerOnHorse(player);
             case "pig" -> player.getVehicle() instanceof Pig;
-            case "minecart" -> player.getVehicle() instanceof Minecart;
+            case "minecart" -> player.getVehicle() instanceof RideableMinecart;
             case "strider" -> plugin.getVersionSpecificHandler().isPlayerOnStrider(player);
             case "sneaking" -> // sprinting does not matter
                     player.isSneaking() && !player.isSwimming() && !player.isFlying()
