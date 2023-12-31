@@ -92,6 +92,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BentoBoxLevelTas
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensDeliverTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensInteractTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EcoBossesKillingTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EcoMobsKillingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsBalanceTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsMoneyEarnTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FabledSkyBlockLevelTaskType;
@@ -426,6 +427,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new CitizensDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));
             taskTypeManager.registerTaskType(() -> new CitizensInteractTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));
             taskTypeManager.registerTaskType(() -> new EcoBossesKillingTaskType(this), () -> CompatUtils.isPluginEnabled("EcoBosses"));
+            taskTypeManager.registerTaskType(() -> new EcoMobsKillingTaskType(this), () -> CompatUtils.isPluginEnabled("EcoMobs"));
             taskTypeManager.registerTaskType(() -> new EssentialsBalanceTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
             taskTypeManager.registerTaskType(() -> new EssentialsMoneyEarnTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
             taskTypeManager.registerTaskType(() -> new FabledSkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("FabledSkyBlock")); // not tested

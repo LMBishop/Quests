@@ -8,19 +8,19 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import com.willfp.ecobosses.bosses.EcoBoss;
-import com.willfp.ecobosses.bosses.LivingEcoBoss;
-import com.willfp.ecobosses.events.BossKillEvent;
+import com.willfp.ecomobs.event.EcoMobKillEvent;
+import com.willfp.ecomobs.mob.EcoMob;
+import com.willfp.ecomobs.mob.LivingMob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
-public final class EcoBossesKillingTaskType extends BukkitTaskType {
+public final class EcoMobsKillingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
-    public EcoBossesKillingTaskType(BukkitQuestsPlugin plugin) {
-        super("ecobosses_killing", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of an EcoBosses entity.");
+    public EcoMobsKillingTaskType(BukkitQuestsPlugin plugin) {
+        super("ecomobs_killing", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of an EcoMobs entity.");
         this.plugin = plugin;
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "id", "ids"));
@@ -29,9 +29,9 @@ public final class EcoBossesKillingTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onBossKill(BossKillEvent event) {
-        Player player = event.getKiller();
-        if (player == null || player.hasMetadata("NPC")) {
+    public void onEcoMobKill(EcoMobKillEvent event) {
+        Player player = event.getPlayer();
+        if (player.hasMetadata("NPC")) {
             return;
         }
 
@@ -40,17 +40,17 @@ public final class EcoBossesKillingTaskType extends BukkitTaskType {
             return;
         }
 
-        LivingEcoBoss boss = event.getBoss();
-        EcoBoss ecoBoss = boss.getBoss();
+        LivingMob mob = event.getMob();
+        EcoMob ecoMob = mob.getMob();
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player killed EcoBosses boss '" + ecoBoss.getDisplayName() + "' (id = " + ecoBoss.getID() + ")", quest.getId(), task.getId(), player.getUniqueId());
+            super.debug("Player killed EcoMobs mob '" + mob.getDisplayName() + "' (id = " + mob.getMob().getID() + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (!TaskUtils.matchString(this, pendingTask, ecoBoss.getID(), player.getUniqueId(), "id", "ids", false, false)) {
+            if (!TaskUtils.matchString(this, pendingTask, ecoMob.getID(), player.getUniqueId(), "id", "ids", false, false)) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
