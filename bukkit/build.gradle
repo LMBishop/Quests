@@ -26,7 +26,7 @@ repositories {
     maven { url = 'https://repo.essentialsx.net/releases/' }
     // MMOItems, MythicLib
     maven { url = 'https://nexus.phoenixdevt.fr/repository/maven-public/' }
-    // MythicMobs 4, FabledSkyblock
+    // MythicMobs 4, FabledSkyBlock
     maven { url = 'https://repo.songoda.com/repository/public/' }
     // MythicMobs 5
     maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
@@ -40,8 +40,8 @@ repositories {
     maven { url = 'https://repo.rosewooddev.io/repository/public/' }
     // SuperiorSkyblock2
     maven { url = 'https://repo.bg-software.com/repository/api/' }
-    // uSkyBlock
-    maven { url = 'https://www.uskyblock.ovh/maven/uskyblock/' }
+    // uSkyBlock TODO fix whenever repo is up
+    //maven { url = 'https://raw.githubusercontent.com/uskyblock/uskyblock-repo/master/' }
     // VotingPlugin
     maven { url = 'https://nexus.bencodez.com/repository/maven-public/' }
 
@@ -75,7 +75,7 @@ dependencies {
     compileOnly 'com.willfp:libreforge:4.21.1'
     // EssentialsX
     compileOnly('net.essentialsx:EssentialsX:2.19.7') { transitive = false }
-    // FabledSkyblock
+    // FabledSkyBlock
     compileOnly 'com.songoda:skyblock:2.3.30'
     // IridiumSkyblock TODO fix whenever repo is up
     //compileOnly 'com.github.Iridium-Development:IridiumSkyblock:master-SNAPSHOT'
@@ -107,12 +107,12 @@ dependencies {
     compileOnly 'com.github.Slimefun:Slimefun4:RC-32'
     // SuperiorSkyblock2
     compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:2022.9'
-    // uSkyBlock
-    compileOnly('com.github.rlf:uSkyBlock-API:2.8.3') { transitive = false }
+    // uSkyBlock TODO fix whenever repo is up
+    //compileOnly('ovh.uskyblock:uSkyBlock-API:2.8.9') { transitive = false }
     // VotingPlugin
-    compileOnly('com.bencodez:votingplugin:6.9.5') { transitive = false }
+    compileOnly('com.bencodez:votingplugin:6.15') { transitive = false }
 
-    // IridiumSkyblock
+    // IridiumSkyblock, uSkyBlock
     compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
 
     // bStats

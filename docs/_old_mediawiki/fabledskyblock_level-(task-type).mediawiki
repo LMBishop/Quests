@@ -1,6 +1,6 @@
-: ''Requires the FabledSkyblock plugin to activate.''
+: ''Requires the FabledSkyBlock plugin to activate.''
 
-Reach a certain FabledSkyblock level.
+Reach a certain FabledSkyBlock level.
 
 == Options ==
 {|

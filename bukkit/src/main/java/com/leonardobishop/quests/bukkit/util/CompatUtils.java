@@ -36,4 +36,14 @@ public class CompatUtils {
         Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
         return plugin != null ? plugin.getDescription().getVersion() : null;
     }
+
+    public static Class<?> getFirstClassAvailable(String... classNames) {
+        for (String className : classNames) {
+            try {
+                return Class.forName(className);
+            } catch (ClassNotFoundException ignored) {
+            }
+        }
+        return null;
+    }
 }
