@@ -9,10 +9,10 @@ grand_parent: Task types
 Since v3.5
 {: .label .label-green }
 
-Plugin 'FabledSkyblock' required
+Plugin 'FabledSkyBlock' required
 {: .label }
 
-Reach a certain FabledSkyblock level.
+Reach a certain FabledSkyBlock level.
 
 ## Options
 

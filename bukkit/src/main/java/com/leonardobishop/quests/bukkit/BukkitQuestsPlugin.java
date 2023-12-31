@@ -94,7 +94,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensInteract
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EcoBossesKillingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsBalanceTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsMoneyEarnTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FabledSkyblockLevelTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FabledSkyBlockLevelTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.IridiumSkyblockValueTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.MythicMobsKillingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.NuVotifierVoteTaskType;
@@ -428,7 +428,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new EcoBossesKillingTaskType(this), () -> CompatUtils.isPluginEnabled("EcoBosses"));
             taskTypeManager.registerTaskType(() -> new EssentialsBalanceTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
             taskTypeManager.registerTaskType(() -> new EssentialsMoneyEarnTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
-            taskTypeManager.registerTaskType(() -> new FabledSkyblockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("FabledSkyblock")); // not tested
+            taskTypeManager.registerTaskType(() -> new FabledSkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("FabledSkyBlock")); // not tested
             taskTypeManager.registerTaskType(() -> new PlaceholderAPIEvaluateTaskType(this), () -> CompatUtils.isPluginEnabled("PlaceholderAPI"));
             taskTypeManager.registerTaskType(() -> new PlayerPointsEarnTaskType(this), () -> CompatUtils.isPluginEnabled("PlayerPoints"));
             taskTypeManager.registerTaskType(() -> new PyroFishingProFishingTaskType(this), () -> CompatUtils.isPluginEnabled("PyroFishingPro") && CompatUtils.classExists("me.arsmagica.API.PyroFishCatchEvent"));
