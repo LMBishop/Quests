@@ -102,8 +102,8 @@ public enum ConfigProblemDescriptions {
                     "<dark_grey>-></dark_grey><bold>task-id</bold>:<br>" +
                     "<dark_grey>---></dark_grey>type: ...'"
     ),
-    UNKNOWN_CATEGORY("Category '%s' does not exist",
-            "Category by the ID '%s' does not exist."
+    UNKNOWN_CATEGORY("Category '%s' does not exist (I only know: %s)",
+            "Category by the ID '%s' does not exist. The only known ones are: %s"
     ),
     UNKNOWN_REQUIREMENT("Quest requirement '%s' does not exist",
                     "This may be the result of a cascading error<br>" +

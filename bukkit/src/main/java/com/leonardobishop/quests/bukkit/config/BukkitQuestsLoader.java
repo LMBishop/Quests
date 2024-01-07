@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class BukkitQuestsLoader implements QuestsLoader {
 
@@ -319,9 +320,10 @@ public class BukkitQuestsLoader implements QuestsLoader {
                             if (c != null) {
                                 c.registerQuestId(id);
                             } else {
+                                String all_categories = questManager.getCategories().stream().map(Category::getId).collect(Collectors.joining(", "));
                                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                        ConfigProblemDescriptions.UNKNOWN_CATEGORY.getDescription(category),
-                                        ConfigProblemDescriptions.UNKNOWN_CATEGORY.getExtendedDescription(category),
+                                        ConfigProblemDescriptions.UNKNOWN_CATEGORY.getDescription(category, all_categories),
+                                        ConfigProblemDescriptions.UNKNOWN_CATEGORY.getExtendedDescription(category, all_categories),
                                         "options.category"));
                             }
                         }
