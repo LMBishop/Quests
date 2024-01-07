@@ -138,35 +138,44 @@ public class CommandUtils {
     }
 
     public static void useOtherPlayer(CommandSender sender, String name, BukkitQuestsPlugin plugin, Consumer<QPlayer> callback) {
-        OfflinePlayer ofp = Bukkit.getOfflinePlayer(name);
-        UUID uuid;
-        String username;
-        if (ofp.getName() != null) {
-            uuid = ofp.getUniqueId();
-            username = ofp.getName();
-        } else {
-            Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.send(sender, "{player}", name);
-            return;
+        OfflinePlayer[] playerList;
+        if (name.equals("all")) {
+            playerList = Bukkit.getOfflinePlayers();
+        }
+        else {
+            playerList = new OfflinePlayer[]{Bukkit.getOfflinePlayer(name)};
         }
 
-        {
-            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
-            if (qPlayer != null) {
-                callback.accept(qPlayer);
+        for (OfflinePlayer ofp : playerList) {
+            UUID uuid;
+            String username;
+            if (ofp.getName() != null) {
+                uuid = ofp.getUniqueId();
+                username = ofp.getName();
+            } else {
+                Messages.COMMAND_QUEST_ADMIN_PLAYERNOTFOUND.send(sender, "{player}", name);
                 return;
             }
-        }
 
-        if (plugin.getPlayerManager().getPlayer(uuid) == null) {
-            Messages.COMMAND_QUEST_ADMIN_LOADDATA.send(sender, "{player}", username);
-            plugin.getPlayerManager().loadPlayer(uuid).thenAccept((qPlayer -> {
-                if (qPlayer == null) {
-                    Messages.COMMAND_QUEST_ADMIN_NODATA.send(sender, "{player}", username);
+            {
+                QPlayer qPlayer = plugin.getPlayerManager().getPlayer(uuid);
+                if (qPlayer != null) {
+                    callback.accept(qPlayer);
                     return;
                 }
+            }
 
-                plugin.getScheduler().doSync(() -> callback.accept(qPlayer));
-            }));
+            if (plugin.getPlayerManager().getPlayer(uuid) == null) {
+                Messages.COMMAND_QUEST_ADMIN_LOADDATA.send(sender, "{player}", username);
+                plugin.getPlayerManager().loadPlayer(uuid).thenAccept((qPlayer -> {
+                    if (qPlayer == null) {
+                        Messages.COMMAND_QUEST_ADMIN_NODATA.send(sender, "{player}", username);
+                        return;
+                    }
+
+                    plugin.getScheduler().doSync(() -> callback.accept(qPlayer));
+                }));
+            }
         }
     }
 
