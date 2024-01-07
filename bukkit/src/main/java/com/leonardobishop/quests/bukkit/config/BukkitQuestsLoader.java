@@ -330,6 +330,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                             String taskRoot = "tasks." + taskId;
                             String taskType = config.getString(taskRoot + ".type");
                             String resolvedTaskTypeName = taskTypeManager.resolveTaskTypeName(taskType);
+                            if (resolvedTaskTypeName == null) continue;
 
                             Task task = new Task(taskId, resolvedTaskTypeName);
 
