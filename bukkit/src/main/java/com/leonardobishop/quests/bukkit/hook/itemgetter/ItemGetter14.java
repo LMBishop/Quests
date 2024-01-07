@@ -1,8 +1,11 @@
 package com.leonardobishop.quests.bukkit.hook.itemgetter;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.util.NamespacedKeyUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.ConfigurationSection;
@@ -21,7 +24,7 @@ import java.util.UUID;
 /**
  * Reads the following:
  * <ul>
- *     <li>type (<b>without</b> data support, <b>without</b> namespace support)</li>
+ *     <li>type (<b>without</b> data support, <b>with</b> namespace support)</li>
  *     <li>name</li>
  *     <li>lore</li>
  *     <li>enchantments (<b>without</b> namespace support)</li>
@@ -224,15 +227,34 @@ public class ItemGetter14 extends ItemGetter {
         }
 
         Material type = Material.getMaterial(typeString);
-        if (type == null) {
+        if (type != null) {
+            return new ItemStack(type, 1);
+        }
+
+        NamespacedKey typeKey = NamespacedKeyUtils.fromString(typeString);
+        if (typeKey == null) {
             return invalidItemStack;
         }
 
-        return new ItemStack(type, 1);
+        type = Registry.MATERIAL.get(typeKey);
+        if (type != null) {
+            return new ItemStack(type, 1);
+        }
+
+        return invalidItemStack;
     }
 
     @Override
     public boolean isValidMaterial(String typeString) {
-        return Material.getMaterial(typeString) != null;
+        if (Material.getMaterial(typeString) != null) {
+            return true;
+        }
+
+        NamespacedKey typeKey = NamespacedKeyUtils.fromString(typeString);
+        if (typeKey == null) {
+            return false;
+        }
+
+        return Registry.MATERIAL.get(typeKey) != null;
     }
 }
