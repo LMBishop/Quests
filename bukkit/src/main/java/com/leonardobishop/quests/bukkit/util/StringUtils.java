@@ -14,7 +14,15 @@ public class StringUtils {
             return false;
         }
 
-        return cs.chars().allMatch(c -> Character.isLetterOrDigit(c) || c == '_' || c == '-');
+        final int sz = cs.length();
+        for (int i = 0; i < sz; i++) {
+            final char c = cs.charAt(i);
+            if (!(Character.isLetterOrDigit(c) || c == '_' || c == '-')) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static boolean isNumeric(final CharSequence cs) {
