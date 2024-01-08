@@ -38,6 +38,8 @@ import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHand
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler20;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler8;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler9;
+import com.leonardobishop.quests.bukkit.hook.wildstacker.AbstractWildStackerHook;
+import com.leonardobishop.quests.bukkit.hook.wildstacker.WildStackerHook;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItemRegistry;
@@ -177,6 +179,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private AbstractCoreProtectHook coreProtectHook;
     private AbstractEssentialsHook essentialsHook;
     private AbstractPlayerBlockTrackerHook playerBlockTrackerHook;
+    private AbstractWildStackerHook wildStackerHook;
     private ItemGetter itemGetter;
     private SkullGetter skullGetter;
     private QuestsTitle titleHandle;
@@ -384,6 +387,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 Method isTrackedMethod = pluginClazz.getMethod("isTracked", Block.class);
                 this.playerBlockTrackerHook = new PlayerBlockTrackerHook(pluginClazz, isTrackedMethod);
             } catch (ClassCastException | ClassNotFoundException | NoSuchMethodException ignored) {
+            }
+
+            if (CompatUtils.isPluginEnabled("WildStacker")) {
+                this.wildStackerHook = new WildStackerHook();
             }
 
             // Register task types without compatibility requirement
@@ -753,6 +760,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     public @Nullable AbstractPlayerBlockTrackerHook getPlayerBlockTrackerHook() {
         return playerBlockTrackerHook;
+    }
+
+    public @Nullable AbstractWildStackerHook getWildStackerHook() {
+        return wildStackerHook;
     }
 
     public ItemGetter getItemGetter() {

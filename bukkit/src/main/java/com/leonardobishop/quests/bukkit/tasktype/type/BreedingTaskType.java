@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.bukkit.tasktype.type;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.hook.wildstacker.AbstractWildStackerHook;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
@@ -81,7 +82,7 @@ public final class BreedingTaskType extends BukkitTaskType {
         }
     }
 
-    private void handle(Player player, Entity entity) {
+    private void handle(Player player, LivingEntity entity) {
         if (player.hasMetadata("NPC")) {
             return;
         }
@@ -90,6 +91,9 @@ public final class BreedingTaskType extends BukkitTaskType {
         if (qPlayer == null) {
             return;
         }
+
+        AbstractWildStackerHook wildStackerHook = this.plugin.getWildStackerHook();
+        int eventAmount = (wildStackerHook != null) ? wildStackerHook.getEntityAmount(entity) : 1;
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
@@ -103,7 +107,7 @@ public final class BreedingTaskType extends BukkitTaskType {
                 continue;
             }
 
-            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress, eventAmount);
             super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
             int amount = (int) task.getConfigValue("amount");
