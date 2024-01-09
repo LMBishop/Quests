@@ -320,10 +320,10 @@ public class BukkitQuestsLoader implements QuestsLoader {
                             if (c != null) {
                                 c.registerQuestId(id);
                             } else {
-                                String all_categories = questManager.getCategories().stream().map(Category::getId).collect(Collectors.joining(", "));
+                                String allCategories = questManager.getCategories().stream().map(Category::getId).collect(Collectors.joining(", "));
                                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                        ConfigProblemDescriptions.UNKNOWN_CATEGORY.getDescription(category, all_categories),
-                                        ConfigProblemDescriptions.UNKNOWN_CATEGORY.getExtendedDescription(category, all_categories),
+                                        ConfigProblemDescriptions.UNKNOWN_CATEGORY.getDescription(category, allCategories),
+                                        ConfigProblemDescriptions.UNKNOWN_CATEGORY.getExtendedDescription(category, allCategories),
                                         "options.category"));
                             }
                         }
