@@ -55,6 +55,11 @@ public class CancelQMenu extends QMenu {
     @Override
     public Inventory draw() {
         String title = Chat.legacyColor(config.getString("options.guinames.quest-cancel"));
+
+        if (config.getBoolean("options.gui-use-placeholderapi")) {
+            title = plugin.getPlaceholderAPIProcessor().apply(Bukkit.getPlayer(owner.getPlayerUUID()), title);
+        }
+
         Inventory inventory = Bukkit.createInventory(null, 27, title);
 
         for (int pointer = 0; pointer < 27; pointer++) {

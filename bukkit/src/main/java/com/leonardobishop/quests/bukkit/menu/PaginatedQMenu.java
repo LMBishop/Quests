@@ -23,9 +23,9 @@ import java.util.List;
 
 public abstract class PaginatedQMenu extends QMenu {
 
-    protected final String title;
     protected final boolean trim;
     private final BukkitQuestsPlugin plugin;
+    protected String title;
     protected int currentPage;
     protected int pageSize;
     protected int minPage;
@@ -33,13 +33,21 @@ public abstract class PaginatedQMenu extends QMenu {
 
     public PaginatedQMenu(QPlayer owner, String title, boolean trim, int pageSize, BukkitQuestsPlugin plugin) {
         super(owner);
-        this.title = title;
         this.trim = trim;
         this.plugin = plugin;
+        this.title = title;
         this.pageSize = pageSize;
         this.currentPage = 1;
         this.minPage = 1;
         this.maxPage = 1;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public int getCurrentPage() {
@@ -181,6 +189,13 @@ public abstract class PaginatedQMenu extends QMenu {
     public Inventory draw() {
         int pageMin = pageSize * (currentPage - 1);
         int pageMax = pageSize * currentPage;
+
+        BukkitQuestsConfig config = (BukkitQuestsConfig) plugin.getQuestsConfig();
+
+        if (config.getBoolean("options.gui-use-placeholderapi")) {
+            Player player = Bukkit.getPlayer(owner.getPlayerUUID());
+            title = plugin.getPlaceholderAPIProcessor().apply(player, title);
+        }
 
         Inventory inventory = Bukkit.createInventory(null, 54, title);
 
