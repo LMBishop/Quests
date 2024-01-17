@@ -124,12 +124,10 @@ public abstract class PaginatedQMenu extends QMenu {
             PageNextMenuElement pageNextMenuElement = new PageNextMenuElement(config, this);
             PagePrevMenuElement pagePrevMenuElement = new PagePrevMenuElement(config, this);
             PageDescMenuElement pageDescMenuElement = new PageDescMenuElement(config, this);
-            // add manually spacer then let people change item
-            staticMenuElements[46] = spacer;
-            staticMenuElements[47] = spacer;
-            staticMenuElements[51] = spacer;
-            staticMenuElements[52] = spacer;
-            staticMenuElements[53] = spacer;
+
+            // manually add spacers to the bottom row, then let people change items
+            for (int i = 45; i < 54; staticMenuElements[i++] = spacer);
+
             if(backMenuElement != null && backMenuElement.isEnabled())
                 staticMenuElements[backMenuElement.getSlot()] = backMenuElement == null ? spacer : backMenuElement;
             if(pagePrevMenuElement.isEnabled())
