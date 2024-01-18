@@ -17,7 +17,7 @@ public class StartedQMenu extends PaginatedQMenu {
 
     public StartedQMenu(BukkitQuestsPlugin plugin, QPlayer owner, List<Quest> quests) {
         super(owner, Chat.legacyColor(plugin.getQuestsConfig().getString("options.guinames.quests-started-menu")),
-                plugin.getQuestsConfig().getBoolean("options.trim-gui-size"), 54, plugin);
+                plugin.getQuestsConfig().getBoolean("options.trim-gui-size.quests-started-menu"), 54, plugin);
 
         List<MenuElement> elements = new ArrayList<>();
 
