@@ -33,7 +33,10 @@ options:
   # If categories are disabled, quests will be put into one big gui.
   categories-enabled: true
   # If true, the gui size will automatically change based on the amount of quests inside it.
-  trim-gui-size: true
+  trim-gui-size:
+    quests-category-menu: true
+    quests-menu: true
+    quests-started-menu: true
   # Enable/disable titles
   titles-enabled: true
   # Enable/disable BossBars

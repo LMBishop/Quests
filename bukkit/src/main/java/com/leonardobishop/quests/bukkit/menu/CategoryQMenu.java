@@ -21,7 +21,7 @@ public class CategoryQMenu extends PaginatedQMenu {
 
     public CategoryQMenu(BukkitQuestsPlugin plugin, QPlayer owner) {
         super(owner, Chat.legacyColor(plugin.getQuestsConfig().getString("options.guinames.quests-category")),
-                plugin.getQuestsConfig().getBoolean("options.trim-gui-size"), 54, plugin);
+                plugin.getQuestsConfig().getBoolean("options.trim-gui-size.quests-category-menu"), 54, plugin);
 
         BukkitQuestsConfig config = (BukkitQuestsConfig) plugin.getQuestsConfig();
 

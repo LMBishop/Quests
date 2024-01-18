@@ -54,7 +54,10 @@ of rows) so that there are not any empty rows.
 ``` yaml
 options:
   # ...
-  trim-gui-size: true
+  trim-gui-size:
+    quests-category-menu: true
+    quests-menu: true
+    quests-started-menu: true
 ```
 
 ## Titles enabled
