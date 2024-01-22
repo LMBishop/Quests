@@ -538,6 +538,33 @@ public class TaskUtils {
 
     /**
      * Returns a config validator which checks if at least one value in the given
+     * paths is a long.
+     *
+     * @param paths a list of valid paths for task
+     * @return config validator
+     */
+    public static TaskType.ConfigValidator useLongConfigValidator(TaskType type, String... paths) {
+        return (config, problems) -> {
+            for (String path : paths) {
+                Object object = config.get(path);
+
+                if (object == null) {
+                    continue;
+                }
+
+                try {
+                    Long l = (Long) object;
+                } catch (ClassCastException ex) {
+                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                            "Expected a long for '" + path + "', but got '" + object + "' instead", null, path));
+                }
+                break;
+            }
+        };
+    }
+
+    /**
+     * Returns a config validator which checks if at least one value in the given
      * paths is an integer.
      *
      * @param paths a list of valid paths for task

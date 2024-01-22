@@ -5,6 +5,7 @@ import com.leonardobishop.quests.bukkit.scheduler.WrappedRunnable;
 import com.leonardobishop.quests.bukkit.scheduler.WrappedTask;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
@@ -15,10 +16,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.WeakHashMap;
+import java.util.concurrent.CompletableFuture;
 
 public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
+    private final WeakHashMap<Task, Integer> refreshTicksMap = new WeakHashMap<>();
     private WrappedTask poll;
 
     public PlaceholderAPIEvaluateTaskType(BukkitQuestsPlugin plugin) {
@@ -48,95 +52,135 @@ public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
                 }
             }
         });
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "refresh-ticks"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "async"));
     }
 
     @Override
     public void onReady() {
+        int refreshTicks = plugin.getConfig().getInt("options.placeholderapi-global-refresh-ticks", 30);
         this.poll = new WrappedRunnable() {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
-                    if (qPlayer == null) {
-                        continue;
-                    }
-
-                    for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, PlaceholderAPIEvaluateTaskType.this)) {
-                        Quest quest = pendingTask.quest();
-                        Task task = pendingTask.task();
-                        TaskProgress taskProgress = pendingTask.taskProgress();
-
-                        PlaceholderAPIEvaluateTaskType.super.debug("Polling PAPI for player", quest.getId(), task.getId(), player.getUniqueId());
-
-                        String placeholder = (String) task.getConfigValue("placeholder");
-                        String evaluates = String.valueOf(task.getConfigValue("evaluates"));
-                        String configOperator = (String) task.getConfigValue("operator");
-                        Operator operator = null;
-                        if (configOperator != null) {
-                            try {
-                                operator = Operator.valueOf(configOperator);
-                            } catch (IllegalArgumentException ignored) { }
-                        }
-                        if (placeholder != null && evaluates != null) {
-                            double numericEvaluates = 0;
-                            if (operator != null) {
-                                try {
-                                    numericEvaluates = Double.parseDouble(evaluates);
-                                } catch (NumberFormatException ex) {
-                                    PlaceholderAPIEvaluateTaskType.super.debug("Numeric operator was specified but configured string to evaluate to cannot be parsed into a double, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                                    continue;
-                                }
-                            }
-
-
-                            String evaluated = PlaceholderAPI.setPlaceholders(player, placeholder);
-                            PlaceholderAPIEvaluateTaskType.super.debug("Evaluation = '" + evaluated + "'", quest.getId(), task.getId(), player.getUniqueId());
-                            if (operator == null && evaluated.equals(evaluates)) {
-                                PlaceholderAPIEvaluateTaskType.super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                                taskProgress.setCompleted(true);
-                            } else if (operator != null) {
-                                double numericEvaluated;
-                                try {
-                                    numericEvaluated = Double.parseDouble(evaluated);
-                                } catch (NumberFormatException ex) {
-                                    PlaceholderAPIEvaluateTaskType.super.debug("Numeric operator was specified but evaluated string cannot be parsed into a double, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                                    continue;
-                                }
-                                PlaceholderAPIEvaluateTaskType.super.debug("Operator = " + operator, quest.getId(), task.getId(), player.getUniqueId());
-                                taskProgress.setProgress(numericEvaluated);
-                                switch (operator) {
-                                    case GREATER_THAN -> {
-                                        if (numericEvaluated > numericEvaluates) {
-                                            PlaceholderAPIEvaluateTaskType.super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                                            taskProgress.setCompleted(true);
-                                        }
-                                    }
-                                    case LESS_THAN -> {
-                                        if (numericEvaluated < numericEvaluates) {
-                                            PlaceholderAPIEvaluateTaskType.super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                                            taskProgress.setCompleted(true);
-                                        }
-                                    }
-                                    case GREATER_THAN_OR_EQUAL_TO -> {
-                                        if (numericEvaluated >= numericEvaluates) {
-                                            PlaceholderAPIEvaluateTaskType.super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                                            taskProgress.setCompleted(true);
-                                        }
-                                    }
-                                    case LESS_THAN_OR_EQUAL_TO -> {
-                                        if (numericEvaluated <= numericEvaluates) {
-                                            PlaceholderAPIEvaluateTaskType.super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                                            taskProgress.setCompleted(true);
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                    }
+                    handle(player);
                 }
             }
-        }.runTaskTimer(plugin.getScheduler(), 30L, 30L);
+        }.runTaskTimer(plugin.getScheduler(), refreshTicks, refreshTicks);
+    }
+
+    private void handle(Player player) {
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
+
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+        if (qPlayer == null) {
+            return;
+        }
+
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
+
+            super.debug("Polling PAPI for player", quest.getId(), task.getId(), player.getUniqueId());
+
+            Integer refreshTicks = (Integer) task.getConfigValue("refresh-ticks");
+            if (refreshTicks != null) {
+                int currentTick = Bukkit.getCurrentTick();
+                Integer lastRefreshTicks = refreshTicksMap.get(task);
+
+                if (lastRefreshTicks != null) {
+                    int ticksSinceLastRefresh = currentTick - lastRefreshTicks;
+
+                    if (ticksSinceLastRefresh < refreshTicks) {
+                        super.debug("Ticks since last refresh are lower than specified, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                        continue;
+                    }
+                }
+
+                refreshTicksMap.put(task, currentTick);
+            }
+
+            String placeholder = (String) task.getConfigValue("placeholder");
+            if (placeholder == null) {
+                continue;
+            }
+
+            String evaluatesString = String.valueOf(task.getConfigValue("evaluates"));
+            if (evaluatesString == null) {
+                continue;
+            }
+
+            String operatorString = (String) task.getConfigValue("operator");
+            Operator operator;
+            if (operatorString != null) {
+                try {
+                    operator = Operator.valueOf(operatorString);
+                } catch (IllegalArgumentException ignored) {
+                    super.debug("Numeric operator was specified but cannot be parsed, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+            } else {
+                operator = null;
+            }
+
+            super.debug("Operator = " + operator, quest.getId(), task.getId(), player.getUniqueId());
+
+            boolean async = TaskUtils.getConfigBoolean(task, "async", false);
+            CompletableFuture<String> future = evaluate(player, placeholder, async);
+
+            future.thenAccept(evaluatedString -> {
+                super.debug("Evaluation = '" + evaluatedString + "'", quest.getId(), task.getId(), player.getUniqueId());
+
+                if (operator != null) {
+                    double evaluates;
+                    try {
+                        evaluates = Double.parseDouble(evaluatesString);
+                    } catch (NumberFormatException ignored) {
+                        super.debug("Numeric operator was specified but configured string to evaluate to cannot be parsed into a double, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                        return;
+                    }
+
+                    double evaluated;
+                    try {
+                        evaluated = Double.parseDouble(evaluatedString);
+                    } catch (NumberFormatException ignored) {
+                        super.debug("Numeric operator was specified but evaluated string to cannot be parsed into a double, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                        return;
+                    }
+
+                    taskProgress.setProgress(evaluated);
+
+                    if (operator.compare(evaluated, evaluates)) {
+                        super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                        taskProgress.setCompleted(true);
+                    }
+
+                    TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, evaluates);
+                } else if (evaluatedString.equals(evaluatesString)) {
+                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                    taskProgress.setCompleted(true);
+                }
+            });
+        }
+    }
+
+    private CompletableFuture<String> evaluate(Player player, String placeholder, boolean async) {
+        if (!async) {
+            String evaluated = PlaceholderAPI.setPlaceholders(player, placeholder);
+            return CompletableFuture.completedFuture(evaluated);
+        }
+
+        CompletableFuture<String> future = new CompletableFuture<>();
+
+        plugin.getScheduler().runTaskAsynchronously(() -> {
+            String evaluated = PlaceholderAPI.setPlaceholders(player, placeholder);
+            plugin.getScheduler().runTaskAtEntity(player, () -> future.complete(evaluated));
+        });
+
+        return future;
     }
 
     @Override
@@ -146,10 +190,32 @@ public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
         }
     }
 
-    enum Operator {
-        GREATER_THAN,
-        LESS_THAN,
-        GREATER_THAN_OR_EQUAL_TO,
-        LESS_THAN_OR_EQUAL_TO;
+    private enum Operator {
+        GREATER_THAN {
+            @Override
+            public boolean compare(double evaluated, double evaluates) {
+                return evaluated > evaluates;
+            }
+        },
+        LESS_THAN {
+            @Override
+            public boolean compare(double evaluated, double evaluates) {
+                return evaluated < evaluates;
+            }
+        },
+        GREATER_THAN_OR_EQUAL_TO {
+            @Override
+            public boolean compare(double evaluated, double evaluates) {
+                return evaluated >= evaluates;
+            }
+        },
+        LESS_THAN_OR_EQUAL_TO {
+            @Override
+            public boolean compare(double evaluated, double evaluates) {
+                return evaluated <= evaluates;
+            }
+        };
+
+        public abstract boolean compare(double evaluated, double evaluates);
     }
 }
