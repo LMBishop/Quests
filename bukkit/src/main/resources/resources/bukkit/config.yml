@@ -121,6 +121,9 @@ options:
   use-progress-as-fallback: true
   # PlayerBlockTracker class to be used with the hook
   playerblocktracker-class-name: "com.gestankbratwurst.playerblocktracker.PlayerBlockTracker"
+  # How frequently placeholderapi_evaluate task placeholders will be refreshed (def=30 - 1.5s)
+  # (multiply SECONDS by 20 to get the number of ticks)
+  placeholderapi-global-refresh-ticks: 30
   # Verify quests exist when a player's data is loaded - inconsistencies may arise when
   # players progress on specific quests and those quests are later removed. The problem is that their progress
   # is still kept in the quest progress file, which may lead to issues such as players reaching a quest started
