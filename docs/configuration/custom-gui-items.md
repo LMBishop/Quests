@@ -5,8 +5,8 @@ nav_order: 7
 ---
 # Custom GUI items
 
-**Custom GUI items** are dummy items added to the category menu and the
-quest menu. This can be used to help stylise your quests GUI.
+**Custom GUI items** are dummy items added to category, quest and
+started menus. This can be used to help stylise your quests GUI.
 
 This can be done in the `config.yml`:
 
@@ -64,5 +64,14 @@ custom-elements:
   "c:<category-name>": # apply to <category-name> menu
     # ...
   "quests": # apply to whole quests menu if categories are disabled
+    # ...
+```
+
+Additionally, you can add custom items to the started quests menu by
+specifying it with "started":
+
+``` yaml
+custom-elements:
+  "started": # apply to the started quests menu
     # ...
 ```

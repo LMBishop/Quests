@@ -28,7 +28,7 @@ public class StartedQMenu extends PaginatedQMenu {
             elements.add(new QuestMenuElement(plugin, quest, this));
         }
 
-        super.populate(null, elements, null);
+        super.populate("custom-elements.started", elements, null);
     }
 
 }
