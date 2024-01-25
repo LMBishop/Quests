@@ -368,6 +368,14 @@ gui:
 #          - "&7This is a custom item which can be added"
 #          - "&7to your menus. This is purely cosmetic."
 #        type: "EMERALD_BLOCK"
+#  "started": # apply to the started quests menu
+#    0:
+#      display:
+#        name: "&cExample Custom Item (slot 1)"
+#        lore:
+#          - "&7This is a custom item which can be added"
+#          - "&7to your menus. This is purely cosmetic."
+#        type: "EMERALD_BLOCK"
 
 
 # -----------------------------------------------------------
