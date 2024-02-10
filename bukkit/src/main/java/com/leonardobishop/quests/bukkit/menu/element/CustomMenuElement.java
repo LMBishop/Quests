@@ -14,6 +14,7 @@ import java.util.UUID;
 
 public class CustomMenuElement extends MenuElement{
 
+    private final BukkitQuestsPlugin plugin;
     private final ItemStack itemStack;
     private final List<String> commands;
     private final String playerName;
@@ -23,6 +24,7 @@ public class CustomMenuElement extends MenuElement{
     }
 
     public CustomMenuElement(BukkitQuestsPlugin plugin, UUID owner, String name, ItemStack itemStack, List<String> commands) {
+        this.plugin = plugin;
         this.itemStack = MenuUtils.applyPlaceholders(plugin, owner, itemStack);
         this.commands = commands;
         this.playerName = name;
@@ -35,10 +37,17 @@ public class CustomMenuElement extends MenuElement{
 
     @Override
     public ClickResult handleClick(ClickType clickType) {
-        for (String command : commands) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                    command.replace("{player}", playerName));
+        if (commands.isEmpty()) {
+            return ClickResult.DO_NOTHING;
         }
+
+        this.plugin.getScheduler().runTask(() -> {
+            for (String command : commands) {
+                command = command.replace("{player}", playerName);
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            }
+        });
+
         return ClickResult.DO_NOTHING;
     }
 
