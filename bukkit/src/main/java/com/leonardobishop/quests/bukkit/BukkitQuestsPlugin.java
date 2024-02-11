@@ -109,6 +109,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ShopGUIPlusSellT
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.SuperiorSkyblockLevelType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.SuperiorSkyblockWorthType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.VotingPluginVoteType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ZNPCsPlusDeliverTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.uSkyBlockLevelTaskType;
 import com.leonardobishop.quests.bukkit.util.CompatUtils;
 import com.leonardobishop.quests.bukkit.util.LogHistory;
@@ -448,6 +449,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new uSkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("uSkyBlock"));
             taskTypeManager.registerTaskType(() -> new NuVotifierVoteTaskType(this), () -> CompatUtils.isPluginEnabled("Votifier")); // not tested
             taskTypeManager.registerTaskType(() -> new VotingPluginVoteType(this), () -> CompatUtils.isPluginEnabled("VotingPlugin")); // not tested
+            taskTypeManager.registerTaskType(() -> new ZNPCsPlusDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("ZNPCsPlus"));
 
             // Register task types with enabled specific version plugin compatibility requirement
             taskTypeManager.registerTaskType(() -> new IridiumSkyblockValueTaskType(this), () -> { // TODO FIX

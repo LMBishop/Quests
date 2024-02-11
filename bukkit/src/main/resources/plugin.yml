@@ -6,7 +6,28 @@ version: "${version}"
 main: com.leonardobishop.quests.bukkit.BukkitQuestsPlugin
 website: https://github.com/LMBishop/Quests
 author: "LMBishop & contributors"
-softdepend: [ASkyBlock, BentoBox, Citizens, CoreProtect, Essentials, FabledSkyBlock, IridiumSkyblock, MythicMobs, PlaceholderAPI, PlayerBlockTracker, PlayerPoints, ShopGUIPlus, SuperiorSkyblock2, uSkyBlock, Votifier, VotingPlugin, WildStacker]
+softdepend:
+- ASkyBlock
+- BentoBox
+- Citizens
+- CoreProtect
+- EcoBosses
+- EcoMobs
+- Essentials
+- FabledSkyBlock
+- IridiumSkyblock
+- MythicMobs
+- PlaceholderAPI
+- PlayerBlockTracker
+- PlayerPoints
+- PyroFishingPro
+- ShopGUIPlus
+- SuperiorSkyblock2
+- uSkyBlock
+- Votifier
+- VotingPlugin
+- WildStacker
+- ZNPCsPlus
 prefix: Quests
 api-version: "1.13" # allows new API features but Quests will still work pre-1.13
 folia-supported: true
