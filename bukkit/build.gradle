@@ -46,6 +46,8 @@ repositories {
     maven { url = 'https://nexus.bencodez.com/repository/maven-public/' }
     // WildStacker
     maven { url = 'https://repo.bg-software.com/repository/api/' }
+    // ZNPCsPlus
+    maven { url = 'https://repo.pyr.lol/snapshots' }
 
     // JetBrains Annotations
     mavenCentral()
@@ -116,6 +118,8 @@ dependencies {
     compileOnly('com.bencodez:votingplugin:6.15') { transitive = false }
     // WildStacker
     compileOnly 'com.bgsoftware:WildStackerAPI:2023.3'
+    // ZNPCsPlus
+    compileOnly 'lol.pyr:znpcsplus-api:2.0.0-SNAPSHOT'
 
     // IridiumSkyblock, PyroFishingPro, uSkyBlock
     compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
