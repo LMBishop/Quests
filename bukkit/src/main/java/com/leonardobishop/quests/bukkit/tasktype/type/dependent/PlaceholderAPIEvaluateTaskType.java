@@ -158,7 +158,8 @@ public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
                         taskProgress.setCompleted(true);
                     }
 
-                    TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, evaluates);
+                    // Do not send track advancement for this task type as it behaves really weird
+                    //TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, evaluates);
                 } else if (evaluatedString.equals(evaluatesString)) {
                     super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                     taskProgress.setCompleted(true);
