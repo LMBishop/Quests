@@ -27,15 +27,25 @@ public final class ZNPCsPlusDeliverTaskType extends DeliverTaskType<String> {
 
         NpcEntry entry = event.getEntry();
         Hologram hologram = event.getNpc().getHologram();
+        String name;
 
-        StringBuilder nameBuilder = new StringBuilder();
-        for (int i = 0; i < hologram.lineCount(); i++) {
-            String line = hologram.getLine(i);
-            nameBuilder.append(line).append('\n');
+        int lineCount = hologram.lineCount();
+        if (lineCount > 0) {
+            StringBuilder nameBuilder = new StringBuilder();
+            for (int i = 0; i < lineCount; i++) {
+                String line = hologram.getLine(i);
+                nameBuilder.append(line);
+
+                if (i != lineCount - 1) {
+                    nameBuilder.append('\n');
+                }
+            }
+            name = nameBuilder.toString();
+        } else {
+            name = null;
         }
-        nameBuilder.deleteCharAt(nameBuilder.length() - 1);
 
-        checkInventory(event.getPlayer(), entry.getId(), nameBuilder.toString(), 1L, plugin);
+        checkInventory(event.getPlayer(), entry.getId(), name, 1L, plugin);
     }
 
     @Override

@@ -78,6 +78,11 @@ public abstract class DeliverTaskType<T> extends BukkitTaskType {
             } else {
                 String configNPCName = (String) task.getConfigValue("npc-name");
                 if (configNPCName != null) {
+                    if (npcName == null) {
+                        super.debug("NPC name is empty and does not match required name, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                        continue;
+                    }
+
                     if (!nameCorrected) {
                         npcName = Chat.legacyStrip(Chat.legacyColor(npcName));
                         nameCorrected = true;

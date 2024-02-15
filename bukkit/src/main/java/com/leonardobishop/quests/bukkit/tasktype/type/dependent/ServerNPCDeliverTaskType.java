@@ -10,6 +10,8 @@ import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
+import java.util.List;
+
 public final class ServerNPCDeliverTaskType extends DeliverTaskType<String> {
 
     private final BukkitQuestsPlugin plugin;
@@ -27,7 +29,10 @@ public final class ServerNPCDeliverTaskType extends DeliverTaskType<String> {
 
         SnakeNPC npc = event.getSnakeNPC();
         SnakeHologram hologram = npc.getHologram();
-        String name = String.join("\n", hologram.getLines());
+        List<String> hologramLines = hologram.getLines();
+        String name = !hologramLines.isEmpty()
+                ? String.join("\n", hologramLines)
+                : null;
 
         checkInventory(event.getPlayer(), npc.getName(), name, 1L, plugin);
     }
