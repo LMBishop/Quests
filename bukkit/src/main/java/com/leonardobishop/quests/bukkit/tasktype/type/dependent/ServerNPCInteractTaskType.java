@@ -28,11 +28,17 @@ public final class ServerNPCInteractTaskType extends InteractTaskType<String> {
         }
 
         SnakeNPC npc = event.getSnakeNPC();
-        SnakeHologram hologram = npc.getHologram();
-        List<String> hologramLines = hologram.getLines();
-        String name = !hologramLines.isEmpty()
-                ? String.join("\n", hologramLines)
-                : null;
+        SnakeHologram hologram = npc.getSettings().getHologram();
+        String name;
+
+        if (hologram != null) {
+            List<String> hologramLines = hologram.getLines();
+            name = !hologramLines.isEmpty()
+                    ? String.join("\n", hologramLines)
+                    : null;
+        } else {
+            name = null;
+        }
 
         handle(event.getPlayer(), npc.getName(), name, plugin);
     }

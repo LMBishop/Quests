@@ -28,11 +28,17 @@ public final class ServerNPCDeliverTaskType extends DeliverTaskType<String> {
         }
 
         SnakeNPC npc = event.getSnakeNPC();
-        SnakeHologram hologram = npc.getHologram();
-        List<String> hologramLines = hologram.getLines();
-        String name = !hologramLines.isEmpty()
-                ? String.join("\n", hologramLines)
-                : null;
+        SnakeHologram hologram = npc.getSettings().getHologram();
+        String name;
+
+        if (hologram != null) {
+            List<String> hologramLines = hologram.getLines();
+            name = !hologramLines.isEmpty()
+                    ? String.join("\n", hologramLines)
+                    : null;
+        } else {
+            name = null;
+        }
 
         checkInventory(event.getPlayer(), npc.getName(), name, 1L, plugin);
     }
