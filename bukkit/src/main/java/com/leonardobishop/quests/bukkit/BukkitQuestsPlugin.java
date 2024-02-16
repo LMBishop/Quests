@@ -445,8 +445,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new PlaceholderAPIEvaluateTaskType(this), () -> CompatUtils.isPluginEnabled("PlaceholderAPI"));
             taskTypeManager.registerTaskType(() -> new PlayerPointsEarnTaskType(this), () -> CompatUtils.isPluginEnabled("PlayerPoints"));
             taskTypeManager.registerTaskType(() -> new PyroFishingProFishingTaskType(this), () -> CompatUtils.isPluginEnabled("PyroFishingPro") && CompatUtils.classExists("me.arsmagica.API.PyroFishCatchEvent"));
-            taskTypeManager.registerTaskType(() -> new ServerNPCDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("ServerNPC"));
-            taskTypeManager.registerTaskType(() -> new ServerNPCInteractTaskType(this), () -> CompatUtils.isPluginEnabled("ServerNPC"));
+            taskTypeManager.registerTaskType(() -> new ServerNPCDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("ServerNPC") && CompatUtils.classWithMethodExists("com.isnakebuzz.npcapi.entities.SnakeNPC", "getSettings"));
+            taskTypeManager.registerTaskType(() -> new ServerNPCInteractTaskType(this), () -> CompatUtils.isPluginEnabled("ServerNPC") && CompatUtils.classWithMethodExists("com.isnakebuzz.npcapi.entities.SnakeNPC", "getSettings"));
             taskTypeManager.registerTaskType(() -> new ShopGUIPlusBuyTaskType(this), () -> CompatUtils.isPluginEnabled("ShopGUIPlus")); // not tested
             taskTypeManager.registerTaskType(() -> new ShopGUIPlusSellTaskType(this), () -> CompatUtils.isPluginEnabled("ShopGUIPlus")); // not tested
             taskTypeManager.registerTaskType(() -> new SuperiorSkyblockLevelType(this), () -> CompatUtils.isPluginEnabled("SuperiorSkyblock2")); // not tested
