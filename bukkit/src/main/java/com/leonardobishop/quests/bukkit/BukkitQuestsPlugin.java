@@ -101,6 +101,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FabledSkyBlockLe
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.IridiumSkyblockValueTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.MythicMobsKillingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.NuVotifierVoteTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PinataPartyHitTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PlaceholderAPIEvaluateTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PlayerPointsEarnTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PyroFishingProFishingTaskType;
@@ -442,6 +443,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new EssentialsBalanceTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
             taskTypeManager.registerTaskType(() -> new EssentialsMoneyEarnTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
             taskTypeManager.registerTaskType(() -> new FabledSkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("FabledSkyBlock")); // not tested
+            taskTypeManager.registerTaskType(() -> new PinataPartyHitTaskType(this), () -> CompatUtils.isPluginEnabled("PinataParty"));
             taskTypeManager.registerTaskType(() -> new PlaceholderAPIEvaluateTaskType(this), () -> CompatUtils.isPluginEnabled("PlaceholderAPI"));
             taskTypeManager.registerTaskType(() -> new PlayerPointsEarnTaskType(this), () -> CompatUtils.isPluginEnabled("PlayerPoints"));
             taskTypeManager.registerTaskType(() -> new PyroFishingProFishingTaskType(this), () -> CompatUtils.isPluginEnabled("PyroFishingPro") && CompatUtils.classExists("me.arsmagica.API.PyroFishCatchEvent"));
