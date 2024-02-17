@@ -141,6 +141,20 @@ startcommands:
   - "broadcast {player} has started a quest"
 ```
 
+## Cancel commands
+
+
+*`cancelcommands`*
+
+**Optional.** This is a list of commands which will be executed when the
+player cancels the quest. You can use `{player}` and the player's name
+will be substituted in place.
+
+``` yaml
+cancelcommands:
+  - "broadcast {player} has cancelled a quest"
+```
+
 ## Start string
 
   
@@ -190,6 +204,37 @@ These placeholders will be called using PlaceholderAPI. See [quest
 progress in scoreboard](../guides/quest-progress-in-scoreboard) for a
 guide which utilises this feature.
 
+## Progress placeholders
+
+*`progress-placeholders`*
+
+**Optional.** This is a list of placeholders which represent the progress
+of each task. These are used by the [bossbar](/configuration/basic-options#bossbar)
+and [actionbar](/configuration/basic-options#actionbar) configuration options.
+
+You can define a placeholder for each task, or for all of them as a catch-all.
+
+```yaml
+progress-placeholders:
+  <task-name>: "Progress for <task-name>"
+  '*': "Progress for tasks not defined above"
+```
+
+For example, in an actual quest:
+
+```yaml
+tasks:
+  mining:
+    type: "blockbreak"
+    amount: 100
+  building:
+    type: "blockplace"
+    amount: 100
+# ... 
+progress-placeholders:
+  mining: "&f{mining:progress}/100 &7blocks broken"
+  building: "&f{building:progress}/100 &7blocks placed"
+```
 ## Options
 
   

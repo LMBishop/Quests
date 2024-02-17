@@ -73,6 +73,7 @@ The eCloud extension called 'Quests' is not for this plugin, do not download it!
 | `%quests_quest:<quest-id>_completedbefore%`          | Returns **true/false** on whether or not the quest **`<quest-id>`** is completed by the player **at least once**.            |
 | `%quests_quest:<quest-id>_completiondate%`           | Returns a **date formatted as DD/MM/YYYY\*\*\*, or "Never"** on when the quest **`<quest-id>`** was completed by the player. |
 | `%quests_quest:<quest-id>_cooldown%`                 | Returns a **time in seconds** of the cooldown for quest **`<quest-id>`**.                                                    |
+| `%quests_quest:<quest-id>_timeleft%`                 | Returns the amount of time remaining to complete the quest **`<quest-id>`**.                                                 | 
 | `%quests_quest:<quest-id>_canaccept%`                | Returns **true/false** on whether or not the quest **`<quest-id>`** can be started by the player.                            |
 | `%quests_quest:<quest-id>_meetsrequirements%`        | Returns **true/false** on whether or not the player has completed the required quests for the quest **`<quest-id>`**.        |
 | `%quests_quest:<quest-id>_task:<task-id>_progress%`  | Returns the **progress** of task **`task-id`** on the quest **`<quest-id>`**.                                                |
@@ -88,6 +89,7 @@ The eCloud extension called 'Quests' is not for this plugin, do not download it!
 | `%quests_tracked_completedbefore%`          | Returns **true/false** on whether or not the **players tracked quest** is completed **at least once**.                          |
 | `%quests_tracked_completiondate%`           | Returns a **date formatted as DD/MM/YYYY\*\*\*, or "Never"** on when the **players tracked quest** was completed by the player. |
 | `%quests_tracked_cooldown%`                 | Returns a **time in seconds** of the cooldown for the **players tracked quest**.                                                |
+| `%quests_tracked_timeleft%`                 | Returns the amount of time remaining to complete the **players tracked quest**.                                                 | 
 | `%quests_tracked_canaccept%`                | Returns **true/false** on whether or not the **players tracked quest** can be started by the player.                            |
 | `%quests_tracked_meetsrequirements%`        | Returns **true/false** on whether or not the player has completed the required quests for the **players tracked quest**.        |
 | `%quests_tracked_task:<task-id>_progress%`  | Returns the **progress** of task **`task-id`** on the **players tracked quest**.                                                |

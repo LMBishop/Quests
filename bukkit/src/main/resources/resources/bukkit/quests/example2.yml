@@ -34,6 +34,9 @@ rewards:
 placeholders:
   description: "&7Break and place &f100 blocks &7of any type."
   progress: " &8- &f{mining:progress}&7/100 broken, &f{building:progress}&7/100 placed"
+progress-placeholders:
+  mining: "&f{mining:progress}&7/100 blocks broken"
+  building: "&f{building:progress}&7/100 blocks placed"
 options:
   category: "examples"
   # Unlike the previous quest, this quest has "example1" as a required quest. You cannot start this quest without "example1" quest complete.

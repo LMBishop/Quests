@@ -74,6 +74,57 @@ options:
   titles-enabled: true
 ```
 
+## Bossbar
+
+*`options.bossbar`*
+
+This configures a temporary bossbar which will appear when a player
+makes progress on a task, or completes a task. The bar itself
+represents the percentage done for a task.
+
+The text displayed will be the [progress placeholder](/configuration/creating-a-quest#progress-placeholders)
+for the task. In the future, there will also be a method to
+automatically generate this text.
+
+```yaml
+options:
+  # ...
+  bossbar:
+    # Enable bossbar for task progress
+    progress: false
+    # Enable bossbar for task completions
+    complete: false
+    # Time in seconds to display bossbar
+    time: 5
+    # See https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarColor.html
+    color:
+      '0.0': BLUE # for 0.0 and higher progress values (progress is always between 0.0 and 1.0)
+    # See https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarStyle.html
+    style:
+      '0.0': SOLID # for 0.0 and higher progress values (progress is always between 0.0 and 1.0)
+```
+
+## Actionbar
+
+*`options.actionbar`*
+
+This configures a temporary action bar which will appear when a player
+makes progress on a task, or completes a task. 
+
+The text displayed will be the [progress placeholder](/configuration/creating-a-quest#progress-placeholders)
+for the task. In the future, there will also be a method to
+automatically generate this text.
+
+```yaml
+options:
+  # ...
+  actionbar:
+    # Enable actionbar for task progress
+    progress: false
+    # Enable actionbar for task completions
+    complete: false
+```
+
 ## Quest started limit
 
 *`options.quest-started-limit`*
@@ -228,6 +279,18 @@ list](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html)
 list](https://helpch.at/docs/1.8.8/index.html?org/bukkit/Sound.html)
 (1.8).
 
+An alternative syntax is available for 
+[namespaced sound names](https://www.digminecraft.com/lists/sound_list_pc.php):
+
+``` yaml
+options:
+  # ...
+  sounds:
+    quest-start: "(minecraft:entity.player.levelup):2:3"
+    # ...
+```
+
+
 To not have a sound play, you can leave the string blank (i.e. `""`),
 for example:
 
@@ -246,6 +309,9 @@ player, not the actual volume played back on the client.
 
 **Example (1.9+):** `ENTITY_PLAYER_LEVELUP:2:3` -\> sound
 `ENTITY_PLAYER_LEVELUP` at pitch `2` with a volume of `3`.
+
+**Example (namespaced sound):** `(minecraft:entity.player.levelup):2:3` -\> sound
+`minecraft:entity.player.levelup` at pitch `2` with a volume of `3`.
 
 ## GUI hide locked
 

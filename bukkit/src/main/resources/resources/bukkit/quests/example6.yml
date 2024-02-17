@@ -24,6 +24,8 @@ rewards:
 placeholders:
   description: "&7Place &f10 &7blocks of any type."
   progress: " &8- &f{building:progress}&7/10 blocks"
+progress-placeholders:
+  building: "&f{building:progress}&7/10 blocks placed"
 options:
   category: "permissionexample"
   # This quest has no specific permission, however its category does. The permission for the category is "quests.category.permissionexample"

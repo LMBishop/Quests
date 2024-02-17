@@ -45,6 +45,11 @@ placeholders:
   description: "&7Break &f30 blocks &7of any type."
   progress: " &8- &f{mining:progress}&7/30 broken"
 
+# Progress placeholders are used exclusively for the bossbar and actionbar.
+# Use the name of the task, or '*' for all tasks.
+progress-placeholders:
+  '*': "&f{mining:progress}&7/30 blocks broken"
+
 # Everything inside this section define quest-specific options
 options:
   # This is the category for the quest, it will appear under the "examples" category. Categories can be disabled.

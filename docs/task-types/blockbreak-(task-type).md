@@ -9,7 +9,10 @@ grand_parent: Task types
 Since v1.0
 {: .label .label-green }
 
-Break a set amount of blocks.
+Break a set amount of blocks. For items which can be broken by
+breaking a block underneath it (such as torches or signs), consider
+using the [blockitemdropping task type](blockitemdropping-(task-type))
+instead.
 
 {: .note }
 Since Quests v3.13, `blockbreakcertain` and `blockbreak` have been

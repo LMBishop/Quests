@@ -305,6 +305,19 @@ item:
   id: "executableitems_id"  #executableitems id
 ```
 
+#### ItemsAdder
+
+**ItemsAdder quest items** are ItemStacks which belong to the
+ItemsAdder plugin.
+
+    items/testitem.yml
+
+``` yaml
+type: "itemsadder"
+item:
+  id: "itemsadder"  #itemsdadder id
+```
+
 ### Referencing a quest item
 
 In most cases where an ItemStack is accepted in Quests, you can simply

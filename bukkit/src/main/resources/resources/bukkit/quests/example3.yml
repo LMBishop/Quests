@@ -37,6 +37,9 @@ rewards:
 placeholders:
   description: "&7Break &f81 gold ore &7and place &f9 gold blocks."
   progress: " &8- &f{mining:progress}&7/81 gold ore, &f{building:progress}&7/9 gold blocks"
+progress-placeholders:
+  mining: "&f{mining:progress}&7/81 gold ore broken"
+  building: "&f{building:progress}&7/9 gold blocks placed"
 options:
   category: "examples"
   requires:

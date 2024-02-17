@@ -11,6 +11,9 @@ Since v2.2
 
 Breed a certain amount of animals.
 
+This task type has specific logic implemented for compatibility with
+[WildStacker](https://bg-software.com/wildstacker/).
+
 ## Options
 
 | Key            | Description                                     | Type                             | Required | Default | Notes                                                                                                                                                                                              |

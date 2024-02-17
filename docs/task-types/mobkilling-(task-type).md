@@ -11,6 +11,9 @@ Since v2.0
 
 Kill a set amount of mobs.
 
+This task type has specific logic implemented for compatibility with
+[WildStacker](https://bg-software.com/wildstacker/).
+
 {: .note }
 Since Quests v3.13, `mobkillingcertain` and `mobkilling` have been
 merged into one. Both names can be used to refer to this task.
