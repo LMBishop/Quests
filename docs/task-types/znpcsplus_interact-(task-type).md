@@ -1,18 +1,18 @@
 ---
-title: citizens_interact
+title: znpcsplus_interact
 parent: External task types
 grand_parent: Task types
 ---
 
-# citizens_interact (task type)
+# znpcsplus_interact (task type)
 
-Since v2.0.15
+Since v3.15
 {: .label .label-green }
 
-Plugin 'Citizens' required
+Plugin 'ZNPCsPlus' required
 {: .label }
 
-Interact with a Citizens NPC.
+Interact with a ZNPCsPlus NPC.
 
 ## Options
 
@@ -24,13 +24,12 @@ Interact with a Citizens NPC.
 
 ## Examples
 
-Interact with an NPC named Gerald:
+Interact with an NPC with ID "gerald":
 
 ``` yaml
-citizensinteract:
-  type: "citizens_interact"
-  npc-name: "Gerald"                    # name of NPC
-  # OR npc-id: "npc1"                     ID of NPC (mutally exclusive with npc-name)
+znpcsplusinteract:
+  type: "znpcsplus_interact
+  npc-id: "gerald"                      # ID of NPC
   worlds:                               # (OPTIONAL) restrict to certain worlds
    - "world"
 ```

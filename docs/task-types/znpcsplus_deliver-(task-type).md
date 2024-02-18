@@ -1,18 +1,18 @@
 ---
-title: citizens_deliver
+title: znpcsplus_deliver
 parent: External task types
 grand_parent: Task types
 ---
 
-# citizens_deliver (task type)
+# znpcsplus_deliver (task type)
 
-Since v2.0.15
+Since v3.15
 {: .label .label-green }
 
-Plugin 'Citizens' required
+Plugin 'ZNPCsPlus' required
 {: .label }
 
-Deliver a set of items to a Citizens NPC.
+Deliver a set of items to a ZNPCsPlus NPC.
 
 ## Options
 
@@ -30,13 +30,12 @@ Deliver a set of items to a Citizens NPC.
 
 ## Examples
 
-Deliver 8 of `BEEF` to an NPC named Gerald:
+Deliver 8 of `BEEF` to an NPC with ID "gerald":
 
 ``` yaml
-citizensdeliver:
-  type: "citizens_deliver"
-  npc-name: "Gerald"                    # name of NPC
-  # OR npc-id: "npc1"                     ID of NPC (mutally exclusive with npc-name)
+znpcsplusdeliver:
+  type: "znpcsplus_deliver"
+  npc-id: "gerald"                      # ID of NPC
   item: BEEF                            # name of item (can be id or minecraft name)
   amount: 8                             # amount of item needed
   remove-items-when-complete: false     # (OPTIONAL) take the items away from the player on completion - default: false
@@ -45,12 +44,12 @@ citizensdeliver:
    - "world"
 ```
 
-Deliver 8 of a specific item to an NPC named Gerald:
+Deliver 8 of a specific item to an NPC with ID "gerald":
 
 ``` yaml
 beef:
-  type: "citizens_deliver"
-  npc-name: "Gerald"                    # name of NPC
+  type: "znpcsplus_deliver"
+  npc-id: "gerald"                      # ID of NPC
   item:                                 # SPECIFIC item with name and lore
     name: "&cSpecial Beef"
     type: "BEEF"
@@ -64,13 +63,12 @@ beef:
 ```
 
 Deliver 8 of [quest item](../configuration/defining-items#quest-items)
-`special_beef` to an NPC named Gerald:
+`special_beef` to an NPC with ID "gerald":
 
 ``` yaml
 beef:
-  type: "citizens_deliver"
-  npc-name: "Gerald"                    # name of NPC
-  # OR npc-id: "npc1"                     ID of NPC (mutally exclusive with npc-name)
+  type: "znpcsplus_deliver"
+  npc-id: "npc1"                        # ID of NPC 
   item:                                 # USING quest-item
     quest-item: "special_beef"
   amount: 8                             # amount of item needed

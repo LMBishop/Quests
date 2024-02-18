@@ -470,14 +470,68 @@ options:
   
 *`options.quests-use-placeholderapi`*
 
-Choose whether or not start strings, reward strings, reward commands and
-start commands are parsed with PlaceholderAPI. This is disabled by
-default for performance reasons.
+Replace placeholders from PlaceholderAPI in rewards, rewardstrings 
+and start strings.
 
 ``` yaml
 options:
   # ...
   quests-use-placeholderapi: false
+```
+
+## Progress use PlaceholderAPI
+
+
+*`options.progress-use-placeholderapi`*
+
+Replace placeholders from PlaceholderAPI in boss bar and action bar 
+progress strings
+
+``` yaml
+options:
+  # ...
+  progress-use-placeholderapi: false
+```
+
+## Use progress as fallback
+
+
+*`options.use-progress-as-fallback`*
+
+If true, the `progress` string from the placeholders section in quests
+will  be used as a fallback in the boss bar and action bar if the
+`progress-placeholders` option is not set. 
+
+``` yaml
+options:
+  # ...
+  use-progress-as-fallback: true
+```
+
+## PlayerBlockTracker class name
+
+
+*`options.playerblocktracker-class-name`*
+
+The name of the PlayerBlockTracker class to use for the hook. 
+
+``` yaml
+options:
+  # ...
+  playerblocktracker-class-name: "com.gestankbratwurst.playerblocktracker.PlayerBlockTracker"
+```
+
+## PlaceholderAPI global refresh ticks
+
+
+*`options.placeholderapi-global-refresh-ticks`*
+
+How frequently `placeholderapi_evaluate` task placeholders will refresh.
+
+``` yaml
+options:
+  # ...
+  placeholderapi-global-refresh-ticks: 30
 ```
 
 ## Verify quest exists on load
