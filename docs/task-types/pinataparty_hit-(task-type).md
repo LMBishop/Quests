@@ -1,6 +1,6 @@
 ---
 title: pinataparty_hit
-parent: Built-in task types
+parent: External task types
 grand_parent: Task types
 ---
 
@@ -8,6 +8,9 @@ grand_parent: Task types
 
 Since v3.15
 {: .label .label-green }
+
+Plugin 'PinataParty' required
+{: .label }
 
 Hit a PinataParty pinata a set number of times.
 
