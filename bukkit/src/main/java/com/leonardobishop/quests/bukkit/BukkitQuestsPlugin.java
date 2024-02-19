@@ -695,10 +695,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
 
         try {
-            Player.Spigot.class.getMethod("sendMessage", ChatMessageType.class, BaseComponent.class);
+            Class.forName("org.bukkit.entity.Player.Spigot").getMethod("sendMessage", ChatMessageType.class, BaseComponent.class);
             actionBarHandle = new ActionBar_Spigot();
             return;
-        } catch (NoSuchMethodException ignored) {
+        } catch (ClassNotFoundException | NoSuchMethodException ignored) {
         }
 
         actionBarHandle = new ActionBar_Nothing();
