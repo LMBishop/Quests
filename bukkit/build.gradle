@@ -58,10 +58,12 @@ dependencies {
     // Paper
     compileOnly('io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT') {
         exclude(group: 'it.unimi.dsi', module: 'fastutil') // exclude fastutil just to don't use it (for 1.8 support)
+        exclude(group: 'net.md-5', module: 'bungeecord-chat')
     }
     // Folia
     compileOnly('dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT') {
         exclude(group: 'it.unimi.dsi', module: 'fastutil') // exclude fastutil just to don't use it (for 1.8 support)
+        exclude(group: 'net.md-5', module: 'bungeecord-chat')
     }
     // ASkyBlock
     compileOnly('com.wasteofplastic:askyblock:3.0.9.4') { transitive = false }
@@ -132,6 +134,8 @@ dependencies {
     implementation 'org.slf4j:slf4j-nop:1.7.36'
     // hppc
     implementation 'com.carrotsearch:hppc:0.9.1'
+    // bungeecord-chat
+    implementation('net.md-5:bungeecord-chat:1.20-R0.2') { transitive = false }
 }
 
 tasks.build {
@@ -139,10 +143,13 @@ tasks.build {
 }
 
 shadowJar {
+    exclude('mojang-translations/*')
+
     relocate 'org.bstats', 'com.leonardobishop.quests.libs.bstats'
     relocate 'com.zaxxer.hikari', 'com.leonardobishop.quests.libs.hikari'
     relocate 'org.slf4j', 'com.leonardobishop.quests.libs.slf4j'
     relocate 'com.carrotsearch.hppc', 'com.leonardobishop.quests.libs.hppc'
+    relocate 'net.md_5.bungee', 'com.leonardobishop.quests.libs.bungee'
 
     minimize {
         exclude(dependency('org.bstats:.*:.*'))
