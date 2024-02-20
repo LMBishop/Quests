@@ -25,6 +25,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Colorable;
 import org.jetbrains.annotations.NotNull;
@@ -774,8 +775,8 @@ public class TaskUtils {
                         EntityType.valueOf(entity);
                     } catch (IllegalArgumentException ex) {
                         problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(entity),
-                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(entity),
+                                ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(entity),
+                                ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getExtendedDescription(entity),
                                 path));
                     }
                 }

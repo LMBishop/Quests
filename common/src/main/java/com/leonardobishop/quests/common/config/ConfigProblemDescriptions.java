@@ -65,21 +65,27 @@ public enum ConfigProblemDescriptions {
             "Dye color '%s' does not exist on the server.<br>" +
                     "Please refer to the wiki for a list of javadocs<br>" +
                     "corresponding to your server version. Alternatively,<br>" +
-                    "you can find the material list by searching for your<br>" +
+                    "you can find the dye color list by searching for your<br>" +
                     "server version + 'DyeColor ENUM'."),
     UNKNOWN_ENCHANTMENT("Enchantment '%s' does not exist",
             "Enchantment '%s' does not exist on the server.<br>" +
                     "Please refer to the wiki for a list of javadocs<br>" +
                     "corresponding to your server version. Alternatively,<br>" +
-                    "you can find the material list by searching for your<br>" +
+                    "you can find the enchantment list by searching for your<br>" +
                     "server version + 'Enchantment javadoc'."
     ),
     UNKNOWN_ENTITY_TYPE("Entity type '%s' does not exist",
             "Entity type '%s' does not exist on the server.<br>" +
                     "Please refer to the wiki for a list of javadocs<br>" +
                     "corresponding to your server version. Alternatively,<br>" +
-                    "you can find the material list by searching for your<br>" +
+                    "you can find the entity type list by searching for your<br>" +
                     "server version + 'EntityType ENUM'."),
+    UNKNOWN_SPAWN_REASON("Spawn reason '%s' does not exist",
+            "Spawn reason '%s' does not exist on the server.<br>" +
+                    "Please refer to the wiki for a list of javadocs<br>" +
+                    "corresponding to your server version. Alternatively,<br>" +
+                    "you can find the spawn reason list by searching for your<br>" +
+                    "server version + 'SpawnReason ENUM'."),
     TASK_MALFORMED_NOT_SECTION("Task '%s' is not a configuration section",
             "Task '%s' is not properly formatted as a<br>" +
                     "configuration section. Please review the wiki<br>" +
