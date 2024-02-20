@@ -10,33 +10,47 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class Chat {
+public final class Chat {
 
     private static final ColorAdapter legacyColorAdapter;
     private static final Pattern legacyPattern;
     private static MiniMessageParser miniMessageParser;
 
     static {
-        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];;
-        if (version.startsWith("v1_7") || version.startsWith("v1_8") || version.startsWith("v1_9")
-                || version.startsWith("v1_10") || version.startsWith("v1_11") || version.startsWith("v1_12")
-                || version.startsWith("v1_13") || version.startsWith("v1_14") || version.startsWith("v1_15")) {
+        String[] versionPartStrings = Bukkit.getBukkitVersion().split("-", 2)[0].split("\\.", 3);
+        int versionPartCount = versionPartStrings.length;
+
+        int[] versionParts = new int[versionPartCount];
+        for (int i = 0; i < versionPartCount; i++) {
+            try {
+                versionParts[i] = Integer.parseInt(versionPartStrings[i]);
+            } catch (NumberFormatException ignored) {
+                versionParts[i] = 0;
+            }
+        }
+
+        if (versionParts[0] <= 1 && versionParts[1] <= 15) {
             legacyColorAdapter = new CodedColorAdapter();
         } else {
             legacyColorAdapter = new HexColorAdapter();
         }
-        Quests questsPlugin = (Quests) Bukkit.getPluginManager().getPlugin("Quests");
+
+        legacyPattern = Pattern.compile("(?i)[&§][0-9A-FK-ORX#]");
+
+        Quests plugin = (Quests) Bukkit.getPluginManager().getPlugin("Quests");
+        Objects.requireNonNull(plugin);
+
         try {
             Class.forName("net.kyori.adventure.Adventure", false, Bukkit.class.getClassLoader());
+
             miniMessageParser = new MiniMessageParser();
-            questsPlugin.getQuestsLogger().debug("Modern chat is available.");
-        } catch (Throwable e) {
-            questsPlugin.getQuestsLogger().debug("Modern chat is not available, resorting to legacy chat.");
-            miniMessageParser = null;
+            plugin.getQuestsLogger().debug("Modern chat is available.");
+        } catch (ClassNotFoundException ignored) {
+            plugin.getQuestsLogger().debug("Modern chat is not available, using legacy chat instead.");
         }
-        legacyPattern = Pattern.compile("(&|§)(?:\\d|#|[a-f]|[k-o]|r)");
     }
 
     @Contract("null -> null")
@@ -47,14 +61,18 @@ public class Chat {
 
     @Contract("null -> null")
     @Deprecated // use send instead
-    public static List<String> legacyColor(@Nullable List<String> s) {
-        if (s == null || s.size() == 0) return s;
-
-        List<String> colored = new ArrayList<>();
-        for (String line : s) {
-            colored.add(legacyColorAdapter.color(line));
+    public static List<String> legacyColor(@Nullable List<String> list) {
+        if (list == null || list.isEmpty()) {
+            return list;
         }
-        return colored;
+
+        List<String> coloredList = new ArrayList<>();
+        for (String s : list) {
+            String colored = legacyColorAdapter.color(s);
+            coloredList.add(colored);
+        }
+
+        return coloredList;
     }
 
     @Contract("null -> null")
@@ -70,6 +88,7 @@ public class Chat {
         return miniMessageParser != null;
     }
 
+    @SuppressWarnings("deprecation")
     public static ChatColor matchConfigProblemToColor(ConfigProblem.ConfigProblemType configProblem) {
         return switch (configProblem) {
             case ERROR -> ChatColor.RED;
@@ -105,8 +124,8 @@ public class Chat {
         }
 
         String substitutedMessage = message;
-        for (int i = 0; i < substitutions.length ; i += 2) {
-            substitutedMessage = substitutedMessage.replace(substitutions[i], substitutions[i+1]);
+        for (int i = 0; i < substitutions.length; i += 2) {
+            substitutedMessage = substitutedMessage.replace(substitutions[i], substitutions[i + 1]);
         }
 
         if (miniMessageParser == null || (allowLegacy && usesLegacy(message))) {
@@ -126,5 +145,4 @@ public class Chat {
     public static void send(CommandSender who, String message, String... substitutions) {
         send(who, message, false, substitutions);
     }
-
 }
