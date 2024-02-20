@@ -33,7 +33,6 @@ public final class SmithingTaskType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
-        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
@@ -94,19 +93,21 @@ public final class SmithingTaskType extends BukkitTaskType {
                 }
             }
 
-            QuestItem qi;
-            if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
-                QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "item", "data");
-                fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
-                qi = fetchedItem;
-            }
+            if (task.hasConfigKey("item")) {
+                QuestItem qi;
+                if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                    QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "item", "data");
+                    fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
+                    qi = fetchedItem;
+                }
 
-            super.debug("Player smithed " + eventAmount + " of " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("Player smithed " + eventAmount + " of " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
-            boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
-            if (!qi.compareItemStack(item, exactMatch)) {
-                super.debug("Item does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                continue;
+                boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
+                if (!qi.compareItemStack(item, exactMatch)) {
+                    super.debug("Item does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
             }
 
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress, eventAmount);
