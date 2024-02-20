@@ -9,7 +9,7 @@ public class EssentialsHook implements AbstractEssentialsHook {
     private final Essentials ess;
 
     public EssentialsHook() {
-        ess = ((Essentials) Bukkit.getPluginManager().getPlugin("Essentials"));
+        this.ess = ((Essentials) Bukkit.getPluginManager().getPlugin("Essentials"));
     }
 
     @Override
