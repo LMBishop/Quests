@@ -10,6 +10,8 @@ import com.leonardobishop.quests.bukkit.hook.actionbar.QuestsActionBar;
 import com.leonardobishop.quests.bukkit.hook.bossbar.BossBar_Bukkit;
 import com.leonardobishop.quests.bukkit.hook.bossbar.BossBar_Nothing;
 import com.leonardobishop.quests.bukkit.hook.bossbar.QuestsBossBar;
+import com.leonardobishop.quests.bukkit.hook.cmi.AbstractCMIHook;
+import com.leonardobishop.quests.bukkit.hook.cmi.CMIHook;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.AbstractCoreProtectHook;
 import com.leonardobishop.quests.bukkit.hook.coreprotect.CoreProtectHook;
 import com.leonardobishop.quests.bukkit.hook.essentials.AbstractEssentialsHook;
@@ -181,6 +183,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private QuestItemRegistry questItemRegistry;
     private MenuController menuController;
     private AbstractPlaceholderAPIHook placeholderAPIHook;
+    private AbstractCMIHook cmiHook;
     private AbstractCoreProtectHook coreProtectHook;
     private AbstractEssentialsHook essentialsHook;
     private AbstractPlayerBlockTrackerHook playerBlockTrackerHook;
@@ -374,6 +377,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 this.placeholderAPIHook = new PlaceholderAPIHook();
                 this.placeholderAPIHook.registerExpansion(this);
                 this.placeholderAPIProcessor = (player, s) -> placeholderAPIHook.replacePlaceholders(player, s);
+            }
+
+            if (CompatUtils.isPluginEnabled("CMI")) {
+                this.cmiHook = new CMIHook();
             }
 
             if (CompatUtils.isPluginEnabled("CoreProtect")) {
@@ -758,6 +765,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     public @Nullable AbstractPlaceholderAPIHook getPlaceholderAPIHook() {
         return placeholderAPIHook;
+    }
+
+    public @Nullable AbstractCMIHook getCMIHook() {
+        return cmiHook;
     }
 
     public @Nullable AbstractCoreProtectHook getCoreProtectHook() {
