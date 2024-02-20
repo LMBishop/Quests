@@ -269,6 +269,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         List<String> startString = config.getStringList("startstring");
                         List<String> startCommands = config.getStringList("startcommands");
                         List<String> cancelCommands = config.getStringList("cancelcommands");
+                        List<String> expiryCommands = config.getStringList("expirycommands");
                         boolean repeatable = config.getBoolean("options.repeatable", false);
                         boolean cooldown = config.getBoolean("options.cooldown.enabled", false);
                         boolean timeLimit = config.getBoolean("options.time-limit.enabled", false);
@@ -300,6 +301,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 .withStartString(startString)
                                 .withStartCommands(startCommands)
                                 .withCancelCommands(cancelCommands)
+                                .withExpiryCommands(expiryCommands)
                                 .withPlaceholders(placeholders)
                                 .withProgressPlaceholders(progressPlaceholders)
                                 .withCooldown(cooldownTime)

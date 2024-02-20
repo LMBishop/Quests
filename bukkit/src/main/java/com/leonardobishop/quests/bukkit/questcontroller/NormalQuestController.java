@@ -329,6 +329,14 @@ public class NormalQuestController implements QuestController {
             Bukkit.getPluginManager().callEvent(questCancelEvent);
             // PlayerCancelQuestEvent -- end
             Messages.send(questCancelEvent.getQuestExpireMessage(), player);
+            for (String s : quest.getExpiryCommands()) {
+                s = s.replace("{player}", player.getName());
+                if (plugin.getConfig().getBoolean("options.quests-use-placeholderapi")) {
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), plugin.getPlaceholderAPIProcessor().apply(player, s));
+                } else {
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), s);
+                }
+            }
         }
         if (config.getBoolean("options.allow-quest-track")
                 && config.getBoolean("options.quest-autotrack")
