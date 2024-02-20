@@ -394,6 +394,38 @@ public class TaskUtils {
         return false;
     }
 
+    public static boolean matchSpawnReason(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull CreatureSpawnEvent.SpawnReason spawnReason, @NotNull UUID player) {
+        return matchSpawnReason(type, pendingTask, spawnReason, player, "spawn-reason", "spawn-reasons");
+    }
+
+    public static boolean matchSpawnReason(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull CreatureSpawnEvent.SpawnReason spawnReason, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
+        Task task = pendingTask.task;
+
+        List<String> checkSpawnReasons = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
+        if (checkSpawnReasons == null) {
+            return true;
+        } else if (checkSpawnReasons.isEmpty()) {
+            return false;
+        }
+
+        CreatureSpawnEvent.SpawnReason reason;
+
+        for (String spawnReasonName : checkSpawnReasons) {
+            reason = CreatureSpawnEvent.SpawnReason.valueOf(spawnReasonName);
+
+            type.debug("Checking against spawn reason " + reason, pendingTask.quest.getId(), task.getId(), player);
+
+            if (reason == spawnReason) {
+                type.debug("Spawn reason match", pendingTask.quest.getId(), task.getId(), player);
+                return true;
+            } else {
+                type.debug("Spawn reason mismatch", pendingTask.quest.getId(), task.getId(), player);
+            }
+        }
+
+        return false;
+    }
+
     public static boolean matchString(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable String string, @NotNull UUID player, final @NotNull String stringKey, final @NotNull String listKey, boolean legacyColor, boolean ignoreCase) {
         Task task = pendingTask.task;
 
@@ -777,6 +809,54 @@ public class TaskUtils {
                         problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
                                 ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(entity),
                                 ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getExtendedDescription(entity),
+                                path));
+                    }
+                }
+                break;
+            }
+        };
+    }
+
+    /**
+     * Returns a config validator which checks if at least one value in the given
+     * paths is a valid list of spawn reasons.
+     * <p>
+     * The list of entities is expected to be in the format of:
+     * <pre>key: "SPAWN_REASON"</pre>
+     * where SPAWN_REASON is the name of an entity. Alternatively, the list
+     * of entities can be in the format of:
+     * <pre>key:
+     *   - "SPAWN_REASON"
+     *   - "..."</pre>
+     * </p>
+     *
+     * @param paths a list of valid paths for task
+     * @return config validator
+     */
+    public static TaskType.ConfigValidator useSpawnReasonListConfigValidator(TaskType type, String... paths) {
+        return (config, problems) -> {
+            for (String path : paths) {
+                Object configObject = config.get(path);
+
+                List<String> checkSpawnReasons = new ArrayList<>();
+                if (configObject instanceof List<?> configList) {
+                    for (Object object : configList) {
+                        checkSpawnReasons.add(String.valueOf(object));
+                    }
+                } else {
+                    if (configObject == null) {
+                        continue;
+                    }
+                    checkSpawnReasons.add(String.valueOf(configObject));
+                }
+
+                for (String spawnReason : checkSpawnReasons) {
+                    try {
+                        CreatureSpawnEvent.SpawnReason.valueOf(spawnReason);
+                    } catch (IllegalArgumentException ex) {
+                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                ConfigProblemDescriptions.UNKNOWN_SPAWN_REASON.getDescription(spawnReason),
+                                ConfigProblemDescriptions.UNKNOWN_SPAWN_REASON.getExtendedDescription(spawnReason),
                                 path));
                     }
                 }
