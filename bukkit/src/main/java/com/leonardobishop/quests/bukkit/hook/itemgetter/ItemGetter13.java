@@ -1,8 +1,10 @@
 package com.leonardobishop.quests.bukkit.hook.itemgetter;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.util.NamespacedKeyUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.ConfigurationSection;
@@ -24,7 +26,7 @@ import java.util.UUID;
  *     <li>type (<b>without</b> data support, <b>without</b> namespace support)</li>
  *     <li>name</li>
  *     <li>lore</li>
- *     <li>enchantments (<b>without</b> namespace support)</li>
+ *     <li>enchantments (<b>with</b> namespace support)</li>
  *     <li>item flags</li>
  *     <li>unbreakability (<b>with</b> CraftBukkit support)</li>
  *     <li>attribute modifiers</li>
@@ -86,22 +88,33 @@ public class ItemGetter13 extends ItemGetter {
                     continue;
                 }
 
-                Enchantment enchantment = Enchantment.getByName(parts[0]);
+                boolean namespaced = parts.length >= 2 && parts[0].startsWith("(") && parts[1].endsWith(")");
+
+                Enchantment enchantment;
+                if (namespaced) {
+                    String namespacedKeyString = enchantmentString.substring(1, parts[0].length() + parts[1].length());
+                    NamespacedKey namespacedKey = NamespacedKeyUtils.fromString(namespacedKeyString);
+                    enchantment = Enchantment.getByKey(namespacedKey);
+                } else {
+                    enchantment = Enchantment.getByName(parts[0]);
+                }
+
                 if (enchantment == null) {
                     continue;
                 }
 
-                int level;
-                if (parts.length == 2) {
+                // (namespace:key):level
+                // 0          1    2
+                // SOME_ENUM_NAME:level
+                // 0              1
+                int levelIndex = namespaced ? 2 : 1;
+
+                int level = 1;
+                if (parts.length >= levelIndex + 1) {
                     try {
-                        level = Integer.parseUnsignedInt(parts[1]);
-                    } catch (NumberFormatException e) {
-                        continue;
+                        level = Integer.parseUnsignedInt(parts[levelIndex]);
+                    } catch (NumberFormatException ignored) {
                     }
-                } else if (parts.length == 1) {
-                    level = 1;
-                } else {
-                    continue;
                 }
 
                 meta.addEnchant(enchantment, level, true);
