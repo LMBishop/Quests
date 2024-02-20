@@ -155,6 +155,20 @@ cancelcommands:
   - "broadcast {player} has cancelled a quest"
 ```
 
+## Expiry commands
+
+
+*`expirycommands`*
+
+**Optional.** This is a list of commands which will be executed when the
+the player's quest expires. You can use `{player}` and the player's name
+will be substituted in place.
+
+``` yaml
+expirycommands:
+  - "broadcast {player}'s quest has expired"
+```
+
 ## Start string
 
   
