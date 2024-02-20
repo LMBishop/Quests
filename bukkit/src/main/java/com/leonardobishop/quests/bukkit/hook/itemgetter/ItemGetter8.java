@@ -23,15 +23,15 @@ import java.util.List;
  *     <li>lore</li>
  *     <li>enchantments (<b>without</b> namespace support)</li>
  *     <li>item flags</li>
- *     <li>unbreakability</li>
+ *     <li>unbreakability (<b>without</b> CraftBukkit support)</li>
  * </ul>
  * Requires at least API version 1.8.
  */
 @SuppressWarnings({"deprecation", "DuplicatedCode", "JavaReflectionMemberAccess"})
 public class ItemGetter8 extends ItemGetter {
 
-    private static final Method spigotMethod;
-    private static final Method setUnbreakableMethod;
+    private static Method spigotMethod;
+    private static Method setUnbreakableMethod;
 
     static {
         try {
@@ -39,8 +39,8 @@ public class ItemGetter8 extends ItemGetter {
 
             Class<?> spigotClass = Class.forName("org.bukkit.inventory.meta.ItemMeta.Spigot");
             setUnbreakableMethod = spigotClass.getMethod("setUnbreakable", boolean.class);
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
+        } catch (ClassNotFoundException | NoSuchMethodException ignored) {
+            // server version cannot support the method (doesn't work on CraftBukkit)
         }
     }
 
@@ -133,12 +133,14 @@ public class ItemGetter8 extends ItemGetter {
             }
         }
 
-        // unbreakability
-        boolean unbreakable = config.getBoolean("unbreakable", false);
-        if (unbreakable && !filters.contains(Filter.UNBREAKABLE)) {
-            try {
-                setUnbreakableMethod.invoke(spigotMethod.invoke(meta), true);
-            } catch (IllegalAccessException | InvocationTargetException ignored) {
+        if (spigotMethod != null && setUnbreakableMethod != null) {
+            // unbreakability
+            Boolean unbreakable = (Boolean) config.get("unbreakable");
+            if (unbreakable != null && !filters.contains(Filter.UNBREAKABLE)) {
+                try {
+                    setUnbreakableMethod.invoke(spigotMethod.invoke(meta), unbreakable);
+                } catch (IllegalAccessException | InvocationTargetException ignored) {
+                }
             }
         }
 

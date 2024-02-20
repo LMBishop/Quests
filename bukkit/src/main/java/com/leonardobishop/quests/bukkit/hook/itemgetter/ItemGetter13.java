@@ -26,7 +26,7 @@ import java.util.UUID;
  *     <li>lore</li>
  *     <li>enchantments (<b>without</b> namespace support)</li>
  *     <li>item flags</li>
- *     <li>unbreakability</li>
+ *     <li>unbreakability (<b>with</b> CraftBukkit support)</li>
  *     <li>attribute modifiers</li>
  * </ul>
  * Requires at least API version 1.13.
@@ -124,9 +124,9 @@ public class ItemGetter13 extends ItemGetter {
         }
 
         // unbreakability
-        boolean unbreakable = config.getBoolean("unbreakable", false);
-        if (unbreakable && !filters.contains(Filter.UNBREAKABLE)) {
-            meta.setUnbreakable(true);
+        Boolean unbreakable = (Boolean) config.get("unbreakable");
+        if (unbreakable != null && !filters.contains(Filter.UNBREAKABLE)) {
+            meta.setUnbreakable(unbreakable);
         }
 
         // attribute modifiers
