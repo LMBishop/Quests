@@ -370,6 +370,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         if (config.isConfigurationSection("progress-placeholders")) {
                             for (String p : config.getConfigurationSection("progress-placeholders").getKeys(false)) {
                                 progressPlaceholders.put(p, config.getString("progress-placeholders." + p));
+                                findInvalidTaskReferences(quest, config.getString("progress-placeholders." + p), problems, "placeholders." + p, true, true);
                             }
                         }
                         questManager.registerQuest(quest);
@@ -513,24 +514,52 @@ public class BukkitQuestsLoader implements QuestsLoader {
         questsLogger.info(questItemRegistry.getAllItems().size() + " quest items have been registered.");
     }
 
-    private void findInvalidTaskReferences(Quest quest, String s, List<ConfigProblem> configProblems, String location) {
-        Pattern pattern = Pattern.compile("\\{([^}]+)}");
+    private static final Pattern taskPlaceholderPattern = Pattern.compile("\\{([^}]+)}");
 
-        Matcher matcher = pattern.matcher(s);
+    private void findInvalidTaskReferences(Quest quest, String s, List<ConfigProblem> configProblems, String location) {
+        findInvalidTaskReferences(quest, s, configProblems, location, false, false);
+    }
+
+    private void findInvalidTaskReferences(Quest quest, String s, List<ConfigProblem> configProblems, String location, boolean allowByThis, boolean allowByType) {
+        Matcher matcher = taskPlaceholderPattern.matcher(s);
+
         while (matcher.find()) {
-            String[] parts = matcher.group(1).split(":");
+            String taskPlaceholder = matcher.group(1);
+
+            String[] parts = taskPlaceholder.split(":", 2);
+            if (parts.length != 2) {
+                // not a placeholder?
+                continue;
+            }
+
+            String taskIdPart = parts[0];
+            if (allowByThis && taskIdPart.equals("this")) {
+                continue;
+            }
+
             boolean match = false;
-            for (Task t : quest.getTasks()) {
-                if (t.getId().equals(parts[0])) {
+            for (Task task : quest.getTasks()) {
+                String taskType = task.getType();
+                if (allowByType && taskType.equals(taskIdPart)) {
+                    match = true;
+                    break;
+                }
+
+                String taskId = task.getId();
+                if (taskId.equals(taskIdPart)) {
                     match = true;
                     break;
                 }
             }
-            if (!match)
-                configProblems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getDescription(parts[0]),
-                        ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getExtendedDescription(parts[0]),
-                        location));
+
+            if (match) {
+                continue;
+            }
+
+            configProblems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                    ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getDescription(parts[0]),
+                    ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getExtendedDescription(parts[0]),
+                    location));
         }
     }
 
