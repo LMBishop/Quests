@@ -171,6 +171,11 @@ public class TaskUtils {
                 break titleSearch;
             }
 
+            title = quest.getProgressPlaceholders().get(task.getType()); // one title for all tasks of the same type
+            if (title != null) {
+                break titleSearch;
+            }
+
             title = quest.getProgressPlaceholders().get("*"); // one title for all tasks
             if (title != null) {
                 break titleSearch;
