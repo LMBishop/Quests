@@ -370,7 +370,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         if (config.isConfigurationSection("progress-placeholders")) {
                             for (String p : config.getConfigurationSection("progress-placeholders").getKeys(false)) {
                                 progressPlaceholders.put(p, config.getString("progress-placeholders." + p));
-                                findInvalidTaskReferences(quest, config.getString("progress-placeholders." + p), problems, "placeholders." + p, true, true);
+                                findInvalidTaskReferences(quest, config.getString("progress-placeholders." + p), problems, "placeholders." + p, true);
                             }
                         }
                         questManager.registerQuest(quest);
@@ -517,10 +517,10 @@ public class BukkitQuestsLoader implements QuestsLoader {
     private static final Pattern taskPlaceholderPattern = Pattern.compile("\\{([^}]+):(progress|complete|id)}");
 
     private void findInvalidTaskReferences(Quest quest, String s, List<ConfigProblem> configProblems, String location) {
-        findInvalidTaskReferences(quest, s, configProblems, location, false, false);
+        findInvalidTaskReferences(quest, s, configProblems, location, false);
     }
 
-    private void findInvalidTaskReferences(Quest quest, String s, List<ConfigProblem> configProblems, String location, boolean allowByThis, boolean allowByType) {
+    private void findInvalidTaskReferences(Quest quest, String s, List<ConfigProblem> configProblems, String location, boolean allowByThis) {
         Matcher matcher = taskPlaceholderPattern.matcher(s);
 
         while (matcher.find()) {
@@ -531,12 +531,6 @@ public class BukkitQuestsLoader implements QuestsLoader {
 
             boolean match = false;
             for (Task task : quest.getTasks()) {
-                String taskType = task.getType();
-                if (allowByType && taskType.equals(taskIdPart)) {
-                    match = true;
-                    break;
-                }
-
                 String taskId = task.getId();
                 if (taskId.equals(taskIdPart)) {
                     match = true;
