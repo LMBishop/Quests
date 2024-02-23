@@ -514,7 +514,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
         questsLogger.info(questItemRegistry.getAllItems().size() + " quest items have been registered.");
     }
 
-    private static final Pattern taskPlaceholderPattern = Pattern.compile("\\{([^}]+)}");
+    private static final Pattern taskPlaceholderPattern = Pattern.compile("\\{([^}]+):(progress|complete|id)}");
 
     private void findInvalidTaskReferences(Quest quest, String s, List<ConfigProblem> configProblems, String location) {
         findInvalidTaskReferences(quest, s, configProblems, location, false, false);
@@ -524,15 +524,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
         Matcher matcher = taskPlaceholderPattern.matcher(s);
 
         while (matcher.find()) {
-            String taskPlaceholder = matcher.group(1);
-
-            String[] parts = taskPlaceholder.split(":", 2);
-            if (parts.length != 2) {
-                // not a placeholder?
-                continue;
-            }
-
-            String taskIdPart = parts[0];
+            String taskIdPart = matcher.group(1);
             if (allowByThis && taskIdPart.equals("this")) {
                 continue;
             }
@@ -557,8 +549,8 @@ public class BukkitQuestsLoader implements QuestsLoader {
             }
 
             configProblems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                    ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getDescription(parts[0]),
-                    ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getExtendedDescription(parts[0]),
+                    ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getDescription(taskIdPart),
+                    ConfigProblemDescriptions.UNKNOWN_TASK_REFERENCE.getExtendedDescription(taskIdPart),
                     location));
         }
     }
