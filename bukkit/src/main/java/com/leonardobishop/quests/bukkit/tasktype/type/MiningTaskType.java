@@ -216,6 +216,9 @@ public final class MiningTaskType extends BukkitTaskType {
 
             int progress = TaskUtils.decrementIntegerTaskProgress(taskProgress);
             super.debug("Decrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+            int amount = (int) task.getConfigValue("amount");
+            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, amount);
         }
     }
 }
