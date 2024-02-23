@@ -165,7 +165,7 @@ public final class InventoryTaskType extends BukkitTaskType {
                 }
             }
 
-            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, amount);
+            TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, amount);
         }
     }
 }

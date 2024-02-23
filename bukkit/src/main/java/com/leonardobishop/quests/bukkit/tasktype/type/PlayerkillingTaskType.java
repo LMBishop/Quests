@@ -58,7 +58,7 @@ public final class PlayerkillingTaskType extends BukkitTaskType {
                 taskProgress.setCompleted(true);
             }
 
-            TaskUtils.sendTrackAdvancement(killer, quest, task, taskProgress, playerKillsNeeded);
+            TaskUtils.sendTrackAdvancement(killer, quest, task, pendingTask, playerKillsNeeded);
         }
     }
 }

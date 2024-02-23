@@ -70,7 +70,7 @@ public final class EssentialsMoneyEarnTaskType extends BukkitTaskType {
                 taskProgress.setCompleted(true);
             }
 
-            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, earningsNeeded);
+            TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, earningsNeeded);
         }
     }
 }

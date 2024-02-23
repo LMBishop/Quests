@@ -55,7 +55,7 @@ public final class ExpEarnTaskType extends BukkitTaskType {
                 taskProgress.setCompleted(true);
             }
 
-            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, expNeeded);
+            TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, expNeeded);
         }
     }
 }

@@ -123,7 +123,7 @@ public abstract class ShopGUIPlusInteractionTaskType extends BukkitTaskType {
                 taskProgress.setCompleted(true);
             }
 
-            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, amountNeeded);
+            TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, amountNeeded);
         }
     }
 }

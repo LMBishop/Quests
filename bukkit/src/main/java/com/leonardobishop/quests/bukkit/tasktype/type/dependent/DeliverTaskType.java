@@ -148,7 +148,7 @@ public abstract class DeliverTaskType<T> extends BukkitTaskType {
                 }
             }
 
-            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, amount);
+            TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, amount);
         }
     }
 }
