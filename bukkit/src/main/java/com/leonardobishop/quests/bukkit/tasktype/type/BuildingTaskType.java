@@ -94,7 +94,7 @@ public final class BuildingTaskType extends BukkitTaskType {
 
             boolean reverseIfBroken = TaskUtils.getConfigBoolean(task, "reverse-if-broken");
             if (!reverseIfBroken) {
-                return;
+                continue;
             }
 
             super.debug("reverse-if-broken is enabled, checking block", quest.getId(), task.getId(), player.getUniqueId());
