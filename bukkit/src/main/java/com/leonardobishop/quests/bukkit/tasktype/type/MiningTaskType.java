@@ -138,7 +138,7 @@ public final class MiningTaskType extends BukkitTaskType {
                     taskProgress.setCompleted(true);
                 }
 
-                TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, amount);
+                TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, amount);
             };
 
             boolean coreProtectEnabled = TaskUtils.getConfigBoolean(task, "check-coreprotect");
@@ -218,7 +218,7 @@ public final class MiningTaskType extends BukkitTaskType {
             super.debug("Decrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
             int amount = (int) task.getConfigValue("amount");
-            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, amount);
+            TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, amount);
         }
     }
 }

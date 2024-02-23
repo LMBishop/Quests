@@ -107,7 +107,7 @@ public final class WalkingTaskType extends BukkitTaskType {
                 taskProgress.setCompleted(true);
             }
 
-            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, distanceNeeded);
+            TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, distanceNeeded);
         }
     }
 

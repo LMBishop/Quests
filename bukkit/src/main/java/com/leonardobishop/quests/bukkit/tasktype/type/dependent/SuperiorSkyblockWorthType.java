@@ -60,7 +60,7 @@ public final class SuperiorSkyblockWorthType extends BukkitTaskType {
                     taskProgress.setCompleted(true);
                 }
 
-                TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, islandLevelNeeded);
+                TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, islandLevelNeeded);
             }
         }
     }

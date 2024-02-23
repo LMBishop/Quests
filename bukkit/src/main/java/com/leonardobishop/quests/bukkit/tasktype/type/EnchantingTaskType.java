@@ -110,7 +110,7 @@ public final class EnchantingTaskType extends BukkitTaskType {
                 taskProgress.setCompleted(true);
             }
 
-            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, enchantsNeeded);
+            TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, enchantsNeeded);
         }
     }
 }

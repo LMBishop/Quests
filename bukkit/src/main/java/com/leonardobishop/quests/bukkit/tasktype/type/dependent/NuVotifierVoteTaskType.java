@@ -56,7 +56,7 @@ public final class NuVotifierVoteTaskType extends BukkitTaskType {
                 taskProgress.setCompleted(true);
             }
 
-            TaskUtils.sendTrackAdvancement(player, quest, task, taskProgress, votesNeeded);
+            TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, votesNeeded);
         }
     }
 }
