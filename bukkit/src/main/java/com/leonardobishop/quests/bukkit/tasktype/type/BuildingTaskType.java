@@ -28,6 +28,7 @@ public final class BuildingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, TaskUtils.MaterialListConfigValidatorMode.BLOCK, "block", "blocks"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "reverse-if-broken"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "allow-negative-progress"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -42,7 +43,7 @@ public final class BuildingTaskType extends BukkitTaskType {
             return;
         }
 
-        final Block block = event.getBlock();
+        Block block = event.getBlock();
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
@@ -60,7 +61,6 @@ public final class BuildingTaskType extends BukkitTaskType {
             super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
             int amount = (int) task.getConfigValue("amount");
-
             if (progress >= amount) {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
@@ -83,7 +83,7 @@ public final class BuildingTaskType extends BukkitTaskType {
             return;
         }
 
-        final Block block = event.getBlock();
+        Block block = event.getBlock();
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
@@ -101,6 +101,13 @@ public final class BuildingTaskType extends BukkitTaskType {
 
             if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
+
+            boolean allowNegativeProgress = TaskUtils.getConfigBoolean(task, "allow-negative-progress", true);
+            int currentProgress = TaskUtils.getIntegerTaskProgress(taskProgress);
+            if (currentProgress <= 0 && !allowNegativeProgress) {
+                super.debug("Task progress is already at zero and negative progress is disabled, skipping decrement", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
 
