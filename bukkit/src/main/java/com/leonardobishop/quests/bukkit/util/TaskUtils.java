@@ -153,7 +153,9 @@ public class TaskUtils {
         return progress;
     }
 
-	public static void sendTrackAdvancement(Player player, Quest quest, Task task, TaskProgress taskProgress, Number amount) {
+	public static void sendTrackAdvancement(Player player, Quest quest, Task task, PendingTask pendingTask, Number amount) {
+        TaskProgress taskProgress = pendingTask.taskProgress();
+
         boolean useActionBar = plugin.getConfig().getBoolean("options.actionbar.progress", false)
                 || (taskProgress.isCompleted() && plugin.getConfig().getBoolean("options.actionbar.complete", false));
         boolean useBossBar = plugin.getConfig().getBoolean("options.bossbar.progress", false)
@@ -194,7 +196,8 @@ public class TaskUtils {
             return; // no valid title format found
         }
 
-        title = QItemStack.processPlaceholders(title, taskProgress);
+        QuestProgress questProgress = pendingTask.questProgress();
+        title = QItemStack.processPlaceholders(title, questProgress, taskProgress);
 
         boolean usePlaceholderAPI = plugin.getQuestsConfig().getBoolean("options.progress-use-placeholderapi", false);
         if (usePlaceholderAPI) {
