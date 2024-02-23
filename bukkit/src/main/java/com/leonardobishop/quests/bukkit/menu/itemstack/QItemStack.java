@@ -131,7 +131,7 @@ public class QItemStack {
         return is;
     }
 
-    private static final Pattern taskPlaceholderPattern = Pattern.compile("\\{([^}]+):([^:}]+)}");
+    private static final Pattern taskPlaceholderPattern = Pattern.compile("\\{([^}]+):(progress|complete|id)}");
 
     public static String processPlaceholders(String s, QuestProgress questProgress) {
         return processPlaceholders(s, questProgress, null);
