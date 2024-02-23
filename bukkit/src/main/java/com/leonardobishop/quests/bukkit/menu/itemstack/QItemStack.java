@@ -131,69 +131,67 @@ public class QItemStack {
         return is;
     }
 
-    public static String processPlaceholders(String s, TaskProgress taskProgress) {
-        Matcher m = Pattern.compile("\\{([^}]+)}").matcher(s);
-        while (m.find()) {
-            String[] parts = m.group(1).split(":");
-            if (parts.length > 1) {
-                if (taskProgress == null) {
-                    continue;
-                }
-                if (parts[1].equals("progress")) {
-                    Object progress = taskProgress.getProgress();
-                    String str;
-                    if (progress instanceof Float || progress instanceof Double || progress instanceof BigDecimal) {
-                        str = String.format("%.2f", progress);
-                    } else {
-                        str = String.valueOf(progress);
-                    }
-
-                    s = s.replace("{" + m.group(1) + "}", (progress == null ? String.valueOf(0) : str));
-                }
-                if (parts[1].equals("complete")) {
-                    String str;
-                    if (taskProgress.isCompleted()) {
-                        str = Chat.legacyColor(Messages.UI_PLACEHOLDERS_TRUE.getMessageLegacyColor());
-                    } else {
-                        str = Chat.legacyColor(Messages.UI_PLACEHOLDERS_FALSE.getMessageLegacyColor());
-                    }
-                    s = s.replace("{" + m.group(1) + "}", str);
-                }
-            }
-        }
-        return s;
-    }
+    private static final Pattern taskPlaceholderPattern = Pattern.compile("\\{([^}]+):([^:}]+)}");
 
     public static String processPlaceholders(String s, QuestProgress questProgress) {
-        Matcher m = Pattern.compile("\\{([^}]+)}").matcher(s);
-        while (m.find()) {
-            String[] parts = m.group(1).split(":");
-            if (parts.length > 1) {
-                if (questProgress.getTaskProgress(parts[0]) == null) {
-                    continue;
-                }
-                if (parts[1].equals("progress")) {
-                    Object progress = questProgress.getTaskProgress(parts[0]).getProgress();
-                    String str;
-                    if (progress instanceof Float || progress instanceof Double || progress instanceof BigDecimal) {
-                        str = String.format("%.2f", progress);
-                    } else {
-                        str = String.valueOf(progress);
-                    }
+        return processPlaceholders(s, questProgress, null);
+    }
 
-                    s = s.replace("{" + m.group(1) + "}", (progress == null ? String.valueOf(0) : str));
-                }
-                if (parts[1].equals("complete")) {
-                    String str;
-                    if (questProgress.getTaskProgress(parts[0]).isCompleted()) {
-                        str = Chat.legacyColor(Messages.UI_PLACEHOLDERS_TRUE.getMessageLegacyColor());
+    public static String processPlaceholders(String s, QuestProgress questProgress, TaskProgress taskProgress) {
+        Matcher matcher = taskPlaceholderPattern.matcher(s);
+
+        while (matcher.find()) {
+            TaskProgress matchedTaskProgress;
+
+            String taskIdPart = matcher.group(1);
+            if (taskProgress != null && taskIdPart.equals("this")) {
+                matchedTaskProgress = taskProgress;
+            } else {
+                matchedTaskProgress = questProgress.getTaskProgress(taskIdPart);
+            }
+
+            if (matchedTaskProgress == null) {
+                continue;
+            }
+
+            String placeholderPart = matcher.group(2);
+            String replacement;
+
+            switch (placeholderPart) {
+                // formatted progress placeholders
+                case "progress" -> {
+                    Object progress = matchedTaskProgress.getProgress();
+                    if (progress instanceof Float || progress instanceof Double || progress instanceof BigDecimal) {
+                        replacement = String.format("%.2f", ((Number) progress).floatValue());
                     } else {
-                        str = Chat.legacyColor(Messages.UI_PLACEHOLDERS_FALSE.getMessageLegacyColor());
+                        replacement = String.valueOf(progress);
                     }
-                    s = s.replace("{" + m.group(1) + "}", str);
                 }
+
+                // completion placeholders
+                case "complete" -> {
+                    boolean completed = matchedTaskProgress.isCompleted();
+                    if (completed) {
+                        replacement = Messages.UI_PLACEHOLDERS_TRUE.getMessageLegacyColor();
+                    } else {
+                        replacement = Messages.UI_PLACEHOLDERS_FALSE.getMessageLegacyColor();
+                    }
+                }
+
+                // may be particularly useful when using PAPI placeholders in boss bars
+                case "id" -> replacement = matchedTaskProgress.getTaskId();
+
+                // set it to null so we can check if there is need to update the matcher
+                default -> replacement = null;
+            }
+
+            // update the matcher only if something needs to be replaced
+            if (replacement != null) {
+                s = s.substring(0, matcher.start()) + replacement + s.substring(matcher.end());
+                matcher = taskPlaceholderPattern.matcher(s);
             }
         }
+
         return s;
     }
 
