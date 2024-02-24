@@ -163,8 +163,10 @@ public class QItemStack {
                     Object progress = matchedTaskProgress.getProgress();
                     if (progress instanceof Float || progress instanceof Double || progress instanceof BigDecimal) {
                         replacement = String.format("%.2f", ((Number) progress).floatValue());
-                    } else {
+                    } else if (progress != null) {
                         replacement = String.valueOf(progress);
+                    } else {
+                        replacement = String.valueOf(0);
                     }
                 }
 
