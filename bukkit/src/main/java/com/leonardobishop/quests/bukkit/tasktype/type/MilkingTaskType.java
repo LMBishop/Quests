@@ -12,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Goat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,7 +36,7 @@ public final class MilkingTaskType extends BukkitTaskType {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Entity entity = event.getRightClicked();
-        if (!(entity instanceof Cow || entity instanceof Goat)) {
+        if (!(entity instanceof Cow || plugin.getVersionSpecificHandler().isGoat(entity))) {
             return;
         }
 

@@ -2,6 +2,8 @@ package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.CaveVinesPlant;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Goat;
 
 public class VersionSpecificHandler17 extends VersionSpecificHandler16 implements VersionSpecificHandler {
 
@@ -13,5 +15,10 @@ public class VersionSpecificHandler17 extends VersionSpecificHandler16 implement
     @Override
     public boolean isCaveVinesPlantWithBerries(BlockData blockData) {
         return blockData instanceof CaveVinesPlant caveVinesPlant && caveVinesPlant.isBerries();
+    }
+
+    @Override
+    public boolean isGoat(Entity entity) {
+        return entity instanceof Goat;
     }
 }

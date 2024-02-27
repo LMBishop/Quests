@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.SmithItemEvent;
@@ -35,4 +36,6 @@ public interface VersionSpecificHandler {
     ItemStack[] getSmithItems(SmithItemEvent event);
 
     String getSmithMode(SmithItemEvent event);
+
+    boolean isGoat(Entity entity);
 }
