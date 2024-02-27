@@ -31,6 +31,8 @@ import org.bukkit.material.Colorable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -394,17 +396,42 @@ public class TaskUtils {
         return false;
     }
 
-    public static boolean matchSpawnReason(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull CreatureSpawnEvent.SpawnReason spawnReason, @NotNull UUID player) {
-        return matchSpawnReason(type, pendingTask, spawnReason, player, "spawn-reason", "spawn-reasons");
+    private static Method getEntitySpawnReasonMethod;
+
+    static {
+        try {
+            getEntitySpawnReasonMethod = Entity.class.getMethod("getEntitySpawnReason");
+        } catch (NoSuchMethodException ignored) {
+            // server version cannot support the method (doesn't work on Spigot)
+        }
     }
 
-    public static boolean matchSpawnReason(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull CreatureSpawnEvent.SpawnReason spawnReason, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
+    public static boolean matchSpawnReason(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Entity entity, @NotNull UUID player) {
+        return matchSpawnReason(type, pendingTask, entity, player, "spawn-reason", "spawn-reasons");
+    }
+
+    public static boolean matchSpawnReason(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Entity entity, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
         Task task = pendingTask.task;
 
         List<String> checkSpawnReasons = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
         if (checkSpawnReasons == null) {
             return true;
         } else if (checkSpawnReasons.isEmpty()) {
+            return false;
+        }
+
+        if (getEntitySpawnReasonMethod == null) {
+            type.debug("Spawn reason is specified but the server software doesn't have the method necessary to get it", pendingTask.quest.getId(), task.getId(), player);
+
+            // it is supported only on Paper so we simply ignore it
+            return true;
+        }
+
+        CreatureSpawnEvent.SpawnReason spawnReason;
+        try {
+            spawnReason = (CreatureSpawnEvent.SpawnReason) getEntitySpawnReasonMethod.invoke(entity);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            // it should never happen
             return false;
         }
 

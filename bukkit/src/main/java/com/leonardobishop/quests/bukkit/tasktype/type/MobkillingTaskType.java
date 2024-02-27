@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -98,8 +97,6 @@ public final class MobkillingTaskType extends BukkitTaskType {
             return;
         }
 
-        CreatureSpawnEvent.SpawnReason spawnReason = entity.getEntitySpawnReason();
-
         //noinspection deprecation
         String customName = entity.getCustomName();
 
@@ -127,7 +124,7 @@ public final class MobkillingTaskType extends BukkitTaskType {
                 continue;
             }
 
-            if (!TaskUtils.matchSpawnReason(this, pendingTask, spawnReason, player.getUniqueId())) {
+            if (!TaskUtils.matchSpawnReason(this, pendingTask, entity, player.getUniqueId())) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
