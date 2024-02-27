@@ -685,10 +685,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     private void setBossBarHandle() {
         try {
-            Bukkit.class.getMethod("createBossBar", String.class, BarColor.class, BarStyle.class, BarFlag[].class);
+            Bukkit.class.getMethod("createBossBar", String.class, Class.forName("org.bukkit.boss.BarColor"), Class.forName("org.bukkit.boss.BarStyle"), Class.forName("[Lorg.bukkit.boss.BarFlag;"));
             bossBarHandle = new BossBar_Bukkit(this);
             return;
-        } catch (NoSuchMethodException ignored) {
+        } catch (ClassNotFoundException | NoSuchMethodException ignored) {
         }
 
         bossBarHandle = new BossBar_Nothing();
