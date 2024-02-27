@@ -15,7 +15,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -60,8 +59,6 @@ public final class MilkingTaskType extends BukkitTaskType {
             return;
         }
 
-        CreatureSpawnEvent.SpawnReason spawnReason = entity.getEntitySpawnReason();
-
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
@@ -74,7 +71,7 @@ public final class MilkingTaskType extends BukkitTaskType {
                 continue;
             }
 
-            if (!TaskUtils.matchSpawnReason(this, pendingTask, spawnReason, player.getUniqueId())) {
+            if (!TaskUtils.matchSpawnReason(this, pendingTask, entity, player.getUniqueId())) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
