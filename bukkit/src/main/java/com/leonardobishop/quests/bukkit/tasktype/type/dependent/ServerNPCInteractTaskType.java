@@ -40,7 +40,7 @@ public final class ServerNPCInteractTaskType extends InteractTaskType<String> {
             name = null;
         }
 
-        handle(event.getPlayer(), npc.getName(), name, plugin);
+        handle(event.getPlayer(), npc.getDisplayName(), name, plugin);
     }
 
     @Override
