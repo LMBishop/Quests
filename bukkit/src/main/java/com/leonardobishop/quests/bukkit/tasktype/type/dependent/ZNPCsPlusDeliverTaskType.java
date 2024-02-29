@@ -31,6 +31,8 @@ public final class ZNPCsPlusDeliverTaskType extends DeliverTaskType<String> {
 
         int lineCount = hologram.lineCount();
         if (lineCount > 0) {
+            boolean empty = true;
+
             StringBuilder nameBuilder = new StringBuilder();
             for (int i = 0; i < lineCount; i++) {
                 boolean lastLine = (i == lineCount - 1);
@@ -46,12 +48,14 @@ public final class ZNPCsPlusDeliverTaskType extends DeliverTaskType<String> {
                 }
 
                 nameBuilder.append(line);
+                if (empty) empty = false;
 
                 if (!lastLine) {
                     nameBuilder.append('\n');
                 }
             }
-            name = nameBuilder.toString();
+
+            name = !empty ? nameBuilder.toString() : null;
         } else {
             name = null;
         }
