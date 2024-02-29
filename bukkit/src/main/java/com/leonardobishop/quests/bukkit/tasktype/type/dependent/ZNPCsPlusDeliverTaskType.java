@@ -33,10 +33,21 @@ public final class ZNPCsPlusDeliverTaskType extends DeliverTaskType<String> {
         if (lineCount > 0) {
             StringBuilder nameBuilder = new StringBuilder();
             for (int i = 0; i < lineCount; i++) {
-                String line = hologram.getLine(i);
+                boolean lastLine = (i == lineCount - 1);
+
+                String line;
+                try {
+                    line = hologram.getLine(i);
+                } catch (Throwable ignored) {
+                    if (lastLine) {
+                        nameBuilder.deleteCharAt(nameBuilder.length() - 1);
+                    }
+                    continue;
+                }
+
                 nameBuilder.append(line);
 
-                if (i != lineCount - 1) {
+                if (!lastLine) {
                     nameBuilder.append('\n');
                 }
             }
