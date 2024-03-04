@@ -302,7 +302,8 @@ public class TaskUtils {
         Object configData = task.getConfigValue("data");
 
         Material blockMaterial = state.getType();
-        byte blockData = state.getRawData();
+        // do not set block data here as it will initialize Legacy Material Support
+        Byte blockData = null;
 
         Material material;
         int comparableData;
@@ -321,11 +322,25 @@ public class TaskUtils {
 
             type.debug("Checking against block " + material + ":" + comparableData, pendingTask.quest.getId(), task.getId(), player);
 
-            if (material == blockMaterial && ((parts.length == 1 && configData == null) || blockData == comparableData)) {
-                type.debug("Block match", pendingTask.quest.getId(), task.getId(), player);
-                return true;
+            if (material == blockMaterial) {
+                if (parts.length == 1 && configData == null) {
+                    type.debug("Block match (modern)", pendingTask.quest.getId(), task.getId(), player);
+                    return true;
+                }
+
+                // delay legacy material support initialization
+                if (blockData == null) {
+                    blockData = state.getRawData();
+                }
+
+                if (blockData == comparableData) {
+                    type.debug("Block match (legacy)", pendingTask.quest.getId(), task.getId(), player);
+                    return true;
+                }
+
+                type.debug("Block mismatch (legacy)", pendingTask.quest.getId(), task.getId(), player);
             } else {
-                type.debug("Block mismatch", pendingTask.quest.getId(), task.getId(), player);
+                type.debug("Block mismatch (modern)", pendingTask.quest.getId(), task.getId(), player);
             }
         }
 
