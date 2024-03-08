@@ -40,7 +40,7 @@ public final class ServerNPCDeliverTaskType extends DeliverTaskType<String> {
             name = null;
         }
 
-        checkInventory(event.getPlayer(), npc.getName(), name, 1L, plugin);
+        checkInventory(event.getPlayer(), npc.getDisplayName(), name, 1L, plugin);
     }
 
     @Override
