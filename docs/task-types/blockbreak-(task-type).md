@@ -27,7 +27,7 @@ merged into one. Both names can be used to refer to this task.
 | `data`                     | The data code for the block.                                                                   | Integer                        | No       | 0       | This field is not used in Minecraft versions 1.13+, nor is it compatible with lists of blocks.                                                                                                                                                                                  |
 | `reverse-if-placed`        | Whether placing blocks should decrement from the quest progress.                               | Boolean                        | No       | false   | This allows negative task progress unless `allow-negative-progress` is set to `false`.                                                                                                                                                                                          |
 | `check-coreprotect`        | Whether the plugin should query CoreProtect if a block has been recently placed.               | Boolean                        | No       | false   | This requires the CoreProtect plugin.                                                                                                                                                                                                                                           |
-| `check-coreprotect-time`   | How long ago (in seconds) the plugin should check with CoreProtect whether a block was placed. | Integer                        | No       | \-      | This requires the CoreProtect plugin.                                                                                                                                                                                                                                           |
+| `check-coreprotect-time`   | How long ago (in seconds) the plugin should check with CoreProtect whether a block was placed. | Integer                        | No       | \-      | Used with `check-coreprotect`.                                                                                                                                                                                                                                                  |
 | `check-playerblocktracker` | Whether the plugin should query PlayerBlockTracker if a block has been recently placed.        | Boolean                        | No       | false   | This requires the PlayerBlockTracker plugin.                                                                                                                                                                                                                                    |
 | `allow-silk-touch`         | Whether mining a block with a silk touch pickaxe should count.                                 | Boolean                        | No       | true    | \-                                                                                                                                                                                                                                                                              |
 | `allow-negative-progress`  | Whether progress can be allowed to enter the negatives.                                        | Boolean                        | No       | true    | Used with `reverse-if-placed`.                                                                                                                                                                                                                                                  |
@@ -50,7 +50,7 @@ Break 10 of stone:
 ``` yaml
 miningstone:
   type: "blockbreakcertain"
-  amount: 10                            # amount of blocks to be brkoen
+  amount: 10                            # amount of blocks to be broken
   block: STONE                          # name of block (can be id or minecraft name)
   data: 1                               # (OPTIONAL) data code 
   reverse-if-placed: false              # (OPTIONAL) if true, blocks of same type placed will reverse progression (prevents silk-touch exploit)
@@ -65,11 +65,11 @@ Break 10 of either stone or gold ore:
 ``` yaml
 miningmultiple:
   type: "blockbreakcertain"
-  amount: 10                            # amount of blocks to be placed
+  amount: 10                            # amount of blocks to be broken
   blocks:                               # name of blocks which will count towards progress
    - STONE
    - GOLD_ORE                           
-  reverse-if-broken: false              # (OPTIONAL) if true, blocks of same type broken will reverse progression (prevents silk-touch exploit)
+  reverse-if-placed: false              # (OPTIONAL) if true, blocks of same type placed will reverse progression (prevents silk-touch exploit)
   check-coreprotect: false              # (OPTIONAL) if true and CoreProtect is present, the plugin will check its logs for player placed blocks
   check-coreprotect-time: 3600          # (OPTIONAL) time in seconds for the maximum logging period to check
   worlds:                               # (OPTIONAL) restrict to certain worlds
