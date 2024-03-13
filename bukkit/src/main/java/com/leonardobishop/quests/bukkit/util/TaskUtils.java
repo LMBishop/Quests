@@ -390,6 +390,14 @@ public class TaskUtils {
     }
 
     public static boolean matchEntity(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Entity entity, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
+        return matchEntity(type, pendingTask, entity.getType(), player, stringKey, listKey);
+    }
+
+    public static boolean matchEntity(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull EntityType entityType, @NotNull UUID player) {
+        return matchEntity(type, pendingTask, entityType, player, "mob", "mobs");
+    }
+
+    public static boolean matchEntity(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull EntityType entityType, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
         Task task = pendingTask.task;
 
         List<String> checkMobs = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
@@ -398,8 +406,6 @@ public class TaskUtils {
         } else if (checkMobs.isEmpty()) {
             return false;
         }
-
-        EntityType entityType = entity.getType();
 
         EntityType mob;
 
