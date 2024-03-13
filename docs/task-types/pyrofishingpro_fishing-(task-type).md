@@ -20,7 +20,7 @@ Catch a set amount of a Pyro fish from the sea.
 |---------------|-------------------------------------|---------|----------|---------|-------------------------------------------------------------------|
 | `amount`      | The number of Pyro fish to catch.   | Integer | Yes      | \-      | \-                                                                |
 | `fish-number` | The specific fish number to catch.  | Integer | No       | \-      | If this value is not specified, then any fish will count.         |
-| `tier`        | The specific tier of fish to catch. | Integer | No       | \-      | If this value is not specified, then any tier of fish will count. |
+| `tier`        | The specific tier of fish to catch. | String  | No       | \-      | If this value is not specified, then any tier of fish will count. |
 
 ## Examples
 
