@@ -5,6 +5,8 @@ import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,7 +20,34 @@ import java.util.concurrent.TimeUnit;
  */
 public class QuestProgressFile {
 
-    private final Map<String, QuestProgress> questProgress = new HashMap<>();
+    private static final Constructor<?> optimizedMapCtor;
+
+    static {
+        Class<?> optimizedMapClazz;
+
+        try {
+            optimizedMapClazz = Class.forName("it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap");
+        } catch (ClassNotFoundException ignored) {
+            optimizedMapClazz = HashMap.class;
+        }
+
+        try {
+            optimizedMapCtor = optimizedMapClazz.getDeclaredConstructor();
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <K, V> Map<K, V> newOptimizedMapInstance() {
+        try {
+            return (Map<K, V>) optimizedMapCtor.newInstance();
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private final Map<String, QuestProgress> questProgress = newOptimizedMapInstance();
     private final UUID playerUUID;
     private final Quests plugin;
 
