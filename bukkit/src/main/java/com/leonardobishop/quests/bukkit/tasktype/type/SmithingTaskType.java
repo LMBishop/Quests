@@ -36,7 +36,14 @@ public final class SmithingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
+
+        if (plugin.getVersionSpecificHandler().getMinecraftVersion() < 20) {
+            return;
+        }
+
+        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "mode"));
         super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Arrays.asList(
+                "any", // for clarity reasons we want the user to specify the mode on 1.20+
                 "transform",
                 "trim"
         ), "mode"));
@@ -85,9 +92,11 @@ public final class SmithingTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
+            // null on versions lower than 1.20
             if (recipeType != null) {
                 final String mode = (String) task.getConfigValue("mode");
-                if (!recipeType.equals(mode)) {
+
+                if (!recipeType.equals(mode) && !"any".equals(mode)) {
                     super.debug("Specific mode is required, but the actual mode '" + recipeType + "' does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
