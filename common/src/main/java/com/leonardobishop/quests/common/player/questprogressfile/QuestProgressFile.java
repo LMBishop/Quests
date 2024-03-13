@@ -222,7 +222,8 @@ public class QuestProgressFile {
      * @return true if player has the quest started
      */
     public boolean hasQuestStarted(Quest quest) {
-        return questProgress.containsKey(quest.getId()) && questProgress.get(quest.getId()).isStarted();
+        QuestProgress qProgress = questProgress.get(quest.getId());
+        return qProgress != null && qProgress.isStarted();
     }
 
     /**
