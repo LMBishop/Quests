@@ -97,6 +97,8 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ASkyBlockLevelTa
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BentoBoxLevelTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensDeliverTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensInteractTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CustomFishingGroupType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CustomFishingLootType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EcoBossesKillingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EcoMobsKillingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsBalanceTaskType;
@@ -449,6 +451,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new ASkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("ASkyBlock"));
             taskTypeManager.registerTaskType(() -> new CitizensDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));
             taskTypeManager.registerTaskType(() -> new CitizensInteractTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));
+            taskTypeManager.registerTaskType(() -> new CustomFishingLootType(this), () -> CompatUtils.isPluginEnabled("CustomFishing"));
+            taskTypeManager.registerTaskType(() -> new CustomFishingGroupType(this), () -> CompatUtils.isPluginEnabled("CustomFishing"));
             taskTypeManager.registerTaskType(() -> new EcoBossesKillingTaskType(this), () -> CompatUtils.isPluginEnabled("EcoBosses"));
             taskTypeManager.registerTaskType(() -> new EcoMobsKillingTaskType(this), () -> CompatUtils.isPluginEnabled("EcoMobs"));
             taskTypeManager.registerTaskType(() -> new EssentialsBalanceTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
