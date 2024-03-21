@@ -11,6 +11,7 @@ import net.momirealms.customfishing.api.event.FishingResultEvent;
 import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import java.util.Arrays;
@@ -26,19 +27,10 @@ public final class CustomFishingGroupType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "group", "groups"));
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
-
-        plugin.getServer().getPluginManager().registerEvents(new CustomFishingListener(), plugin);
     }
 
-    private final class CustomFishingListener implements Listener {
-
-        @EventHandler(ignoreCancelled = true)
-        public void onFishing(FishingResultEvent event) {
-            handle(event);
-        }
-    }
-
-    private void handle(FishingResultEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onFishingResult(FishingResultEvent event) {
         if (event.getResult() == FishingResultEvent.Result.FAILURE)
             return;
 
