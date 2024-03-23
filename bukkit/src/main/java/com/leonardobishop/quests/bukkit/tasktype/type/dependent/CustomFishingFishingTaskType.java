@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit.tasktype.type.dependent;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
@@ -12,29 +13,25 @@ import net.momirealms.customfishing.api.mechanic.loot.Loot;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 
-public final class CustomFishingLootType extends BukkitTaskType {
+import java.util.Arrays;
+
+public final class CustomFishingFishingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
-    public CustomFishingLootType(BukkitQuestsPlugin plugin) {
-        super("customfishing_loot", TaskUtils.TASK_ATTRIBUTION_STRING, "Catch a set amount of a loot");
+    public CustomFishingFishingTaskType(BukkitQuestsPlugin plugin) {
+        super("customfishing_fishing", TaskUtils.TASK_ATTRIBUTION_STRING, "Catch a set amount of CustomFishing loots");
         this.plugin = plugin;
 
-        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "loot", "loots"));
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFishingResult(FishingResultEvent event) {
-        if (event.getResult() == FishingResultEvent.Result.FAILURE)
-            return;
-
-        final Player player = event.getPlayer();
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
-        if (qPlayer == null) {
+        FishingResultEvent.Result result = event.getResult();
+        if (result != FishingResultEvent.Result.SUCCESS) {
             return;
         }
 
@@ -43,14 +40,35 @@ public final class CustomFishingLootType extends BukkitTaskType {
             return;
         }
 
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+        Player player = event.getPlayer();
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
+
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+        if (qPlayer == null) {
+            return;
+        }
+
+        String id = loot.getID();
+        String[] groups = loot.getLootGroup();
+
+        // Cache for performance reasons (used in debug logging)
+        String groupsAsString = Arrays.toString(groups);
+
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player caught loot " + loot.getID(), quest.getId(), task.getId(), player.getUniqueId());
+            super.debug("Player caught loot id " + id + " groups " + groupsAsString, quest.getId(), task.getId(), player.getUniqueId());
 
-            if (!TaskUtils.matchString(this, pendingTask, loot.getID(), player.getUniqueId(), "loot", "loots", false, false)) {
+            if (!TaskUtils.matchString(this, pendingTask, id, player.getUniqueId(), "loot", "loots", false, false)) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
+
+            if (!TaskUtils.matchAnyString(this, pendingTask, groups, player.getUniqueId(), "group", "groups", false, false)) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
