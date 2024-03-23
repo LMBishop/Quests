@@ -1,5 +1,7 @@
 package com.leonardobishop.quests.bukkit.util;
 
+import java.lang.reflect.Array;
+
 /*
  * From Apache Commons Lang
  * https://github.com/apache/commons-lang/blob/master/LICENSE.txt
@@ -95,5 +97,32 @@ public class StringUtils {
         }
 
         return true;
+    }
+
+    public static boolean equalsAny(final CharSequence string, final CharSequence[] searchStrings, final boolean ignoreCase) {
+        if (isNotEmpty(searchStrings)) {
+            for (final CharSequence next : searchStrings) {
+                if (equals(string, next, ignoreCase)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static <T> boolean isNotEmpty(final T[] array) {
+        return !isEmpty(array);
+    }
+
+    public static boolean isEmpty(final Object[] array) {
+        return isArrayEmpty(array);
+    }
+
+    private static boolean isArrayEmpty(final Object array) {
+        return getLength(array) == 0;
+    }
+
+    public static int getLength(final Object array) {
+        return array != null ? Array.getLength(array) : 0;
     }
 }
