@@ -34,7 +34,7 @@ repositories {
     maven { url = 'https://repo.leonardobishop.com/releases/' }
     // PlaceholderAPI
     maven { url = 'https://repo.extendedclip.com/content/repositories/dev/' }
-    // ItemsAdder, PlayerBlockTracker, SCore, ShopGUIPlus, Slimefun4
+    // ItemsAdder, CustomFishing, PlayerBlockTracker, SCore, ShopGUIPlus, Slimefun4
     maven { url = 'https://jitpack.io/' }
     // PlayerPoints
     maven { url = 'https://repo.rosewooddev.io/repository/public/' }
@@ -75,6 +75,8 @@ dependencies {
     compileOnly('net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT') { transitive = false }
     // CoreProtect
     compileOnly 'net.coreprotect:coreprotect:21.2'
+    // CustomFishing
+    compileOnly 'com.github.Xiao-MoMi:Custom-Fishing:2.1.2'
     // EcoBosses, EcoMobs
     compileOnly 'com.willfp:EcoBosses:9.14.0'
     compileOnly 'com.willfp:EcoMobs:10.0.0-b1'

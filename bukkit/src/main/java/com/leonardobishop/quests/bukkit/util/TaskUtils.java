@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -501,9 +502,43 @@ public class TaskUtils {
         }
 
         for (String name : checkNames) {
-            type.debug("Checking against name " + string, pendingTask.quest.getId(), task.getId(), player);
+            type.debug("Checking against name " + name, pendingTask.quest.getId(), task.getId(), player);
 
-            if (StringUtils.equals(string, name, ignoreCase)) {
+            if (StringUtils.equals(name, string, ignoreCase)) {
+                type.debug("Name match", pendingTask.quest.getId(), task.getId(), player);
+                return true;
+            } else {
+                type.debug("Name mismatch", pendingTask.quest.getId(), task.getId(), player);
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean matchAnyString(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull String @Nullable [] strings, @NotNull UUID player, final @NotNull String stringKey, final @NotNull String listKey, boolean legacyColor, boolean ignoreCase) {
+        Task task = pendingTask.task;
+
+        List<String> checkNames = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
+        if (checkNames == null) {
+            return true;
+        } else if (checkNames.isEmpty()) {
+            return strings == null || strings.length == 0;
+        }
+
+        if (strings == null || strings.length == 0) {
+            return false;
+        }
+
+        if (legacyColor) {
+            for (int i = 0; i < strings.length; i++) {
+                strings[i] = Chat.legacyColor(strings[i]);
+            }
+        }
+
+        for (String name : checkNames) {
+            type.debug("Checking against name " + name, pendingTask.quest.getId(), task.getId(), player);
+
+            if (StringUtils.equalsAny(name, strings, ignoreCase)) {
                 type.debug("Name match", pendingTask.quest.getId(), task.getId(), player);
                 return true;
             } else {
