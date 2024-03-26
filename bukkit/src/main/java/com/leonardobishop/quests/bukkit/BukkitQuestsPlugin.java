@@ -70,6 +70,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.CommandTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.CompostingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.ConsumeTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.CraftingTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.CuringTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.DealDamageTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.DistancefromTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.EnchantingTaskType;
@@ -443,6 +444,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new BlockshearingTaskType(this), () -> CompatUtils.classExists("io.papermc.paper.event.block.PlayerShearBlockEvent"));
             taskTypeManager.registerTaskType(() -> new BrewingTaskType(this), () -> CompatUtils.classWithMethodExists("org.bukkit.event.inventory.BrewEvent", "getResults"));
             taskTypeManager.registerTaskType(() -> new CompostingTaskType(this), () -> CompatUtils.classExists("io.papermc.paper.event.entity.EntityCompostItemEvent"));
+            taskTypeManager.registerTaskType(() -> new CuringTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.entity.EntityTransformEvent"));
             taskTypeManager.registerTaskType(() -> new FarmingTaskType(this), () -> CompatUtils.classExists("org.bukkit.block.data.Ageable"));
             taskTypeManager.registerTaskType(() -> new HatchingTaskType(this), () -> CompatUtils.classExists("com.destroystokyo.paper.event.entity.ThrownEggHatchEvent"));
             taskTypeManager.registerTaskType(() -> new ItemmendingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.player.PlayerItemMendEvent"));
