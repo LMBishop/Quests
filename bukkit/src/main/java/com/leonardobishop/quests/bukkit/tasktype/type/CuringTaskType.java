@@ -1,6 +1,5 @@
 package com.leonardobishop.quests.bukkit.tasktype.type;
 
-import com.destroystokyo.paper.event.entity.ThrownEggHatchEvent;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
@@ -9,34 +8,41 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import org.bukkit.entity.EntityType;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.ZombieVillager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.event.entity.EntityTransformEvent;
 
-public final class HatchingTaskType extends BukkitTaskType {
+public final class CuringTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
-    public HatchingTaskType(BukkitQuestsPlugin plugin) {
-        super("hatching", TaskUtils.TASK_ATTRIBUTION_STRING, "Hatch a set amount of entities of certain types.");
+    public CuringTaskType(BukkitQuestsPlugin plugin) {
+        super("curing", TaskUtils.TASK_ATTRIBUTION_STRING, "Cure a set amount of zombie villagers.");
         this.plugin = plugin;
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
-        super.addConfigValidator(TaskUtils.useEntityListConfigValidator(this, "mob", "mobs"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onThrownEggHatch(ThrownEggHatchEvent event) {
-        int numHatches = event.getNumHatches();
-        if (numHatches == 0) {
+    public void onEntityTransform(EntityTransformEvent event) {
+        EntityTransformEvent.TransformReason reason = event.getTransformReason();
+        if (reason != EntityTransformEvent.TransformReason.CURED) {
             return;
         }
 
-        ProjectileSource shooter = event.getEgg().getShooter();
-        if (!(shooter instanceof Player player)) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof ZombieVillager zombieVillager)) {
+            return;
+        }
+
+        OfflinePlayer offlinePlayer = zombieVillager.getConversionPlayer();
+        if (!(offlinePlayer instanceof Player player)) {
             return;
         }
 
@@ -49,21 +55,22 @@ public final class HatchingTaskType extends BukkitTaskType {
             return;
         }
 
-        EntityType hatchingType = event.getHatchingType();
+        Villager.Type type = zombieVillager.getVillagerType();
+        Villager.Profession profession = zombieVillager.getVillagerProfession();
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player hatched " + hatchingType, quest.getId(), task.getId(), player.getUniqueId());
+            // I don't know why my IDE thinks profession
+            // is always null, probably a bad API design.
+            //noinspection ConstantValue
+            super.debug("Player cured " + zombieVillager.getType() + " of profession " + profession + " and type " + type, quest.getId(), task.getId(), player.getUniqueId());
 
-            if (!TaskUtils.matchEntity(this, pendingTask, hatchingType, player.getUniqueId())) {
-                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                continue;
-            }
+            // TODO: add villager-type and villager-profession options
 
-            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress, numHatches);
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
             super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
             int amount = (int) task.getConfigValue("amount");
