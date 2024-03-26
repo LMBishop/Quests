@@ -92,6 +92,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.PlaytimeTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.PositionTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.ProjectilelaunchingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.ReplenishingTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.ResurrectingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.ShearingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.SmeltingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.SmithingTaskType;
@@ -449,6 +450,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new HatchingTaskType(this), () -> CompatUtils.classExists("com.destroystokyo.paper.event.entity.ThrownEggHatchEvent"));
             taskTypeManager.registerTaskType(() -> new ItemmendingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.player.PlayerItemMendEvent"));
             taskTypeManager.registerTaskType(() -> new ReplenishingTaskType(this), () -> CompatUtils.classExists("com.destroystokyo.paper.loottable.LootableInventoryReplenishEvent"));
+            taskTypeManager.registerTaskType(() -> new ResurrectingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.entity.EntityResurrectEvent"));
             taskTypeManager.registerTaskType(() -> new SmithingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.inventory.SmithItemEvent"));
 
             // Register task types with enabled plugin compatibility requirement
