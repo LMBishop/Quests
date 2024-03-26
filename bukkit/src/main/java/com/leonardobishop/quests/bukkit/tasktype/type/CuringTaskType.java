@@ -11,6 +11,7 @@ import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.entity.ZombieVillager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -54,12 +55,20 @@ public final class CuringTaskType extends BukkitTaskType {
             return;
         }
 
+        Villager.Type type = zombieVillager.getVillagerType();
+        Villager.Profession profession = zombieVillager.getVillagerProfession();
+
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player cured " + entity.getType(), quest.getId(), task.getId(), player.getUniqueId());
+            // I don't know why my IDE thinks profession
+            // is always null, probably a bad API design.
+            //noinspection ConstantValue
+            super.debug("Player cured " + zombieVillager.getType() + " of profession " + profession + " and type " + type, quest.getId(), task.getId(), player.getUniqueId());
+
+            // TODO: add villager-type and villager-profession options
 
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
             super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
