@@ -26,7 +26,7 @@ public class QuestProgressFile {
         Class<?> optimizedMapClazz;
 
         try {
-            optimizedMapClazz = Class.forName("it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap");
+            optimizedMapClazz = Class.forName("it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap");
         } catch (ClassNotFoundException ignored) {
             optimizedMapClazz = HashMap.class;
         }
