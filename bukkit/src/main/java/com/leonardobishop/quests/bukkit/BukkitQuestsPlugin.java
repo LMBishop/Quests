@@ -79,6 +79,9 @@ import com.leonardobishop.quests.bukkit.tasktype.type.FishingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.HatchingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.InteractTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.InventoryTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.ItembreakingTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.ItemdamagingTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.ItemmendingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.MilkingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.MiningTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.MobkillingTaskType;
@@ -420,6 +423,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new FishingTaskType(this));
             taskTypeManager.registerTaskType(new InteractTaskType(this));
             taskTypeManager.registerTaskType(new InventoryTaskType(this));
+            taskTypeManager.registerTaskType(new ItembreakingTaskType(this));
+            taskTypeManager.registerTaskType(new ItemdamagingTaskType(this));
             taskTypeManager.registerTaskType(new MilkingTaskType(this));
             taskTypeManager.registerTaskType(new MiningTaskType(this));
             taskTypeManager.registerTaskType(new MobkillingTaskType(this));
@@ -440,6 +445,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new CompostingTaskType(this), () -> CompatUtils.classExists("io.papermc.paper.event.entity.EntityCompostItemEvent"));
             taskTypeManager.registerTaskType(() -> new FarmingTaskType(this), () -> CompatUtils.classExists("org.bukkit.block.data.Ageable"));
             taskTypeManager.registerTaskType(() -> new HatchingTaskType(this), () -> CompatUtils.classExists("com.destroystokyo.paper.event.entity.ThrownEggHatchEvent"));
+            taskTypeManager.registerTaskType(() -> new ItemmendingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.player.PlayerItemMendEvent"));
             taskTypeManager.registerTaskType(() -> new ReplenishingTaskType(this), () -> CompatUtils.classExists("com.destroystokyo.paper.loottable.LootableInventoryReplenishEvent"));
             taskTypeManager.registerTaskType(() -> new SmithingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.inventory.SmithItemEvent"));
 
