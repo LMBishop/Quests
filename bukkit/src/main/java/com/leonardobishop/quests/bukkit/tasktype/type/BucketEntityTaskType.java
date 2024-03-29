@@ -11,19 +11,19 @@ import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketEntityEvent;
 
-public final class BucketEmptyTaskType extends BukkitTaskType {
+public final class BucketEntityTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BucketEmptyTaskType(BukkitQuestsPlugin plugin) {
-        super("bucketempty", TaskUtils.TASK_ATTRIBUTION_STRING, "Empty a specific bucket.");
+    public BucketEntityTaskType(BukkitQuestsPlugin plugin) {
+        super("bucketentity", TaskUtils.TASK_ATTRIBUTION_STRING, "Capture entity with a bucket.");
         this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
+    public void onPlayerBucketEntity(PlayerBucketEntityEvent event) {
         Player player = event.getPlayer();
         if (player.hasMetadata("NPC")) {
             return;
