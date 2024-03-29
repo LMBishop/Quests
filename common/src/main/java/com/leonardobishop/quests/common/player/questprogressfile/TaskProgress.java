@@ -56,6 +56,12 @@ public class TaskProgress {
     }
 
     public void setCompleted(boolean complete) {
+        // do not queue completion for already completed quests
+        // https://github.com/LMBishop/Quests/issues/543
+        if (this.completed == complete) {
+            return;
+        }
+
         this.completed = complete;
         this.modified = true;
 
