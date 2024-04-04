@@ -24,7 +24,7 @@ jobs:
             **/*.gradle*
             **/gradle-wrapper.properties
       - name: Build with Gradle
-        run: ./gradlew build --no-daemon --stacktrace
+        run: ./gradlew allJar --no-daemon --stacktrace
       - name: Upload the plugin JAR
         uses: actions/upload-artifact@v4
         with:
