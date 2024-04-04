@@ -33,8 +33,6 @@ public abstract class ShopGUIPlusInteractionTaskType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
-        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "shop-id"));
-        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "item-id"));
 
         try {
             Class<?> clazz = Class.forName("net.brcdev.shopgui.shop.ShopTransactionResult");
