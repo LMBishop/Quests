@@ -97,7 +97,7 @@ public final class SmeltingTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            final String mode = (String) task.getConfigValue("mode");
+            String mode = (String) task.getConfigValue("mode");
             if (mode != null && !inventoryType.name().equalsIgnoreCase(mode)) {
                 super.debug("Specific mode is required, but the actual mode '" + inventoryType + "' does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
