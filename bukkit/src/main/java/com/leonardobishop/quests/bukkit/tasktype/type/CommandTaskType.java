@@ -23,6 +23,7 @@ public final class CommandTaskType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "command"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "ignore-case"));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "command-match-mode"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -51,7 +52,7 @@ public final class CommandTaskType extends BukkitTaskType {
 
             boolean ignoreCase = TaskUtils.getConfigBoolean(task, "ignore-case");
 
-            if (!TaskUtils.matchString(this, pendingTask, message, player.getUniqueId(), "command", "commands", false, ignoreCase)) {
+            if (!TaskUtils.matchString(this, pendingTask, message,player.getUniqueId(), "command", "commands", false, "command-match-mode", ignoreCase)) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }

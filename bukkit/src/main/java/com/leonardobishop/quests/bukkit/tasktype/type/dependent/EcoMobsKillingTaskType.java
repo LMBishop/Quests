@@ -26,6 +26,7 @@ public final class EcoMobsKillingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "id", "ids"));
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "id-match-mode"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -50,7 +51,7 @@ public final class EcoMobsKillingTaskType extends BukkitTaskType {
 
             super.debug("Player killed EcoMobs mob '" + mob.getDisplayName() + "' (id = " + mob.getMob().getID() + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (!TaskUtils.matchString(this, pendingTask, ecoMob.getID(), player.getUniqueId(), "id", "ids", false, false)) {
+            if (!TaskUtils.matchString(this, pendingTask, ecoMob.getID(), player.getUniqueId(), "id", "ids", false, "id-match-mode", false)) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
