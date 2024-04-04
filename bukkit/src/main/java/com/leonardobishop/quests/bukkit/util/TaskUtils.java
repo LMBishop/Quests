@@ -8,6 +8,7 @@ import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraint;
 import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
+import com.leonardobishop.quests.bukkit.util.lang3.StringUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -483,7 +484,30 @@ public class TaskUtils {
         return false;
     }
 
-    public static boolean matchString(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable String string, @NotNull UUID player, final @NotNull String stringKey, final @NotNull String listKey, boolean legacyColor, boolean ignoreCase) {
+    public enum StringMatchMode {
+        EQUALS {
+            @Override
+            public boolean matches(@NotNull String str1, @NotNull String str2, boolean ignoreCase) {
+                return StringUtils.equals(str1, str2, ignoreCase);
+            }
+        },
+        STARTS_WITH {
+            @Override
+            public boolean matches(@NotNull String str, @NotNull String prefix, boolean ignoreCase) {
+                return StringUtils.startsWith(str, prefix, ignoreCase);
+            }
+        },
+        ENDS_WITH {
+            @Override
+            public boolean matches(@NotNull String str, @NotNull String suffix, boolean ignoreCase) {
+                return StringUtils.endsWith(str, suffix, ignoreCase);
+            }
+        };
+
+        public abstract boolean matches(@NotNull String str1, @NotNull String str2, boolean ignoreCase);
+    }
+
+    public static boolean matchString(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable String string, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey, boolean legacyColor, @NotNull String matchModeKey, boolean ignoreCase) {
         Task task = pendingTask.task;
 
         List<String> checkNames = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
@@ -501,10 +525,21 @@ public class TaskUtils {
             string = Chat.legacyColor(string);
         }
 
-        for (String name : checkNames) {
-            type.debug("Checking against name " + name, pendingTask.quest.getId(), task.getId(), player);
+        StringMatchMode matchMode;
 
-            if (StringUtils.equals(name, string, ignoreCase)) {
+        String matchModeString = (String) task.getConfigValue(matchModeKey);
+        if (matchModeString != null) {
+            matchMode = StringMatchMode.valueOf(matchModeString);
+        } else {
+            matchMode = StringMatchMode.EQUALS;
+        }
+
+        type.debug("Utilising " + matchMode + " mode for checking", pendingTask.quest.getId(), task.getId(), player);
+
+        for (String name : checkNames) {
+            type.debug("Checking against name " + string, pendingTask.quest.getId(), task.getId(), player);
+
+            if (matchMode.matches(string, name, ignoreCase)) {
                 type.debug("Name match", pendingTask.quest.getId(), task.getId(), player);
                 return true;
             } else {
@@ -535,10 +570,21 @@ public class TaskUtils {
             }
         }
 
+        StringMatchMode matchMode;
+
+        String matchModeString = (String) task.getConfigValue(matchModeKey);
+        if (matchModeString != null) {
+            matchMode = StringMatchMode.valueOf(matchModeString);
+        } else {
+            matchMode = StringMatchMode.EQUALS;
+        }
+
+        type.debug("Utilising " + matchMode + " mode for checking", pendingTask.quest.getId(), task.getId(), player);
+
         for (String name : checkNames) {
             type.debug("Checking against name " + name, pendingTask.quest.getId(), task.getId(), player);
 
-            if (StringUtils.equalsAny(name, strings, ignoreCase)) {
+            if (matchMode.matchesAny(strings, name, ignoreCase)) {
                 type.debug("Name match", pendingTask.quest.getId(), task.getId(), player);
                 return true;
             } else {
@@ -1000,6 +1046,27 @@ public class TaskUtils {
                 break;
             }
         };
+    }
+
+    /**
+     * Returns a config validator which checks if at least one value in the given
+     * paths is present in the enum.
+     *
+     * Should be used for small enums only as it lists possible values in config
+     * problem extended description.
+     *
+     * @param clazz the enum class
+     * @param paths a list of valid paths for task
+     * @return config validator
+     */
+    public static <T extends Enum<T>> TaskType.ConfigValidator useEnumConfigValidator(TaskType type, Class<T> clazz, String... paths) {
+        List<String> acceptedValues = new ArrayList<>();
+        T[] constants = clazz.getEnumConstants();
+        for (T constant : constants) {
+            String acceptedValue = constant.name();
+            acceptedValues.add(acceptedValue);
+        }
+        return useAcceptedValuesConfigValidator(type, acceptedValues, paths);
     }
 
     /**
