@@ -38,7 +38,7 @@ public final class CommandTaskType extends BukkitTaskType {
         }
 
         String message = event.getMessage();
-        if (message.length() >= 1) {
+        if (!message.isEmpty()) {
             message = message.substring(1);
         }
 

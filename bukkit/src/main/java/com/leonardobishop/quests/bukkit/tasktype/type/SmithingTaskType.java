@@ -94,7 +94,7 @@ public final class SmithingTaskType extends BukkitTaskType {
 
             // null on versions lower than 1.20
             if (recipeType != null) {
-                final String mode = (String) task.getConfigValue("mode");
+                String mode = (String) task.getConfigValue("mode");
 
                 if (!recipeType.equals(mode) && !"any".equals(mode)) {
                     super.debug("Specific mode is required, but the actual mode '" + recipeType + "' does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());

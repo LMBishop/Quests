@@ -93,7 +93,7 @@ public final class WalkingTaskType extends BukkitTaskType {
 
             super.debug("Player moved", quest.getId(), task.getId(), player.getUniqueId());
 
-            final String mode = (String) task.getConfigValue("mode");
+            String mode = (String) task.getConfigValue("mode");
             if (mode != null && !validateMode(player, mode)) {
                 super.debug("Player mode does not match required mode, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;

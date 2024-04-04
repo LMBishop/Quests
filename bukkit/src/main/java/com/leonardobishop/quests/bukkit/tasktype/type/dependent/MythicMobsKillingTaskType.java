@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.CompatUtils;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
@@ -95,13 +96,10 @@ public final class MythicMobsKillingTaskType extends BukkitTaskType {
             return;
         }
 
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
-
-            int minMobLevel = (int) task.getConfigValue("min-level", -1);
-            int requiredLevel = (int) task.getConfigValue("level", -1);
 
             super.debug("Player killed mythic mob '" + mobName + "' (level = " + level + ")", quest.getId(), task.getId(), player.getUniqueId());
 
@@ -110,11 +108,13 @@ public final class MythicMobsKillingTaskType extends BukkitTaskType {
                 continue;
             }
 
+            int minMobLevel = (int) task.getConfigValue("min-level", -1);
             if (level < minMobLevel) {
                 super.debug("Minimum level is required and it is not high enough, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
 
+            int requiredLevel = (int) task.getConfigValue("level", -1);
             if (requiredLevel != -1 && level != requiredLevel) {
                 super.debug("Specific level is required and it does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
