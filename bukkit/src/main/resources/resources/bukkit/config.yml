@@ -128,6 +128,11 @@ options:
   # delayed. It may be helpful in case CoreProtect block lookups work sometimes
   # weird and doesn't account for some last instant/spammed block changes
   coreprotect-block-lookup-delay: -1
+  # If true and WildStacker plugin is present and enabled, Quests will try to set up
+  # a dedicated WildStacker event handler for mobkilling kills. The dedicated handler
+  # makes the task type count kills depending on the number of "virtual" merged entities
+  # killed. Otherwise, vanilla approach will be used.
+  mobkilling-use-wildstacker-hook: true
   # Verify quests exist when a player's data is loaded - inconsistencies may arise when
   # players progress on specific quests and those quests are later removed. The problem is that their progress
   # is still kept in the quest progress file, which may lead to issues such as players reaching a quest started
