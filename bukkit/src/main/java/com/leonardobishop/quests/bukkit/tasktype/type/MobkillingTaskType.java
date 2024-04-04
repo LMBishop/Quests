@@ -40,11 +40,14 @@ public final class MobkillingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
 
-        try {
-            Class.forName("com.bgsoftware.wildstacker.api.events.EntityUnstackEvent");
-            plugin.getServer().getPluginManager().registerEvents(new MobkillingTaskType.EntityUnstackListener(), plugin);
-            return;
-        } catch (ClassNotFoundException ignored) { } // there is no entity unstack available so we use EntityDeathEvent instead
+        if (plugin.getQuestsConfig().getBoolean("options.mobkilling-use-wildstacker-hook", true)) {
+            try {
+                Class.forName("com.bgsoftware.wildstacker.api.events.EntityUnstackEvent");
+                plugin.getServer().getPluginManager().registerEvents(new MobkillingTaskType.EntityUnstackListener(), plugin);
+                return;
+            } catch (ClassNotFoundException ignored) {
+            } // there is no entity unstack available so we use EntityDeathEvent instead
+        }
 
         plugin.getServer().getPluginManager().registerEvents(new MobkillingTaskType.EntityDeathListener(), plugin);
     }
