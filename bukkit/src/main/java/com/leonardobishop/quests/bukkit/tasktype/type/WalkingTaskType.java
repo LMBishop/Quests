@@ -34,6 +34,8 @@ public final class WalkingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Arrays.asList(
                 "boat",
                 "horse",
+                "donkey",
+                "llama",
                 "pig",
                 "minecart",
                 "strider",
@@ -115,6 +117,8 @@ public final class WalkingTaskType extends BukkitTaskType {
         return switch (mode) {
             case "boat" -> player.getVehicle() instanceof Boat;
             case "horse" -> plugin.getVersionSpecificHandler().isPlayerOnHorse(player);
+            case "donkey" -> player.getVehicle() instanceof Donkey;
+            case "llama" -> player.getVehicle() instanceof Llama;
             case "pig" -> player.getVehicle() instanceof Pig;
             case "minecart" -> player.getVehicle() instanceof RideableMinecart;
             case "strider" -> plugin.getVersionSpecificHandler().isPlayerOnStrider(player);
