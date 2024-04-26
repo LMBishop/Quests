@@ -550,7 +550,7 @@ public class TaskUtils {
         return false;
     }
 
-    public static boolean matchAnyString(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull String @Nullable [] strings, @NotNull UUID player, final @NotNull String stringKey, final @NotNull String listKey, boolean legacyColor, boolean ignoreCase) {
+    public static boolean matchAnyString(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull String @Nullable [] strings, @NotNull UUID player, final @NotNull String stringKey, final @NotNull String listKey, boolean legacyColor, @NotNull String matchModeKey, boolean ignoreCase) {
         Task task = pendingTask.task;
 
         List<String> checkNames = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
@@ -584,12 +584,14 @@ public class TaskUtils {
         for (String name : checkNames) {
             type.debug("Checking against name " + name, pendingTask.quest.getId(), task.getId(), player);
 
-            if (matchMode.matchesAny(strings, name, ignoreCase)) {
-                type.debug("Name match", pendingTask.quest.getId(), task.getId(), player);
-                return true;
-            } else {
-                type.debug("Name mismatch", pendingTask.quest.getId(), task.getId(), player);
+            for (String string : strings) {
+                if (matchMode.matches(string, name, ignoreCase)) {
+                    type.debug("Name match", pendingTask.quest.getId(), task.getId(), player);
+                    return true;
+                }
             }
+
+            type.debug("Name mismatch", pendingTask.quest.getId(), task.getId(), player);
         }
 
         return false;

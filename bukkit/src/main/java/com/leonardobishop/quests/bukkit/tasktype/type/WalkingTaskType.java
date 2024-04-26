@@ -33,12 +33,16 @@ public final class WalkingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "distance"));
         super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Arrays.asList(
                 "boat",
-                "horse",
+                "camel",
                 "donkey",
+                "horse",
                 "llama",
-                "pig",
                 "minecart",
+                "mule",
+                "pig",
+                "skeleton_horse",
                 "strider",
+                "zombie_horse",
                 "sneaking",
                 "walking",
                 "running",
@@ -115,26 +119,52 @@ public final class WalkingTaskType extends BukkitTaskType {
 
     private boolean validateMode(Player player, String mode) {
         return switch (mode) {
+            // Vehicles
             case "boat" -> player.getVehicle() instanceof Boat;
+            case "camel" -> plugin.getVersionSpecificHandler().isPlayerOnCamel(player);
+            case "donkey" -> plugin.getVersionSpecificHandler().isPlayerOnDonkey(player);
             case "horse" -> plugin.getVersionSpecificHandler().isPlayerOnHorse(player);
-            case "donkey" -> player.getVehicle() instanceof Donkey;
-            case "llama" -> player.getVehicle() instanceof Llama;
-            case "pig" -> player.getVehicle() instanceof Pig;
+            case "llama" -> plugin.getVersionSpecificHandler().isPlayerOnLlama(player);
             case "minecart" -> player.getVehicle() instanceof RideableMinecart;
+            case "mule" -> plugin.getVersionSpecificHandler().isPlayerOnMule(player);
+            case "pig" -> player.getVehicle() instanceof Pig;
+            case "skeleton_horse" -> plugin.getVersionSpecificHandler().isPlayerOnSkeletonHorse(player);
             case "strider" -> plugin.getVersionSpecificHandler().isPlayerOnStrider(player);
-            case "sneaking" -> // sprinting does not matter
+            case "zombie_horse" -> plugin.getVersionSpecificHandler().isPlayerOnZombieHorse(player);
+
+            // Player movement
+            case "sneaking" ->
+                // player must be sneaking; cannot be swimming, flying and
+                // gliding because sneaking is used to control the height;
+                // we ignore sprinting and it shouldn't affect sneaking
                     player.isSneaking() && !player.isSwimming() && !player.isFlying()
                             && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
             case "walking" ->
+                // player cannot be doing anything special as we want the
+                // other actions to be counted towards other task modes
                     !player.isSneaking() && !player.isSwimming() && !player.isSprinting() && !player.isFlying()
                             && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            case "running" -> !player.isSneaking() && !player.isSwimming() && player.isSprinting() && !player.isFlying()
-                    && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            case "swimming" -> // sprinting and sneaking do not matter, flying is not possible
-                    player.isSwimming() && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            case "flying" -> // if the player is flying then the player is flying
-                    player.isFlying();
-            case "elytra" -> // if the player is gliding then the player is gliding
+            case "running" ->
+                // player must be sprinting; cannot be sneaking as it makes
+                // running impossible; running and swimming at once is possible
+                // but it's not real running so we ignore it; we ignore flying
+                // as it's definitely not running; running and gliding at once
+                // is not possible so we ignore it as well
+                    !player.isSneaking() && !player.isSwimming() && player.isSprinting() && !player.isFlying()
+                            && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case "swimming" ->
+                // sprinting and sneaking is possible with swimming at once
+                // so we ignore it but not gliding as it's a bit different
+                    player.isSwimming()
+                            && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case "flying" ->
+                // sprinting and sneaking is possible with flying at once
+                // so we ignore it but not gliding as it's a bit different
+                    player.isFlying()
+                            && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case "elytra" ->
+                // we can safely ignore any other actions here as there is
+                // really no better way to detect flying with elytra
                     plugin.getVersionSpecificHandler().isPlayerGliding(player);
             default -> false;
         };
