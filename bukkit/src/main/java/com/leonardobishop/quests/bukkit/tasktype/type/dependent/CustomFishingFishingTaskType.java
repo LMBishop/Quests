@@ -26,6 +26,8 @@ public final class CustomFishingFishingTaskType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "loot-match-mode"));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "group-match-mode"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -63,12 +65,12 @@ public final class CustomFishingFishingTaskType extends BukkitTaskType {
 
             super.debug("Player caught loot id " + id + " groups " + groupsAsString, quest.getId(), task.getId(), player.getUniqueId());
 
-            if (!TaskUtils.matchString(this, pendingTask, id, player.getUniqueId(), "loot", "loots", false, false)) {
+            if (!TaskUtils.matchString(this, pendingTask, id, player.getUniqueId(), "loot", "loots", false, "loot-match-mode", false)) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
 
-            if (!TaskUtils.matchAnyString(this, pendingTask, groups, player.getUniqueId(), "group", "groups", false, false)) {
+            if (!TaskUtils.matchAnyString(this, pendingTask, groups, player.getUniqueId(), "group", "groups", false, "group-match-mode", false)) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
