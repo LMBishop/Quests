@@ -12,7 +12,7 @@ processResources {
 }
 
 repositories {
-    // Paper
+    // Folia, Paper
     maven { url = 'https://papermc.io/repo/repository/maven-public/' }
     // ASkyBlock, BentoBox, bStats, Citizens
     maven { url = 'https://repo.codemc.org/repository/maven-public/' }
@@ -26,15 +26,13 @@ repositories {
     maven { url = 'https://repo.essentialsx.net/releases/' }
     // MMOItems, MythicLib
     maven { url = 'https://nexus.phoenixdevt.fr/repository/maven-public/' }
-    // MythicMobs 4, FabledSkyBlock
-    maven { url = 'https://repo.songoda.com/repository/public/' }
-    // MythicMobs 5
+    // MythicMobs 4, MythicMobs 5
     maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
     // NuVotifier
     maven { url = 'https://repo.leonardobishop.com/releases/' }
     // PlaceholderAPI
     maven { url = 'https://repo.extendedclip.com/content/repositories/dev/' }
-    // ItemsAdder, CustomFishing, PlayerBlockTracker, SCore, ShopGUIPlus, Slimefun4
+    // CustomFishing, ItemsAdder, SCore, ShopGUIPlus, Slimefun4
     maven { url = 'https://jitpack.io/' }
     // PlayerPoints
     maven { url = 'https://repo.rosewooddev.io/repository/public/' }
@@ -49,7 +47,7 @@ repositories {
     // ZNPCsPlus
     maven { url = 'https://repo.pyr.lol/snapshots' }
 
-    // JetBrains Annotations
+    // bungeecord-chat, HikariCP, hppc, JetBrains Annotations, slf4j
     mavenCentral()
 }
 
@@ -88,14 +86,12 @@ dependencies {
     compileOnly 'com.willfp:libreforge:4.21.1'
     // EssentialsX
     compileOnly('net.essentialsx:EssentialsX:2.19.7') { transitive = false }
-    // FabledSkyBlock
-    compileOnly 'com.songoda:skyblock:2.3.30'
     // IridiumSkyblock TODO fix whenever repo is up
     //compileOnly 'com.github.Iridium-Development:IridiumSkyblock:master-SNAPSHOT'
     // ItemsAdder
     compileOnly 'com.github.LoneDev6:API-ItemsAdder:3.5.0b'
     // JetBrains Annotations
-    compileOnly 'org.jetbrains:annotations:23.0.0'
+    compileOnly 'org.jetbrains:annotations:24.1.0'
     // MMOItems
     compileOnly 'net.Indyuce:MMOItems-API:6.9.2-SNAPSHOT'
     // MythicLib
@@ -108,8 +104,6 @@ dependencies {
     compileOnly 'com.vexsoftware:NuVotifier:2.7.3'
     // PlaceholderAPI
     compileOnly 'me.clip:placeholderapi:2.11.3-DEV-160'
-    // PlayerBlockTracker
-    compileOnly('com.github.Flo0:PlayerBlockTracker:1.0.2') { transitive = false }
     // PlayerPoints
     compileOnly('org.black_ixx:playerpoints:3.2.5')
     // SCore
@@ -117,7 +111,7 @@ dependencies {
     // ShopGUIPlus
     compileOnly('com.github.brcdev-minecraft:shopgui-api:3.0.0') { transitive = false }
     // Slimefun4
-    compileOnly 'com.github.Slimefun:Slimefun4:RC-32'
+    compileOnly 'com.github.Slimefun:Slimefun4:RC-37'
     // SuperiorSkyblock2
     compileOnly 'com.bgsoftware:SuperiorSkyblockAPI:2022.9'
     // uSkyBlock TODO fix whenever repo is up
