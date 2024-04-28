@@ -695,7 +695,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         bossBarHandle = new BossBar_Nothing();
     }
 
-    @SuppressWarnings("deprecation")
     private void setActionBarHandle() {
         try {
             Player.class.getMethod("sendActionBar", String.class);
@@ -738,7 +737,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             return;
         }
 
-        if (CompatUtils.classWithMethodExists("org.bukkit.craftbukkit.{}.inventory.CraftMetaSkull", "setProfile", GameProfile.class)) {
+        if (CompatUtils.classWithMethodExists("{}.inventory.CraftMetaSkull", "setProfile", GameProfile.class)) {
             // Spigot 1.18.1+
             if (CompatUtils.classExists("org.bukkit.profile.PlayerProfile")) {
                 skullGetter = new ModernSkullGetter(this);
