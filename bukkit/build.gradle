@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow'
+    id 'io.github.goooler.shadow'
 }
 
 processResources {
@@ -13,7 +13,9 @@ processResources {
 
 repositories {
     // Folia, Paper
-    maven { url = 'https://papermc.io/repo/repository/maven-public/' }
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+    // Paper (adventure-bom snapshots)
+    maven { url = 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
     // ASkyBlock, BentoBox, bStats, Citizens
     maven { url = 'https://repo.codemc.org/repository/maven-public/' }
     // AuthLib
@@ -54,14 +56,14 @@ repositories {
 dependencies {
     compileOnly project(':common')
     // Paper
-    compileOnly('io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT') {
+    compileOnly("io.papermc.paper:paper-api:1.20.5-R0.1-SNAPSHOT") {
         // exclude libraries not available in 1.8
         exclude(group: 'it.unimi.dsi', module: 'fastutil')
         exclude(group: 'org.apache.maven', module: 'maven-resolver-provider')
         exclude(group: 'net.md-5', module: 'bungeecord-chat')
     }
     // Folia
-    compileOnly('dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT') {
+    compileOnly('dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT') {
         // exclude libraries not available in 1.8
         exclude(group: 'it.unimi.dsi', module: 'fastutil')
         exclude(group: 'org.apache.maven', module: 'maven-resolver-provider')

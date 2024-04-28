@@ -1,4 +1,12 @@
+pluginManagement {
+    repositories {
+        // io.github.goooler.shadow
+        maven { url = 'https://plugins.gradle.org/m2/' }
+        // net.raphimc.java-downgrader
+        maven { url = 'https://maven.lenni0451.net/releases' }
+    }
+}
+
 rootProject.name = 'Quests'
 include 'common'
 include 'bukkit'
-

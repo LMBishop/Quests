@@ -6,7 +6,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         distribution: [temurin]
-        java-version: ["17"]
+        java-version: ["21"]
     runs-on: ${{ matrix.os }}
     if: "!startsWith(github.event.commits[0].message, '[ci-skip]')"
     steps:
@@ -25,9 +25,17 @@ jobs:
             **/gradle-wrapper.properties
       - name: Build with Gradle
         run: ./gradlew allJar --no-daemon --stacktrace
-      - name: Upload the plugin JAR
+      - name: "Upload the Java ${{ matrix.java-version }} plugin JAR"
         uses: actions/upload-artifact@v4
         with:
           name: "Quests-JDK${{ matrix.java-version }}"
-          path: build/libs/*.jar
+          path: |
+            build/libs/*.jar
+            !build/libs/*+java8.jar
+          if-no-files-found: error
+      - name: Upload the Java 8 plugin JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: Quests-JDK8 (use at your own risk)
+          path: build/libs/*+java8.jar
           if-no-files-found: error
