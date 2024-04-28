@@ -105,7 +105,7 @@ public class QItemStack {
             } else {
                 tempLore.addAll(globalLoreAppendStarted);
             }
-            ism.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+            ism.addEnchant(Enchantment.KNOCKBACK, 1, true);
             try {
                 ism.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 ism.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
