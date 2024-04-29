@@ -65,6 +65,10 @@ public final class CuringTaskType extends BukkitTaskType {
 
             // I don't know why my IDE thinks profession
             // is always null, probably a bad API design.
+            //
+            // Yeah, ZombieVillager is missing an override
+            // for annotation from the Zombie interface.
+            //
             //noinspection ConstantValue
             super.debug("Player cured " + zombieVillager.getType() + " of profession " + profession + " and type " + type, quest.getId(), task.getId(), player.getUniqueId());
 
