@@ -121,7 +121,9 @@ public class BossBar_Bukkit implements QuestsBossBar {
                 throw new IllegalStateException(type + " section is empty");
             }
         } catch (IllegalArgumentException | IllegalStateException e) {
-            plugin.getLogger().log(Level.SEVERE, "Could not set " + type + " for the initialized boss bar implementation, using default instead!", e);
+            plugin.getLogger().log(Level.SEVERE, "Could not set " + type + " for the initialized boss bar implementation, using default instead!");
+            plugin.getLogger().log(Level.SEVERE, "Update your config to latest version! (" + e.getMessage() + ")");
+            plugin.getLogger().log(Level.SEVERE, "https://github.com/LMBishop/Quests/blob/master/bukkit/src/main/resources/resources/bukkit/config.yml");
             map = Collections.singletonMap(0.0f, def);
         }
         return map;
