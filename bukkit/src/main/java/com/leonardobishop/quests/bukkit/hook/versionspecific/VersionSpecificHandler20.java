@@ -11,6 +11,11 @@ import org.bukkit.inventory.SmithingTrimRecipe;
 public class VersionSpecificHandler20 extends VersionSpecificHandler17 implements VersionSpecificHandler {
 
     @Override
+    public int getMinecraftVersion() {
+        return 20;
+    }
+
+    @Override
     public boolean isPlayerOnCamel(Player player) {
         return player.getVehicle() instanceof Camel;
     }
