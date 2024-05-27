@@ -602,7 +602,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             long autoSaveInterval = this.getConfig().getLong("options.performance-tweaking.quest-autosave-interval", 12000);
             try {
                 if (questAutoSaveTask != null) questAutoSaveTask.cancel();
-                questAutoSaveTask = new QuestsAutoSaveRunnable(this).runTaskTimer(getScheduler(), autoSaveInterval, autoSaveInterval);
+                questAutoSaveTask = serverScheduler.runTaskTimer(() -> new QuestsAutoSaveRunnable(this), autoSaveInterval, autoSaveInterval);
             } catch (Exception ex) {
                 questsLogger.debug("Cannot cancel and restart quest autosave task");
             }
