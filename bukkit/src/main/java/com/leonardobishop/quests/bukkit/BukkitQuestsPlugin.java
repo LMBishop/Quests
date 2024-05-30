@@ -530,7 +530,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         sb.append(registered).append(" task types have been registered");
 
         if (skipped + unsupported > 0) {
-            sb.append(' ').append(')');
+            sb.append(' ').append('(');
 
             if (skipped > 0) {
                 sb.append(skipped).append(" skipped due to exclusions or conflicting names");
