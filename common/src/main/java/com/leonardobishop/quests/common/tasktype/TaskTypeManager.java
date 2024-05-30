@@ -25,6 +25,7 @@ public abstract class TaskTypeManager {
     private final Map<String, TaskType> taskTypes = new HashMap<>();
     private final Map<String, String> aliases = new HashMap<>();
     private final Set<String> exclusions;
+    private int registered;
     private int skipped;
     private int unsupported;
     private boolean registrationsOpen;
@@ -102,6 +103,7 @@ public abstract class TaskTypeManager {
             this.aliases.put(alias, type);
         }
 
+        this.registered++;
         return true;
     }
 
@@ -193,6 +195,15 @@ public abstract class TaskTypeManager {
      */
     public @NotNull Set<String> getExclusions() {
         return Collections.unmodifiableSet(this.exclusions);
+    }
+
+    /**
+     * Returns the number of task types registered.
+     *
+     * @return number of task types registered
+     */
+    public int getRegistered() {
+        return this.registered;
     }
 
     /**

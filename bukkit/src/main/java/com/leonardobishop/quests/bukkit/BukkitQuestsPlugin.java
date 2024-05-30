@@ -493,7 +493,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             });
 
             // Register task types with even more weird requirements
-            if (Bukkit.getPluginManager().isPluginEnabled("BentoBox")) {
+            if (CompatUtils.isPluginEnabled("BentoBox")) {
                 BentoBoxLevelTaskType.register(this, taskTypeManager);
             }
 
@@ -501,18 +501,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.closeRegistrations();
 
             // Inform about registered task types
-            String registrationMessage = taskTypeManager.getTaskTypes().size() + " task types have been registered";
-            int skipped = taskTypeManager.getSkipped();
-            int unsupported = taskTypeManager.getUnsupported();
-            if (skipped + unsupported > 0) {
-                registrationMessage += " (";
-                if (skipped > 0) registrationMessage += skipped + " skipped due to exclusions or conflicting names";
-                if (skipped * unsupported > 0) registrationMessage += ", ";
-                if (unsupported > 0) registrationMessage += unsupported + " not supported";
-                registrationMessage += ")";
-            }
-            registrationMessage += ".";
-            questsLogger.info(registrationMessage);
+            final String registrationMessage = this.getRegistrationMessage();
+            this.questsLogger.info(registrationMessage);
 
             if (playerBlockTrackerHook != null) {
                 this.playerBlockTrackerHook.fixPlayerBlockTracker();
@@ -529,6 +519,36 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 qPlayerManager.loadPlayer(player.getUniqueId());
             }
         });
+    }
+
+    private @NotNull String getRegistrationMessage() {
+        final int registered = this.taskTypeManager.getRegistered();
+        final int skipped = taskTypeManager.getSkipped();
+        final int unsupported = taskTypeManager.getUnsupported();
+
+        final StringBuilder sb = new StringBuilder();
+        sb.append(registered).append(" task types have been registered");
+
+        if (skipped + unsupported > 0) {
+            sb.append(' ').append(')');
+
+            if (skipped > 0) {
+                sb.append(skipped).append(" skipped due to exclusions or conflicting names");
+            }
+
+            if (skipped * unsupported > 0) {
+                sb.append(',').append(' ');
+            }
+
+            if (unsupported > 0) {
+                sb.append(unsupported).append(" not supported");
+            }
+
+            sb.append(')');
+        }
+
+        sb.append('.');
+        return sb.toString();
     }
 
     @Override
