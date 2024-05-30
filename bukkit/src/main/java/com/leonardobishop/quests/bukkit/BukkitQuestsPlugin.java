@@ -503,7 +503,15 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             // Inform about registered task types
             String registrationMessage = taskTypeManager.getTaskTypes().size() + " task types have been registered";
             int skipped = taskTypeManager.getSkipped();
-            registrationMessage += (skipped > 0) ? " (" + skipped + " skipped due to exclusions or conflicting names)." : ".";
+            int unsupported = taskTypeManager.getUnsupported();
+            if (skipped + unsupported > 0) {
+                registrationMessage += " (";
+                if (skipped > 0) registrationMessage += skipped + " skipped due to exclusions or conflicting names";
+                if (skipped * unsupported > 0) registrationMessage += ", ";
+                if (unsupported > 0) registrationMessage += unsupported + " not supported";
+                registrationMessage += ")";
+            }
+            registrationMessage += ".";
             questsLogger.info(registrationMessage);
 
             if (playerBlockTrackerHook != null) {
