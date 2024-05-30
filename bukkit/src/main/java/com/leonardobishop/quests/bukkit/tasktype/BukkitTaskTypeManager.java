@@ -45,12 +45,12 @@ public final class BukkitTaskTypeManager extends TaskTypeManager {
      *
      * @param taskType the task type to register
      * @return true if the task type was successfully registered, false otherwise
-     * @throws RuntimeException if the task type is not an instance of {@link BukkitTaskType}
+     * @throws UnsupportedOperationException if the task type is not an instance of {@link BukkitTaskType}
      */
     @Override
     public boolean registerTaskType(final @NotNull TaskType taskType) {
         if (!(taskType instanceof final BukkitTaskType bukkitTaskType)) {
-            throw new RuntimeException("BukkitTaskTypeManager implementation can only accept instances of BukkitTaskType!");
+            throw new UnsupportedOperationException("BukkitTaskTypeManager implementation can only accept instances of BukkitTaskType!");
         }
 
         if (super.registerTaskType(taskType)) {
