@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -32,7 +33,7 @@ public final class EssentialsBalanceTaskType extends BukkitTaskType {
     }
 
     @Override
-    public void onStart(Quest quest, Task task, UUID playerUUID) {
+    public void onStart(final @NotNull Quest quest, final @NotNull Task task, final @NotNull UUID playerUUID) {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null || !player.isOnline() || player.hasMetadata("NPC")) {
             return;

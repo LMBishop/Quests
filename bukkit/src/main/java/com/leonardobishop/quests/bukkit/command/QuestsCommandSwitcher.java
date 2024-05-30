@@ -39,7 +39,7 @@ public class QuestsCommandSwitcher extends CommandSwitcher implements TabExecuto
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (plugin.getTaskTypeManager().areRegistrationsAccepted()) {
+        if (plugin.getTaskTypeManager().areRegistrationsOpen()) {
             sender.sendMessage(ChatColor.RED + "Quests is not ready yet.");
             return true;
         }

@@ -11,12 +11,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AdminDebugQuestCommandHandler implements CommandHandler {
 
     private final BukkitQuestsPlugin plugin;
-
 
     public AdminDebugQuestCommandHandler(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -69,10 +70,18 @@ public class AdminDebugQuestCommandHandler implements CommandHandler {
                         ". This may generate a lot of spam.");
                 sender.sendMessage(ChatColor.GRAY + "Use '/quests admin debug " + questId + "' to disable.");
             } else {
-                preferences.setDebug(questId, null);
+                preferences.unsetDebug(questId);
                 sender.sendMessage(ChatColor.GREEN + "Debugging disabled for " + questName + ".");
             }
 
+            // Set it here to optimize debugging on high player count servers
+            final Set<QPlayer> debuggers = new HashSet<>();
+            for (final QPlayer debugger : this.plugin.getPlayerManager().getQPlayers()) {
+                if (debugger.getPlayerPreferences().isDebug()) {
+                    debuggers.add(debugger);
+                }
+            }
+            QPlayerPreferences.setDebuggers(debuggers);
         } else {
             sender.sendMessage(ChatColor.RED + "You must be a player to use this command.");
         }

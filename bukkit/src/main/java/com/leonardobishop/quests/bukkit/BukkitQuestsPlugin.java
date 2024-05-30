@@ -165,6 +165,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -340,7 +341,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         questsConfig.setItemGetter(itemGetter);
 
         // Finish module initialisation
-        this.taskTypeManager = new BukkitTaskTypeManager(this, questsConfig.getStringList("options.task-type-exclusions"));
+        this.taskTypeManager = new BukkitTaskTypeManager(this, new HashSet<>(questsConfig.getStringList("options.task-type-exclusions")));
         this.qPlayerManager = new QPlayerManager(this, storageProvider, questController);
         this.menuController = new MenuController(this);
         this.questItemRegistry = new QuestItemRegistry();
