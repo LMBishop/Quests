@@ -6,11 +6,11 @@ import com.leonardobishop.quests.common.quest.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -21,41 +21,40 @@ import java.util.UUID;
  */
 public abstract class TaskType {
 
-    private final List<Quest> quests = new ArrayList<>();
-    private final List<String> aliases = new ArrayList<>();
-    private final List<ConfigValidator> configValidators = new ArrayList<>();
-    private final String type;
-    private String author;
-    private String description;
+    protected final String type;
+    private final String author;
+    private final String description;
+    private final Set<String> aliases;
+    private final Set<Quest> quests;
+    private final Set<ConfigValidator> configValidators;
 
     /**
+     * Constructs a TaskType.
+     *
      * @param type the name of the task type, should not contain spaces
      * @param author the name of the person (or people) who wrote it
      * @param description a short, simple description of the task type
+     * @param aliases the aliases of the task type, should not contain spaces
      */
-    public TaskType(@NotNull String type, String author, String description, String... aliases) {
-        this(type, author, description);
-        Collections.addAll(this.aliases, aliases);
-    }
-
-    /**
-     * @param type the name of the task type, should not contain spaces
-     * @param author the name of the person (or people) who wrote it
-     * @param description a short, simple description of the task type
-     */
-    public TaskType(@NotNull String type, String author, String description) {
-        this(type);
-        this.author = author;
-        this.description = description;
-    }
-
-    /**
-     * @param type the name of the task type, should not contain spaces
-     */
-    public TaskType(@NotNull String type) {
+    public TaskType(final @NotNull String type, final @Nullable String author, final @Nullable String description, final @NotNull String @NotNull ... aliases) {
         Objects.requireNonNull(type, "type cannot be null");
+        Objects.requireNonNull(aliases, "aliases cannot be null");
 
         this.type = type;
+        this.author = author;
+        this.description = description;
+        this.aliases = Set.of(aliases);
+        this.quests = new HashSet<>();
+        this.configValidators = new HashSet<>();
+    }
+
+    /**
+     * Constructs a TaskType with the specified type.
+     *
+     * @param type the name of the task type, should not contain spaces
+     */
+    public TaskType(final @NotNull String type) {
+        this(type, null, null);
     }
 
     /**
@@ -64,42 +63,62 @@ public abstract class TaskType {
      *
      * @param quest the {@link Quest} to register.
      */
-    public final void registerQuest(@NotNull Quest quest) {
+    public final void registerQuest(final @NotNull Quest quest) {
         Objects.requireNonNull(quest, "quest cannot be null");
 
-        if (!quests.contains(quest)) {
-            quests.add(quest);
-        }
+        this.quests.add(quest);
     }
 
     /**
-     * Clears the list which contains the registered quests.
+     * Clears the set which contains the registered quests.
      */
     protected final void unregisterAll() {
-        quests.clear();
+        this.quests.clear();
     }
 
     /**
-     * @return immutable {@link List} of type {@link Quest} of all registered quests.
+     * Returns an immutable set of all registered quests.
+     *
+     * @return immutable {@link Set} of type {@link Quest} of all registered quests.
      */
-    public final @NotNull List<Quest> getRegisteredQuests() {
-        return Collections.unmodifiableList(quests);
+    public final @NotNull Set<Quest> getRegisteredQuests() {
+        return Collections.unmodifiableSet(this.quests);
     }
 
+    /**
+     * Returns the type of this task type.
+     *
+     * @return the type of this task type
+     */
     public final @NotNull String getType() {
-        return type;
+        return this.type;
     }
 
+    /**
+     * Returns the author of this task type.
+     *
+     * @return the author of this task type, or null if not specified
+     */
     public @Nullable String getAuthor() {
-        return author;
+        return this.author;
     }
 
+    /**
+     * Returns the description of this task type.
+     *
+     * @return the description of this task type, or null if not specified
+     */
     public @Nullable String getDescription() {
-        return description;
+        return this.description;
     }
 
-    public @NotNull List<String> getAliases() {
-        return Collections.unmodifiableList(aliases);
+    /**
+     * Returns the aliases of this task type.
+     *
+     * @return a set of aliases of this task type
+     */
+    public @NotNull Set<String> getAliases() {
+        return this.aliases;
     }
 
     /**
@@ -112,27 +131,54 @@ public abstract class TaskType {
 
     /**
      * Called when a player starts a quest containing a task of this type.
+     *
+     * @param quest the quest containing the task
+     * @param task the task being started
+     * @param playerUUID the UUID of the player starting the task
      */
-    public void onStart(Quest quest, Task task, UUID playerUUID) {
+    public void onStart(final @NotNull Quest quest, final @NotNull Task task, final @NotNull UUID playerUUID) {
         // not implemented here
     }
 
+    /**
+     * Called when a task type is disabled.
+     */
     public void onDisable() {
         // not implemented here
     }
 
-    public void addConfigValidator(@NotNull ConfigValidator validator) {
+    /**
+     * Adds a config validator to this task type.
+     *
+     * @param validator the config validator to add
+     */
+    public void addConfigValidator(final @NotNull ConfigValidator validator) {
         Objects.requireNonNull(validator, "validator cannot be null");
 
-        configValidators.add(validator);
+        this.configValidators.add(validator);
     }
 
-    public List<ConfigValidator> getConfigValidators() {
-        return configValidators;
+    /**
+     * Returns an immutable set of config validators.
+     *
+     * @return an immutable set of config validators
+     */
+    public @NotNull Set<ConfigValidator> getConfigValidators() {
+        return Collections.unmodifiableSet(this.configValidators);
     }
 
+    /**
+     * A functional interface for config validation.
+     */
     @FunctionalInterface
     public interface ConfigValidator {
-        void validateConfig(@NotNull HashMap<String, Object> taskConfig, @NotNull List<ConfigProblem> problems);
+
+        /**
+         * Validates the configuration of a task.
+         *
+         * @param taskConfig the configuration of the task
+         * @param problems the set of problems to report validation issues
+         */
+        void validateConfig(final @NotNull Map<String, Object> taskConfig, final @NotNull Set<ConfigProblem> problems);
     }
 }

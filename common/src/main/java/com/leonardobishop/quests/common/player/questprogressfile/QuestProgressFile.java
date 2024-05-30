@@ -308,7 +308,7 @@ public class QuestProgressFile {
     @Deprecated
     public void clean() {
         plugin.getQuestsLogger().debug("Cleaning file " + playerUUID + ".");
-        if (!plugin.getTaskTypeManager().areRegistrationsAccepted()) {
+        if (!plugin.getTaskTypeManager().areRegistrationsOpen()) {
             ArrayList<String> invalidQuests = new ArrayList<>();
             for (String questId : this.questProgress.keySet()) {
                 Quest q;
