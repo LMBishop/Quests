@@ -5,8 +5,6 @@ import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,34 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class QuestProgressFile {
 
-    private static final Constructor<?> optimizedMapCtor;
-
-    static {
-        Class<?> optimizedMapClazz;
-
-        try {
-            optimizedMapClazz = Class.forName("it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap");
-        } catch (ClassNotFoundException ignored) {
-            optimizedMapClazz = HashMap.class;
-        }
-
-        try {
-            optimizedMapCtor = optimizedMapClazz.getDeclaredConstructor();
-        } catch (NoSuchMethodException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <K, V> Map<K, V> newOptimizedMapInstance() {
-        try {
-            return (Map<K, V>) optimizedMapCtor.newInstance();
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private final Map<String, QuestProgress> questProgress = newOptimizedMapInstance();
+    private final Map<String, QuestProgress> questProgress = new HashMap<>();
     private final UUID playerUUID;
     private final Quests plugin;
 
@@ -237,11 +208,8 @@ public class QuestProgressFile {
      * @return {@link QuestProgress} or a blank generated one if the quest does not exist
      */
     public QuestProgress getQuestProgress(Quest quest) {
-        if (questProgress.containsKey(quest.getId())) {
-            return questProgress.get(quest.getId());
-        }
-        generateBlankQuestProgress(quest);
-        return getQuestProgress(quest);
+        QuestProgress qProgress = questProgress.get(quest.getId());
+        return qProgress != null ? qProgress : generateBlankQuestProgress(quest);
     }
 
     /**
@@ -259,9 +227,10 @@ public class QuestProgressFile {
      * Generate a new blank {@link QuestProgress} for a specified {@code quest}.
      *
      * @param quest the quest to generate progress for
+     * @return the generated blank {@link QuestProgress}
      */
-    public void generateBlankQuestProgress(Quest quest) {
-        generateBlankQuestProgress(quest, false);
+    public QuestProgress generateBlankQuestProgress(Quest quest) {
+        return generateBlankQuestProgress(quest, false);
     }
 
     /**
@@ -269,8 +238,9 @@ public class QuestProgressFile {
      *
      * @param quest the quest to generate progress for
      * @param modified the modified state of the quest
+     * @return the generated blank {@link QuestProgress}
      */
-    public void generateBlankQuestProgress(Quest quest, boolean modified) {
+    public QuestProgress generateBlankQuestProgress(Quest quest, boolean modified) {
         QuestProgress questProgress = new QuestProgress(plugin, quest.getId(), false, false, 0, playerUUID, false, 0, modified);
         for (Task task : quest.getTasks()) {
             TaskProgress taskProgress = new TaskProgress(questProgress, task.getId(), null, playerUUID, false, modified);
@@ -278,6 +248,7 @@ public class QuestProgressFile {
         }
 
         addQuestProgress(questProgress);
+        return questProgress;
     }
 
     public void clear() {
