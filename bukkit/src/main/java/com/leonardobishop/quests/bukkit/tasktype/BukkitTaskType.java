@@ -15,6 +15,10 @@ public abstract class BukkitTaskType extends TaskType implements Listener {
         super(type, author, description, aliases);
     }
 
+    public BukkitTaskType(final @NotNull String type, final @Nullable String author, final @Nullable String description) {
+        super(type, author, description);
+    }
+
     public BukkitTaskType(final @NotNull String type) {
         super(type);
     }
