@@ -49,6 +49,17 @@ public abstract class TaskType {
     }
 
     /**
+     * Constructs a TaskType with the specified type, author, and description.
+     *
+     * @param type the name of the task type, should not contain spaces
+     * @param author the name of the person (or people) who wrote it
+     * @param description a short, simple description of the task type
+     */
+    public TaskType(final @NotNull String type, final @Nullable String author, final @Nullable String description) {
+        this(type, author, description, new String[0]);
+    }
+
+    /**
      * Constructs a TaskType with the specified type.
      *
      * @param type the name of the task type, should not contain spaces
