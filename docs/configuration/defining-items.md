@@ -318,6 +318,19 @@ item:
   id: "itemsadder"  #itemsdadder id
 ```
 
+#### Oraxen
+
+**Oraxen quest items** are ItemStacks which belong to the
+Oraxen plugin.
+
+    items/testitem.yml
+
+``` yaml
+type: "oraxen"
+item:
+  id: "oraxen_id"  #oraxen id
+```
+
 ### Referencing a quest item
 
 In most cases where an ItemStack is accepted in Quests, you can simply

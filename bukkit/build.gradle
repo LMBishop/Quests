@@ -32,6 +32,8 @@ repositories {
     maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
     // NuVotifier
     maven { url = 'https://repo.leonardobishop.com/releases/' }
+    // Oraxen
+    maven { url = 'https://repo.oraxen.com/releases' }
     // PlaceholderAPI
     maven { url = 'https://repo.extendedclip.com/content/repositories/dev/' }
     // CustomFishing, ItemsAdder, SCore, ShopGUIPlus, Slimefun4
@@ -104,6 +106,8 @@ dependencies {
     compileOnly 'io.lumine:Mythic-Dist:5.2.0'
     // NuVotifier
     compileOnly 'com.vexsoftware:NuVotifier:2.7.3'
+    // Oraxen
+    compileOnly('io.th0rgal:oraxen:1.175.0') { transitive = false }
     // PlaceholderAPI
     compileOnly 'me.clip:placeholderapi:2.11.3-DEV-160'
     // PlayerPoints
