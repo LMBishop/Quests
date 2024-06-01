@@ -20,6 +20,8 @@ public class Quest implements Comparable<Quest> {
     private List<String> requirements;
     private List<String> rewardString;
     private List<String> startString;
+    private List<String> cancelString;
+    private List<String> expiryString;
     private List<String> startCommands;
     private List<String> cancelCommands;
     private List<String> expiryCommands;
@@ -121,6 +123,26 @@ public class Quest implements Comparable<Quest> {
      */
     public @NotNull List<String> getStartString() {
         return Collections.unmodifiableList(startString);
+    }
+
+    /**
+     * Get the cancel string of the quest.
+     * The cancel string is a series of messages sent to the player upon cancelling the quest.
+     *
+     * @return immutable list of messages to send
+     */
+    public @NotNull List<String> getCancelString() {
+        return Collections.unmodifiableList(cancelString);
+    }
+
+    /**
+     * Get the expiry string of the quest.
+     * The expiry string is a series of messages sent to the player upon expiring the quest.
+     *
+     * @return immutable list of messages to send
+     */
+    public @NotNull List<String> getExpiryString() {
+        return Collections.unmodifiableList(expiryString);
     }
 
     /**
@@ -315,6 +337,8 @@ public class Quest implements Comparable<Quest> {
         private List<String> requirements = Collections.emptyList();
         private List<String> rewardString = Collections.emptyList();
         private List<String> startString = Collections.emptyList();
+        private List<String> cancelString = Collections.emptyList();
+        private List<String> expiryString = Collections.emptyList();
         private List<String> startCommands = Collections.emptyList();
         private List<String> cancelCommands = Collections.emptyList();
         private List<String> expiryCommands = Collections.emptyList();
@@ -353,6 +377,16 @@ public class Quest implements Comparable<Quest> {
 
         public Builder withStartString(List<String> startString) {
             this.startString = startString;
+            return this;
+        }
+
+        public Builder withCancelString(List<String> cancelString) {
+            this.cancelString = cancelString;
+            return this;
+        }
+
+        public Builder withExpiryString(List<String> expiryString) {
+            this.expiryString = expiryString;
             return this;
         }
 
@@ -443,6 +477,8 @@ public class Quest implements Comparable<Quest> {
             quest.requirements = this.requirements;
             quest.rewardString = this.rewardString;
             quest.startString = this.startString;
+            quest.cancelString = this.cancelString;
+            quest.expiryString = this.expiryString;
             quest.startCommands = this.startCommands;
             quest.cancelCommands = this.cancelCommands;
             quest.expiryCommands = this.expiryCommands;
@@ -459,9 +495,7 @@ public class Quest implements Comparable<Quest> {
             quest.placeholders = this.placeholders;
             quest.progressPlaceholders = this.progressPlaceholders;
             quest.categoryid = this.categoryid;
-
             return quest;
         }
-
     }
 }
