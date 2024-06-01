@@ -302,6 +302,12 @@ public class NormalQuestController implements QuestController {
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), s);
                 }
             }
+            for (String s : quest.getCancelString()) {
+                if (plugin.getConfig().getBoolean("options.quests-use-placeholderapi")) {
+                    s = plugin.getPlaceholderAPIProcessor().apply(player, s);
+                }
+                player.sendMessage(Chat.legacyColor(s));
+            }
             SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-cancel"));
         }
         if (config.getBoolean("options.allow-quest-track")
@@ -336,6 +342,12 @@ public class NormalQuestController implements QuestController {
                 } else {
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), s);
                 }
+            }
+            for (String s : quest.getExpiryString()) {
+                if (plugin.getConfig().getBoolean("options.quests-use-placeholderapi")) {
+                    s = plugin.getPlaceholderAPIProcessor().apply(player, s);
+                }
+                player.sendMessage(Chat.legacyColor(s));
             }
         }
         if (config.getBoolean("options.allow-quest-track")

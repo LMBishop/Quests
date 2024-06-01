@@ -270,6 +270,8 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         List<String> requirements = config.getStringList("options.requires");
                         List<String> rewardString = config.getStringList("rewardstring");
                         List<String> startString = config.getStringList("startstring");
+                        List<String> cancelString = config.getStringList("cancelstring");
+                        List<String> expiryString = config.getStringList("expirystring");
                         List<String> startCommands = config.getStringList("startcommands");
                         List<String> cancelCommands = config.getStringList("cancelcommands");
                         List<String> expiryCommands = config.getStringList("expirycommands");
@@ -302,6 +304,8 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 .withRequirements(requirements)
                                 .withRewardString(rewardString)
                                 .withStartString(startString)
+                                .withCancelString(cancelString)
+                                .withExpiryString(expiryString)
                                 .withStartCommands(startCommands)
                                 .withCancelCommands(cancelCommands)
                                 .withExpiryCommands(expiryCommands)

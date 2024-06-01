@@ -183,6 +183,32 @@ startstring:
  - " &8- &7You must break 30 blocks."
 ```
 
+## Cancel string
+
+
+*`cancelstring`*
+
+**Optional.** This is a list of messages which will be sent to the
+player when they cancel the quest.
+
+``` yaml
+cancelstring:
+ - " &8- &7You cancelled the quest to break 30 blocks."
+```
+
+## Expiry string
+
+
+*`expirystring`*
+
+**Optional.** This is a list of messages which will be sent to the
+player when their quest has expired.
+
+``` yaml
+expirystring:
+ - " &8- &7The quest to break 30 blocks just expired."
+```
+
 ## Reward string
 
   
