@@ -383,7 +383,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         questManager.registerQuest(quest);
                         taskTypeManager.registerQuestTasksWithTaskTypes(quest);
                         qItemStackRegistry.register(quest, displayItem);
-                        if (config.isConfigurationSection("options.started-display")) {
+                        if (config.isConfigurationSection("options.locked-display")) {
                             qItemStackRegistry.registerQuestLocked(quest,
                                     plugin.getItemGetter().getItem("options.locked-display", config));
                         }
