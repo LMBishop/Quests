@@ -12,11 +12,16 @@ import me.arsmagica.API.PyroFishCatchEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public final class PyroFishingProFishingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
+    private Method getPlayerMethod = null;
     private Player lastPlayer = null;
 
     public PyroFishingProFishingTaskType(BukkitQuestsPlugin plugin) {
@@ -26,24 +31,57 @@ public final class PyroFishingProFishingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "fish-number"));
+
+        for (Method method : PyroFishCatchEvent.class.getMethods()) {
+            if (method.getReturnType() != Player.class) {
+                continue;
+            }
+
+            if (method.getParameterTypes().length != 0) {
+                continue;
+            }
+
+            if (this.getPlayerMethod != null) {
+                // set it to null and break as there is more than 1 method returning a player
+                this.getPlayerMethod = null;
+                break;
+            } else {
+                this.getPlayerMethod = method;
+            }
+        }
+
+        if (this.getPlayerMethod == null) {
+            this.plugin.getLogger().warning("No valid player getter found for PyroFishCatchEvent, using legacy workaround.");
+            this.plugin.getServer().getPluginManager().registerEvents(new PlayerFishListener(), this.plugin);
+        }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
-    public void onPlayerFish(PlayerFishEvent event) {
-        PlayerFishEvent.State state = event.getState();
-        if (state == PlayerFishEvent.State.CAUGHT_FISH) {
-            lastPlayer = event.getPlayer();
+    private Player getLastPlayer(PyroFishCatchEvent event) {
+        if (this.getPlayerMethod != null) {
+            try {
+                return (Player) this.getPlayerMethod.invoke(event);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            return this.lastPlayer;
+        }
+    }
+
+    private final class PlayerFishListener implements Listener {
+        @EventHandler(priority = EventPriority.LOW)
+        public void onPlayerFish(PlayerFishEvent event) {
+            PlayerFishEvent.State state = event.getState();
+            if (state == PlayerFishEvent.State.CAUGHT_FISH) {
+                PyroFishingProFishingTaskType.this.lastPlayer = event.getPlayer();
+            }
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPyroFishCatch(PyroFishCatchEvent event) {
-        if (lastPlayer == null) {
-            return;
-        }
-
-        Player player = lastPlayer;
-        if (player.hasMetadata("NPC")) {
+        Player player = getLastPlayer(event);
+        if (player == null || player.hasMetadata("NPC")) {
             return;
         }
 

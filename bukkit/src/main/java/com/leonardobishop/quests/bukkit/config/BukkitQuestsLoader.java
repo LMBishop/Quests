@@ -7,6 +7,7 @@ import com.leonardobishop.quests.bukkit.item.ItemsAdderQuestItem;
 import com.leonardobishop.quests.bukkit.item.MMOItemsQuestItem;
 import com.leonardobishop.quests.bukkit.item.OraxenQuestItem;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
+import com.leonardobishop.quests.bukkit.item.PyroFishingProQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItemRegistry;
 import com.leonardobishop.quests.bukkit.item.SlimefunQuestItem;
@@ -503,6 +504,10 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         case "oraxen":
                             if (!Bukkit.getPluginManager().isPluginEnabled("Oraxen")) return FileVisitResult.CONTINUE;
                             item = new OraxenQuestItem(id, config.getString("item.id"));
+                            break;
+                        case "pyrofishingpro":
+                            if (!Bukkit.getPluginManager().isPluginEnabled("PyroFishingPro")) return FileVisitResult.CONTINUE;
+                            item = new PyroFishingProQuestItem(id, config.getInt("item.fish-number", -1), config.getString("item.tier"));
                             break;
                     }
 
