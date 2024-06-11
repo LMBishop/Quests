@@ -7,6 +7,7 @@ main: com.leonardobishop.quests.bukkit.BukkitQuestsPlugin
 website: https://github.com/LMBishop/Quests
 author: "LMBishop & contributors"
 softdepend:
+- Atlas
 - ASkyBlock
 - BentoBox
 - Citizens

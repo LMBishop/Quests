@@ -15,8 +15,8 @@ allprojects {
     group = 'com.leonardobishop'
     version = '3.15'
 
-    sourceCompatibility = 21
-    targetCompatibility = 21
+    sourceCompatibility = 17
+    targetCompatibility = 17
 }
 
 task allJar( type: Jar, dependsOn: subprojects.tasks['build'] ) {

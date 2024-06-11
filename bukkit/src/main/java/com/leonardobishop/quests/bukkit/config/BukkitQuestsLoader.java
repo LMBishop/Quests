@@ -2,14 +2,7 @@ package com.leonardobishop.quests.bukkit.config;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
-import com.leonardobishop.quests.bukkit.item.ExecutableItemsQuestItem;
-import com.leonardobishop.quests.bukkit.item.ItemsAdderQuestItem;
-import com.leonardobishop.quests.bukkit.item.MMOItemsQuestItem;
-import com.leonardobishop.quests.bukkit.item.OraxenQuestItem;
-import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
-import com.leonardobishop.quests.bukkit.item.QuestItem;
-import com.leonardobishop.quests.bukkit.item.QuestItemRegistry;
-import com.leonardobishop.quests.bukkit.item.SlimefunQuestItem;
+import com.leonardobishop.quests.bukkit.item.*;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStackRegistry;
 import com.leonardobishop.quests.bukkit.util.lang3.StringUtils;
@@ -500,9 +493,13 @@ public class BukkitQuestsLoader implements QuestsLoader {
                             if (!Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")) return FileVisitResult.CONTINUE;
                             item = new ItemsAdderQuestItem(id, config.getString("item.id"));
                             break;
-                        case "oraxen":
-                            if (!Bukkit.getPluginManager().isPluginEnabled("Oraxen")) return FileVisitResult.CONTINUE;
-                            item = new OraxenQuestItem(id, config.getString("item.id"));
+//                        case "oraxen":
+//                            if (!Bukkit.getPluginManager().isPluginEnabled("Oraxen")) return FileVisitResult.CONTINUE;
+//                            item = new OraxenQuestItem(id, config.getString("item.id"));
+//                            break;
+                        case "atlas":
+                            if (!Bukkit.getPluginManager().isPluginEnabled("Atlas")) return FileVisitResult.CONTINUE;
+                            item = new AtlasQuestItem(id, config.getString("item.id"));
                             break;
                     }
 

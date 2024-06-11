@@ -53,12 +53,15 @@ repositories {
 
     // bungeecord-chat, HikariCP, hppc, JetBrains Annotations, slf4j
     mavenCentral()
+
+    // Atlas
+    mavenLocal()
 }
 
 dependencies {
     compileOnly project(':common')
     // Paper
-    compileOnly("io.papermc.paper:paper-api:1.20.5-R0.1-SNAPSHOT") {
+    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT") {
         // exclude libraries not available in 1.8
         exclude(group: 'it.unimi.dsi', module: 'fastutil')
         exclude(group: 'org.apache.maven', module: 'maven-resolver-provider')
@@ -71,6 +74,8 @@ dependencies {
         exclude(group: 'org.apache.maven', module: 'maven-resolver-provider')
         exclude(group: 'net.md-5', module: 'bungeecord-chat')
     }
+    // Atlaas
+    compileOnly("net.jeracraft:atlas:1.2-folia-b2");
     // ASkyBlock
     compileOnly('com.wasteofplastic:askyblock:3.0.9.4') { transitive = false }
     // AuthLib
