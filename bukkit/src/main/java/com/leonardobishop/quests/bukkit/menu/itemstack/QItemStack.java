@@ -1,7 +1,7 @@
 package com.leonardobishop.quests.bukkit.menu.itemstack;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
-import com.leonardobishop.quests.bukkit.util.Format;
+import com.leonardobishop.quests.bukkit.util.FormatUtils;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.player.QPlayer;
@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -162,7 +163,9 @@ public class QItemStack {
                 case "progress" -> {
                     Object progress = matchedTaskProgress.getProgress();
                     if (progress instanceof Float || progress instanceof Double || progress instanceof BigDecimal) {
-                        replacement = String.format("%.2f", ((Number) progress).floatValue());
+                        replacement = FormatUtils.floating((Number) progress);
+                    } else if (progress instanceof Integer || progress instanceof Long || progress instanceof BigInteger) {
+                        replacement = FormatUtils.integral((Number) progress);
                     } else if (progress != null) {
                         replacement = String.valueOf(progress);
                     } else {
@@ -200,7 +203,7 @@ public class QItemStack {
     public static String processTimeLeft(String s, Quest quest, QuestProgressFile questProgressFile) {
         String timeLeft;
         if (quest.isTimeLimitEnabled()) {
-            timeLeft = Format.formatTime(TimeUnit.SECONDS.convert(questProgressFile.getTimeRemainingFor(quest), TimeUnit.MILLISECONDS));
+            timeLeft = FormatUtils.time(TimeUnit.SECONDS.convert(questProgressFile.getTimeRemainingFor(quest), TimeUnit.MILLISECONDS));
         } else {
             timeLeft = Chat.legacyColor(Messages.UI_PLACEHOLDERS_NO_TIME_LIMIT.getMessageLegacyColor());
         }

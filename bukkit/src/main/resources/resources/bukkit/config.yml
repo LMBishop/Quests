@@ -188,6 +188,15 @@ options:
 quest-mode:
   mode: "NORMAL" # More modes are a work in progress
 
+number-formats:
+  # decimal format used for processing float, double and BigDecimal placeholders
+  floating:
+    format: '#,##0.00'
+    locale: 'en-US'
+  # decimal format used for processing int, long and BigInteger placeholders
+  integral:
+    format: '#,##0'
+    locale: 'en-US'
 
 # -----------------------------------------------------------
 #  Global task configuration

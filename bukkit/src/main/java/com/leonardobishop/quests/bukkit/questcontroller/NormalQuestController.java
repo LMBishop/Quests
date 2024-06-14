@@ -10,7 +10,7 @@ import com.leonardobishop.quests.bukkit.api.event.PlayerStopTrackQuestEvent;
 import com.leonardobishop.quests.bukkit.api.event.PreStartQuestEvent;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
-import com.leonardobishop.quests.bukkit.util.Format;
+import com.leonardobishop.quests.bukkit.util.FormatUtils;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.bukkit.util.SoundUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
@@ -71,7 +71,7 @@ public class NormalQuestController implements QuestController {
                     break;
                 case QUEST_COOLDOWN:
                     long cooldown = qPlayer.getQuestProgressFile().getCooldownFor(quest);
-                    questResultMessage = Messages.QUEST_START_COOLDOWN.getMessage().replace("{time}", Format.formatTime(TimeUnit.SECONDS.convert
+                    questResultMessage = Messages.QUEST_START_COOLDOWN.getMessage().replace("{time}", FormatUtils.time(TimeUnit.SECONDS.convert
                             (cooldown, TimeUnit.MILLISECONDS)));
                     break;
                 case QUEST_LOCKED:

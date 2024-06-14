@@ -6,7 +6,7 @@ import com.leonardobishop.quests.bukkit.menu.CancelQMenu;
 import com.leonardobishop.quests.bukkit.menu.ClickResult;
 import com.leonardobishop.quests.bukkit.menu.QMenu;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
-import com.leonardobishop.quests.bukkit.util.Format;
+import com.leonardobishop.quests.bukkit.util.FormatUtils;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
@@ -113,7 +113,7 @@ public class QuestMenuElement extends MenuElement {
                 display = config.getItem("gui.quest-permission-display");
             }
         } else if (cooldown > 0) {
-            placeholders.put("{time}", Format.formatTime(TimeUnit.SECONDS.convert(cooldown, TimeUnit.MILLISECONDS)));
+            placeholders.put("{time}", FormatUtils.time(TimeUnit.SECONDS.convert(cooldown, TimeUnit.MILLISECONDS)));
             placeholders.put("{quest}", Chat.legacyStrip(qItemStack.getName()));
             placeholders.put("{questid}", quest.getId());
             if (plugin.getQItemStackRegistry().hasQuestCooldownItemStack(quest)) {

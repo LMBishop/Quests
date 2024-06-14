@@ -127,6 +127,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ZNPCsPlusDeliver
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ZNPCsPlusInteractTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.uSkyBlockLevelTaskType;
 import com.leonardobishop.quests.bukkit.util.CompatUtils;
+import com.leonardobishop.quests.bukkit.util.FormatUtils;
 import com.leonardobishop.quests.bukkit.util.LogHistory;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
@@ -303,42 +304,47 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         // Setup version specific compatibility layers
         int version;
         try {
-            version = Integer.parseInt(super.getServer().getBukkitVersion().split("\\.", 3)[1]);
-        } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
-            questsLogger.warning("Failed to resolve server version - some features may not work!");
-            version = 0;
-        }
+            version = this.getServerVersion();
+            this.questsLogger.info("Your server is running version 1." + version);
+        } catch (final IllegalArgumentException e) {
+            // all server supported versions by Quests fulfill this format,
+            // so we assume that some future version can possibly break it,
+            // and we want to load the latest and not the oldest handler
+            version = Integer.MAX_VALUE;
 
-        questsLogger.info("Your server is running version 1." + version);
+            this.questsLogger.warning("Failed to resolve server version - some features may not work! (" + e.getMessage() + ")");
+        }
 
         // (titles)
-        setTitleHandle();
+        this.setTitleHandle();
 
         // (bossbar)
-        setBossBarHandle();
+        this.setBossBarHandle();
 
         // (actionbar)
-        setActionBarHandle();
+        this.setActionBarHandle();
 
         // (itemstacks)
-        setItemGetter();
+        this.setItemGetter();
 
         // (skulls)
-        setSkullGetter();
+        this.setSkullGetter();
 
         // (version specific handler)
-        // TODO move above to version specific handlers
         if (version <= 8) {
-            versionSpecificHandler = new VersionSpecificHandler8();
-        } else switch (version) {
-            case 9, 10 -> versionSpecificHandler = new VersionSpecificHandler9();
-            case 11, 12, 13, 14, 15 -> versionSpecificHandler = new VersionSpecificHandler11();
-            case 16 -> versionSpecificHandler = new VersionSpecificHandler16();
-            case 17, 18, 19 -> versionSpecificHandler = new VersionSpecificHandler17();
-            default -> versionSpecificHandler = new VersionSpecificHandler20();
+            this.versionSpecificHandler = new VersionSpecificHandler8();
+        } else {
+            this.versionSpecificHandler = switch (version) {
+                case 9, 10 -> new VersionSpecificHandler9();
+                case 11, 12, 13, 14, 15 -> new VersionSpecificHandler11();
+                case 16 -> new VersionSpecificHandler16();
+                case 17, 18, 19 -> new VersionSpecificHandler17();
+                default -> new VersionSpecificHandler20();
+            };
         }
 
-        questsConfig.setItemGetter(itemGetter);
+        // Set item getter to be used by Quests config
+        this.questsConfig.setItemGetter(this.itemGetter);
 
         // Finish module initialisation
         this.taskTypeManager = new BukkitTaskTypeManager(this, new HashSet<>(questsConfig.getStringList("options.task-type-exclusions")));
@@ -521,6 +527,33 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         });
     }
 
+    /**
+     * Gets the server minor version.
+     *
+     * @return the server minor version
+     * @throws IllegalArgumentException with message set to the bukkit version if it could not be parsed successfully.
+     */
+    private int getServerVersion() throws IllegalArgumentException {
+        final String bukkitVersion = this.getServer().getBukkitVersion();
+
+        final String[] bukkitVersionParts = bukkitVersion.split("\\.", 3);
+        if (bukkitVersionParts.length < 2) {
+            throw new IllegalArgumentException(bukkitVersion, new ArrayIndexOutOfBoundsException());
+        }
+
+        final String minorVersionPart = bukkitVersionParts[1];
+        try {
+            return Integer.parseInt(minorVersionPart);
+        } catch (final NumberFormatException e) {
+            throw new IllegalArgumentException(bukkitVersion, e);
+        }
+    }
+
+    /**
+     * Gets the tasks registration message.
+     *
+     * @return the tasks registration message
+     */
     private @NotNull String getRegistrationMessage() {
         final int registered = this.taskTypeManager.getRegistered();
         final int skipped = this.taskTypeManager.getSkipped();
@@ -613,38 +646,49 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     private boolean reloadBaseConfiguration() {
-        this.validConfiguration = questsConfig.loadConfig();
+        this.validConfiguration = this.questsConfig.loadConfig();
 
-        if (validConfiguration) {
-            int loggingLevel = questsConfig.getInt("options.verbose-logging-level", 2);
-            questsLogger.setServerLoggingLevel(QuestsLogger.LoggingLevel.fromNumber(loggingLevel));
-            boolean logHistoryEnabled = questsConfig.getBoolean("options.record-log-history", true);
-            logHistory.setEnabled(logHistoryEnabled);
+        if (this.validConfiguration) {
+            final int loggingLevelNumber = this.questsConfig.getInt("options.verbose-logging-level", 2);
+            final QuestsLogger.LoggingLevel loggingLevel = QuestsLogger.LoggingLevel.fromNumber(loggingLevelNumber);
+            this.questsLogger.setServerLoggingLevel(loggingLevel);
 
-            switch (questsConfig.getString("quest-mode.mode", "normal").toLowerCase()) {
+            final boolean logHistoryEnabled = this.questsConfig.getBoolean("options.record-log-history", true);
+            this.logHistory.setEnabled(logHistoryEnabled);
+
+            //noinspection SwitchStatementWithTooFewBranches
+            switch (this.questsConfig.getString("quest-mode.mode", "normal").toLowerCase()) {
                 default:
                 case "normal":
-                    questController = new NormalQuestController(this);
-                    //TODO the other one
+                    this.questController = new NormalQuestController(this);
+                    // TODO the other one
             }
 
-            long autoSaveInterval = this.getConfig().getLong("options.performance-tweaking.quest-autosave-interval", 12000);
+            final long autoSaveInterval = this.getConfig().getLong("options.performance-tweaking.quest-autosave-interval", 12000);
             try {
-                if (questAutoSaveTask != null) questAutoSaveTask.cancel();
-                questAutoSaveTask = serverScheduler.runTaskTimer(() -> new QuestsAutoSaveRunnable(this), autoSaveInterval, autoSaveInterval);
-            } catch (Exception ex) {
-                questsLogger.debug("Cannot cancel and restart quest autosave task");
+                if (this.questAutoSaveTask != null) {
+                    this.questAutoSaveTask.cancel();
+                }
+                this.questAutoSaveTask = this.serverScheduler.runTaskTimer(() -> new QuestsAutoSaveRunnable(this), autoSaveInterval, autoSaveInterval);
+            } catch (final Exception e) {
+                this.questsLogger.debug("Cannot cancel and restart quest autosave task");
             }
 
-            long queueExecuteInterval = this.getConfig().getLong("options.performance-tweaking.quest-queue-executor-interval", 1);
+            final long queueExecuteInterval = this.getConfig().getLong("options.performance-tweaking.quest-queue-executor-interval", 1);
             try {
-                if (questQueuePollTask != null) questQueuePollTask.cancel();
-                questQueuePollTask = serverScheduler.runTaskTimer(questCompleter, queueExecuteInterval, queueExecuteInterval);
-            } catch (Exception ex) {
-                questsLogger.debug("Cannot cancel and restart queue executor task");
+                if (this.questQueuePollTask != null) {
+                    this.questQueuePollTask.cancel();
+                }
+                this.questQueuePollTask = this.serverScheduler.runTaskTimer(this.questCompleter, queueExecuteInterval, queueExecuteInterval);
+            } catch (final Exception e) {
+                this.questsLogger.debug("Cannot cancel and restart queue executor task");
             }
+
+            // Set number formats to be used
+            FormatUtils.setNumberFormats(this);
         }
-        return validConfiguration;
+
+        return this.validConfiguration;
     }
 
     private void generateConfigurations() {
