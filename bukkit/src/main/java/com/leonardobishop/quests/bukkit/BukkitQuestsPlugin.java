@@ -155,6 +155,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -170,6 +171,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.logging.Level;
 
 public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
@@ -271,7 +273,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         questsLogger.info("Running server scheduler: " + serverScheduler.getServerSchedulerName());
 
         // Load base configuration for use during rest of startup procedure
-        if (!this.reloadBaseConfiguration()) {
+        if (!this.reloadBaseConfiguration(true)) {
             questsLogger.severe("Plugin cannot start into a stable state as the configuration is broken!");
             super.getServer().getPluginManager().disablePlugin(this);
             return;
@@ -615,7 +617,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     @Override
     public void reloadQuests() {
-        if (this.reloadBaseConfiguration()) {
+        if (this.reloadBaseConfiguration(false)) {
             BukkitQuestsLoader questsLoader = new BukkitQuestsLoader(this);
             questsLoader.loadQuestItems(new File(super.getDataFolder() + File.separator + "items"));
             configProblems = questsLoader.loadQuests(new File(super.getDataFolder() + File.separator + "quests"));
@@ -645,7 +647,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return itemGetter.getItem(path, config, excludes);
     }
 
-    private boolean reloadBaseConfiguration() {
+    private boolean reloadBaseConfiguration(final boolean initialLoad) {
         this.validConfiguration = this.questsConfig.loadConfig();
 
         if (this.validConfiguration) {
@@ -664,24 +666,29 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                     // TODO the other one
             }
 
-            final long autoSaveInterval = this.getConfig().getLong("options.performance-tweaking.quest-autosave-interval", 12000);
-            try {
-                if (this.questAutoSaveTask != null) {
-                    this.questAutoSaveTask.cancel();
+            // Don't do that on first load as the plugin will later call reloadQuests()
+            // in the onEnable() lambda which calls this method and makes it try to cancel
+            // task that has not been scheduled yet
+            if (!initialLoad) {
+                final long autoSaveInterval = this.getConfig().getLong("options.performance-tweaking.quest-autosave-interval", 12000);
+                try {
+                    if (this.questAutoSaveTask != null && !this.questAutoSaveTask.isCancelled()) {
+                        this.questAutoSaveTask.cancel();
+                    }
+                    this.questAutoSaveTask = this.serverScheduler.runTaskTimer(new QuestsAutoSaveRunnable(this), autoSaveInterval, autoSaveInterval);
+                } catch (final Exception e) {
+                    this.getLogger().log(Level.SEVERE, "Cannot cancel and restart quest autosave task", e);
                 }
-                this.questAutoSaveTask = this.serverScheduler.runTaskTimer(() -> new QuestsAutoSaveRunnable(this), autoSaveInterval, autoSaveInterval);
-            } catch (final Exception e) {
-                this.questsLogger.debug("Cannot cancel and restart quest autosave task");
-            }
 
-            final long queueExecuteInterval = this.getConfig().getLong("options.performance-tweaking.quest-queue-executor-interval", 1);
-            try {
-                if (this.questQueuePollTask != null) {
-                    this.questQueuePollTask.cancel();
+                final long queueExecuteInterval = this.getConfig().getLong("options.performance-tweaking.quest-queue-executor-interval", 1);
+                try {
+                    if (this.questQueuePollTask != null && !this.questQueuePollTask.isCancelled()) {
+                        this.questQueuePollTask.cancel();
+                    }
+                    this.questQueuePollTask = this.serverScheduler.runTaskTimer(this.questCompleter, queueExecuteInterval, queueExecuteInterval);
+                } catch (final Exception e) {
+                    this.getLogger().log(Level.SEVERE, "Could not cancel and restart queue executor task", e);
                 }
-                this.questQueuePollTask = this.serverScheduler.runTaskTimer(this.questCompleter, queueExecuteInterval, queueExecuteInterval);
-            } catch (final Exception e) {
-                this.questsLogger.debug("Cannot cancel and restart queue executor task");
             }
 
             // Set number formats to be used
@@ -922,6 +929,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     @Override
     public void reloadConfig() {
-        this.reloadBaseConfiguration();
+        this.reloadBaseConfiguration(false);
     }
 }
