@@ -1,13 +1,18 @@
 package com.leonardobishop.quests.bukkit.util.lang3;
 
-/*
- * From Apache Commons Lang
- * https://github.com/apache/commons-lang/blob/master/LICENSE.txt
+/**
+ * Apache Commons Lang<br>
+ * Copyright 2001-2024 The Apache Software Foundation<br>
+ * <br>
+ * This product includes software developed at<br>
+ * The Apache Software Foundation (<a href="https://www.apache.org/">https://www.apache.org/</a>).<br>
+ * <br>
+ * License: <a href="https://github.com/apache/commons-lang/blob/98a67224956a680958568986747160d20cfbbe25/LICENSE.txt">LICENSE.txt</a>
  */
 public final class CharSequenceUtils {
 
-    // https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/CharSequenceUtils.java#L294-L338
-    public static boolean regionMatches(final CharSequence cs, final boolean ignoreCase, final int thisStart, // package -> public
+    // https://github.com/apache/commons-lang/blob/98a67224956a680958568986747160d20cfbbe25/src/main/java/org/apache/commons/lang3/CharSequenceUtils.java#L294-L338
+    public static boolean regionMatches(final CharSequence cs, final boolean ignoreCase, final int thisStart, // Quests - package -> public
                                         final CharSequence substring, final int start, final int length)    {
         if (cs instanceof String && substring instanceof String) {
             return ((String) cs).regionMatches(ignoreCase, thisStart, (String) substring, start, length);
