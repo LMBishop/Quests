@@ -2,7 +2,7 @@ package com.leonardobishop.quests.bukkit.hook.papi;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
-import com.leonardobishop.quests.bukkit.util.Format;
+import com.leonardobishop.quests.bukkit.util.FormatUtils;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
@@ -181,7 +181,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                 break;
                             case "cooldown":
                                 if (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompleted()) {
-                                    final String time = Format.formatTime(TimeUnit.SECONDS.convert(qPlayer.getQuestProgressFile().getCooldownFor(quest), TimeUnit.MILLISECONDS));
+                                    final String time = FormatUtils.time(TimeUnit.SECONDS.convert(qPlayer.getQuestProgressFile().getCooldownFor(quest), TimeUnit.MILLISECONDS));
                                     if (!time.startsWith("-")) result = time;
                                 } else {
                                     result = "0";
@@ -190,7 +190,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                             case "timeleft":
                                 if (qPlayer.hasStartedQuest(quest)) {
                                     long timeLeft = qPlayer.getQuestProgressFile().getTimeRemainingFor(quest);
-                                    result = timeLeft != -1 ? Format.formatTime(TimeUnit.SECONDS.convert(timeLeft, TimeUnit.MILLISECONDS)) : Messages.PLACEHOLDERAPI_NO_TIME_LIMIT.getMessage();
+                                    result = timeLeft != -1 ? FormatUtils.time(TimeUnit.SECONDS.convert(timeLeft, TimeUnit.MILLISECONDS)) : Messages.PLACEHOLDERAPI_NO_TIME_LIMIT.getMessage();
                                 } else {
                                     result = "0";
                                 }

@@ -230,6 +230,9 @@ The types of quest items are as follows:
 - `mmoitems` (items from MMOItems)
 - `slimefun` (items from Slimefun)
 - `executableitems` (items from ExecutableItems)
+- `itemsadder` (items from ItemsAdder)
+- `oraxen` (items from Oraxen)
+- `pyrofishingpro` (items from PyroFishingPro)
 
 ### Importing items
 
@@ -329,6 +332,22 @@ Oraxen plugin.
 type: "oraxen"
 item:
   id: "oraxen_id"  #oraxen id
+```
+
+#### PyroFishingPro
+
+**PyroFishingPro quest items** are ItemStacks which belong to the
+PyroFishingPro plugin. Can be used with many task types except `fishing`.
+To ensure the orderly functioning, `pyrofishingpro_fishing` type should
+be used instead of utilising defined item in regular `fishing` tasks.
+
+    items/testitem.yml
+
+``` yaml
+type: "pyrofishingpro"
+item:
+  fish-number: 123  #pyrofishingpro fish number (optional)
+  tier: "Mythical"  #pyrofishing fish tier (optional)
 ```
 
 ### Referencing a quest item

@@ -123,6 +123,9 @@ gui:
 The `{quest}` variable represents the quest [display
 name](creating-a-quest#name), with its formatting stripped.
 
+The `{questcolored}` variable represents the quest [display
+name](creating-a-quest#name), with its formatting left as is.
+
 The `{questid}` variable represents the quest ID.
 
 The `{requirements}` variable represents the display names of the quests
@@ -153,6 +156,9 @@ gui:
 The `{quest}` variable represents the quest [display
 name](creating-a-quest#name), with its formatting stripped.
 
+The `{questcolored}` variable represents the quest [display
+name](creating-a-quest#name), with its formatting left as is.
+
 The `{questid}` variable represents the quest ID.
 
 ## Quest cooldown display
@@ -177,6 +183,9 @@ gui:
 
 The `{quest}` variable represents the quest [display
 name](creating-a-quest#name), with its formatting stripped.
+
+The `{questcolored}` variable represents the quest [display
+name](creating-a-quest#name), with its formatting left as is.
 
 The `{questid}` variable represents the quest ID.
 
@@ -205,6 +214,9 @@ gui:
 
 The `{quest}` variable represents the quest [display
 name](creating-a-quest#name), with its formatting stripped.
+
+The `{questcolored}` variable represents the quest [display
+name](creating-a-quest#name), with its formatting left as is.
 
 The `{questid}` variable represents the quest ID.
 

@@ -24,18 +24,30 @@ jobs:
             **/*.gradle*
             **/gradle-wrapper.properties
       - name: Build with Gradle
-        run: ./gradlew allJar --no-daemon --stacktrace
+        run: ./gradlew --no-daemon --stacktrace
       - name: "Upload the Java ${{ matrix.java-version }} plugin JAR"
         uses: actions/upload-artifact@v4
         with:
-          name: "Quests-JDK${{ matrix.java-version }}"
+          name: "! Quests-JDK${{ matrix.java-version }}"
           path: |
             build/libs/*.jar
-            !build/libs/*+java8.jar
+            !build/libs/*-downgraded-*.jar
           if-no-files-found: error
-      - name: Upload the Java 8 plugin JAR
+      - name: Upload the downgraded Java 8 plugin JAR
         uses: actions/upload-artifact@v4
         with:
-          name: Quests-JDK8 (use at your own risk)
-          path: build/libs/*+java8.jar
+          name: Quests-JDK1.8 (use at your own risk)
+          path: build/libs/*-downgraded-8.jar
+          if-no-files-found: error
+      - name: Upload the downgraded Java 16 plugin JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: Quests-JDK16 (use at your own risk)
+          path: build/libs/*-downgraded-16.jar
+          if-no-files-found: error
+      - name: Upload the downgraded Java 17 plugin JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: Quests-JDK17 (use at your own risk)
+          path: build/libs/*-downgraded-17.jar
           if-no-files-found: error
