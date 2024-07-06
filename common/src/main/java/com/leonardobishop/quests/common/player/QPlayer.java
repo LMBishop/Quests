@@ -8,10 +8,12 @@ import com.leonardobishop.quests.common.questcontroller.QuestController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Represents a player.
@@ -80,9 +82,49 @@ public class QPlayer {
      *
      * @return list of effectively started quests
      */
-    public List<Quest> getEffectiveStartedQuests() {
-        // TODO this can be better
-        return plugin.getQuestManager().getQuests().values().stream().filter(q -> questController.hasPlayerStartedQuest(this, q)).collect(Collectors.toList());
+    public @NotNull List<Quest> getEffectiveStartedQuests() {
+        return this.getEffectiveStartedQuests(-1);
+    }
+
+    /**
+     * Gets a list of quests which the player has effectively started with an optional limit on the number of quests.
+     * This includes quests started automatically.
+     *
+     * @param limit the maximum number of quests to return. A value of -1 indicates no limit.
+     * @return list of effectively started quests, up to the specified limit
+     */
+    public @NotNull List<Quest> getEffectiveStartedQuests(final int limit) {
+        final Collection<Quest> quests = this.plugin.getQuestManager()
+                .getQuests()
+                .values();
+
+        final List<Quest> ret;
+        if (limit != 1) {
+            ret = new ArrayList<>();
+        } else {
+            ret = null; // for limit 1, use a singleton list which is not backed by an array
+        }
+
+        for (final Quest quest : quests) {
+            if (this.questController.hasPlayerStartedQuest(this, quest)) {
+                if (ret == null) { // this is true only if limit is 1
+                    return Collections.singletonList(quest);
+                }
+
+                ret.add(quest);
+
+                if (limit != -1 && ret.size() >= limit) { // -1 indicates no limit
+                    return ret;
+                }
+            }
+        }
+
+        // if no quests were added to the list and limit was 1, return an empty list
+        if (ret == null) {
+            return Collections.emptyList();
+        }
+
+        return ret;
     }
 
     /**
