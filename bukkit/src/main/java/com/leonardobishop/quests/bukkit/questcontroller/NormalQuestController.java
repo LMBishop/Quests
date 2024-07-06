@@ -418,19 +418,34 @@ public class NormalQuestController implements QuestController {
         return startedQuests;
     }
 
-    private void trackNextQuest(QPlayer qPlayer, Quest previousQuest) {
-        if (config.getBoolean("options.quest-autotrack")
-                && (previousQuest == null || !(previousQuest.isRepeatable() && !previousQuest.isCooldownEnabled()))) {
-            Quest nextQuest;
-            if (qPlayer.getQuestProgressFile().getStartedQuests().size() > 0) {
-                nextQuest = qPlayer.getQuestProgressFile().getStartedQuests().get(0);
-                qPlayer.trackQuest(nextQuest);
-            } else {
-                qPlayer.trackQuest(null);
-            }
-        } else if (!config.getBoolean("options.quest-autotrack")) {
+    private void trackNextQuest(final @NotNull QPlayer qPlayer, final @Nullable Quest previousQuest) {
+        final boolean autotrack = this.config.getBoolean("options.quest-autotrack");
+
+        if (!autotrack) {
             qPlayer.trackQuest(null);
+            return;
+        }
+
+        if (previousQuest == null || !previousQuest.isRepeatable() || previousQuest.isCooldownEnabled()) {
+            final List<Quest> startedQuests = qPlayer.getQuestProgressFile().getStartedQuests();
+            final boolean autostart = this.config.getBoolean("options.quest-autostart");
+
+            final Quest nextQuest;
+            if (!startedQuests.isEmpty()) {
+                nextQuest = startedQuests.getFirst();
+            } else if (autostart) {
+                final List<Quest> effectiveStartedQuests = qPlayer.getEffectiveStartedQuests(1);
+
+                if (!effectiveStartedQuests.isEmpty()) {
+                    nextQuest = effectiveStartedQuests.getFirst();
+                } else {
+                    nextQuest = null;
+                }
+            } else {
+                nextQuest = null;
+            }
+
+            qPlayer.trackQuest(nextQuest);
         }
     }
-
 }
