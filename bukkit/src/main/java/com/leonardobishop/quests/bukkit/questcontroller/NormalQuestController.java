@@ -23,6 +23,8 @@ import com.leonardobishop.quests.common.quest.Task;
 import com.leonardobishop.quests.common.questcontroller.QuestController;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -187,10 +189,13 @@ public class NormalQuestController implements QuestController {
                 return QuestStartResult.NO_PERMISSION_FOR_CATEGORY;
             }
         }
-        if (questProgress.isStarted() || quest.isAutoStartEnabled() || config.getBoolean("options.quest-autostart")) {
+
+        boolean autostart = this.config.getBoolean("options.quest-autostart");
+        if (questProgress.isStarted() || quest.isAutoStartEnabled() || autostart) {
             return QuestStartResult.QUEST_ALREADY_STARTED;
         }
-        if (!config.getBoolean("options.quest-autostart") && quest.doesCountTowardsLimit()) {
+
+        if (quest.doesCountTowardsLimit()) {
             Set<Quest> startedQuests = getStartedQuestsForPlayer(qPlayer);
             int questLimitCount = 0;
             for (Quest q : startedQuests) {
@@ -202,6 +207,7 @@ public class NormalQuestController implements QuestController {
                 return QuestStartResult.QUEST_LIMIT_REACHED;
             }
         }
+
         return QuestStartResult.QUEST_SUCCESS;
     }
 
