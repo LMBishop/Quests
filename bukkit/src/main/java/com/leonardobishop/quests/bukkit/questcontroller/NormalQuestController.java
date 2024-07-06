@@ -264,7 +264,7 @@ public class NormalQuestController implements QuestController {
 
     @Override
     public boolean hasPlayerStartedQuest(QPlayer qPlayer, Quest quest) {
-        return config.getBoolean("options.quest-autostart") || quest.isAutoStartEnabled()
+        return quest.isAutoStartEnabled() || config.getBoolean("options.quest-autostart")
                 ? canPlayerStartQuest(qPlayer, quest).hasPlayerStartedQuest()
                 : qPlayer.getQuestProgressFile().hasQuestStarted(quest);
     }
