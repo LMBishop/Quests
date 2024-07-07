@@ -98,6 +98,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.ShearingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.SmeltingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.SmithingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.TamingTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.TradingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.WalkingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ASkyBlockLevelTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BentoBoxLevelTaskType;
@@ -463,6 +464,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new ReplenishingTaskType(this), () -> CompatUtils.classExists("com.destroystokyo.paper.loottable.LootableInventoryReplenishEvent"));
             taskTypeManager.registerTaskType(() -> new ResurrectingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.entity.EntityResurrectEvent"));
             taskTypeManager.registerTaskType(() -> new SmithingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.inventory.SmithItemEvent"));
+            taskTypeManager.registerTaskType(() -> new TradingTaskType(this), () -> CompatUtils.classExists("io.papermc.paper.event.player.PlayerTradeEvent"));
 
             // Register task types with enabled plugin compatibility requirement
             taskTypeManager.registerTaskType(() -> new ASkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("ASkyBlock"));
