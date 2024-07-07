@@ -1,4 +1,5 @@
 import xyz.wagyourtail.jvmdg.gradle.task.DowngradeJar
+import xyz.wagyourtail.jvmdg.gradle.task.ShadeJar
 import java.io.ByteArrayOutputStream
 
 plugins {
@@ -91,9 +92,9 @@ for (javaVersion in javaVersions) {
     // we use this hacky solution to improve display and sort order in IntelliJ Gradle tab
     val majorVersion = javaVersion.ordinal + 1
     val majorVersionFormatted = String.format("%02d", majorVersion)
-    val taskName = "downgrade${majorVersionFormatted}AllJar"
+    val downgradeTaskName = "downgrade${majorVersionFormatted}AllJar"
 
-    tasks.register<DowngradeJar>(taskName) {
+    tasks.register<DowngradeJar>(downgradeTaskName) {
         inputFile = allJarTask.archiveFile
         downgradeTo = javaVersion
         quiet = true
@@ -102,7 +103,21 @@ for (javaVersion in javaVersions) {
         archiveClassifier = "downgraded-${majorVersion}"
     }
 
-    defaultTasks.add(taskName)
+    val downgradeJarTask = tasks.getByName<DowngradeJar>(downgradeTaskName)
+    val shadeTaskName = "shade${majorVersionFormatted}Downgrade"
+
+    tasks.register<ShadeJar>(shadeTaskName) {
+        inputFile = downgradeJarTask.archiveFile
+        downgradeTo = javaVersion
+        quiet = true
+
+        archiveBaseName = "Quests"
+        archiveClassifier = "downgraded-${majorVersion}-shaded"
+
+        shadePath = { _ -> "com/leonardobishop/quests/jvmdg" }
+    }
+
+    defaultTasks.add(shadeTaskName)
 }
 
 artifacts {

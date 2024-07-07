@@ -37,17 +37,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Quests-JDK1.8 (use at your own risk)
-          path: build/libs/*-downgraded-8.jar
+          path: build/libs/*-downgraded-8-shaded.jar
           if-no-files-found: error
       - name: Upload the downgraded Java 16 plugin JAR
         uses: actions/upload-artifact@v4
         with:
           name: Quests-JDK16 (use at your own risk)
-          path: build/libs/*-downgraded-16.jar
+          path: build/libs/*-downgraded-16-shaded.jar
           if-no-files-found: error
       - name: Upload the downgraded Java 17 plugin JAR
         uses: actions/upload-artifact@v4
         with:
           name: Quests-JDK17 (use at your own risk)
-          path: build/libs/*-downgraded-17.jar
+          path: build/libs/*-downgraded-17-shaded.jar
           if-no-files-found: error
