@@ -8,8 +8,8 @@ pluginManagement {
 
     plugins {
         id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-        id("io.github.goooler.shadow") version "8.1.7"
-        id("xyz.wagyourtail.jvmdowngrader") version "0.7.1"
+        id("io.github.goooler.shadow") version "8.1.8"
+        id("xyz.wagyourtail.jvmdowngrader") version "1.1.2"
     }
 }
 
