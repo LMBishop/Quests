@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -369,32 +370,50 @@ public class NormalQuestController implements QuestController {
     }
 
     @Override
-    public void trackQuestForPlayer(QPlayer qPlayer, Quest quest) {
-        Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
+    public void trackQuestForPlayer(final @NotNull QPlayer qPlayer, final @Nullable Quest quest) {
+        final String trackedQuestId = qPlayer.getPlayerPreferences().getTrackedQuestId();
+        final String questId = quest != null ? quest.getId() : null;
+
+        if (!Objects.equals(questId, trackedQuestId)) {
+            qPlayer.getPlayerPreferences().setTrackedQuestId(questId); // always update it
+        } else {
+            return; // no need to send messages or call events again
+        }
+
+        final Player player = this.plugin.getServer().getPlayer(qPlayer.getPlayerUUID());
+        if (player == null) {
+            return; // we can't even send a message or call an event without the player
+        }
 
         if (quest == null) {
-            String currentTrackedQuestId = qPlayer.getPlayerPreferences().getTrackedQuestId();
-            qPlayer.getPlayerPreferences().setTrackedQuestId(null);
-            if (player != null) {
-                Bukkit.getPluginManager().callEvent(new PlayerStopTrackQuestEvent(player, qPlayer));
-                Quest currentTrackedQuest;
-                if (currentTrackedQuestId != null && (currentTrackedQuest = plugin.getQuestManager().getQuestById(currentTrackedQuestId)) != null) {
-                    QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(currentTrackedQuest);
-                    String displayName = qItemStack.getName();
-                    String displayNameStripped = Chat.legacyStrip(displayName);
-                    Messages.QUEST_TRACK_STOP.send(player, "{quest}", displayNameStripped, "{questcolored}", displayName);
-                }
+            this.plugin.getServer().getPluginManager().callEvent(new PlayerStopTrackQuestEvent(player, qPlayer));
+
+            // we can assume that trackedQuestId != null because of the Objects#equals check above
+            final Quest trackedQuest = this.plugin.getQuestManager().getQuestById(trackedQuestId);
+
+            // it can be still null if the quest was removed
+            if (trackedQuest != null) {
+                final QItemStack item = this.plugin.getQItemStackRegistry().getQuestItemStack(trackedQuest);
+                final String displayName = item.getName();
+                final String displayNameStripped = Chat.legacyStrip(displayName);
+                Messages.QUEST_TRACK_STOP.send(player, "{questcolored}", displayName, "{quest}", displayNameStripped);
             }
-        } else if (qPlayer.hasStartedQuest(quest)) {
-            QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(quest);
-            String displayName = qItemStack.getName();
-            String displayNameStripped = Chat.legacyStrip(displayName);
-            qPlayer.getPlayerPreferences().setTrackedQuestId(quest.getId());
-            if (player != null) {
-                Bukkit.getPluginManager().callEvent(new PlayerStartTrackQuestEvent(player, qPlayer));
-                Messages.QUEST_TRACK.send(player, "{quest}", displayNameStripped, "{questcolored}", displayName);
-            }
+
+            // return and handle quest != null case
+            return;
         }
+
+        // we don't want to notify player about start of a quest which hasn't been started
+        if (!qPlayer.hasStartedQuest(quest)) {
+            return;
+        }
+
+        this.plugin.getServer().getPluginManager().callEvent(new PlayerStartTrackQuestEvent(player, qPlayer));
+
+        final QItemStack item = this.plugin.getQItemStackRegistry().getQuestItemStack(quest);
+        final String displayName = item.getName();
+        final String displayNameStripped = Chat.legacyStrip(displayName);
+        Messages.QUEST_TRACK.send(player, "{questcolored}", displayName, "{quest}", displayNameStripped);
     }
 
     private Set<Quest> getStartedQuestsForPlayer(QPlayer qPlayer) {
