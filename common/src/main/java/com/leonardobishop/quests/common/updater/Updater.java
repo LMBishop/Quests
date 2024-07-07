@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.TimeUnit;
@@ -33,8 +34,9 @@ public class Updater {
         this.tokenizedInstalledVersion = tokenize(installedVersion);
         this.enabled = enabled;
         try {
-            this.api = new URL(getApiUrl());
-        } catch (MalformedURLException ignored) { }
+            this.api = URI.create(this.getApiUrl()).toURL();
+        } catch (IllegalArgumentException | MalformedURLException ignored) {
+        }
     }
 
     public String getUpdateLink() {
