@@ -224,9 +224,6 @@ public class NormalQuestController implements QuestController {
         questProgress.setCompleted(true);
         questProgress.setCompletedBefore(true);
         questProgress.setCompletionDate(System.currentTimeMillis());
-        if (config.getBoolean("options.allow-quest-track")) {
-            trackNextQuest(qPlayer, quest);
-        }
         Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
         if (player != null) {
             QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(quest);
@@ -259,6 +256,9 @@ public class NormalQuestController implements QuestController {
                 player.sendMessage(Chat.legacyColor(s));
             }
             SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-complete"));
+        }
+        if (this.config.getBoolean("options.allow-quest-track") && this.config.getBoolean("options.quest-autotrack")) {
+            this.trackNextQuest(qPlayer, quest);
         }
         return true;
     }
