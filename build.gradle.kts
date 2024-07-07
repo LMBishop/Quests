@@ -22,6 +22,7 @@ allprojects {
 
 subprojects {
     tasks.withType<JavaCompile> {
+        options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
         options.encoding = Charsets.UTF_8.name()
         options.release = 21
     }
