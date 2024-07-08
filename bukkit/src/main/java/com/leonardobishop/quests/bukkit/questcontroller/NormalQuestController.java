@@ -447,12 +447,11 @@ public class NormalQuestController implements QuestController {
 
         if (previousQuest == null || !previousQuest.isRepeatable() || previousQuest.isCooldownEnabled()) {
             final List<Quest> startedQuests = qPlayer.getQuestProgressFile().getStartedQuests();
-            final boolean autostart = this.config.getBoolean("options.quest-autostart");
 
             final Quest nextQuest;
             if (!startedQuests.isEmpty()) {
                 nextQuest = startedQuests.getFirst();
-            } else if (autostart) {
+            } else {
                 final List<Quest> effectiveStartedQuests = qPlayer.getEffectiveStartedQuests(1);
 
                 if (!effectiveStartedQuests.isEmpty()) {
@@ -460,8 +459,6 @@ public class NormalQuestController implements QuestController {
                 } else {
                     nextQuest = null;
                 }
-            } else {
-                nextQuest = null;
             }
 
             qPlayer.trackQuest(nextQuest);
