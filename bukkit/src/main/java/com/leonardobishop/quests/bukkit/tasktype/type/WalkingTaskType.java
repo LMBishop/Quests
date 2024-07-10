@@ -17,9 +17,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public final class WalkingTaskType extends BukkitTaskType {
 
@@ -97,7 +101,12 @@ public final class WalkingTaskType extends BukkitTaskType {
 
             super.debug("Player moved", quest.getId(), task.getId(), player.getUniqueId());
 
-            String mode = (String) task.getConfigValue("mode");
+            Object modeObject = task.getConfigValue("mode");
+
+            // not suspicious at all ඞ
+            //noinspection SuspiciousMethodCalls
+            Mode mode = Mode.STRING_MODE_MAP.get(modeObject);
+
             if (mode != null && !validateMode(player, mode)) {
                 super.debug("Player mode does not match required mode, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
@@ -117,56 +126,84 @@ public final class WalkingTaskType extends BukkitTaskType {
         }
     }
 
-    private boolean validateMode(Player player, String mode) {
+    private boolean validateMode(final @NotNull Player player, final @NotNull Mode mode) {
         return switch (mode) {
             // Vehicles
-            case "boat" -> player.getVehicle() instanceof Boat;
-            case "camel" -> plugin.getVersionSpecificHandler().isPlayerOnCamel(player);
-            case "donkey" -> plugin.getVersionSpecificHandler().isPlayerOnDonkey(player);
-            case "horse" -> plugin.getVersionSpecificHandler().isPlayerOnHorse(player);
-            case "llama" -> plugin.getVersionSpecificHandler().isPlayerOnLlama(player);
-            case "minecart" -> player.getVehicle() instanceof RideableMinecart;
-            case "mule" -> plugin.getVersionSpecificHandler().isPlayerOnMule(player);
-            case "pig" -> player.getVehicle() instanceof Pig;
-            case "skeleton_horse" -> plugin.getVersionSpecificHandler().isPlayerOnSkeletonHorse(player);
-            case "strider" -> plugin.getVersionSpecificHandler().isPlayerOnStrider(player);
-            case "zombie_horse" -> plugin.getVersionSpecificHandler().isPlayerOnZombieHorse(player);
+            case BOAT -> player.getVehicle() instanceof Boat;
+            case CAMEL -> this.plugin.getVersionSpecificHandler().isPlayerOnCamel(player);
+            case DONKEY -> this.plugin.getVersionSpecificHandler().isPlayerOnDonkey(player);
+            case HORSE -> this.plugin.getVersionSpecificHandler().isPlayerOnHorse(player);
+            case LLAMA -> this.plugin.getVersionSpecificHandler().isPlayerOnLlama(player);
+            case MINECART -> player.getVehicle() instanceof RideableMinecart;
+            case MULE -> this.plugin.getVersionSpecificHandler().isPlayerOnMule(player);
+            case PIG -> player.getVehicle() instanceof Pig;
+            case SKELETON_HORSE -> this.plugin.getVersionSpecificHandler().isPlayerOnSkeletonHorse(player);
+            case STRIDER -> this.plugin.getVersionSpecificHandler().isPlayerOnStrider(player);
+            case ZOMBIE_HORSE -> this.plugin.getVersionSpecificHandler().isPlayerOnZombieHorse(player);
 
             // Player movement
-            case "sneaking" ->
+            case SNEAKING ->
                 // player must be sneaking; cannot be swimming, flying and
                 // gliding because sneaking is used to control the height;
-                // we ignore sprinting and it shouldn't affect sneaking
+                // we ignore sprinting, and it shouldn't affect sneaking
                     player.isSneaking() && !player.isSwimming() && !player.isFlying()
-                            && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            case "walking" ->
+                            && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case WALKING ->
                 // player cannot be doing anything special as we want the
                 // other actions to be counted towards other task modes
                     !player.isSneaking() && !player.isSwimming() && !player.isSprinting() && !player.isFlying()
-                            && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            case "running" ->
+                            && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case RUNNING ->
                 // player must be sprinting; cannot be sneaking as it makes
-                // running impossible; running and swimming at once is possible
-                // but it's not real running so we ignore it; we ignore flying
+                // running impossible; running and swimming at once is possible,
+                // but it's not real running, so we ignore it; we ignore flying
                 // as it's definitely not running; running and gliding at once
-                // is not possible so we ignore it as well
+                // is not possible, so we ignore it as well
                     !player.isSneaking() && !player.isSwimming() && player.isSprinting() && !player.isFlying()
-                            && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            case "swimming" ->
-                // sprinting and sneaking is possible with swimming at once
+                            && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case SWIMMING ->
+                // sprinting and sneaking is possible with swimming at once,
                 // so we ignore it but not gliding as it's a bit different
                     player.isSwimming()
-                            && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            case "flying" ->
-                // sprinting and sneaking is possible with flying at once
+                            && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case FLYING ->
+                // sprinting and sneaking is possible with flying at once,
                 // so we ignore it but not gliding as it's a bit different
                     player.isFlying()
-                            && !plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            case "elytra" ->
+                            && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case ELYTRA ->
                 // we can safely ignore any other actions here as there is
                 // really no better way to detect flying with elytra
-                    plugin.getVersionSpecificHandler().isPlayerGliding(player);
-            default -> false;
+                    this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
         };
+    }
+
+    private enum Mode {
+        // Vehicles
+        BOAT,
+        CAMEL,
+        DONKEY,
+        HORSE,
+        LLAMA,
+        MINECART,
+        MULE,
+        PIG,
+        SKELETON_HORSE,
+        STRIDER,
+        ZOMBIE_HORSE,
+
+        // Player movement
+        SNEAKING,
+        WALKING,
+        RUNNING,
+        SWIMMING,
+        FLYING,
+        ELYTRA;
+
+        private static final Map<String, Mode> STRING_MODE_MAP = new HashMap<>() {{
+            for (final Mode mode : Mode.values()) {
+                this.put(mode.name().toLowerCase(Locale.ROOT), mode);
+            }
+        }};
     }
 }
