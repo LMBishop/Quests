@@ -8,6 +8,7 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.DyeColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,6 +43,8 @@ public final class ShearingTaskType extends BukkitTaskType {
         }
 
         final Entity entity = event.getEntity();
+        final Colorable colorable = entity instanceof Colorable ? (Colorable) entity : null;
+        final DyeColor color = colorable != null ? colorable.getColor() : null;
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
@@ -55,7 +58,7 @@ public final class ShearingTaskType extends BukkitTaskType {
                 continue;
             }
 
-            if (entity instanceof final Colorable colorable && !TaskUtils.matchColorable(this, pendingTask, colorable, player.getUniqueId())) {
+            if (colorable != null && !TaskUtils.matchEnum(DyeColor.class, this, pendingTask, color, player.getUniqueId(), "color", "colors")) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
