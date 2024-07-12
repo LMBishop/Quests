@@ -13,7 +13,7 @@ tasks.withType<ProcessResources> {
 }
 
 repositories {
-    // Folia, Paper
+    // Paper
     maven("https://repo.papermc.io/repository/maven-public/")
     // Paper (adventure-bom snapshots)
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
@@ -62,8 +62,6 @@ dependencies {
 
     // Paper
     compileOnlyServer("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
-    // Folia
-    compileOnlyServer("dev.folia:folia-api:1.20.6-R0.1-SNAPSHOT")
 
     // ASkyBlock
     compileOnlyPlugin("com.wasteofplastic:askyblock:3.0.9.4")
