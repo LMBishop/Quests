@@ -61,9 +61,9 @@ dependencies {
     compileOnlyProject(":common")
 
     // Paper
-    compileOnlyServer("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
+    compileOnlyServer("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
     // Folia
-    compileOnlyServer("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnlyServer("dev.folia:folia-api:1.20.6-R0.1-SNAPSHOT")
 
     // ASkyBlock
     compileOnlyPlugin("com.wasteofplastic:askyblock:3.0.9.4")
@@ -129,11 +129,11 @@ dependencies {
     // bStats
     implementation("org.bstats:bstats-bukkit-lite:1.8")
     // HikariCP
-    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("com.zaxxer:HikariCP:5.1.0")
     // slf4j
     implementation("org.slf4j:slf4j-nop:1.7.36")
     // hppc
-    implementation("com.carrotsearch:hppc:0.9.1")
+    implementation("com.carrotsearch:hppc:0.10.0")
     // bungeecord-chat
     implementation("net.md-5:bungeecord-chat:1.20-R0.2") { isTransitive = false }
 }
