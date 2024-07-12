@@ -110,7 +110,7 @@ public abstract class TaskType {
      *
      * @return the author of this task type, or null if not specified
      */
-    public @Nullable String getAuthor() {
+    public final @Nullable String getAuthor() {
         return this.author;
     }
 
@@ -119,7 +119,7 @@ public abstract class TaskType {
      *
      * @return the description of this task type, or null if not specified
      */
-    public @Nullable String getDescription() {
+    public final @Nullable String getDescription() {
         return this.description;
     }
 
@@ -128,7 +128,7 @@ public abstract class TaskType {
      *
      * @return a set of aliases of this task type
      */
-    public @NotNull Set<String> getAliases() {
+    public final @NotNull Set<String> getAliases() {
         return this.aliases;
     }
 

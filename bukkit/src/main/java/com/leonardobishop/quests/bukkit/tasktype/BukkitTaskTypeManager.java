@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,15 +22,6 @@ public final class BukkitTaskTypeManager extends TaskTypeManager {
     private final BukkitQuestsPlugin plugin;
 
     /**
-     * Constructs a new BukkitTaskTypeManager.
-     *
-     * @param plugin the Bukkit plugin instance
-     */
-    public BukkitTaskTypeManager(final @NotNull BukkitQuestsPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    /**
      * Constructs a new BukkitTaskTypeManager with exclusions.
      *
      * @param plugin the Bukkit plugin instance
@@ -37,6 +29,21 @@ public final class BukkitTaskTypeManager extends TaskTypeManager {
      */
     public BukkitTaskTypeManager(final @NotNull BukkitQuestsPlugin plugin, final @NotNull Set<String> exclusions) {
         super(exclusions);
+        Objects.requireNonNull(plugin, "plugin cannot be null");
+
+        this.plugin = plugin;
+    }
+
+    /**
+     * Constructs a new BukkitTaskTypeManager.
+     *
+     * @param plugin the Bukkit plugin instance
+     */
+    @SuppressWarnings("unused")
+    public BukkitTaskTypeManager(final @NotNull BukkitQuestsPlugin plugin) {
+        super();
+        Objects.requireNonNull(plugin, "plugin cannot be null");
+
         this.plugin = plugin;
     }
 
@@ -71,6 +78,7 @@ public final class BukkitTaskTypeManager extends TaskTypeManager {
      * @param taskId the task ID
      * @param associatedPlayer the UUID of the associated player
      */
+    @Override
     public void sendDebug(final @NotNull String message, final @NotNull String taskType, final @NotNull String questId, final @NotNull String taskId, final @NotNull UUID associatedPlayer) {
         String chatHeader = null;
 
