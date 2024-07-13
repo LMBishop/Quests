@@ -44,7 +44,7 @@ public final class ServerNPCDeliverTaskType extends DeliverTaskType<String> {
     }
 
     @Override
-    public String getNPCId(Task task) {
-        return (String) task.getConfigValue("npc-id");
+    public List<String> getNPCId(Task task) {
+        return TaskUtils.getConfigStringList(task, "npc-id");
     }
 }

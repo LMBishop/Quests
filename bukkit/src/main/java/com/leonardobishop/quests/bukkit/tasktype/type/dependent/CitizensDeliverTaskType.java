@@ -8,6 +8,8 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
+import java.util.List;
+
 public final class CitizensDeliverTaskType extends DeliverTaskType<Integer> {
 
     private final BukkitQuestsPlugin plugin;
@@ -26,7 +28,7 @@ public final class CitizensDeliverTaskType extends DeliverTaskType<Integer> {
     }
 
     @Override
-    public Integer getNPCId(Task task) {
-        return (Integer) task.getConfigValue("npc-id");
+    public List<Integer> getNPCId(Task task) {
+        return TaskUtils.getConfigIntegerList(task, "npc-id");
     }
 }

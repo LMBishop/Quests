@@ -83,6 +83,18 @@ public class TaskUtils {
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static @Nullable List<Integer> getConfigIntegerList(Task task, String key) {
+        Object configObject = task.getConfigValue(key);
+        if (configObject instanceof List list) {
+            return List.copyOf(list);
+        } else if (configObject instanceof Integer i){
+            return List.of(i);
+        } else {
+            return null;
+        }
+    }
+
     public static boolean getConfigBoolean(Task task, String key) {
         return getConfigBoolean(task, key, false);
     }
