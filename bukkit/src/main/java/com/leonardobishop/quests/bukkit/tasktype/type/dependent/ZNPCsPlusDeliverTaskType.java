@@ -10,6 +10,8 @@ import lol.pyr.znpcsplus.api.npc.NpcEntry;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
+import java.util.List;
+
 public final class ZNPCsPlusDeliverTaskType extends DeliverTaskType<String> {
 
     private final BukkitQuestsPlugin plugin;
@@ -64,7 +66,7 @@ public final class ZNPCsPlusDeliverTaskType extends DeliverTaskType<String> {
     }
 
     @Override
-    public String getNPCId(Task task) {
-        return (String) task.getConfigValue("npc-id");
+    public List<String> getNPCId(Task task) {
+        return TaskUtils.getConfigStringList(task, "npc-id");
     }
 }
