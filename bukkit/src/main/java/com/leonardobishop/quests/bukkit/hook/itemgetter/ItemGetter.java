@@ -7,7 +7,8 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class ItemGetter {
 
-    protected static final ItemStack invalidItemStack = new ItemStack(Material.STONE, 1);
+    protected static final ItemStack INVALID_ITEM_STACK = new ItemStack(Material.STONE, 1);
+
     protected final BukkitQuestsPlugin plugin;
 
     public ItemGetter(BukkitQuestsPlugin plugin) {
@@ -50,6 +51,8 @@ public abstract class ItemGetter {
         ITEM_FLAGS,
         UNBREAKABLE,
         ATTRIBUTE_MODIFIER,
-        CUSTOM_MODEL_DATA
+        CUSTOM_MODEL_DATA,
+        ENCHANTMENT_GLINT_OVERRIDE,
+        HIDE_TOOLTIP
     }
 }
