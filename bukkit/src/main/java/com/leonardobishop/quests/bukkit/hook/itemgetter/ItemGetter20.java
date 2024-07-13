@@ -1,10 +1,12 @@
 package com.leonardobishop.quests.bukkit.hook.itemgetter;
 
+import com.google.common.collect.Multimap;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.NamespacedKeyUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.ConfigurationSection;
@@ -23,20 +25,23 @@ import java.util.UUID;
 /**
  * Reads the following:
  * <ul>
- *     <li>type (<b>without</b> data support, <b>without</b> namespace support)</li>
+ *     <li>type (<b>without</b> data support, <b>with</b> namespace support)</li>
  *     <li>name</li>
  *     <li>lore</li>
  *     <li>enchantments (<b>with</b> namespace support)</li>
  *     <li>item flags</li>
  *     <li>unbreakability (<b>with</b> CraftBukkit support)</li>
- *     <li>attribute modifiers (<b>without</b> namespace support)</li>
+ *     <li>attribute modifiers</li>
+ *     <li>custom model data</li>
+ *     <li>attribute modifiers (<b>without</b> namespace support)</li> // TODO: add namespace support
+ *     <li>hide tooltip</li>
  * </ul>
- * Requires at least API version 1.13.
+ * Requires at least API version 1.20.(5).
  */
 @SuppressWarnings("DuplicatedCode")
-public class ItemGetter13 extends ItemGetter {
+public class ItemGetter20 extends ItemGetter {
 
-    public ItemGetter13(BukkitQuestsPlugin plugin) {
+    public ItemGetter20(BukkitQuestsPlugin plugin) {
         super(plugin);
     }
 
@@ -124,12 +129,27 @@ public class ItemGetter13 extends ItemGetter {
         // item flags
         List<String> itemFlagStrings = config.getStringList("itemflags");
         if (!itemFlagStrings.isEmpty() && !filters.contains(Filter.ITEM_FLAGS)) {
+            // in case some idiot adds a flag twice - not sure about its behaviour
+            boolean modifiersAdded = false;
+
             for (String itemFlagString : itemFlagStrings) {
                 ItemFlag itemFlag;
                 try {
                     itemFlag = ItemFlag.valueOf(itemFlagString);
                 } catch (IllegalArgumentException e) {
                     continue;
+                }
+
+                if (!modifiersAdded && itemFlag == ItemFlag.HIDE_ATTRIBUTES) {
+                    Material type = item.getType();
+
+                    for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+                        Multimap<Attribute, AttributeModifier> attributeModifiers = type.getDefaultAttributeModifiers(equipmentSlot);
+
+                        attributeModifiers.forEach(meta::addAttributeModifier);
+                    }
+
+                    modifiersAdded = true;
                 }
 
                 meta.addItemFlags(itemFlag);
@@ -142,7 +162,7 @@ public class ItemGetter13 extends ItemGetter {
             meta.setUnbreakable(unbreakable);
         }
 
-        // attribute modifiers
+        // attribute modifiers // TODO: use dedicated 1.20.5 solution
         List<Map<?, ?>> attributeModifierMaps = config.getMapList("attributemodifiers");
         if (!attributeModifierMaps.isEmpty() && !filters.contains(Filter.ATTRIBUTE_MODIFIER)) {
             for (Map<?, ?> attributeModifierMap : attributeModifierMaps) {
@@ -219,6 +239,24 @@ public class ItemGetter13 extends ItemGetter {
             }
         }
 
+        // custom model data
+        Integer customModelData = (Integer) config.get("custommodeldata");
+        if (customModelData != null && !filters.contains(Filter.CUSTOM_MODEL_DATA)) {
+            meta.setCustomModelData(customModelData);
+        }
+
+        // enchantment glint override
+        Boolean enchantmentGlintOverride = (Boolean) config.get("enchantmentglintoverride");
+        if (enchantmentGlintOverride != null && !filters.contains(Filter.ENCHANTMENT_GLINT_OVERRIDE)) {
+            meta.setEnchantmentGlintOverride(enchantmentGlintOverride);
+        }
+
+        // hide tooltip
+        Boolean hideTooltip = (Boolean) config.get("hidetooltip");
+        if (hideTooltip != null && !filters.contains(Filter.HIDE_TOOLTIP)) {
+            meta.setHideTooltip(hideTooltip);
+        }
+
         item.setItemMeta(meta);
         return item;
     }
@@ -230,15 +268,34 @@ public class ItemGetter13 extends ItemGetter {
         }
 
         Material type = Material.getMaterial(typeString);
-        if (type == null) {
+        if (type != null) {
+            return new ItemStack(type, 1);
+        }
+
+        NamespacedKey typeKey = NamespacedKeyUtils.fromString(typeString);
+        if (typeKey == null) {
             return INVALID_ITEM_STACK;
         }
 
-        return new ItemStack(type, 1);
+        type = Registry.MATERIAL.get(typeKey);
+        if (type != null) {
+            return new ItemStack(type, 1);
+        }
+
+        return INVALID_ITEM_STACK;
     }
 
     @Override
     public boolean isValidMaterial(String typeString) {
-        return Material.getMaterial(typeString) != null;
+        if (Material.getMaterial(typeString) != null) {
+            return true;
+        }
+
+        NamespacedKey typeKey = NamespacedKeyUtils.fromString(typeString);
+        if (typeKey == null) {
+            return false;
+        }
+
+        return Registry.MATERIAL.get(typeKey) != null;
     }
 }

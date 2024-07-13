@@ -19,6 +19,7 @@ import com.leonardobishop.quests.bukkit.hook.essentials.EssentialsHook;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter13;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter14;
+import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter20;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter8;
 import com.leonardobishop.quests.bukkit.hook.papi.AbstractPlaceholderAPIHook;
 import com.leonardobishop.quests.bukkit.hook.papi.PlaceholderAPIHook;
@@ -808,6 +809,12 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     }
 
     private void setItemGetter() {
+        // Spigot 1.20.5+
+        if (CompatUtils.classWithMethodExists("org.bukkit.inventory.meta.ItemMeta", "setEnchantmentGlintOverride", Boolean.class)) {
+            itemGetter = new ItemGetter20(this);
+            return;
+        }
+
         // Spigot 1.14+
         if (CompatUtils.classWithMethodExists("org.bukkit.inventory.meta.ItemMeta", "setCustomModelData", Integer.class)) {
             itemGetter = new ItemGetter14(this);

@@ -16,9 +16,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -30,7 +30,7 @@ import java.util.UUID;
  *     <li>enchantments (<b>with</b> namespace support)</li>
  *     <li>item flags</li>
  *     <li>unbreakability (<b>with</b> CraftBukkit support)</li>
- *     <li>attribute modifiers</li>
+ *     <li>attribute modifiers (<b>without</b> namespace support)</li>
  *     <li>custom model data</li>
  * </ul>
  * Requires at least API version 1.14.
@@ -46,10 +46,10 @@ public class ItemGetter14 extends ItemGetter {
     public ItemStack getItem(String path, ConfigurationSection config, Filter... excludes) {
         config = config.getConfigurationSection(path);
         if (config == null) {
-            return invalidItemStack;
+            return INVALID_ITEM_STACK;
         }
 
-        List<Filter> filters = Arrays.asList(excludes);
+        Set<Filter> filters = Set.of(excludes);
 
         // type (without data)
         String typeString = config.getString("item", config.getString("type"));
@@ -234,7 +234,7 @@ public class ItemGetter14 extends ItemGetter {
     @Override
     public ItemStack getItemStack(String typeString) {
         if (typeString == null) {
-            return invalidItemStack;
+            return INVALID_ITEM_STACK;
         }
 
         Material type = Material.getMaterial(typeString);
@@ -244,7 +244,7 @@ public class ItemGetter14 extends ItemGetter {
 
         NamespacedKey typeKey = NamespacedKeyUtils.fromString(typeString);
         if (typeKey == null) {
-            return invalidItemStack;
+            return INVALID_ITEM_STACK;
         }
 
         type = Registry.MATERIAL.get(typeKey);
@@ -252,7 +252,7 @@ public class ItemGetter14 extends ItemGetter {
             return new ItemStack(type, 1);
         }
 
-        return invalidItemStack;
+        return INVALID_ITEM_STACK;
     }
 
     @Override
