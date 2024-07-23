@@ -19,7 +19,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -35,25 +34,7 @@ public final class WalkingTaskType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "distance"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "distance"));
-        super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Arrays.asList(
-                "boat",
-                "camel",
-                "donkey",
-                "horse",
-                "llama",
-                "minecart",
-                "mule",
-                "pig",
-                "skeleton_horse",
-                "strider",
-                "zombie_horse",
-                "sneaking",
-                "walking",
-                "running",
-                "swimming",
-                "flying",
-                "elytra"
-        ), "mode"));
+        super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Mode.STRING_MODE_MAP.keySet().stream().toList(), "mode"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
