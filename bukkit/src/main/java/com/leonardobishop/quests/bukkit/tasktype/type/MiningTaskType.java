@@ -125,6 +125,7 @@ public final class MiningTaskType extends BukkitTaskType {
                     super.debug("PlayerBlockTracker lookup OK", quest.getId(), task.getId(), player.getUniqueId());
                 } else {
                     super.debug("check-playerblocktracker is enabled, but PlayerBlockTracker is not detected on the server", quest.getId(), task.getId(), player.getUniqueId());
+                    continue; // we want to prevent progressing in quest if PBT failed to start and was expected to
                 }
             }
 
@@ -167,6 +168,7 @@ public final class MiningTaskType extends BukkitTaskType {
                 }
 
                 super.debug("check-coreprotect is enabled, but CoreProtect is not detected on the server", quest.getId(), task.getId(), player.getUniqueId());
+                continue; // we want to prevent progressing in quest if CoreProtect failed to start and was expected to
             }
 
             increment.run();
