@@ -52,8 +52,8 @@ public final class CustomFishingFishingTaskType extends BukkitTaskType {
             return;
         }
 
-        String id = loot.getID();
-        String[] groups = loot.getLootGroup();
+        String id = loot.id();
+        String[] groups = loot.lootGroup();
 
         // Cache for performance reasons (used in debug logging)
         String groupsAsString = Arrays.toString(groups);
