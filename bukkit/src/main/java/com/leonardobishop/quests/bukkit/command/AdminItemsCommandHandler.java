@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class AdminItemsCommandHandler implements CommandHandler {
 
@@ -91,9 +92,15 @@ public class AdminItemsCommandHandler implements CommandHandler {
                 amount = Integer.parseInt(args[5]);
             }
             item.setAmount(amount);
+
             // if we got this far, all was well.
             // just give the item to the player already ;)
-            targetPlayer.getInventory().addItem(item);
+            Map<Integer, ItemStack> itemsToDrop = targetPlayer.getInventory().addItem(item);
+
+            // drop items that could not be stored
+            for (ItemStack itemToDrop : itemsToDrop.values()) {
+                targetPlayer.getWorld().dropItem(targetPlayer.getLocation(), itemToDrop);
+            }
         }
     }
 
