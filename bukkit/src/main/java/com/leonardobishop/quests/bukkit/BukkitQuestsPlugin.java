@@ -562,7 +562,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private @NotNull String getRegistrationMessage() {
         final int registered = this.taskTypeManager.getRegistered();
         final int skipped = this.taskTypeManager.getSkipped();
-        final int unsupported = this.taskTypeManager.getUnsupported();
+        final int unsupported = Boolean.getBoolean("Quests.ShowUnsupportedCount") ? this.taskTypeManager.getUnsupported() : 0;
 
         final StringBuilder sb = new StringBuilder();
         sb.append(registered).append(" task types have been registered");
