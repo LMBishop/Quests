@@ -34,7 +34,7 @@ public class AdminModdataCompleteCommandHandler implements CommandHandler {
                 qPlayer.completeQuest(quest);
                 Messages.COMMAND_QUEST_ADMIN_COMPLETE_SUCCESS.send(sender, "{player}", args[3], "{quest}", quest.getId());
 
-                CommandUtils.doSafeSave(qPlayer, questProgressFile, plugin);
+                CommandUtils.doSafeSave(this.plugin, qPlayer);
             });
             return;
         }

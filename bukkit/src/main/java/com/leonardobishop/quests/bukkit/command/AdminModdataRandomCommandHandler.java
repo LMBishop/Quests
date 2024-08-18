@@ -78,7 +78,7 @@ public class AdminModdataRandomCommandHandler implements CommandHandler {
                             "{quest}", quest.getId());
                 }
 
-                CommandUtils.doSafeSave(qPlayer, questProgressFile, plugin);
+                CommandUtils.doSafeSave(this.plugin, qPlayer);
             });
         }
 

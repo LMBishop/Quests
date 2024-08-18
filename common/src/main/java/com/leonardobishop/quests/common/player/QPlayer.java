@@ -18,20 +18,25 @@ import java.util.UUID;
 /**
  * Represents a player.
  */
-public class QPlayer {
+public final class QPlayer {
 
     private final Quests plugin;
-    private final UUID uuid;
-    private final QPlayerPreferences playerPreferences;
-    private final QuestProgressFile questProgressFile;
+    private final QPlayerData playerData;
     private QuestController questController;
 
-    public QPlayer(Quests plugin, UUID uuid, QPlayerPreferences playerPreferences, QuestProgressFile questProgressFile, QuestController questController) {
+    public QPlayer(final @NotNull Quests plugin, final @NotNull QPlayerData playerData, final @NotNull QuestController questController) {
         this.plugin = plugin;
-        this.uuid = uuid;
-        this.playerPreferences = playerPreferences;
-        this.questProgressFile = questProgressFile;
+        this.playerData = playerData;
         this.questController = questController;
+    }
+
+    /**
+     * Get this players associated {@link QPlayerData}
+     *
+     * @return the players data
+     */
+    public @NotNull QPlayerData getPlayerData() {
+        return this.playerData;
     }
 
     /**
@@ -40,7 +45,25 @@ public class QPlayer {
      * @return uuid
      */
     public @NotNull UUID getPlayerUUID() {
-        return this.uuid;
+        return this.playerData.playerUUID();
+    }
+
+    /**
+     * Get this players associated {@link QPlayerPreferences}
+     *
+     * @return the players preferences
+     */
+    public @NotNull QPlayerPreferences getPlayerPreferences() {
+        return this.playerData.playerPreferences();
+    }
+
+    /**
+     * Get this players associated {@link QuestProgressFile}
+     *
+     * @return the quest progress file
+     */
+    public @NotNull QuestProgressFile getQuestProgressFile() {
+        return this.playerData.questProgressFile();
     }
 
     /**
@@ -50,31 +73,32 @@ public class QPlayer {
      * @param quest the quest to complete
      * @return true (always)
      */
-    public boolean completeQuest(@NotNull Quest quest) {
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean completeQuest(final @NotNull Quest quest) {
         Objects.requireNonNull(quest, "quest cannot be null");
 
-        return questController.completeQuestForPlayer(this, quest);
+        return this.questController.completeQuestForPlayer(this, quest);
     }
 
     /**
      * Attempt to track a quest for the player. This will also play all effects (such as titles, messages etc.)
-     **
+     *
      * @param quest the quest to track
      */
-    public void trackQuest(@Nullable Quest quest) {
-        questController.trackQuestForPlayer(this, quest);
+    public void trackQuest(final @Nullable Quest quest) {
+        this.questController.trackQuestForPlayer(this, quest);
     }
 
     /**
-     * Gets whether or not the player has started a specific quest.
+     * Gets whether the player has started a specific quest.
      *
      * @param quest the quest to test for
      * @return true if the quest is started or quest autostart is enabled and the quest is ready to start, false otherwise
      */
-    public boolean hasStartedQuest(@NotNull Quest quest) {
+    public boolean hasStartedQuest(final @NotNull Quest quest) {
         Objects.requireNonNull(quest, "quest cannot be null");
 
-        return questController.hasPlayerStartedQuest(this, quest);
+        return this.questController.hasPlayerStartedQuest(this, quest);
     }
 
     /**
@@ -129,17 +153,16 @@ public class QPlayer {
 
     /**
      * Attempt to start a quest for the player. This will also play all effects (such as titles, messages etc.)
-     *
      * Warning: will fail if the player is not online.
      *
      * @param quest the quest to start
      * @return the quest start result -- {@code QuestStartResult.QUEST_SUCCESS} indicates success
      */
     // TODO PlaceholderAPI support
-    public @NotNull QuestStartResult startQuest(@NotNull Quest quest) {
+    public @NotNull QuestStartResult startQuest(final @NotNull Quest quest) {
         Objects.requireNonNull(quest, "quest cannot be null");
 
-        return questController.startQuestForPlayer(this, quest);
+        return this.questController.startQuestForPlayer(this, quest);
     }
 
     /**
@@ -148,10 +171,10 @@ public class QPlayer {
      * @param quest the quest to start
      * @return true if the quest was cancelled, false otherwise
      */
-    public boolean cancelQuest(@NotNull Quest quest) {
+    public boolean cancelQuest(final @NotNull Quest quest) {
         Objects.requireNonNull(quest, "quest cannot be null");
 
-        return questController.cancelQuestForPlayer(this, quest);
+        return this.questController.cancelQuestForPlayer(this, quest);
     }
 
     /**
@@ -160,52 +183,34 @@ public class QPlayer {
      * @param quest the quest to start
      * @return true if the quest was expired, false otherwise
      */
-    public boolean expireQuest(@NotNull Quest quest) {
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean expireQuest(final @NotNull Quest quest) {
         Objects.requireNonNull(quest, "quest cannot be null");
 
-        return questController.expireQuestForPlayer(this, quest);
+        return this.questController.expireQuestForPlayer(this, quest);
     }
 
     /**
      * Check if the player can start a quest.
-     *
      * Warning: will fail if the player is not online.
      *
      * @param quest the quest to check
      * @return the quest start result
      */
-    public @NotNull QuestStartResult canStartQuest(@NotNull Quest quest) {
+    public @NotNull QuestStartResult canStartQuest(final @NotNull Quest quest) {
         Objects.requireNonNull(quest, "quest cannot be null");
 
-        return questController.canPlayerStartQuest(this, quest);
+        return this.questController.canPlayerStartQuest(this, quest);
     }
 
     /**
-     * Get this players associated {@link QuestProgressFile}
-     *
-     * @return the quest progress file
-     */
-    public @NotNull QuestProgressFile getQuestProgressFile() {
-        return questProgressFile;
-    }
-
-    /**
-     * Get this players associated {@link QPlayerPreferences}
-     *
-     * @return the players preferences
-     */
-    public @NotNull QPlayerPreferences getPlayerPreferences() {
-        return playerPreferences;
-    }
-
-    /**
-     * Get this players associated {@link QuestController}, usually the servers active quest controller
+     * Get player's associated {@link QuestController}. It's usually the server's active quest controller.
      *
      * @see QPlayerManager#getActiveQuestController()
      * @return the quest controller for this player
      */
     public @NotNull QuestController getQuestController() {
-        return questController;
+        return this.questController;
     }
 
     /**
@@ -213,21 +218,24 @@ public class QPlayer {
      *
      * @param questController new quest controller
      */
-    public void setQuestController(@NotNull QuestController questController) {
+    public void setQuestController(final @NotNull QuestController questController) {
         Objects.requireNonNull(questController, "questController cannot be null");
 
         this.questController = questController;
     }
 
-    @Override //Used by java GC
-    public boolean equals(Object o) {
-        if (!(o instanceof QPlayer)) return false;
-        QPlayer qPlayer = (QPlayer) o;
-        return this.uuid == qPlayer.getPlayerUUID();
+    @Override
+    public boolean equals(final @Nullable Object o) {
+        if (o instanceof final QPlayer qPlayer) {
+            return this.getPlayerUUID() == qPlayer.getPlayerUUID();
+        } else {
+            return false;
+        }
     }
 
-    @Override //Used by java GC
+    @Override
     public int hashCode() {
-        return uuid.hashCode() * 73; //uuid hash * prime number
+        // uuid hash * prime number
+        return this.getPlayerUUID().hashCode() * 73;
     }
 }
