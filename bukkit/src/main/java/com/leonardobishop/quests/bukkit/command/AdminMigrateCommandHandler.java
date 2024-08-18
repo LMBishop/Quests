@@ -1,8 +1,9 @@
 package com.leonardobishop.quests.bukkit.command;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
-import com.leonardobishop.quests.bukkit.storage.MySqlStorageProvider;
-import com.leonardobishop.quests.bukkit.storage.YamlStorageProvider;
+import com.leonardobishop.quests.bukkit.storage.ModernMySQLStorageProvider;
+import com.leonardobishop.quests.bukkit.storage.ModernYAMLStorageProvider;
+import com.leonardobishop.quests.common.player.QPlayerData;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.storage.StorageProvider;
 import org.bukkit.ChatColor;
@@ -87,15 +88,15 @@ public class AdminMigrateCommandHandler implements CommandHandler {
                 }
 
                 sender.sendMessage(ChatColor.GRAY + "Loading quest progress files from '" + fromProvider.getName() + "'...");
-                List<QuestProgressFile> files = fromProvider.loadAllProgressFiles();
+                List<QPlayerData> files = fromProvider.loadAllPlayerData();
                 sender.sendMessage(ChatColor.GRAY.toString() + files.size() + " files loaded.");
 
-                for (QuestProgressFile file : files) {
+                for (QPlayerData file : files) {
                     file.setModified(true);
                 }
 
                 sender.sendMessage(ChatColor.GRAY + "Writing quest progress files to '" + toProvider.getName() + "'...");
-                toProvider.saveAllProgressFiles(files);
+                toProvider.saveAllPlayerData(files);
                 sender.sendMessage(ChatColor.GRAY + "Done.");
 
                 shutdownProvider(sender, fromProvider);
@@ -151,11 +152,11 @@ public class AdminMigrateCommandHandler implements CommandHandler {
         switch (configuredProvider.toLowerCase()) {
             default:
             case "yaml":
-                storageProvider = new YamlStorageProvider(plugin);
+                storageProvider = new ModernYAMLStorageProvider(plugin);
                 break;
             case "mysql":
                 ConfigurationSection section = configurationSection.getConfigurationSection("database-settings");
-                storageProvider = new MySqlStorageProvider(plugin, section);
+                storageProvider = new ModernMySQLStorageProvider(plugin, section);
         }
         return storageProvider;
     }

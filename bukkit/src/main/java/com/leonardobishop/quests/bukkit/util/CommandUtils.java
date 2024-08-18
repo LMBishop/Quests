@@ -4,11 +4,12 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -170,17 +171,21 @@ public class CommandUtils {
         }
     }
 
-    public static void doSafeSave(QPlayer qPlayer, QuestProgressFile questProgressFile, BukkitQuestsPlugin plugin) {
-        if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
-            plugin.getScheduler().doAsync(() -> {
-                plugin.getPlayerManager().savePlayerSync(qPlayer.getPlayerUUID(), questProgressFile);
-                plugin.getScheduler().doSync(() -> {
-                    if (Bukkit.getPlayer(qPlayer.getPlayerUUID()) == null) {
+    public static void doSafeSave(final @NotNull BukkitQuestsPlugin plugin, final @NotNull QPlayer qPlayer) {
+        final Player playerBeforeSave = Bukkit.getPlayer(qPlayer.getPlayerUUID());
+
+        if (playerBeforeSave != null) {
+            return;
+        }
+
+        plugin.getPlayerManager()
+                .savePlayer(qPlayer.getPlayerData())
+                .thenAccept(unused -> plugin.getScheduler().doSync(() -> {
+                    final Player playerAfterSave = Bukkit.getPlayer(qPlayer.getPlayerUUID());
+
+                    if (playerAfterSave == null) {
                         plugin.getPlayerManager().dropPlayer(qPlayer.getPlayerUUID());
                     }
-                });
-            });
-        }
+                }));
     }
-
 }
