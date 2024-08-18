@@ -1,19 +1,23 @@
 package com.leonardobishop.quests.common.player.questprogressfile;
 
 import com.leonardobishop.quests.common.plugin.Quests;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
-public class QuestProgress {
+public final class QuestProgress {
 
     private final Quests plugin;
-
-    private final Map<String, TaskProgress> taskProgress = new HashMap<>();
-    private final String questid;
-    private final UUID player;
+    private final String questId;
+    private final UUID playerUUID;
+    private final Map<String, TaskProgress> taskProgressMap;
 
     private boolean started;
     private long startedDate;
@@ -22,29 +26,66 @@ public class QuestProgress {
     private long completionDate;
     private boolean modified;
 
-    public QuestProgress(Quests plugin, String questid, boolean completed, boolean completedBefore, long completionDate, UUID player, boolean started, long startedDate) {
+    /**
+     * Constructs a QuestProgress.
+     *
+     * @param plugin          the plugin instance
+     * @param questId         the associated quest ID
+     * @param playerUUID      the associated player UUID
+     * @param started         whether the quest is started
+     * @param startedDate     the date of the last quest start
+     * @param completed       whether the quest is completed
+     * @param completedBefore whether the quest has been completed before
+     * @param completionDate  the date of the last quest completion
+     * @param modified        whether the object has been modified and needs to be saved
+     */
+    public QuestProgress(final @NotNull Quests plugin, final @NotNull String questId, final @NotNull UUID playerUUID, final boolean started, final long startedDate, final boolean completed, final boolean completedBefore, final long completionDate, final boolean modified) {
         this.plugin = plugin;
-        this.questid = questid;
+        this.questId = questId;
+        this.playerUUID = playerUUID;
+        this.taskProgressMap = new HashMap<>();
+        this.started = started;
+        this.startedDate = startedDate;
         this.completed = completed;
         this.completedBefore = completedBefore;
         this.completionDate = completionDate;
-        this.player = player;
-        this.started = started;
-        this.startedDate = startedDate;
-    }
-
-    public QuestProgress(Quests plugin, String questid, boolean completed, boolean completedBefore, long completionDate, UUID player, boolean started, long startedDate, boolean modified) {
-        this(plugin, questid, completed, completedBefore, completionDate, player, started, startedDate);
         this.modified = modified;
     }
 
-    public QuestProgress(QuestProgress questProgress) {
+    /**
+     * Constructs a QuestProgress with {@link QuestProgress#modified} set to {@code false}.
+     *
+     * @param plugin          the plugin instance
+     * @param questId         the associated quest ID
+     * @param playerUUID      the associated player UUID
+     * @param started         whether the quest is started
+     * @param startedDate     the date of the last quest start
+     * @param completed       whether the quest is completed
+     * @param completedBefore whether the quest has been completed before
+     * @param completionDate  the date of the last quest completion
+     */
+    public QuestProgress(final @NotNull Quests plugin, final @NotNull String questId, final @NotNull UUID playerUUID, final boolean started, final long startedDate, final boolean completed, final boolean completedBefore, final long completionDate) {
+        this(plugin, questId, playerUUID, started, startedDate, completed, completedBefore, completionDate, false);
+    }
+
+    /**
+     * Constructs a data-only clone from a QuestProgress instance.
+     *
+     * @param questProgress the quest progress instance
+     */
+    @ApiStatus.Internal
+    public QuestProgress(final @NotNull QuestProgress questProgress) {
+        final Set<Map.Entry<String, TaskProgress>> progressEntries = questProgress.taskProgressMap.entrySet();
+
         this.plugin = questProgress.plugin;
-        for (Map.Entry<String, TaskProgress> progressEntry : questProgress.taskProgress.entrySet()) {
-            taskProgress.put(progressEntry.getKey(), new TaskProgress(progressEntry.getValue()));
+        this.questId = questProgress.questId;
+        this.playerUUID = questProgress.playerUUID;
+        this.taskProgressMap = new HashMap<>(progressEntries.size());
+
+        for (final Map.Entry<String, TaskProgress> progressEntry : progressEntries) {
+            this.taskProgressMap.put(progressEntry.getKey(), new TaskProgress(progressEntry.getValue()));
         }
-        this.questid = questProgress.questid;
-        this.player = questProgress.player;
+
         this.started = questProgress.started;
         this.startedDate = questProgress.startedDate;
         this.completed = questProgress.completed;
@@ -53,120 +94,259 @@ public class QuestProgress {
         this.modified = questProgress.modified;
     }
 
-    public String getQuestId() {
-        return questid;
+    /**
+     * @return the associated quest ID
+     */
+    @Contract(pure = true)
+    public @NotNull String getQuestId() {
+        return this.questId;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    /**
+     * @return the associated player ID
+     * @see QuestProgress#getPlayerUUID()
+     */
+    @Deprecated(forRemoval = true)
+    @Contract(pure = true)
+    public @NotNull UUID getPlayer() {
+        return this.playerUUID;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-        this.modified = true;
+    /**
+     * @return the associated player ID
+     */
+    @Contract(pure = true)
+    public @NotNull UUID getPlayerUUID() {
+        return this.playerUUID;
     }
 
+    /**
+     * @return mutable task progress map
+     */
+    @Contract(pure = true)
+    public @NotNull Map<String, TaskProgress> getTaskProgressMap() {
+        return this.taskProgressMap;
+    }
+
+    /**
+     * @return mutable task progress map values collection
+     * @see QuestProgress#getTaskProgress()
+     */
+    @Deprecated(forRemoval = true)
+    @Contract(pure = true)
+    public @NotNull Collection<TaskProgress> getTaskProgress() {
+        return this.taskProgressMap.values();
+    }
+
+    /**
+     * @return mutable task progress map values collection
+     */
+    @SuppressWarnings("unused")
+    @Contract(pure = true)
+    public @NotNull Collection<TaskProgress> getAllTaskProgress() {
+        return this.taskProgressMap.values();
+    }
+
+    /**
+     * Gets the {@link TaskProgress} for a specified task ID. Generates a new one if it does not exist.
+     *
+     * @param taskId the task ID to get the progress for
+     * @return {@link TaskProgress} or a blank generated one if the task does not exist
+     */
+    public @NotNull TaskProgress getTaskProgress(final @NotNull String taskId) {
+        final TaskProgress taskProgress = this.taskProgressMap.get(taskId);
+        if (taskProgress != null) {
+            return taskProgress;
+        }
+
+        final TaskProgress newTaskProgress = new TaskProgress(this, taskId, this.playerUUID, null, false, false);
+        this.addTaskProgress(newTaskProgress);
+        return newTaskProgress;
+    }
+
+    /**
+     * Gets the {@link TaskProgress} for a specified task ID. Returns null if it does not exist.
+     *
+     * @param taskId the task ID to get the progress for
+     * @return {@link TaskProgress} or null if the task does not exist
+     */
+    @SuppressWarnings("unused")
+    @Contract(pure = true)
+    public @Nullable TaskProgress getTaskProgressOrNull(final @NotNull String taskId) {
+        return this.taskProgressMap.get(taskId);
+    }
+
+    /**
+     * @param taskId the task ID to repair the progress for
+     */
+    @Deprecated(forRemoval = true)
+    @ApiStatus.Internal
+    public void repairTaskProgress(final @NotNull String taskId) {
+        final TaskProgress taskProgress = new TaskProgress(this, taskId, this.playerUUID, null, false, false);
+        this.addTaskProgress(taskProgress);
+    }
+
+    /**
+     * @param taskProgress the task progress to put into the task progress map
+     */
+    public void addTaskProgress(final @NotNull TaskProgress taskProgress) {
+        this.taskProgressMap.put(taskProgress.getTaskId(), taskProgress);
+    }
+
+    /**
+     * @return whether the quest is started
+     */
+    @Contract(pure = true)
     public boolean isStarted() {
-        return started;
+        return this.started;
     }
 
-    public void setStarted(boolean started) {
+    /**
+     * @param started whether the quest is started
+     */
+    public void setStarted(final boolean started) {
         this.started = started;
         this.modified = true;
     }
 
+    /**
+     * @return the date of the last quest start
+     */
+    @Contract(pure = true)
     public long getStartedDate() {
-        return startedDate;
+        return this.startedDate;
     }
 
-    public void setStartedDate(long startedDate) {
+    /**
+     * @param startedDate the date of the last quest start
+     */
+    public void setStartedDate(final long startedDate) {
         this.startedDate = startedDate;
         this.modified = true;
     }
 
-    public long getCompletionDate() {
-        return completionDate;
+    /**
+     * @return whether the quest is completed
+     */
+    @Contract(pure = true)
+    public boolean isCompleted() {
+        return this.completed;
     }
 
-    public void setCompletionDate(long completionDate) {
-        this.completionDate = completionDate;
+    /**
+     * @param completed whether the quest is completed
+     */
+    public void setCompleted(final boolean completed) {
+        this.completed = completed;
         this.modified = true;
     }
 
-    public UUID getPlayer() {
-        return player;
-    }
-
+    /**
+     * @return whether the quest has been completed before
+     */
+    @Contract(pure = true)
     public boolean isCompletedBefore() {
-        return completedBefore;
+        return this.completedBefore;
     }
 
-    public void setCompletedBefore(boolean completedBefore) {
+    /**
+     * @param completedBefore whether the quest has been completed before
+     */
+    public void setCompletedBefore(final boolean completedBefore) {
         this.completedBefore = completedBefore;
         this.modified = true;
     }
 
-    public void addTaskProgress(TaskProgress taskProgress) {
-        this.taskProgress.put(taskProgress.getTaskId(), taskProgress);
+    /**
+     * @return the date of the last quest completion
+     */
+    @Contract(pure = true)
+    public long getCompletionDate() {
+        return this.completionDate;
     }
 
-    public Collection<TaskProgress> getTaskProgress() {
-        return taskProgress.values();
+    /**
+     * @param completionDate the date of the last quest completion
+     */
+    public void setCompletionDate(final long completionDate) {
+        this.completionDate = completionDate;
+        this.modified = true;
     }
 
-    public Map<String, TaskProgress> getTaskProgressMap() {
-        return taskProgress;
-    }
-
-    public TaskProgress getTaskProgress(String taskId) {
-        TaskProgress tP = taskProgress.getOrDefault(taskId, null);
-        if (tP == null) {
-            repairTaskProgress(taskId);
-            tP = taskProgress.getOrDefault(taskId, null);
-        }
-        return tP;
-    }
-
-    public void repairTaskProgress(String taskid) {
-        TaskProgress taskProgress = new TaskProgress(this, taskid, null, player, false, false);
-        this.addTaskProgress(taskProgress);
-    }
-
+    /**
+     * @return whether the object has been modified and needs to be saved
+     */
+    @SuppressWarnings("unused")
+    @Contract(pure = true)
     public boolean isModified() {
-        if (modified) return true;
-        else {
-            for (TaskProgress progress : this.taskProgress.values()) {
-                if (progress.isModified()) return true;
-            }
-            return false;
+        if (this.modified) {
+            return true;
         }
-    }
 
-    public boolean hasNonDefaultValues() {
-        if (this.started || this.startedDate != 0 || this.completed || this.completedBefore || this.completionDate != 0) return true;
-        else {
-            for (TaskProgress progress : this.taskProgress.values()) {
-                if (progress.getProgress() != null || progress.isCompleted()) return true;
+        for (final TaskProgress taskProgress : this.taskProgressMap.values()) {
+            if (taskProgress.isModified()) {
+                return true;
             }
-            return false;
         }
+
+        return false;
     }
 
-    public void queueForCompletionTest() {
-        plugin.getQuestCompleter().queueSingular(this);
-    }
-
+    /**
+     * It's equivalent to {@code QuestProgress#setModified(false)}.
+     *
+     * @see QuestProgress#setModified(boolean)
+     */
+    @Deprecated(forRemoval = true)
     public void resetModified() {
-        this.modified = false;
-        for (TaskProgress progress : this.taskProgress.values()) {
-            progress.resetModified();
+        this.setModified(false);
+    }
+
+    /**
+     * @param modified whether the object has been modified and needs to be saved
+     */
+    public void setModified(final boolean modified) {
+        this.modified = modified;
+
+        for (final TaskProgress taskProgress : this.taskProgressMap.values()) {
+            taskProgress.setModified(modified);
         }
     }
 
-    public void setModified(boolean modified) {
-        this.modified = modified;
-        for (TaskProgress progress : this.taskProgress.values()) {
-            progress.setModified(modified);
+    /**
+     * Gets whether the object has non default values.
+     *
+     * <p>
+     * Fields checked are:<br>
+     * - {@link QuestProgress#started}<br>
+     * - {@link QuestProgress#startedDate}<br>
+     * - {@link QuestProgress#completed}<br>
+     * - {@link QuestProgress#completedBefore}<br>
+     * - {@link QuestProgress#completionDate}
+     * </p>
+     *
+     * @return whether the object has non default values
+     */
+    @Contract(pure = true)
+    public boolean hasNonDefaultValues() {
+        if (this.started || this.startedDate != 0L || this.completed || this.completedBefore || this.completionDate != 0L) {
+            return true;
         }
+
+        for (final TaskProgress taskProgress : this.taskProgressMap.values()) {
+            if (taskProgress.getProgress() != null || taskProgress.isCompleted()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Queues the {@link QuestProgress} instance for a completion test.
+     */
+    @SuppressWarnings("unused")
+    public void queueForCompletionTest() {
+        this.plugin.getQuestCompleter().queueSingular(this);
     }
 }

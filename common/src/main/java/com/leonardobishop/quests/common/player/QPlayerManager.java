@@ -6,6 +6,7 @@ import com.leonardobishop.quests.common.questcontroller.QuestController;
 import com.leonardobishop.quests.common.storage.StorageProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -19,17 +20,18 @@ import java.util.concurrent.ConcurrentHashMap;
  * The QPlayerManager is responsible for keeping a reference to all players on the server and is used to
  * obtain an instance of a player, load new players and save current players.
  */
-public class QPlayerManager {
+public final class QPlayerManager {
 
-    private final Map<UUID, QPlayer> qPlayers = new ConcurrentHashMap<>();
     private final Quests plugin;
     private final StorageProvider storageProvider;
+    private final Map<UUID, QPlayer> qPlayerMap;
     private QuestController activeQuestController;
 
-    public QPlayerManager(Quests plugin, StorageProvider storageProvider, QuestController questController) {
-        this.plugin = plugin;
-        this.storageProvider = storageProvider;
-        this.activeQuestController = questController;
+    public QPlayerManager(final @NotNull Quests plugin, final @NotNull StorageProvider storageProvider, final @NotNull QuestController questController) {
+        this.plugin = Objects.requireNonNull(plugin, "plugin cannot be null");
+        this.storageProvider = Objects.requireNonNull(storageProvider, "storageProvider cannot be null");
+        this.activeQuestController = Objects.requireNonNull(questController, "questController cannot be null");
+        this.qPlayerMap = new ConcurrentHashMap<>();
     }
 
     /**
@@ -38,7 +40,7 @@ public class QPlayerManager {
      * @param uuid the uuid
      * @return {@link QPlayer} if they are loaded, otherwise null
      */
-    public @Nullable QPlayer getPlayer(@NotNull UUID uuid) {
+    public @Nullable QPlayer getPlayer(final @NotNull UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
 //        QPlayer qPlayer = qPlayers.get(uuid);
@@ -48,7 +50,7 @@ public class QPlayerManager {
 //                Thread.dumpStack();
 //            }
 //        }
-        return qPlayers.get(uuid);
+        return this.qPlayerMap.get(uuid);
     }
 
     /**
@@ -56,12 +58,12 @@ public class QPlayerManager {
      *
      * @param uuid the uuid of the player
      */
-    public void removePlayer(@NotNull UUID uuid) {
+    public void removePlayer(final @NotNull UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
-        plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + "...");
-        CompletableFuture<Void> future = savePlayer(uuid);
-        future.thenAccept((v) -> qPlayers.remove(uuid));
+        this.plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + "...");
+        final CompletableFuture<Void> future = this.savePlayer(uuid);
+        future.thenAccept(unused -> this.qPlayerMap.remove(uuid));
     }
 
     /**
@@ -71,32 +73,30 @@ public class QPlayerManager {
      * @param uuid the uuid of the player
      * @return completable future
      */
-    public CompletableFuture<Void> savePlayer(@NotNull UUID uuid) {
+    public @NotNull CompletableFuture<Void> savePlayer(final @NotNull UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
-        QPlayer qPlayer = getPlayer(uuid);
-        if (qPlayer == null) return CompletableFuture.completedFuture(null);
-        return savePlayer(uuid, qPlayer.getQuestProgressFile());
+        final QPlayer qPlayer = this.getPlayer(uuid);
+        if (qPlayer == null) {
+            return CompletableFuture.completedFuture(null);
+        }
+
+        return this.savePlayer(qPlayer.getPlayerData());
     }
 
     /**
      * Schedules a save for the player with a specified {@link QuestProgressFile}. The modified status of the
      * specified progress file will be reset.
-     *
-     * @param uuid the uuid of the player
-     * @param originalProgressFile the quest progress file to associate with and save
-     * @return completable future
      */
-    public CompletableFuture<Void> savePlayer(@NotNull UUID uuid, @NotNull QuestProgressFile originalProgressFile) {
-        Objects.requireNonNull(uuid, "uuid cannot be null");
-        Objects.requireNonNull(originalProgressFile, "originalProgressFile cannot be null");
+    public @NotNull CompletableFuture<Void> savePlayer(final @NotNull QPlayerData playerData) {
+        Objects.requireNonNull(playerData, "playerData cannot be null");
 
-        CompletableFuture<Void> future = new CompletableFuture<>();
+        final CompletableFuture<Void> future = new CompletableFuture<>();
+        final QPlayerData clonedPlayerData = new QPlayerData(playerData);
+        playerData.setModified(false);
 
-        QuestProgressFile clonedProgressFile = new QuestProgressFile(originalProgressFile);
-        originalProgressFile.resetModified();
-        plugin.getScheduler().doAsync(() -> {
-            save(uuid, clonedProgressFile);
+        this.plugin.getScheduler().doAsync(() -> {
+            this.save(clonedPlayerData);
             future.complete(null);
         });
 
@@ -109,34 +109,35 @@ public class QPlayerManager {
      *
      * @param uuid the uuid of the player
      */
-    public void savePlayerSync(@NotNull UUID uuid) {
+    public void savePlayerSync(final @NotNull UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
-        QPlayer qPlayer = getPlayer(uuid);
-        if (qPlayer == null) return;
-        savePlayerSync(uuid, qPlayer.getQuestProgressFile());
+        final QPlayer qPlayer = this.getPlayer(uuid);
+        if (qPlayer == null) {
+            return;
+        }
+
+        this.savePlayerSync(qPlayer.getPlayerData());
     }
 
     /**
      * Immediately saves the player with a specified {@link QuestProgressFile}, on the same thread. The modified status
      * of the specified progress file is not changed.
-     *
-     * @param uuid the uuid of the player
-     * @param questProgressFile the quest progress file to associate with and save
      */
-    public void savePlayerSync(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile) {
-        save(uuid, questProgressFile);
+    public void savePlayerSync(final @NotNull QPlayerData playerData) {
+        this.save(playerData);
     }
 
-    private void save(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile) {
-        Objects.requireNonNull(uuid, "uuid cannot be null");
-        Objects.requireNonNull(questProgressFile, "questProgressFile cannot be null");
+    private void save(@NotNull QPlayerData playerData) {
+        Objects.requireNonNull(playerData, "playerData cannot be null");
 
-        plugin.getQuestsLogger().debug("Saving player " + uuid + "...");
-        if (storageProvider.saveProgressFile(uuid, questProgressFile)) {
-            plugin.getQuestsLogger().debug("Quest progress file saved for player " + uuid + ".");
+        final String uuidString = playerData.playerUUID().toString();
+        this.plugin.getQuestsLogger().debug("Saving player " + uuidString + "...");
+
+        if (this.storageProvider.savePlayerData(playerData)) {
+            this.plugin.getQuestsLogger().debug("Quest progress file saved for player " + uuidString + ".");
         } else {
-            plugin.getQuestsLogger().severe("Failed to save player " + uuid + "!");
+            this.plugin.getQuestsLogger().severe("Failed to save player " + uuidString + "!");
         }
     }
 
@@ -145,20 +146,21 @@ public class QPlayerManager {
      *
      * @param uuid the uuid of the player
      */
-    public void dropPlayer(@NotNull UUID uuid) {
+    public void dropPlayer(final @NotNull UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
-        plugin.getQuestsLogger().debug("Dropping player " + uuid + ".");
-        qPlayers.remove(uuid);
+        this.plugin.getQuestsLogger().debug("Dropping player " + uuid + ".");
+        this.qPlayerMap.remove(uuid);
     }
 
     /**
      * Gets all QPlayers loaded on the server
      *
-     * @return immutable map of quest players
+     * @return immutable collection of quest players
      */
-    public Collection<QPlayer> getQPlayers() {
-        return Collections.unmodifiableCollection(qPlayers.values());
+    @UnmodifiableView
+    public @NotNull Collection<QPlayer> getQPlayers() {
+        return Collections.unmodifiableCollection(this.qPlayerMap.values());
     }
 
     /**
@@ -168,20 +170,26 @@ public class QPlayerManager {
      * @param uuid the uuid of the player
      * @return completable future with the loaded player, or null if there was an error
      */
-    public CompletableFuture<QPlayer> loadPlayer(UUID uuid) {
-        plugin.getQuestsLogger().debug("Loading player " + uuid + "...");
+    public @NotNull CompletableFuture<QPlayer> loadPlayer(final @NotNull UUID uuid) {
+        Objects.requireNonNull(uuid, "uuid cannot be null");
 
-        CompletableFuture<QPlayer> future = new CompletableFuture<>();
-        plugin.getScheduler().doAsync(() -> {
-            QuestProgressFile questProgressFile = storageProvider.loadProgressFile(uuid);
-            if (questProgressFile == null) {
-                plugin.getQuestsLogger().debug("A problem occurred trying loading player " + uuid + "; quest progress file is null.");
+        final String uuidString = uuid.toString();
+        this.plugin.getQuestsLogger().debug("Loading player " + uuidString + "...");
+        final CompletableFuture<QPlayer> future = new CompletableFuture<>();
+
+        this.plugin.getScheduler().doAsync(() -> {
+            final QPlayerData playerData = this.storageProvider.loadPlayerData(uuid);
+
+            if (playerData == null) {
+                this.plugin.getQuestsLogger().debug("A problem occurred trying loading player " + uuidString + "; quest progress file is null.");
                 future.complete(null);
                 return;
             }
-            QPlayer qPlayer = new QPlayer(plugin, uuid, new QPlayerPreferences(null), questProgressFile, activeQuestController);
-            qPlayers.computeIfAbsent(uuid, s -> qPlayer);
-            plugin.getQuestsLogger().debug("Quest progress file loaded for player " + uuid + ".");
+
+            final QPlayer qPlayer = new QPlayer(this.plugin, playerData, this.activeQuestController);
+            this.qPlayerMap.putIfAbsent(uuid, qPlayer);
+
+            this.plugin.getQuestsLogger().debug("Quest progress file loaded for player " + uuidString + ".");
             future.complete(qPlayer);
         });
 
@@ -193,17 +201,18 @@ public class QPlayerManager {
      *
      * @return {@link StorageProvider}
      */
-    public StorageProvider getStorageProvider() {
-        return storageProvider;
+    public @NotNull StorageProvider getStorageProvider() {
+        return this.storageProvider;
     }
 
-    public QuestController getActiveQuestController() {
-        return activeQuestController;
+    public @NotNull QuestController getActiveQuestController() {
+        return this.activeQuestController;
     }
 
-    public void setActiveQuestController(QuestController activeQuestController) {
-        this.activeQuestController = activeQuestController;
-        for (QPlayer qPlayer : qPlayers.values()) {
+    public void setActiveQuestController(final @NotNull QuestController activeQuestController) {
+        this.activeQuestController = Objects.requireNonNull(activeQuestController, "activeQuestController cannot be null");
+
+        for (final QPlayer qPlayer : this.qPlayerMap.values()) {
             qPlayer.setQuestController(activeQuestController);
         }
     }
