@@ -61,6 +61,7 @@ public class AdminInfoCommandHandler implements CommandHandler {
                 for (String s : quest.getRewards()) {
                     sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.GRAY + s);
                 }
+                sender.sendMessage(ChatColor.RED + "Vault reward: " + ChatColor.GRAY + quest.getVaultReward());
                 sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE +  "Quest options");
                 sender.sendMessage(ChatColor.RED + "Category: " + ChatColor.GRAY + quest.getCategoryId());
                 sender.sendMessage(ChatColor.RED + "Repeatable: " + ChatColor.GRAY + quest.isRepeatable());

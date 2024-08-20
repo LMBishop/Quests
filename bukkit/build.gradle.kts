@@ -37,7 +37,7 @@ repositories {
     maven("https://repo.oraxen.com/releases")
     // PlaceholderAPI
     maven("https://repo.extendedclip.com/content/repositories/dev/")
-    // CustomFishing, ItemsAdder, SCore, ShopGUIPlus, Slimefun4
+    // CustomFishing, ItemsAdder, SCore, ShopGUIPlus, Slimefun4, Vault
     maven("https://jitpack.io/")
     // PlayerPoints
     maven("https://repo.rosewooddev.io/repository/public/")
@@ -114,6 +114,8 @@ dependencies {
     compileOnlyPlugin("com.bgsoftware:SuperiorSkyblockAPI:2022.9")
     // uSkyBlock TODO fix whenever repo is up
     //compileOnlyPlugin("ovh.uskyblock:uSkyBlock-API:2.8.9")
+    // Vault
+    compileOnlyPlugin("com.github.MilkBowl:VaultAPI:1.7.1")
     // VotingPlugin
     compileOnlyPlugin("com.bencodez:votingplugin:6.15")
     // WildStacker
