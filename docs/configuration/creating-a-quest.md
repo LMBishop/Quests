@@ -223,6 +223,18 @@ rewardstring:
  - " &8- &7You have received 10 dimaonds."
 ```
 
+## Vault reward
+
+
+*`vaultreward`*
+
+**Optional.** The Vault reward is an amount of Vault economy money
+that will be given to the player when they complete the quest.
+
+``` yaml
+vaultreward: 600.0
+```
+
 ## Placeholders
 
   

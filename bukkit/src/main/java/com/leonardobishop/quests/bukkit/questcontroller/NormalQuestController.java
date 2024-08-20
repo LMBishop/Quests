@@ -235,6 +235,11 @@ public class NormalQuestController implements QuestController {
             Bukkit.getPluginManager().callEvent(questFinishEvent);
             // PlayerFinishQuestEvent -- end
             plugin.getScheduler().doSync(() -> {
+                final double vaultReward = quest.getVaultReward();
+                if (vaultReward > 0.0D) {
+                    this.plugin.getVaultHook().depositPlayer(player, vaultReward);
+                }
+
                 for (String s : quest.getRewards()) {
                     s = s.replace("{player}", player.getName());
                     if (plugin.getConfig().getBoolean("options.quests-use-placeholderapi")) {
