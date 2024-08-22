@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -25,6 +26,8 @@ public class BossBar_Bukkit implements QuestsBossBar {
     private final RemovalListener<String, BossBar> removalListener;
     private final Map<Float, BarColor> barColorMap;
     private final Map<Float, BarStyle> barStyleMap;
+    private final int limit;
+    private final boolean replaceOnLimit;
 
     // use cache because of its concurrency and automatic player on quit removal
     private final Cache<Player, Cache<String, BossBar>> playerQuestBarCache = CacheBuilder.newBuilder().weakKeys().build();
@@ -38,6 +41,12 @@ public class BossBar_Bukkit implements QuestsBossBar {
 
         // Load bossbar style config
         this.barStyleMap = loadConfig(BarStyle.class, "style", BarStyle.SOLID);
+
+        // Set boss bar amount limit
+        this.limit = plugin.getConfig().getInt("options.bossbar.limit", -1);
+
+        // Set whether boss bars should be replaced
+        this.replaceOnLimit = plugin.getConfig().getBoolean("options.bossbar.replace-on-limit", true);
 
         //noinspection CodeBlock2Expr (for readability)
         plugin.getScheduler().runTaskTimerAsynchronously(() -> {
@@ -63,6 +72,42 @@ public class BossBar_Bukkit implements QuestsBossBar {
                                 .removalListener(removalListener)
                                 .build();
                     });
+
+            limitCheck:
+            if (this.limit >= 0 && questBarCache.size() >= this.limit && !questBarCache.asMap().containsKey(questId)) {
+                if (!this.replaceOnLimit) {
+                    return;
+                }
+
+                final Set<Map.Entry<String, BossBar>> cacheEntries = questBarCache.asMap().entrySet();
+                Map.Entry<String, BossBar> toRemove = null;
+                double minProgress = -1.0d;
+
+                // search for boss bar with the lowest progress
+                for (final Map.Entry<String, BossBar> cacheEntry : cacheEntries) {
+                    final double bossBarProgress = cacheEntry.getValue().getProgress();
+
+                    if (bossBarProgress > minProgress) {
+                        toRemove = cacheEntry;
+                        minProgress = bossBarProgress;
+                    }
+                }
+
+                // no boss bars found
+                if (toRemove == null) {
+                    break limitCheck;
+                }
+
+                // we don't want to replace higher progress boss bar with the requested if it has lower progress
+                final double toRemoveProgress = toRemove.getValue().getProgress();
+                if (toRemoveProgress > progress) {
+                    return;
+                }
+
+                // Remove it from the cache and schedule removal from player's boss bars
+                questBarCache.invalidate(toRemove.getKey());
+                this.plugin.getScheduler().runTask(toRemove.getValue()::removeAll);
+            }
 
             BarColor color = getBest(barColorMap, progress);
             BarStyle style = getBest(barStyleMap, progress);

@@ -51,6 +51,10 @@ options:
     # See https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarStyle.html
     style:
       '0.0': SOLID # for 0.0 and higher progress values (progress is always between 0.0 and 1.0)
+    # Max amount of active task progress boss bars at once
+    limit: -1
+    # Whether new boss bar should be added and make another (the least progress one - if exists) disappear
+    replace-on-limit: true
   # Enable/disable ActionBar
   actionbar:
     progress: false
