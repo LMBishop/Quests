@@ -124,6 +124,8 @@ options:
   # Otherwise, the bar will not appear at all.
   use-progress-as-fallback: true
   # PlayerBlockTracker class to be used with the hook
+  # Original solution: https://github.com/Flo0/PlayerBlockTracker
+  # Modern alternative: https://github.com/Krakenied/BlockTracker
   playerblocktracker-class-name: "com.gestankbratwurst.playerblocktracker.PlayerBlockTracker"
   # How frequently placeholderapi_evaluate task placeholders will be refreshed (def=30 - 1.5s)
   # (multiply SECONDS by 20 to get the number of ticks)
