@@ -486,6 +486,9 @@ public class TaskUtils {
         public abstract boolean matches(@NotNull String str1, @NotNull String str2, boolean ignoreCase);
     }
 
+    /**
+     * @param legacyColor whether {@link Chat#legacyColor(String)} method ought to be used on {@code string} before the comparison
+     */
     public static boolean matchString(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable String string, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey, boolean legacyColor, @NotNull String matchModeKey, boolean ignoreCase) {
         Task task = pendingTask.task;
 
@@ -529,6 +532,9 @@ public class TaskUtils {
         return false;
     }
 
+    /**
+     * @param legacyColor whether {@link Chat#legacyColor(String)} method ought to be used on {@code strings} before the comparison
+     */
     public static boolean matchAnyString(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull String @Nullable [] strings, @NotNull UUID player, final @NotNull String stringKey, final @NotNull String listKey, boolean legacyColor, @NotNull String matchModeKey, boolean ignoreCase) {
         Task task = pendingTask.task;
 

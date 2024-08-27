@@ -20,11 +20,12 @@ have been merged into one. Both names can be used to refer to this task.
 
 ## Options
 
-| Key       | Description                  | Type    | Required | Default | Notes |
-|-----------|------------------------------|---------|----------|---------|-------|
-| `amount`  | The number of items to sell. | Integer | Yes      | \-      | \-    |
-| `shop-id` | The ID of the shop.          | String  | Yes      | \-      | \-    |
-| `item-id` | The ID of the item to sell.  | String  | Yes      | \-      | \-    |
+| Key       | Description                                     | Type                | Required | Default | Notes |
+|-----------|-------------------------------------------------|---------------------|----------|---------|-------|
+| `amount`  | The number of items to sell.                    | Integer             | Yes      | \-      | \-    |
+| `shop-id` | The ID of the shop.                             | String              | Yes      | \-      | \-    |
+| `item-id` | The ID of the item to sell.                     | String              | Yes      | \-      | \-    |
+| `worlds`  | Worlds which should count towards the progress. | List of world names | No       | \-      | \-    |
 
 ## Examples
 

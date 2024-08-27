@@ -192,6 +192,10 @@ options:
 quest-mode:
   mode: "NORMAL" # More modes are a work in progress
 
+# Most common locales:
+# de-DE: 1.234,56
+# en-US: 1,234.56
+# fr-ch: 1'234,56
 number-formats:
   # decimal format used for processing float, double and BigDecimal placeholders
   floating:

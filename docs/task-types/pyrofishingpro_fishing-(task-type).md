@@ -16,11 +16,12 @@ Catch a set amount of a Pyro fish from the sea.
 
 ## Options
 
-| Key           | Description                         | Type    | Required | Default | Notes                                                             |
-|---------------|-------------------------------------|---------|----------|---------|-------------------------------------------------------------------|
-| `amount`      | The number of Pyro fish to catch.   | Integer | Yes      | \-      | \-                                                                |
-| `fish-number` | The specific fish number to catch.  | Integer | No       | \-      | If this value is not specified, then any fish will count.         |
-| `tier`        | The specific tier of fish to catch. | String  | No       | \-      | If this value is not specified, then any tier of fish will count. |
+| Key           | Description                                     | Type                | Required | Default | Notes                                                             |
+|---------------|-------------------------------------------------|---------------------|----------|---------|-------------------------------------------------------------------|
+| `amount`      | The number of Pyro fish to catch.               | Integer             | Yes      | \-      | \-                                                                |
+| `fish-number` | The specific fish number to catch.              | Integer             | No       | \-      | If this value is not specified, then any fish will count.         |
+| `tier`        | The specific tier of fish to catch.             | String              | No       | \-      | If this value is not specified, then any tier of fish will count. |
+| `worlds`      | Worlds which should count towards the progress. | List of world names | No       | \-      | \-                                                                |
 
 ## Examples
 

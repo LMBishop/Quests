@@ -16,11 +16,12 @@ Kill a certain number of EcoMobs mob.
 
 ## Options
 
-| Key          | Description                                     | Type                       | Required | Default | Notes |
-|--------------|-------------------------------------------------|----------------------------|----------|---------|-------|
-| `amount`     | The number of bosses to kill.                   | Integer                    | Yes      | \-      | \-    |
-| `id` / `ids` | The EcoMobs boss ID(s).                         | String, or list of strings | Yes      | \-      | \-    |
-| `worlds`     | Worlds which should count towards the progress. | List of world names        | No       | \-      | \-    |
+| Key             | Description                                      | Type                       | Required | Default | Notes                                         |
+|-----------------|--------------------------------------------------|----------------------------|----------|---------|-----------------------------------------------|
+| `amount`        | The number of bosses to kill.                    | Integer                    | Yes      | \-      | \-                                            |
+| `id` / `ids`    | The EcoMobs boss ID(s).                          | String, or list of strings | Yes      | \-      | \-                                            |
+| `id-match-mode` | The match mode to be used to compare the strings | String                     | No       | EQUALS  | One of: `EQUALS`, `STARTS_WITH`, `ENDS_WITH`. |
+| `worlds`        | Worlds which should count towards the progress.  | List of world names        | No       | \-      | \-                                            |
 
 ## Examples
 

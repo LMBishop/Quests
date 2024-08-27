@@ -16,11 +16,12 @@ server (e.g. commands made with plugins like DeluxeMenu).
 
 ## Options
 
-| Key           | Description                                          | Type                | Required | Default | Notes |
-|---------------|------------------------------------------------------|---------------------|----------|---------|-------|
-| `command`     | The command to execute.                              | String              | Yes      | \-      | \-    |
-| `ignore-case` | Whether the casing of the command should be ignored. | Boolean             | No       | false   | \-    |
-| `worlds`      | Worlds which should count towards the progress.      | List of world names | No       | \-      | \-    |
+| Key                    | Description                                          | Type                       | Required | Default | Notes                                         |
+|------------------------|------------------------------------------------------|----------------------------|----------|---------|-----------------------------------------------|
+| `command` / `commands` | The command(s) to execute.                           | String, or list of strings | Yes      | \-      | \-                                            |
+| `ignore-case`          | Whether the casing of the command should be ignored. | Boolean                    | No       | false   | \-                                            |
+| `command-match-mode`   | The match mode to be used to compare the strings     | String                     | No       | EQUALS  | One of: `EQUALS`, `STARTS_WITH`, `ENDS_WITH`. |
+| `worlds`               | Worlds which should count towards the progress.      | List of world names        | No       | \-      | \-                                            |
 
 ## Examples
 
