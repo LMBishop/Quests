@@ -13,9 +13,12 @@ import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public final class InteractTaskType extends BukkitTaskType {
@@ -33,6 +36,10 @@ public final class InteractTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
         super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, TaskUtils.MaterialListConfigValidatorMode.BLOCK, "block", "blocks"));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, Action.class, "action", "actions"));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, EquipmentSlot.class, "hand", "hands"));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, Event.Result.class, "use-interacted-block-result", "use-interacted-block-results"));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, Event.Result.class, "use-item-in-hand-result", "use-item-in-hand-results"));
     }
 
     @Override
@@ -40,7 +47,7 @@ public final class InteractTaskType extends BukkitTaskType {
         fixedQuestItemCache.clear();
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (player.hasMetadata("NPC")) {
@@ -54,13 +61,48 @@ public final class InteractTaskType extends BukkitTaskType {
 
         Block block = event.getClickedBlock();
         ItemStack item = event.getItem();
+        Action action = event.getAction();
+        EquipmentSlot hand = event.getHand();
+        Event.Result useInteractedBlock = event.useInteractedBlock();
+        Event.Result useItemInHand = event.useItemInHand();
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player interacted", quest.getId(), task.getId(), player.getUniqueId());
+            super.debug("Player interacted with " + action + " using " + hand + " resulting in block " + useInteractedBlock + " and item " + useItemInHand, quest.getId(), task.getId(), player.getUniqueId());
+
+            // keep ignoreCancelled default behaviour
+            boolean effectivelyCancelled = useInteractedBlock == Event.Result.DENY &&
+                    !TaskUtils.doesConfigStringListExist(task, task.getConfigValues().containsKey("use-interacted-block-result")
+                            ? "use-interacted-block-result"
+                            : "use-interacted-block-results"
+                    );
+            if (effectivelyCancelled) {
+                super.debug("Continuing... (event is effectively cancelled)", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
+
+            if (!TaskUtils.matchEnum(Event.Result.class, this, pendingTask, useInteractedBlock, player.getUniqueId(), "use-interacted-block-result", "use-interacted-block-results")) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
+
+            if (!TaskUtils.matchEnum(Event.Result.class, this, pendingTask, useItemInHand, player.getUniqueId(), "use-item-in-hand-result", "use-item-in-hand-results")) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
+
+            if (!TaskUtils.matchEnum(Action.class, this, pendingTask, action, player.getUniqueId(), "action", "actions")) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
+
+            if (!TaskUtils.matchEnum(EquipmentSlot.class, this, pendingTask, hand, player.getUniqueId(), "hand", "hands")) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
 
             if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
