@@ -13,11 +13,11 @@ Walk a set distance.
 
 ## Options
 
-| Key        | Description                                     | Type                | Required | Default | Notes                                                                                                                                                                                 |
-|------------|-------------------------------------------------|---------------------|----------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `distance` | The distance in metres to walk.                 | Integer             | Yes      | \-      | 1 metre is equivalent to 1 block.                                                                                                                                                     |
-| `mode`     | The specific mode to travel                     | String              | No       | \-      | One of: `boat`, `horse`, `pig`, `minecart` `strider`, `sneaking`, `walking`, `running`, `swimming`, `flying`, `elytra`. Not specifying a mode will allow any of these modes to count. |
-| `worlds`   | Worlds which should count towards the progress. | List of world names | No       | \-      | \-                                                                                                                                                                                    |
+| Key        | Description                                     | Type                | Required | Default | Notes                                                                                                                                                                                                                                                        |
+|------------|-------------------------------------------------|---------------------|----------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `distance` | The distance in metres to walk.                 | Integer             | Yes      | \-      | 1 metre is equivalent to 1 block.                                                                                                                                                                                                                            |
+| `mode`     | The specific mode to travel                     | String              | No       | \-      | One of: `boat`, `camel`, `donkey`, `horse`, `llama`, `minecart`, `mule`, `pig`, `skeleton_horse`, `strider`, `zombie_horse`, `sneaking`, `walking`, `running`, `swimming`, `flying`, `elytra`. Not specifying a mode will allow any of these modes to count. |
+| `worlds`   | Worlds which should count towards the progress. | List of world names | No       | \-      | \-                                                                                                                                                                                                                                                           |
 
 ## Examples
 

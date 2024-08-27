@@ -102,6 +102,10 @@ options:
     # See https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarStyle.html
     style:
       '0.0': SOLID # for 0.0 and higher progress values (progress is always between 0.0 and 1.0)
+    # Max amount of active task progress boss bars at once
+    limit: -1
+    # Whether new boss bar should be added and make another (the least progress one - if exists) disappear
+    replace-on-limit: true
 ```
 
 ## Actionbar
@@ -689,4 +693,31 @@ options:
         maximum-lifetime: 1800000
         connection-timeout: 5000
       table-prefix: "quests_"
+```
+
+## Number formats
+
+
+*`number-formats`*
+
+Configure how Quests will display different types of numbers used in placeholders. Most common locales are:
+- `de-DE`: `1.234,56`
+- `en-US`: `1,234.56`
+- `fr-ch`: `1'234,56`
+
+Java docs for internals used to handle number formats:
+- [DecimalFormat](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/DecimalFormat.html)
+- [DecimalFormatSymbols](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/DecimalFormatSymbols.html)
+- [Locale](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Locale.html)
+
+``` yaml
+number-formats:
+  # decimal format used for processing float, double and BigDecimal placeholders
+  floating:
+    format: '#,##0.00'
+    locale: 'en-US'
+  # decimal format used for processing int, long and BigInteger placeholders
+  integral:
+    format: '#,##0'
+    locale: 'en-US'
 ```

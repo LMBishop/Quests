@@ -16,13 +16,14 @@ Kill a certain MythicMobs mob.
 
 ## Options
 
-| Key         | Description                                     | Type                | Required | Default | Notes |
-|-------------|-------------------------------------------------|---------------------|----------|---------|-------|
-| `amount`    | The number of mobs to kill.                     | Integer             | Yes      | \-      | \-    |
-| `name`      | The MythicMob ID.                               | String              | Yes      | \-      | \-    |
-| `level`     | The level the mob must be at.                   | Integer             | Yes      | \-      | \-    |
-| `min-level` | The minimum level the mob must be at.           | Integer             | Yes      | \-      | \-    |
-| `worlds`    | Worlds which should count towards the progress. | List of world names | No       | \-      | \-    |
+| Key               | Description                                      | Type                | Required | Default | Notes                                         |
+|-------------------|--------------------------------------------------|---------------------|----------|---------|-----------------------------------------------|
+| `amount`          | The number of mobs to kill.                      | Integer             | Yes      | \-      | \-                                            |
+| `name` / `names`  | The MythicMob ID.                                | String              | Yes      | \-      | \-                                            |
+| `name-match-mode` | The match mode to be used to compare the strings | String              | No       | EQUALS  | One of: `EQUALS`, `STARTS_WITH`, `ENDS_WITH`. |
+| `level`           | The level the mob must be at.                    | Integer             | Yes      | \-      | \-                                            |
+| `min-level`       | The minimum level the mob must be at.            | Integer             | Yes      | \-      | \-                                            |
+| `worlds`          | Worlds which should count towards the progress.  | List of world names | No       | \-      | \-                                            |
 
 ## Examples
 
