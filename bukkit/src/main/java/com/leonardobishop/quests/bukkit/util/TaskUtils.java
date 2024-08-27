@@ -71,6 +71,11 @@ public class TaskUtils {
         return true;
     }
 
+    public static boolean doesConfigStringListExist(final @NotNull Task task, final @NotNull String key) {
+        final Object configObject = task.getConfigValue(key);
+        return configObject instanceof List || configObject instanceof String;
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static @Nullable List<String> getConfigStringList(Task task, String key) {
         Object configObject = task.getConfigValue(key);
