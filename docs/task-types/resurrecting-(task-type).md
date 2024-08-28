@@ -6,7 +6,7 @@ grand_parent: Task types
 
 # resurrecting (task type)
 
-Not released yet (dev builds)
+Since v3.15.1
 {: .label .label-green }
 
 Resurrect a set amount of times (by totem of undying usage).

@@ -6,7 +6,7 @@ grand_parent: Task types
 
 # curing (task type)
 
-Not released yet (dev builds)
+Since v3.15.1
 {: .label .label-green }
 
 Cure a set amount of zombie villagers.

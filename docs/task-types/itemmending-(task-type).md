@@ -6,7 +6,7 @@ grand_parent: Task types
 
 # itemmending (task type)
 
-Not released yet (dev builds)
+Since v3.15.1
 {: .label .label-green }
 
 Mend certain items with a set amount of repair (by increasing durability with mending enchantment).

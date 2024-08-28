@@ -6,7 +6,7 @@ grand_parent: Task types
 
 # hatching (task type)
 
-Not released yet (dev builds)
+Since v3.15.1
 {: .label .label-green }
 
 Minecraft 1.15+ required

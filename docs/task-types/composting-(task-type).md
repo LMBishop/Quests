@@ -6,7 +6,7 @@ grand_parent: Task types
 
 # composting (task type)
 
-Not released yet (dev builds)
+Since v3.15.1
 {: .label .label-green }
 
 Compost a specific item.
