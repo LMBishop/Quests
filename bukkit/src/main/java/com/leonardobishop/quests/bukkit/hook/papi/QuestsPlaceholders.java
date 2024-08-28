@@ -181,8 +181,14 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                 break;
                             case "cooldown":
                                 if (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompleted()) {
-                                    final String time = FormatUtils.time(TimeUnit.SECONDS.convert(qPlayer.getQuestProgressFile().getCooldownFor(quest), TimeUnit.MILLISECONDS));
-                                    if (!time.startsWith("-")) result = time;
+                                    final long questCooldown = qPlayer.getQuestProgressFile().getCooldownFor(quest);
+                                    if (questCooldown > 0) {
+                                        final long questCooldownMillis = TimeUnit.SECONDS.convert(questCooldown, TimeUnit.MILLISECONDS);
+                                        result = FormatUtils.time(questCooldownMillis);
+                                    } else {
+                                        // TODO handle it in a more proper way after storage rework
+                                        result = Messages.PLACEHOLDERAPI_NO_COOLDOWN.getMessage();
+                                    }
                                 } else {
                                     result = "0";
                                 }
