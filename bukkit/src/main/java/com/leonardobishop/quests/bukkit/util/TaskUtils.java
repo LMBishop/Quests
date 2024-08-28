@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -1064,7 +1065,7 @@ public class TaskUtils {
      * @param paths a list of valid paths for task
      * @return config validator
      */
-    public static TaskType.ConfigValidator useAcceptedValuesConfigValidator(TaskType type, List<String> acceptedValues, String... paths) {
+    public static TaskType.ConfigValidator useAcceptedValuesConfigValidator(TaskType type, Collection<String> acceptedValues, String... paths) {
         return (config, problems) -> {
             for (String path : paths) {
                 Object configObject = config.get(path);

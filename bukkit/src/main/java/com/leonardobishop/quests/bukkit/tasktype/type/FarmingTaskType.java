@@ -48,7 +48,7 @@ public final class FarmingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "check-playerblocktracker"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "check-coreprotect"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "check-coreprotect-time"));
-        super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Mode.STRING_MODE_MAP.keySet().stream().toList(), "mode"));
+        super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Mode.STRING_MODE_MAP.keySet(), "mode"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
