@@ -12,7 +12,7 @@ allprojects {
     apply(plugin = "java")
 
     group = "com.leonardobishop"
-    version = "3.15.1"
+    version = "3.15.2"
 
     java {
         toolchain {
