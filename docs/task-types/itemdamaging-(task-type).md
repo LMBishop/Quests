@@ -6,7 +6,7 @@ grand_parent: Task types
 
 # itemdamaging (task type)
 
-Not released yet (dev builds)
+Since v3.15.1
 {: .label .label-green }
 
 Damage certain items with a set amount of damage (by reducing durability).

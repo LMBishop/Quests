@@ -6,7 +6,7 @@ grand_parent: Task types
 
 # bucketentity (task type)
 
-Not released yet (dev builds)
+Since v3.15.1
 {: .label .label-green }
 
 Capture specific entity in a bucket.

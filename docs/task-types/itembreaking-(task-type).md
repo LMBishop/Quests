@@ -6,7 +6,7 @@ grand_parent: Task types
 
 # itembreaking (task type)
 
-Not released yet (dev builds)
+Since v3.15.1
 {: .label .label-green }
 
 Break a set amount of certain items (by reducing durability to 0).
