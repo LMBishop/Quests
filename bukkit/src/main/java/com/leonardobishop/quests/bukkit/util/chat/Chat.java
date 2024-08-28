@@ -44,7 +44,7 @@ public final class Chat {
         Objects.requireNonNull(plugin);
 
         try {
-            Class.forName("net.kyori.adventure.Adventure", false, Bukkit.class.getClassLoader());
+            Class.forName("net.kyori.adventure.text.minimessage.MiniMessage", false, Bukkit.class.getClassLoader());
 
             miniMessageParser = new MiniMessageParser();
             plugin.getQuestsLogger().debug("Modern chat is available.");
