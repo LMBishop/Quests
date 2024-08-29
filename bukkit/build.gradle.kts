@@ -73,8 +73,8 @@ dependencies {
     compileOnlyPlugin("net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT")
     // CoreProtect
     compileOnlyPlugin("net.coreprotect:coreprotect:21.2")
-    // CustomFishing TODO fix whenever they stop shading annotations in the JAR
-    //compileOnlyPlugin("com.github.Xiao-MoMi:Custom-Fishing:2.2.5")
+    // CustomFishing
+    compileOnlyPlugin("com.github.Xiao-MoMi:Custom-Fishing:2.2.20")
     // EcoBosses, EcoMobs
     compileOnlyPlugin("com.willfp:EcoBosses:9.14.0")
     compileOnlyPlugin("com.willfp:EcoMobs:10.0.0-b1")
@@ -123,7 +123,7 @@ dependencies {
     // ZNPCsPlus
     compileOnlyPlugin("lol.pyr:znpcsplus-api:2.0.0-SNAPSHOT")
 
-    // CustomFishing, IridiumSkyblock, PyroFishingPro, uSkyBlock
+    // IridiumSkyblock, PyroFishingPro, uSkyBlock
     compileOnlyLibs("libs", listOf("*.jar"))
 
     // bStats
