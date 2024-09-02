@@ -6,6 +6,10 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.SmithItemEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -112,6 +116,36 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
     @Override
     public ItemStack getItemInMainHand(Player player) {
         return player.getItemInHand();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public ItemStack getItemInEquipmentSlot(PlayerInventory inventory, EquipmentSlot slot) {
+        return switch (slot) {
+            case CHEST -> inventory.getChestplate();
+            case FEET -> inventory.getBoots();
+            case HAND -> inventory.getItemInHand();
+            case HEAD -> inventory.getHelmet();
+            case LEGS -> inventory.getLeggings();
+
+            // there are 5 equipment slots on 1.8
+            default -> null;
+        };
+    }
+
+    @Override
+    public ItemStack getItem(PlayerBucketEmptyEvent event) {
+        return new ItemStack(event.getBucket(), 1);
+    }
+
+    @Override
+    public EquipmentSlot getHand(PlayerInteractEvent event) {
+        return EquipmentSlot.HAND;
+    }
+
+    @Override
+    public EquipmentSlot getHand(PlayerInteractEntityEvent event) {
+        return EquipmentSlot.HAND;
     }
 
     @Override

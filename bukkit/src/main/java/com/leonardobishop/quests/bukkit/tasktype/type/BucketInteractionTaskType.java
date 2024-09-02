@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class BucketInteractionTaskType extends BukkitTaskType {
 
-    private final BukkitQuestsPlugin plugin;
+    protected final BukkitQuestsPlugin plugin;
     private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
 
     public BucketInteractionTaskType(BukkitQuestsPlugin plugin, String type, String author, String description) {
