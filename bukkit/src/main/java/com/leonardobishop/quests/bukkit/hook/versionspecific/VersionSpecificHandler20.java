@@ -3,6 +3,7 @@ package com.leonardobishop.quests.bukkit.hook.versionspecific;
 import org.bukkit.entity.Camel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.SmithItemEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.SmithingTransformRecipe;
@@ -18,6 +19,11 @@ public class VersionSpecificHandler20 extends VersionSpecificHandler17 implement
     @Override
     public boolean isPlayerOnCamel(Player player) {
         return player.getVehicle() instanceof Camel;
+    }
+
+    @Override
+    public ItemStack getItem(PlayerBucketEmptyEvent event) {
+        return event.getPlayer().getInventory().getItem(event.getHand());
     }
 
     @Override

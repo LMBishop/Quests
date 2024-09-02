@@ -62,7 +62,7 @@ public final class InteractTaskType extends BukkitTaskType {
         Block block = event.getClickedBlock();
         ItemStack item = event.getItem();
         Action action = event.getAction();
-        EquipmentSlot hand = event.getHand();
+        EquipmentSlot hand = plugin.getVersionSpecificHandler().getHand(event);
         Event.Result useInteractedBlock = event.useInteractedBlock();
         Event.Result useItemInHand = event.useItemInHand();
 

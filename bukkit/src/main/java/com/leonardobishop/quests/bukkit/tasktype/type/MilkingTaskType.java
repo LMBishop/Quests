@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public final class MilkingTaskType extends BukkitTaskType {
@@ -49,7 +50,8 @@ public final class MilkingTaskType extends BukkitTaskType {
             return;
         }
 
-        ItemStack item = plugin.getVersionSpecificHandler().getItemInMainHand(player);
+        EquipmentSlot slot = plugin.getVersionSpecificHandler().getHand(event);
+        ItemStack item = plugin.getVersionSpecificHandler().getItemInEquipmentSlot(player.getInventory(), slot);
         if (item.getType() != Material.BUCKET) {
             return;
         }

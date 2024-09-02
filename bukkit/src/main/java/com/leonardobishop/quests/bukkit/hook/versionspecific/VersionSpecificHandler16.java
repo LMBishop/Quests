@@ -4,7 +4,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.SmithItemEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 public class VersionSpecificHandler16 extends VersionSpecificHandler11 implements VersionSpecificHandler {
 
@@ -26,6 +28,11 @@ public class VersionSpecificHandler16 extends VersionSpecificHandler11 implement
     @Override
     public boolean isOffHandEmpty(Player player) {
         return player.getInventory().getItemInOffHand().getAmount() == 0;
+    }
+
+    @Override
+    public ItemStack getItemInEquipmentSlot(PlayerInventory inventory, EquipmentSlot slot) {
+        return inventory.getItem(slot);
     }
 
     @Override
