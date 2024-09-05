@@ -644,16 +644,36 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
     }
 
-    public QuestItem getConfiguredQuestItem(String path, ConfigurationSection config, ItemGetter.Filter... excludes) {
-        if (config.contains(path + ".quest-item")) {
-            return questItemRegistry.getItem(config.getString(path + ".quest-item"));
+    public @NotNull QuestItem getConfiguredQuestItem(final @NotNull String path, final @NotNull ConfigurationSection config, final @NotNull ItemGetter.Filter @NotNull ... excludes) {
+        final String questItemId = config.getString(path + ".quest-item");
+
+        if (questItemId != null) {
+            final QuestItem questItem = this.questItemRegistry.getItem(questItemId);
+
+            if (questItem != null) {
+                return questItem;
+            }
         }
 
-        return new ParsedQuestItem("defined", null, getConfiguredItemStack(path, config, excludes));
+        return new ParsedQuestItem("defined", null, this.getItemStack(path, config, excludes));
     }
 
-    public ItemStack getConfiguredItemStack(String path, ConfigurationSection config, ItemGetter.Filter... excludes) {
-        return itemGetter.getItem(path, config, excludes);
+    public @NotNull ItemStack getConfiguredItemStack(final @NotNull String path, final @NotNull ConfigurationSection config, final @NotNull ItemGetter.Filter @NotNull ... excludes) {
+        final String questItemId = config.getString(path + ".quest-item");
+
+        if (questItemId != null) {
+            final QuestItem questItem = this.questItemRegistry.getItem(questItemId);
+
+            if (questItem != null) {
+                return questItem.getItemStack();
+            }
+        }
+
+        return this.itemGetter.getItem(path, config, excludes);
+    }
+
+    public @NotNull ItemStack getItemStack(final @NotNull String path, final @NotNull ConfigurationSection config, final @NotNull ItemGetter.Filter @NotNull ... excludes) {
+        return this.itemGetter.getItem(path, config, excludes);
     }
 
     private boolean reloadBaseConfiguration(final boolean initialLoad) {
