@@ -25,6 +25,8 @@ public final class TradingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
     private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
+    private final Table<String, String, QuestItem> fixedQuestFirstIngredientCache = HashBasedTable.create();
+    private final Table<String, String, QuestItem> fixedQuestSecondIngredientCache = HashBasedTable.create();
 
     public TradingTaskType(BukkitQuestsPlugin plugin) {
         super("trading", TaskUtils.TASK_ATTRIBUTION_STRING, "Trade with a Villager or Wandering Trader.");
@@ -44,6 +46,8 @@ public final class TradingTaskType extends BukkitTaskType {
     @Override
     public void onReady() {
         fixedQuestItemCache.clear();
+        fixedQuestFirstIngredientCache.clear();
+        fixedQuestSecondIngredientCache.clear();
     }
 
     @SuppressWarnings({"SizeReplaceableByIsEmpty"}) // for readability
@@ -94,16 +98,16 @@ public final class TradingTaskType extends BukkitTaskType {
 
             if (task.hasConfigKey("first-ingredient")) {
                 QuestItem qi;
-                if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                if ((qi = fixedQuestFirstIngredientCache.get(quest.getId(), task.getId())) == null) {
                     QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "first-ingredient", "data");
-                    fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
+                    fixedQuestFirstIngredientCache.put(quest.getId(), task.getId(), fetchedItem);
                     qi = fetchedItem;
                 }
 
                 super.debug("First ingredient was of type " + (firstIngredient != null ? firstIngredient.getType() : null), quest.getId(), task.getId(), player.getUniqueId());
 
                 boolean exactMatch = TaskUtils.getConfigBoolean(task, "first-ingredient-exact-match", true);
-                if (!qi.compareItemStack(item, exactMatch)) {
+                if (!qi.compareItemStack(firstIngredient, exactMatch)) {
                     super.debug("First ingredient does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
@@ -111,16 +115,16 @@ public final class TradingTaskType extends BukkitTaskType {
 
             if (task.hasConfigKey("second-ingredient")) {
                 QuestItem qi;
-                if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                if ((qi = fixedQuestSecondIngredientCache.get(quest.getId(), task.getId())) == null) {
                     QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "second-ingredient", "data");
-                    fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
+                    fixedQuestSecondIngredientCache.put(quest.getId(), task.getId(), fetchedItem);
                     qi = fetchedItem;
                 }
 
                 super.debug("Second ingredient was of type " + (secondIngredient != null ? secondIngredient.getType() : null), quest.getId(), task.getId(), player.getUniqueId());
 
                 boolean exactMatch = TaskUtils.getConfigBoolean(task, "second-ingredient-exact-match", true);
-                if (!qi.compareItemStack(item, exactMatch)) {
+                if (!qi.compareItemStack(secondIngredient, exactMatch)) {
                     super.debug("Second ingredient does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
