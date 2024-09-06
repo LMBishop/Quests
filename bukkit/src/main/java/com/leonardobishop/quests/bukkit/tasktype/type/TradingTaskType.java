@@ -19,6 +19,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public final class TradingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
@@ -31,8 +33,12 @@ public final class TradingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
+        super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "first-ingredient"));
+        super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "second-ingredient"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "first-ingredient-exact-match"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "second-ingredient-exact-match"));
     }
 
     @Override
@@ -40,6 +46,7 @@ public final class TradingTaskType extends BukkitTaskType {
         fixedQuestItemCache.clear();
     }
 
+    @SuppressWarnings({"SizeReplaceableByIsEmpty"}) // for readability
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerTrade(final @NotNull PlayerTradeEvent event) {
         Player player = event.getPlayer();
@@ -55,6 +62,10 @@ public final class TradingTaskType extends BukkitTaskType {
         MerchantRecipe recipe = event.getTrade();
         ItemStack item = recipe.getResult();
         int itemAmount = item.getAmount();
+
+        List<ItemStack> ingredients = recipe.getIngredients();
+        ItemStack firstIngredient = ingredients.size() >= 1 ? ingredients.get(0) : null;
+        ItemStack secondIngredient = ingredients.size() >= 2 ? ingredients.get(1) : null;
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
@@ -77,6 +88,40 @@ public final class TradingTaskType extends BukkitTaskType {
                 boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
                 if (!qi.compareItemStack(item, exactMatch)) {
                     super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+            }
+
+            if (task.hasConfigKey("first-ingredient")) {
+                QuestItem qi;
+                if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                    QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "first-ingredient", "data");
+                    fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
+                    qi = fetchedItem;
+                }
+
+                super.debug("First ingredient was of type " + (firstIngredient != null ? firstIngredient.getType() : null), quest.getId(), task.getId(), player.getUniqueId());
+
+                boolean exactMatch = TaskUtils.getConfigBoolean(task, "first-ingredient-exact-match", true);
+                if (!qi.compareItemStack(item, exactMatch)) {
+                    super.debug("First ingredient does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+            }
+
+            if (task.hasConfigKey("second-ingredient")) {
+                QuestItem qi;
+                if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                    QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "second-ingredient", "data");
+                    fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
+                    qi = fetchedItem;
+                }
+
+                super.debug("Second ingredient was of type " + (secondIngredient != null ? secondIngredient.getType() : null), quest.getId(), task.getId(), player.getUniqueId());
+
+                boolean exactMatch = TaskUtils.getConfigBoolean(task, "second-ingredient-exact-match", true);
+                if (!qi.compareItemStack(item, exactMatch)) {
+                    super.debug("Second ingredient does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
             }
