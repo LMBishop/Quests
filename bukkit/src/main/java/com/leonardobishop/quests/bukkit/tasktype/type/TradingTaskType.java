@@ -104,7 +104,7 @@ public final class TradingTaskType extends BukkitTaskType {
                 }
             }
 
-            if (firstIngredient != null && task.hasConfigKey("first-ingredient")) {
+            if (task.hasConfigKey("first-ingredient")) {
                 QuestItem qi;
                 if ((qi = fixedQuestFirstIngredientCache.get(quest.getId(), task.getId())) == null) {
                     QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "first-ingredient", "data");
@@ -112,16 +112,16 @@ public final class TradingTaskType extends BukkitTaskType {
                     qi = fetchedItem;
                 }
 
-                super.debug("First ingredient was of type " + firstIngredient.getType(), quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("First ingredient was of type " + (firstIngredient != null ? firstIngredient.getType() : null), quest.getId(), task.getId(), player.getUniqueId());
 
                 boolean exactMatch = TaskUtils.getConfigBoolean(task, "first-ingredient-exact-match", true);
-                if (!qi.compareItemStack(firstIngredient, exactMatch)) {
+                if (firstIngredient == null || !qi.compareItemStack(firstIngredient, exactMatch)) {
                     super.debug("First ingredient does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
             }
 
-            if (secondIngredient != null && task.hasConfigKey("second-ingredient")) {
+            if (task.hasConfigKey("second-ingredient")) {
                 QuestItem qi;
                 if ((qi = fixedQuestSecondIngredientCache.get(quest.getId(), task.getId())) == null) {
                     QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "second-ingredient", "data");
@@ -129,10 +129,10 @@ public final class TradingTaskType extends BukkitTaskType {
                     qi = fetchedItem;
                 }
 
-                super.debug("Second ingredient was of type " + secondIngredient.getType(), quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("Second ingredient was of type " + (secondIngredient != null ? secondIngredient.getType() : null), quest.getId(), task.getId(), player.getUniqueId());
 
                 boolean exactMatch = TaskUtils.getConfigBoolean(task, "second-ingredient-exact-match", true);
-                if (!qi.compareItemStack(secondIngredient, exactMatch)) {
+                if (secondIngredient == null || !qi.compareItemStack(secondIngredient, exactMatch)) {
                     super.debug("Second ingredient does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
