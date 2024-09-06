@@ -12,6 +12,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import io.papermc.paper.event.player.PlayerTradeEvent;
+import org.bukkit.entity.AbstractVillager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,6 +35,7 @@ public final class TradingTaskType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
+        super.addConfigValidator(TaskUtils.useEntityListConfigValidator(this, "mob", "mobs"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "first-ingredient"));
         super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "second-ingredient"));
@@ -63,6 +65,7 @@ public final class TradingTaskType extends BukkitTaskType {
             return;
         }
 
+        AbstractVillager villager = event.getVillager();
         MerchantRecipe recipe = event.getTrade();
         ItemStack item = recipe.getResult();
         int itemAmount = item.getAmount();
@@ -76,8 +79,13 @@ public final class TradingTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
+            if (!TaskUtils.matchEntity(this, pendingTask, villager, player.getUniqueId())) {
+                super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
+
             // TODO: add villager-type and villager-profession options
-            // TODO: add option to set villager/wandering trader
+            // not that simple especially after the change in 1.21
 
             if (task.hasConfigKey("item")) {
                 QuestItem qi;
