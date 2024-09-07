@@ -20,7 +20,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public final class TradingTaskType extends BukkitTaskType {
 
@@ -43,6 +46,7 @@ public final class TradingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "first-ingredient-exact-match"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "second-ingredient-exact-match"));
+        super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Mode.STRING_MODE_MAP.keySet(), "mode"));
     }
 
     @Override
@@ -67,12 +71,31 @@ public final class TradingTaskType extends BukkitTaskType {
 
         AbstractVillager villager = event.getVillager();
         MerchantRecipe recipe = event.getTrade();
-        ItemStack item = recipe.getResult();
-        int itemAmount = item.getAmount();
+        ItemStack result = recipe.getResult();
+        int resultAmount = result.getAmount();
 
         List<ItemStack> ingredients = recipe.getIngredients();
-        ItemStack firstIngredient = ingredients.size() >= 1 ? ingredients.get(0) : null;
-        ItemStack secondIngredient = ingredients.size() >= 2 ? ingredients.get(1) : null;
+        ItemStack firstIngredient, secondIngredient;
+        int firstIngredientAmount, secondIngredientAmount;
+
+        if (ingredients.size() >= 1) {
+            if (ingredients.size() >= 2) {
+                secondIngredient = ingredients.get(1);
+                secondIngredientAmount = secondIngredient.getAmount();
+            } else {
+                secondIngredient = null;
+                secondIngredientAmount = 0;
+            }
+
+            firstIngredient = ingredients.get(0);
+            firstIngredientAmount = firstIngredient.getAmount();
+        } else {
+            firstIngredient = null;
+            firstIngredientAmount = 0;
+
+            secondIngredient = null;
+            secondIngredientAmount = 0;
+        }
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
@@ -95,10 +118,10 @@ public final class TradingTaskType extends BukkitTaskType {
                     qi = fetchedItem;
                 }
 
-                super.debug("Player traded " + itemAmount + " item of type " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("Player traded " + resultAmount + " items of type " + result.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
                 boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
-                if (!qi.compareItemStack(item, exactMatch)) {
+                if (!qi.compareItemStack(result, exactMatch)) {
                     super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
@@ -112,7 +135,7 @@ public final class TradingTaskType extends BukkitTaskType {
                     qi = fetchedItem;
                 }
 
-                super.debug("First ingredient was of type " + (firstIngredient != null ? firstIngredient.getType() : null), quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("First ingredient was " + (firstIngredient != null ? (firstIngredient.getAmount() + " of type " + firstIngredient.getType()) : null), quest.getId(), task.getId(), player.getUniqueId());
 
                 boolean exactMatch = TaskUtils.getConfigBoolean(task, "first-ingredient-exact-match", true);
                 if (firstIngredient == null || !qi.compareItemStack(firstIngredient, exactMatch)) {
@@ -129,7 +152,7 @@ public final class TradingTaskType extends BukkitTaskType {
                     qi = fetchedItem;
                 }
 
-                super.debug("Second ingredient was of type " + (secondIngredient != null ? secondIngredient.getType() : null), quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("Second ingredient was " + (secondIngredient != null ? (secondIngredient.getAmount() + " of type " + secondIngredient.getType()) : null), quest.getId(), task.getId(), player.getUniqueId());
 
                 boolean exactMatch = TaskUtils.getConfigBoolean(task, "second-ingredient-exact-match", true);
                 if (secondIngredient == null || !qi.compareItemStack(secondIngredient, exactMatch)) {
@@ -137,6 +160,18 @@ public final class TradingTaskType extends BukkitTaskType {
                     continue;
                 }
             }
+
+            Object modeObject = task.getConfigValue("mode");
+
+            // not suspicious at all ඞ
+            //noinspection SuspiciousMethodCalls
+            Mode mode = Mode.STRING_MODE_MAP.getOrDefault(modeObject, Mode.RESULT);
+
+            int itemAmount = switch (mode) {
+                case RESULT -> resultAmount;
+                case FIRST_INGREDIENT -> firstIngredientAmount;
+                case SECOND_INGREDIENT -> secondIngredientAmount;
+            };
 
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress, itemAmount);
             super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
@@ -150,5 +185,17 @@ public final class TradingTaskType extends BukkitTaskType {
 
             TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, amount);
         }
+    }
+
+    private enum Mode {
+        RESULT,
+        FIRST_INGREDIENT,
+        SECOND_INGREDIENT;
+
+        private static final Map<String, TradingTaskType.Mode> STRING_MODE_MAP = new HashMap<>() {{
+            for (final TradingTaskType.Mode mode : TradingTaskType.Mode.values()) {
+                this.put(mode.name().toLowerCase(Locale.ROOT), mode);
+            }
+        }};
     }
 }

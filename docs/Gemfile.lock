@@ -79,7 +79,6 @@ GEM
     terminal-table (3.0.2)
       unicode-display_width (>= 1.1.1, < 3)
     unicode-display_width (2.5.0)
-    wdm (0.2.0)
     webrick (1.8.1)
 
 PLATFORMS
@@ -90,7 +89,6 @@ DEPENDENCIES
   jekyll (~> 4.3.3)
   jekyll-default-layout
   just-the-docs
-  wdm (>= 0.1.0)
 
 BUNDLED WITH
    2.4.13
