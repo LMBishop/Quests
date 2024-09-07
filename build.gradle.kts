@@ -79,6 +79,14 @@ val javaVersions = listOf(
     // from 1.12 to 1.16.5
     JavaVersion.VERSION_1_8,
 
+    // just because it's a LTS version and a lot of servers use it
+    // https://en.wikipedia.org/wiki/Java_version_history
+    // https://bstats.org/global/bukkit#javaVersion
+    //
+    // also Paper recommends it
+    // https://docs.papermc.io/paper/getting-started#requirements
+    JavaVersion.VERSION_11,
+
     // from 1.17 to 1.17.1
     JavaVersion.VERSION_16,
 
