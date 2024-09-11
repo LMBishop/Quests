@@ -28,6 +28,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
+/**
+ * TODO: There is Paper PR to make obtaining the thrower UUID easier: <a href="https://github.com/PaperMC/Paper/pull/5736">Paper#5736</a>
+ */
 public final class BarteringTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
@@ -60,7 +63,12 @@ public final class BarteringTaskType extends BukkitTaskType {
 
         if (entity instanceof final Piglin piglin) {
             final UUID throwerId = event.getItem().getOwner();
-            this.piglin2ThrowerIdMap.put(piglin, throwerId);
+
+            if (throwerId != null) {
+                this.piglin2ThrowerIdMap.put(piglin, throwerId);
+            } else {
+                this.piglin2ThrowerIdMap.remove(piglin);
+            }
         }
     }
 
