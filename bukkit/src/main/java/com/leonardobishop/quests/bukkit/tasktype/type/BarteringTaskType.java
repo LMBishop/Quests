@@ -62,7 +62,7 @@ public final class BarteringTaskType extends BukkitTaskType {
         final LivingEntity entity = event.getEntity();
 
         if (entity instanceof final Piglin piglin) {
-            final UUID throwerId = event.getItem().getOwner();
+            final UUID throwerId = event.getItem().getThrower();
 
             if (throwerId != null) {
                 this.piglin2ThrowerIdMap.put(piglin, throwerId);
