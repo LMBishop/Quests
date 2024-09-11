@@ -8,7 +8,7 @@ jobs:
         distribution: [temurin]
         java-version: ["21"]
     runs-on: ${{ matrix.os }}
-    if: "!startsWith(github.event.commits[0].message, '[ci-skip]')"
+    if: "!startsWith(github.event.head_commit.message, '[ci-skip]')"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -38,6 +38,12 @@ jobs:
         with:
           name: Quests-JDK1.8 (use at your own risk)
           path: build/libs/*-downgraded-8-shaded.jar
+          if-no-files-found: error
+      - name: Upload the downgraded Java 11 plugin JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: Quests-JDK11 (use at your own risk)
+          path: build/libs/*-downgraded-11-shaded.jar
           if-no-files-found: error
       - name: Upload the downgraded Java 16 plugin JAR
         uses: actions/upload-artifact@v4
