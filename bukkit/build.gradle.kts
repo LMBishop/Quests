@@ -18,7 +18,7 @@ repositories {
     // Paper (adventure-bom snapshots)
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     // ASkyBlock, BentoBox, bStats, Citizens
-    maven("https://repo.codemc.org/repository/maven-public/")
+    maven("https://repo.codemc.io/repository/maven-public/")
     // AuthLib
     maven("https://libraries.minecraft.net/")
     // CoreProtect
@@ -36,7 +36,7 @@ repositories {
     // Oraxen
     maven("https://repo.oraxen.com/releases")
     // PlaceholderAPI
-    maven("https://repo.extendedclip.com/content/repositories/dev/")
+    maven("https://repo.extendedclip.com/releases")
     // CustomFishing, ItemsAdder, SCore, ShopGUIPlus, Slimefun4, Vault
     maven("https://jitpack.io/")
     // PlayerPoints
@@ -68,7 +68,8 @@ dependencies {
     // AuthLib
     compileOnlyPlugin("com.mojang:authlib:1.5.21")
     // BentoBox
-    compileOnlyPlugin("world.bentobox:bentobox:1.22.0-SNAPSHOT")
+    compileOnly("world.bentobox:bentobox:2.5.4-SNAPSHOT")
+    compileOnly("world.bentobox:level:2.16.1-SNAPSHOT")
     // Citizens
     compileOnlyPlugin("net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT")
     // CoreProtect
@@ -101,7 +102,7 @@ dependencies {
     // Oraxen
     compileOnlyPlugin("io.th0rgal:oraxen:1.175.0")
     // PlaceholderAPI
-    compileOnlyPlugin("me.clip:placeholderapi:2.11.3-DEV-160")
+    compileOnlyPlugin("me.clip:placeholderapi:2.11.6")
     // PlayerPoints
     compileOnlyPlugin("org.black_ixx:playerpoints:3.2.5")
     // SCore
