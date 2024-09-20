@@ -3,78 +3,78 @@ package com.leonardobishop.quests.bukkit.tasktype.type.dependent;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import org.jetbrains.annotations.NotNull;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.level.events.IslandLevelCalculatedEvent;
 
+import java.util.Set;
 import java.util.UUID;
 
 public final class BentoBoxLevelTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BentoBoxLevelTaskType(BukkitQuestsPlugin plugin) {
+    public BentoBoxLevelTaskType(final @NotNull BukkitQuestsPlugin plugin) {
         super("bentobox_level", TaskUtils.TASK_ATTRIBUTION_STRING, "Reach a certain island level in the level addon for BentoBox.");
         this.plugin = plugin;
 
-        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "level"));
-        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "level"));
+        this.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "level"));
+        this.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "level"));
     }
 
-    public static void register(BukkitQuestsPlugin plugin, TaskTypeManager manager) {
-        if (BentoBox.getInstance().getAddonsManager().getAddonByName("Level").isPresent()) {
-            manager.registerTaskType(new BentoBoxLevelTaskType(plugin));
+    @EventHandler
+    public void onIslandLevelCalculated(final @NotNull IslandLevelCalculatedEvent event) {
+        final Island island = event.getIsland();
+        final Set<UUID> memberIds = island.getMemberSet();
+        final long level = event.getLevel();
+
+        for (final UUID memberId : memberIds) {
+            final Player player = Bukkit.getPlayer(memberId);
+
+            if (player != null) {
+                this.handle(player, level);
+            }
         }
     }
 
-    // https://github.com/BentoBoxWorld/bentobox/issues/352
-    @EventHandler
-    public void onBentoBoxIslandLevelCalculated(IslandBaseEvent event) {
-        if ("IslandLevelCalculatedEvent".equals(event.getEventName())) {
-            Island island = (Island) event.getKeyValues().get("island");
+    private void handle(final @NotNull Player player, final long level) {
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
 
-            for (UUID member : island.getMemberSet()) {
-                QPlayer qPlayer = plugin.getPlayerManager().getPlayer(member);
-                if (qPlayer == null) {
-                    continue;
-                }
+        final QPlayer qPlayer = this.plugin.getPlayerManager().getPlayer(player.getUniqueId());
+        if (qPlayer == null) {
+            return;
+        }
 
-                Player player = Bukkit.getPlayer(member);
+        for (final TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
+            final Quest quest = pendingTask.quest();
+            final Task task = pendingTask.task();
+            final TaskProgress taskProgress = pendingTask.taskProgress();
 
-                if (player == null) {
-                    continue;
-                }
+            this.debug("Player island level updated to " + level, quest.getId(), task.getId(), player.getUniqueId());
 
-                for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this)) {
-                    Quest quest = pendingTask.quest();
-                    Task task = pendingTask.task();
-                    TaskProgress taskProgress = pendingTask.taskProgress();
+            //noinspection DataFlowIssue // TODO quest data rework
+            final long levelNeeded = (long) task.getConfigValue("level");
 
-                    long islandLevelNeeded = (long) (int) task.getConfigValue("level");
-                    long newLevel = (long) event.getKeyValues().get("level");
+            final long clampedLevel = Math.max(level, levelNeeded);
+            taskProgress.setProgress(clampedLevel);
+            this.debug("Updating task progress (now " + clampedLevel + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                    super.debug("Player island level updated to " + newLevel, quest.getId(), task.getId(), member);
-
-                    taskProgress.setProgress(newLevel);
-                    super.debug("Updating task progress (now " + newLevel + ")", quest.getId(), task.getId(), player.getUniqueId());
-
-                    if (newLevel >= islandLevelNeeded) {
-                        super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                        taskProgress.setProgress(newLevel);
-                        taskProgress.setCompleted(true);
-                    }
-
-                    TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, islandLevelNeeded);
-                }
+            if (level >= levelNeeded) {
+                this.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
             }
+
+            TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, levelNeeded);
         }
     }
 }
