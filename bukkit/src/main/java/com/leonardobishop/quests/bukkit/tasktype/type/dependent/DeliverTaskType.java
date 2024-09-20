@@ -97,7 +97,6 @@ public abstract class DeliverTaskType<T> extends BukkitTaskType {
                 }
             }
 
-            boolean remove = TaskUtils.getConfigBoolean(task, "remove-items-when-complete");
             boolean allowPartial = TaskUtils.getConfigBoolean(task, "allow-partial-completion");
 
             QuestItem qi;
@@ -142,6 +141,8 @@ public abstract class DeliverTaskType<T> extends BukkitTaskType {
                 if (progress >= amount) {
                     taskProgress.setCompleted(true);
                     super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+
+                    boolean remove = TaskUtils.getConfigBoolean(task, "remove-items-when-complete");
 
                     if (remove) {
                         TaskUtils.removeItemsInSlots(player, amountPerSlot, progress);
