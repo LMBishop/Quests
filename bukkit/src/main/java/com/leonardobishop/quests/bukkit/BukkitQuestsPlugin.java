@@ -131,6 +131,10 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.VotingPluginVote
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ZNPCsPlusDeliverTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ZNPCsPlusInteractTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.uSkyBlockLevelTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058BedBreakTask;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058FinalKillTask;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058WinTask;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058LoseTask;
 import com.leonardobishop.quests.bukkit.util.CompatUtils;
 import com.leonardobishop.quests.bukkit.util.FormatUtils;
 import com.leonardobishop.quests.bukkit.util.LogHistory;
@@ -501,6 +505,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new VotingPluginVoteType(this), () -> CompatUtils.isPluginEnabled("VotingPlugin")); // not tested
             taskTypeManager.registerTaskType(() -> new ZNPCsPlusDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("ZNPCsPlus"));
             taskTypeManager.registerTaskType(() -> new ZNPCsPlusInteractTaskType(this), () -> CompatUtils.isPluginEnabled("ZNPCsPlus"));
+            taskTypeManager.registerTaskType(() -> new BedWars1058BedBreakTask(this), () -> CompatUtils.isPluginEnabled("BedWars1058"));
+            taskTypeManager.registerTaskType(() -> new BedWars1058FinalKillTask(this), () -> CompatUtils.isPluginEnabled("BedWars1058"));
+            taskTypeManager.registerTaskType(() -> new BedWars1058WinTask(this), () -> CompatUtils.isPluginEnabled("BedWars1058"));
+            taskTypeManager.registerTaskType(() -> new BedWars1058LoseTask(this), () -> CompatUtils.isPluginEnabled("BedWars1058"));
 
             // Register task types with enabled specific version plugin compatibility requirement
             taskTypeManager.registerTaskType(() -> new IridiumSkyblockValueTaskType(this), () -> { // TODO FIX

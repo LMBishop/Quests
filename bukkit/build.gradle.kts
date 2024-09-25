@@ -51,6 +51,8 @@ repositories {
     maven("https://repo.bg-software.com/repository/api/")
     // ZNPCsPlus
     maven("https://repo.pyr.lol/snapshots")
+    // BedWars1058
+    maven("https://repo.andrei1058.dev/releases/")
 
     // bungeecord-chat, HikariCP, hppc, JetBrains Annotations, slf4j
     mavenCentral()
@@ -123,6 +125,8 @@ dependencies {
     compileOnlyPlugin("com.bgsoftware:WildStackerAPI:2023.3")
     // ZNPCsPlus
     compileOnlyPlugin("lol.pyr:znpcsplus-api:2.0.0-SNAPSHOT")
+    // BedWars1058
+    compileOnlyPlugin("com.andrei1058.bedwars:bedwars-api:24.9")
 
     // IridiumSkyblock, PyroFishingPro, uSkyBlock
     compileOnlyLibs("libs", listOf("*.jar"))
