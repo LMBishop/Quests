@@ -25,3 +25,6 @@ UPDATE_MESSAGE
 *.project
 */bin/
 *.settings/
+
+# no leaks
+bukkit/gradle.properties
