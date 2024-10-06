@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.util.lang3.StringUtils;
+import net.jeracraft.stash.Stash;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -93,7 +94,7 @@ public class AdminItemsCommandHandler implements CommandHandler {
             item.setAmount(amount);
             // if we got this far, all was well.
             // just give the item to the player already ;)
-            targetPlayer.getInventory().addItem(item);
+            Stash.getPlugin().getStashApi().addItem(targetPlayer, item);
         }
     }
 
