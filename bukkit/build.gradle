@@ -58,10 +58,14 @@ repositories {
     maven {
         url = uri("https://maven.pkg.github.com/jeracraftnetwork/*")
         credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+            password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_MAVEN_TOKEN")
         }
     }
+    // To make this work you need to create `gradle.properties` file in bukkit folder with following data
+    // gpr.user=github_username
+    // gpr.key=ghp_....
+    // or you can use environment variables
 
     // InvUI
     maven { url = 'https://repo.xenondevs.xyz/releases' }
@@ -84,9 +88,9 @@ dependencies {
         exclude(group: 'net.md-5', module: 'bungeecord-chat')
     }
     // Atlas
-    compileOnly("net.jeracraft:atlas:1.2.7");
+    compileOnly("net.jeracraft:atlas:1.2.7")
     // Stash
-    compileOnly("net.jeracraft:stash:1.0.5");
+    compileOnly("net.jeracraft:stash:1.0.5")
     // ASkyBlock
     compileOnly('com.wasteofplastic:askyblock:3.0.9.4') { transitive = false }
     // AuthLib
