@@ -1,5 +1,3 @@
-import net.raphimc.javadowngrader.gradle.task.DowngradeJarTask
-
 plugins {
     id 'java'
     id 'io.github.goooler.shadow' version '8.1.7'
@@ -22,9 +20,9 @@ allprojects {
 task allJar( type: Jar, dependsOn: subprojects.tasks['build'] ) {
     if (project.findProperty('gitversion') == null || project.findProperty('gitversion') == 'true') {
         ext.gitCommitHash = 'git rev-parse --verify --short HEAD'.execute().text.trim()
-        project.version = "${project.version}-${gitCommitHash}"
+        project.version = "${project.version}-${gitCommitHash}-JERA"
         subprojects.each {
-            it.version = "${it.version}-${gitCommitHash}"
+            it.version = "${it.version}-${gitCommitHash}-JERA"
         }
     }
 
@@ -36,12 +34,12 @@ task allJar( type: Jar, dependsOn: subprojects.tasks['build'] ) {
     archiveBaseName = 'Quests'
 }
 
-tasks.register("java8Jar", DowngradeJarTask) {
-    input = tasks.jar.archiveFile.get().asFile
-    outputSuffix = "+java8"
-    compileClassPath = sourceSets.main.compileClasspath
-}.get().dependsOn("allJar")
-allJar.finalizedBy("java8Jar")
+//tasks.register("java8Jar", DowngradeJarTask) {
+//    input = tasks.jar.archiveFile.get().asFile
+//    outputSuffix = "+java8"
+//    compileClassPath = sourceSets.main.compileClasspath
+//}.get().dependsOn("allJar")
+//allJar.finalizedBy("java8Jar")
 
 artifacts {
     archives allJar
@@ -66,10 +64,11 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = project.findProperty('mavenUser') ?: System.getenv('MAVEN_USER')
-                password = project.findProperty('mavenPassword') ?: System.getenv('MAVEN_PASSWORD')
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_MAVEN_TOKEN")
             }
-            url = "https://repo.leonardobishop.com/releases/"
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/JeracraftNetwork/Quests"
         }
     }
 }
