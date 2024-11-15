@@ -25,7 +25,7 @@ public class Quest implements Comparable<Quest> {
     private List<String> startCommands;
     private List<String> cancelCommands;
     private List<String> expiryCommands;
-    private double vaultReward;
+    private String vaultReward;
     private boolean repeatEnabled;
     private boolean cooldownEnabled;
     private int cooldown;
@@ -210,9 +210,9 @@ public class Quest implements Comparable<Quest> {
      * Get the Vault reward for this quest.
      * The Vault reward is an amount of Vault economy money to be given upon completing the quest.
      *
-     * @return double
+     * @return string
      */
-    public double getVaultReward() {
+    public @Nullable String getVaultReward() {
         return this.vaultReward;
     }
 
@@ -353,7 +353,7 @@ public class Quest implements Comparable<Quest> {
         private List<String> startCommands = Collections.emptyList();
         private List<String> cancelCommands = Collections.emptyList();
         private List<String> expiryCommands = Collections.emptyList();
-        private double vaultReward = 0.0D;
+        private String vaultReward = null;
         private boolean repeatEnabled = false;
         private boolean cooldownEnabled = false;
         private int cooldown = 0;
@@ -417,7 +417,7 @@ public class Quest implements Comparable<Quest> {
             return this;
         }
 
-        public Builder withVaultReward(double vaultReward) {
+        public Builder withVaultReward(String vaultReward) {
             this.vaultReward = vaultReward;
             return this;
         }
