@@ -276,7 +276,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         List<String> startCommands = config.getStringList("startcommands");
                         List<String> cancelCommands = config.getStringList("cancelcommands");
                         List<String> expiryCommands = config.getStringList("expirycommands");
-                        double vaultReward = config.getDouble("vaultreward", 0.0D);
+                        String vaultReward = config.getString("vaultreward", null);
                         boolean repeatable = config.getBoolean("options.repeatable", false);
                         boolean cooldown = config.getBoolean("options.cooldown.enabled", false);
                         boolean timeLimit = config.getBoolean("options.time-limit.enabled", false);

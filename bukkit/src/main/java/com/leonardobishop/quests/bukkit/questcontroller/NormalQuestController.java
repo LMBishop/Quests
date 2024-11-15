@@ -9,6 +9,7 @@ import com.leonardobishop.quests.bukkit.api.event.PlayerStartTrackQuestEvent;
 import com.leonardobishop.quests.bukkit.api.event.PlayerStopTrackQuestEvent;
 import com.leonardobishop.quests.bukkit.api.event.PreStartQuestEvent;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
+import com.leonardobishop.quests.bukkit.hook.vault.rewards.VaultReward;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.util.FormatUtils;
 import com.leonardobishop.quests.bukkit.util.Messages;
@@ -29,8 +30,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class NormalQuestController implements QuestController {
@@ -39,6 +42,7 @@ public class NormalQuestController implements QuestController {
     private final BukkitQuestsConfig config;
 
     private final List<Quest> autoStartQuestCache;
+    private final Map<Quest, VaultReward> vaultRewardCache;
 
     public NormalQuestController(BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -49,6 +53,8 @@ public class NormalQuestController implements QuestController {
             if (quest.isAutoStartEnabled()) autoStartQuestCache.add(quest);
         }
         this.autoStartQuestCache = autoStartQuestCache;
+
+        this.vaultRewardCache = new WeakHashMap<>();
     }
 
     @Override
@@ -235,10 +241,12 @@ public class NormalQuestController implements QuestController {
             Bukkit.getPluginManager().callEvent(questFinishEvent);
             // PlayerFinishQuestEvent -- end
             plugin.getScheduler().doSync(() -> {
-                final double vaultReward = quest.getVaultReward();
-                if (vaultReward > 0.0D) {
-                    this.plugin.getVaultHook().depositPlayer(player, vaultReward);
-                }
+                final VaultReward vaultReward = this.vaultRewardCache.computeIfAbsent(quest,
+                        k -> VaultReward.parse(this.plugin, k.getVaultReward())
+                );
+
+                // Use cached reward to do not parse it every single time
+                vaultReward.give(player);
 
                 for (String s : quest.getRewards()) {
                     s = s.replace("{player}", player.getName());
