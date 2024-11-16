@@ -2,6 +2,7 @@ package com.leonardobishop.quests.bukkit.storage;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.common.player.QPlayerData;
+import com.leonardobishop.quests.common.player.QPlayerPreferences;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
@@ -328,7 +329,7 @@ public final class ModernMySQLStorageProvider implements StorageProvider {
             return null;
         }
 
-        return new QPlayerData(uuid, null, questProgressFile); // TODO player preferences
+        return new QPlayerData(uuid, new QPlayerPreferences(null), questProgressFile); // TODO player preferences
     }
 
     @Override
