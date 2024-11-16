@@ -36,6 +36,7 @@ public class Quest implements Comparable<Quest> {
     private boolean autoStartEnabled;
     private boolean cancellable;
     private boolean countsTowardsLimit;
+    private boolean countsTowardsCompleted;
     private Map<String, String> placeholders;
     private Map<String, String> progressPlaceholders;
     private String categoryid;
@@ -330,6 +331,15 @@ public class Quest implements Comparable<Quest> {
     }
 
     /**
+     * Get whether this quest should count towards the player's quests completed.
+     *
+     * @return boolean
+     */
+    public boolean doesCountTowardsCompleted() {
+        return countsTowardsCompleted;
+    }
+
+    /**
      * Compare the sort orders for this quest with another quest.
      *
      * @see Comparable#compareTo(Object)
@@ -364,6 +374,7 @@ public class Quest implements Comparable<Quest> {
         private boolean autoStartEnabled = false;
         private boolean cancellable = true;
         private boolean countsTowardsLimit = true;
+        private boolean countsTowardsCompleted = true;
         private Map<String, String> placeholders = Collections.emptyMap();
         private Map<String, String> progressPlaceholders = Collections.emptyMap();
         private String categoryid = null;
@@ -482,6 +493,11 @@ public class Quest implements Comparable<Quest> {
             return this;
         }
 
+        public Builder withCountsTowardsCompleted(boolean countsTowardsCompleted) {
+            this.countsTowardsCompleted = countsTowardsCompleted;
+            return this;
+        }
+
         public Builder inCategory(String categoryid) {
             this.categoryid = categoryid;
             return this;
@@ -508,7 +524,8 @@ public class Quest implements Comparable<Quest> {
             quest.sortOrder = this.sortOrder;
             quest.permissionRequired = this.permissionRequired;
             quest.autoStartEnabled = this.autoStartEnabled;
-            quest.countsTowardsLimit = countsTowardsLimit;
+            quest.countsTowardsLimit = this.countsTowardsLimit;
+            quest.countsTowardsCompleted = this.countsTowardsCompleted;
             quest.cancellable = this.cancellable;
             quest.placeholders = this.placeholders;
             quest.progressPlaceholders = this.progressPlaceholders;
