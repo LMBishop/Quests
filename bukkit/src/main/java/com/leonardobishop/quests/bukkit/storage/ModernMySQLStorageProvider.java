@@ -534,7 +534,7 @@ public final class ModernMySQLStorageProvider implements StorageProvider {
             try (final Statement stmt = this.conn.createStatement();
                  final ResultSet rs = stmt.executeQuery(this.prefixer.apply(GET_STARTED_DATE_COLUMN))) {
 
-                if (rs.first()) {
+                if (rs.next()) {
                     return LATEST_SCHEMA_VERSION;
                 } else {
                     return 1;
@@ -548,7 +548,7 @@ public final class ModernMySQLStorageProvider implements StorageProvider {
             try (final Statement stmt = this.conn.createStatement();
                  final ResultSet rs = stmt.executeQuery(this.prefixer.apply(SELECT_SCHEMA_VERSION))) {
 
-                if (rs.first()) {
+                if (rs.next()) {
                     final int version = Integer.parseUnsignedInt(rs.getString(1));
                     this.plugin.getQuestsLogger().debug("Current schema version: " + version + ".");
                     return version;
