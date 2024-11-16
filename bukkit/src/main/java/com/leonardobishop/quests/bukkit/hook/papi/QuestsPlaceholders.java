@@ -88,11 +88,13 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                 case "completed":
                 case "c":
                     final List<Quest> listCompleted = qPlayer.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.COMPLETED);
+                    listCompleted.removeIf(quest -> !quest.doesCountTowardsCompleted());
                     result = (args.length == 1 ? String.valueOf(listCompleted.size()) : parseList(listCompleted, args[1], split));
                     break;
                 case "completedbefore":
                 case "cb":
                     final List<Quest> listCompletedB = qPlayer.getQuestProgressFile().getAllQuestsFromProgress(QuestProgressFile.QuestsProgressFilter.COMPLETED_BEFORE);
+                    listCompletedB.removeIf(quest -> !quest.doesCountTowardsCompleted());
                     result = (args.length == 1 ? String.valueOf(listCompletedB.size()) : parseList(listCompletedB, args[1], split));
                     break;
                 case "started":
