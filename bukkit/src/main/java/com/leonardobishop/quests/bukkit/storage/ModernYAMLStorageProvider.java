@@ -2,6 +2,7 @@ package com.leonardobishop.quests.bukkit.storage;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.common.player.QPlayerData;
+import com.leonardobishop.quests.common.player.QPlayerPreferences;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
@@ -144,7 +145,7 @@ public final class ModernYAMLStorageProvider implements StorageProvider {
                 this.plugin.getQuestsLogger().debug("Player " + uuidString + " does not have a quest progress file.");
             }
 
-            return new QPlayerData(uuid, null, questProgressFile); // TODO player preferences
+            return new QPlayerData(uuid, new QPlayerPreferences(null), questProgressFile); // TODO player preferences
         } catch (final FileNotFoundException e) {
             this.plugin.getLogger().log(Level.SEVERE, "Failed to find player data file for " + uuidString + ".", e);
         } catch (final IOException e) {
