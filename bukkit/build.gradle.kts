@@ -106,7 +106,7 @@ dependencies {
     // PlayerPoints
     compileOnlyPlugin("org.black_ixx:playerpoints:3.2.5")
     // SCore
-    compileOnlyPlugin("com.github.Ssomar-Developement:SCore:3.4.7")
+    compileOnlyPlugin("com.github.Ssomar-Developement:SCore:4.24.3.5")
     // ShopGUIPlus
     compileOnlyPlugin("com.github.brcdev-minecraft:shopgui-api:3.0.0")
     // Slimefun4
@@ -118,7 +118,7 @@ dependencies {
     // Vault
     compileOnlyPlugin("com.github.MilkBowl:VaultAPI:1.7.1")
     // VotingPlugin
-    compileOnlyPlugin("com.bencodez:votingplugin:6.15")
+    compileOnlyPlugin("com.bencodez:votingplugin:6.17.2")
     // WildStacker
     compileOnlyPlugin("com.bgsoftware:WildStackerAPI:2023.3")
     // ZNPCsPlus
