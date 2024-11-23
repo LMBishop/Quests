@@ -81,7 +81,7 @@ public final class ModernMySQLStorageProvider implements StorageProvider {
 
     // Insertion SQL
     private static final String INSERT_PLAYER_QUEST_PROGRESS =
-            "INSERT INTO `{prefix}quest_progress` (uuid, quest_id, started, started_date, completed, completed_before, completion_date) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE started = ?, started_date = ?, completed = ?, completed_before = ?, completion_date = ?;";
+            "INSERT INTO `{prefix}quest_progress` (uuid, quest_id, started, started_date, completed, completed_before, completion_date) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE started = ?, started_date = ?, completed = ?, completed_before = ?, completion_date = ?";
     private static final String INSERT_PLAYER_TASK_PROGRESS =
             "INSERT INTO `{prefix}task_progress` (uuid, quest_id, task_id, completed, progress, data_type) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE completed = ?, progress = ?, data_type = ?";
 
