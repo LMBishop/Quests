@@ -284,6 +284,8 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         boolean autostart = config.getBoolean("options.autostart", false);
                         boolean cancellable = config.getBoolean("options.cancellable", true);
                         boolean countsTowardsLimit = config.getBoolean("options.counts-towards-limit", true);
+                        boolean countsTowardsCompleted = config.getBoolean("options.counts-towards-completed", true);
+                        boolean hidden = config.getBoolean("options.hidden", false);
                         int cooldownTime = config.getInt("options.cooldown.time", 10);
                         int timeLimtTime = config.getInt("options.time-limit.time", 10);
                         int sortOrder = config.getInt("options.sort-order", 1);
@@ -323,6 +325,8 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 .withRepeatEnabled(repeatable)
                                 .withCancellable(cancellable)
                                 .withCountsTowardsLimit(countsTowardsLimit)
+                                .withCountsTowardsCompleted(countsTowardsCompleted)
+                                .withHidden(hidden)
                                 .withAutoStartEnabled(autostart)
                                 .inCategory(category)
                                 .build();

@@ -59,8 +59,8 @@ import com.leonardobishop.quests.bukkit.scheduler.ServerScheduler;
 import com.leonardobishop.quests.bukkit.scheduler.WrappedTask;
 import com.leonardobishop.quests.bukkit.scheduler.bukkit.BukkitServerSchedulerAdapter;
 import com.leonardobishop.quests.bukkit.scheduler.folia.FoliaServerScheduler;
-import com.leonardobishop.quests.bukkit.storage.MySqlStorageProvider;
-import com.leonardobishop.quests.bukkit.storage.YamlStorageProvider;
+import com.leonardobishop.quests.bukkit.storage.ModernMySQLStorageProvider;
+import com.leonardobishop.quests.bukkit.storage.ModernYAMLStorageProvider;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskTypeManager;
 import com.leonardobishop.quests.bukkit.tasktype.type.BarteringTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BlockItemdroppingTaskType;
@@ -291,14 +291,14 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             default:
                 questsLogger.warning("No valid storage provider is configured - Quests will use YAML storage as a default");
             case "yaml":
-                this.storageProvider = new YamlStorageProvider(this);
+                this.storageProvider = new ModernYAMLStorageProvider(this);
                 break;
             case "mysql":
                 ConfigurationSection section = this.getConfig().getConfigurationSection("options.storage.database-settings");
                 if (section == null) {
                     questsLogger.warning("No database settings are configured - default values will be used");
                 }
-                this.storageProvider = new MySqlStorageProvider(this, section);
+                this.storageProvider = new ModernMySQLStorageProvider(this, section);
         }
 
         try {

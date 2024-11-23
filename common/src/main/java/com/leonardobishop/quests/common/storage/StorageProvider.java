@@ -1,61 +1,91 @@
 package com.leonardobishop.quests.common.storage;
 
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
+import com.leonardobishop.quests.common.player.QPlayerData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
- * The storage provider is responsible for obtaining a QuestProgressFile for a specified UUID and for
- * writing a QuestProgressFile.
+ * The StorageProvider interface defines the contract for a storage system that handles the persistence
+ * of player data, such as player preferences and quest progress, for specific players identified by their UUIDs.
+ * Implementations of this interface are responsible for the actual storage and retrieval of this data.
  */
 public interface StorageProvider {
 
-    String getName();
+    /**
+     * Retrieves the name of this storage provider.
+     *
+     * @return the name of the storage provider
+     */
+    @NotNull String getName();
 
-    void init();
+    /**
+     * Initializes the storage provider, preparing it for use. This method should be called before any
+     * other operations are performed. Initialization may involve setting up connections or loading necessary resources.
+     */
+    void init() throws IOException;
 
+    /**
+     * Shuts down the storage provider, ensuring that any open resources are properly closed and that
+     * any pending data is safely stored. This method should be called during the application's shutdown process.
+     */
     void shutdown();
 
     /**
-     * Load a QuestProgressFile from the data source by a specific UUID
+     * Loads the player data associated with the given UUID from the storage.
      *
-     * @param uuid the UUID to load
-     * @return {@link QuestProgressFile} or null
+     * @param uuid the unique identifier of the player whose data is to be loaded
+     * @return the {@link QPlayerData} for the player, or null if no data is found for the given UUID
      */
-    @Nullable QuestProgressFile loadProgressFile(@NotNull UUID uuid);
+    @Nullable QPlayerData loadPlayerData(final @NotNull UUID uuid);
 
     /**
-     * Save a QuestProgressFile to the data source with a specific UUID
+     * Saves the given player data to the storage.
      *
-     * @param uuid the uuid to match the file to
-     * @param questProgressFile the file to save
+     * @param playerData the {@link QPlayerData} object containing the player's data to be saved
+     * @return true if the data was successfully saved, false otherwise
      */
-    boolean saveProgressFile(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile);
+    boolean savePlayerData(final @NotNull QPlayerData playerData);
 
     /**
-     * Load all QuestProgressFiles
+     * Loads all player data available in the storage.
      *
-     * @return {@link List<QuestProgressFile>}
+     * @return a list of {@link QPlayerData} objects
      */
-    @NotNull List<QuestProgressFile> loadAllProgressFiles();
+    @NotNull List<QPlayerData> loadAllPlayerData();
 
     /**
-     * Save a list of QuestProgressFiles
+     * Saves all provided player data to the storage.
      *
-     * @param files the list of QuestProgressFile to save
-     **/
-    void saveAllProgressFiles(List<QuestProgressFile> files);
+     * @param allPlayerData a list of {@link QPlayerData} objects to be saved
+     * @return true if the data was successfully saved, false otherwise
+     */
+    default boolean saveAllPlayerData(final @NotNull List<QPlayerData> allPlayerData) {
+        Objects.requireNonNull(allPlayerData, "allPlayerData cannot be null");
+
+        // fault check is not needed here as the method
+        // saving single player data already handles that,
+        // and it's actually the one we need to check
+
+        boolean result = true;
+
+        for (final QPlayerData playerData : allPlayerData) {
+            result &= this.savePlayerData(playerData);
+        }
+
+        return result;
+    }
 
     /**
-     * Whether this provider is 'similar' to another one.
-     * Similarity is determined if the provider effectively points to the same data source.
+     * Compares this storage provider with another to determine if they are similar.
+     * Similarity is determined by effectively pointing to the same data source.
      *
-     * @param provider the provider to compare to
-     * @return true if similar, false otherwise
+     * @param otherProvider another StorageProvider to compare against
+     * @return true if the two storage providers are considered similar, false otherwise
      */
-    boolean isSimilar(StorageProvider provider);
-
+    boolean isSimilar(final @NotNull StorageProvider otherProvider);
 }
