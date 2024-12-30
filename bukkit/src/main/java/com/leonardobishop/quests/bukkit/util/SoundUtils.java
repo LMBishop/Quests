@@ -3,7 +3,23 @@ package com.leonardobishop.quests.bukkit.util;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
 public class SoundUtils {
+
+    private static final Map<String, Sound> soundCache = new HashMap<>();
+    private static final Method soundValueOfMethod;
+
+    static {
+        try {
+            soundValueOfMethod = Sound.class.getDeclaredMethod("valueOf", String.class);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException("Sound#valueOf method could not be found", e);
+        }
+    }
 
     /**
      * Play a sound to a player
@@ -54,7 +70,14 @@ public class SoundUtils {
 
         Sound sound;
         try {
-            sound = Sound.valueOf(parts[0]);
+            // TODO make per version sound getter
+            sound = soundCache.computeIfAbsent(parts[0], name -> {
+                try {
+                    return (Sound) soundValueOfMethod.invoke(null, parts[0]);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new IllegalStateException("Sound#valueOf invocation failed", e);
+                }
+            });
         } catch (IllegalArgumentException ignored) {
             return;
         }
