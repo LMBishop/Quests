@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -40,6 +41,8 @@ public class BukkitQuestCompleter implements QuestCompleter, Runnable {
 
     private void checkExpiredQuests(QPlayer qPlayer) {
         QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+        List<Quest> toExpire = new ArrayList<>();
+
         for (QuestProgress questProgress : questProgressFile.getAllQuestProgress()) {
             if (!questProgress.isStarted()) {
                 continue;
@@ -51,8 +54,12 @@ public class BukkitQuestCompleter implements QuestCompleter, Runnable {
             }
 
             if (questProgressFile.getTimeRemainingFor(quest) == 0) {
-                qPlayer.expireQuest(quest);
+                toExpire.add(quest);
             }
+        }
+
+        for (Quest expiredQuest : toExpire) {
+            qPlayer.expireQuest(expiredQuest);
         }
     }
 
