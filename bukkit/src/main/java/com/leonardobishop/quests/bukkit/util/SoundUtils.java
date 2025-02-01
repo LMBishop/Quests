@@ -68,17 +68,21 @@ public class SoundUtils {
             return;
         }
 
-        Sound sound;
-        try {
-            // TODO make per version sound getter
-            sound = soundCache.computeIfAbsent(parts[0], name -> {
-                try {
-                    return (Sound) soundValueOfMethod.invoke(null, parts[0]);
-                } catch (IllegalAccessException | InvocationTargetException e) {
+        Sound sound = soundCache.computeIfAbsent(parts[0], name -> {
+            try {
+                return (Sound) soundValueOfMethod.invoke(null, parts[0]);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                final Throwable cause = e.getCause();
+
+                if (cause instanceof IllegalArgumentException) {
+                    return null;
+                } else {
                     throw new IllegalStateException("Sound#valueOf invocation failed", e);
                 }
-            });
-        } catch (IllegalArgumentException ignored) {
+            }
+        });
+
+        if (sound == null) {
             return;
         }
 
