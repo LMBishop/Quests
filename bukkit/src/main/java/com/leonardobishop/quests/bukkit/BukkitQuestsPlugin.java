@@ -976,4 +976,9 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     public void reloadConfig() {
         this.reloadBaseConfiguration(false);
     }
+
+    @Override
+    public boolean isPrimaryThread() {
+        return Bukkit.isPrimaryThread();
+    }
 }

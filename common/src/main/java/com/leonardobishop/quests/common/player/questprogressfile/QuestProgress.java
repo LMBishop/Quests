@@ -130,7 +130,7 @@ public final class QuestProgress {
 
     /**
      * @return mutable task progress map values collection
-     * @see QuestProgress#getTaskProgress()
+     * @see QuestProgress#getAllTaskProgress()
      */
     @Deprecated(forRemoval = true)
     @Contract(pure = true)
