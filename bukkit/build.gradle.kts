@@ -23,6 +23,8 @@ repositories {
     maven("https://libraries.minecraft.net/")
     // CoreProtect
     maven("https://maven.playpro.com/")
+    // CustomFishing
+    maven("https://repo.momirealms.net/releases/")
     // EcoBosses, EcoMobs
     maven("https://repo.auxilor.io/repository/maven-public/")
     // EssentialsX
@@ -39,7 +41,7 @@ repositories {
     maven("https://repo.oraxen.com/releases")
     // PlaceholderAPI
     maven("https://repo.extendedclip.com/releases")
-    // CustomFishing, ItemsAdder, SCore, ShopGUIPlus, Slimefun4, Vault
+    // ItemsAdder, SCore, ShopGUIPlus, Slimefun4, Vault
     maven("https://jitpack.io/")
     // PlayerPoints
     maven("https://repo.rosewooddev.io/repository/public/")
@@ -79,7 +81,7 @@ dependencies {
     // CoreProtect
     compileOnlyPlugin("net.coreprotect:coreprotect:21.2")
     // CustomFishing
-    compileOnlyPlugin("com.github.Xiao-MoMi:Custom-Fishing:2.3.3")
+    compileOnlyPlugin("net.momirealms:custom-fishing:2.3.8")
     // EcoBosses, EcoMobs
     compileOnlyPlugin("com.willfp:EcoBosses:9.14.0")
     compileOnlyPlugin("com.willfp:EcoMobs:10.0.0-b1")

@@ -99,4 +99,5 @@ public interface Quests {
      */
     void reloadQuests();
 
+    boolean isPrimaryThread();
 }
