@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.common.player.questprogressfile;
 
 import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.player.questprogressfile.filters.QuestProgressFilter;
 import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -77,17 +78,16 @@ public final class QuestProgressFile {
      */
     @Contract(pure = true)
     public @NotNull List<Quest> getStartedQuests() {
-        return this.getAllQuestsFromProgress(QuestsProgressFilter.STARTED);
+        return this.getAllQuestsFromProgress(QuestProgressFilter.STARTED);
     }
 
     /**
-     * Returns all {@link Quest} a player has encountered
-     * (not to be confused with a collection of quest progress)
+     * Returns all {@link Quest} a player has encountered (not to be confused with a collection of quest progress).
      *
-     * @return {@code List<Quest>} all quests
+     * @return list of matching quests
      */
     @Contract(pure = true)
-    public @NotNull List<Quest> getAllQuestsFromProgress(final @NotNull QuestsProgressFilter filter) {
+    public @NotNull List<Quest> getAllQuestsFromProgress(final @NotNull QuestProgressFilter filter) {
         final List<Quest> quests = new ArrayList<>();
 
         for (final QuestProgress questProgress : this.questProgressMap.values()) {
@@ -107,66 +107,32 @@ public final class QuestProgressFile {
         return quests;
     }
 
-    public enum QuestsProgressFilter {
-        ALL("all") {
-            @Override
-            @Contract(pure = true)
-            public boolean matches(final @NotNull QuestProgress questProgress) {
-                return true;
-            }
-        },
-        COMPLETED("completed") {
-            @Override
-            @Contract(pure = true)
-            public boolean matches(final @NotNull QuestProgress questProgress) {
-                return questProgress.isCompleted();
-            }
-        },
-        COMPLETED_BEFORE("completedBefore") {
-            @Override
-            @Contract(pure = true)
-            public boolean matches(final @NotNull QuestProgress questProgress) {
-                return questProgress.isCompletedBefore();
-            }
-        },
-        STARTED("started") {
-            @Override
-            @Contract(pure = true)
-            public boolean matches(final @NotNull QuestProgress questProgress) {
-                return questProgress.isStarted();
-            }
-        };
+    /**
+     * Returns count of all {@link Quest} a player has encountered. It is clearly equivalent to collection size of
+     * {@link QuestProgressFile#getAllQuestsFromProgress(QuestProgressFilter)}, however it does not utilise a list
+     * for counting quests so its performance is undeniably better.
+     *
+     * @return count of matching quests
+     */
+    @Contract(pure = true)
+    public int getAllQuestsFromProgressCount(final @NotNull QuestProgressFilter filter) {
+        int count = 0;
 
-        private final String legacy;
+        for (final QuestProgress questProgress : this.questProgressMap.values()) {
+            final boolean matches = filter.matches(questProgress);
+            if (!matches) {
+                continue;
+            }
 
-        QuestsProgressFilter(final @NotNull String legacy) {
-            this.legacy = legacy;
+            final Quest quest = this.plugin.getQuestManager().getQuestById(questProgress.getQuestId());
+            if (quest == null) {
+                continue;
+            }
+
+            count++;
         }
 
-        @SuppressWarnings("unused")
-        @Contract(pure = true)
-        public @NotNull String getLegacy() {
-            return this.legacy;
-        }
-
-        @Contract(pure = true)
-        public abstract boolean matches(final @NotNull QuestProgress questProgress);
-
-        // And some static things to improve legacy performance (is it even used?)
-
-        private static final QuestsProgressFilter[] FILTERS = QuestsProgressFilter.values();
-
-        private static final Map<String, QuestsProgressFilter> legacyToFilterMap = new HashMap<>(QuestsProgressFilter.FILTERS.length) {{
-            for (final QuestsProgressFilter questsProgressFilter : QuestsProgressFilter.FILTERS) {
-                this.put(questsProgressFilter.legacy, questsProgressFilter);
-            }
-        }};
-
-        @SuppressWarnings("unused")
-        @Contract(pure = true)
-        public static @NotNull QuestsProgressFilter fromLegacy(final @NotNull String legacy) {
-            return QuestsProgressFilter.legacyToFilterMap.getOrDefault(legacy, QuestsProgressFilter.ALL);
-        }
+        return count;
     }
 
     /**
@@ -294,6 +260,11 @@ public final class QuestProgressFile {
      * @return {@link QuestProgress} or a blank generated one if the quest does not exist
      */
     public @NotNull QuestProgress getQuestProgress(final @NotNull Quest quest) {
+        if (!this.plugin.isPrimaryThread()) {
+            //noinspection CallToPrintStackTrace
+            new IllegalStateException("async getQuestProgress call").printStackTrace();
+        }
+
         final QuestProgress questProgress = this.getQuestProgressOrNull(quest);
         return questProgress != null ? questProgress : this.generateBlankQuestProgress(quest);
     }
@@ -422,6 +393,107 @@ public final class QuestProgressFile {
     }
 
     /**
+     * @param modified whether the object has been modified and needs to be saved
+     */
+    public void setModified(final boolean modified) {
+        for (final QuestProgress questProgress : this.questProgressMap.values()) {
+            questProgress.setModified(modified);
+        }
+    }
+
+    // DEPRECATED AND FOR REMOVAL
+
+    /**
+     * Returns all {@link Quest} a player has encountered (not to be confused with a collection of quest progress).
+     *
+     * @return list of matching quests
+     */
+    @Deprecated(forRemoval = true)
+    @Contract(pure = true)
+    public @NotNull List<Quest> getAllQuestsFromProgress(final @NotNull QuestsProgressFilter filter) {
+        final List<Quest> quests = new ArrayList<>();
+
+        for (final QuestProgress questProgress : this.questProgressMap.values()) {
+            final boolean matches = filter.matches(questProgress);
+            if (!matches) {
+                continue;
+            }
+
+            final Quest quest = this.plugin.getQuestManager().getQuestById(questProgress.getQuestId());
+            if (quest == null) {
+                continue;
+            }
+
+            quests.add(quest);
+        }
+
+        return quests;
+    }
+
+    @Deprecated(forRemoval = true)
+    public enum QuestsProgressFilter {
+        ALL("all") {
+            @Override
+            @Contract(pure = true)
+            public boolean matches(final @NotNull QuestProgress questProgress) {
+                return QuestProgressFilter.ALL.matches(questProgress);
+            }
+        },
+        COMPLETED("completed") {
+            @Override
+            @Contract(pure = true)
+            public boolean matches(final @NotNull QuestProgress questProgress) {
+                return QuestProgressFilter.COMPLETED.matches(questProgress);
+            }
+        },
+        COMPLETED_BEFORE("completedBefore") {
+            @Override
+            @Contract(pure = true)
+            public boolean matches(final @NotNull QuestProgress questProgress) {
+                return QuestProgressFilter.COMPLETED_BEFORE.matches(questProgress);
+            }
+        },
+        STARTED("started") {
+            @Override
+            @Contract(pure = true)
+            public boolean matches(final @NotNull QuestProgress questProgress) {
+                return QuestProgressFilter.STARTED.matches(questProgress);
+            }
+        };
+
+        private final String legacy;
+
+        QuestsProgressFilter(final @NotNull String legacy) {
+            this.legacy = legacy;
+        }
+
+        @SuppressWarnings("unused")
+        @Contract(pure = true)
+        public @NotNull String getLegacy() {
+            return this.legacy;
+        }
+
+        @Contract(pure = true)
+        public abstract boolean matches(final @NotNull QuestProgress questProgress);
+
+        // And some static things to improve legacy performance (is it even used?)
+
+        private static final QuestsProgressFilter[] FILTERS = QuestsProgressFilter.values();
+
+        private static final Map<String, QuestsProgressFilter> legacyToFilterMap = new HashMap<>(QuestsProgressFilter.FILTERS.length) {{
+            for (final QuestsProgressFilter questsProgressFilter : QuestsProgressFilter.FILTERS) {
+                this.put(questsProgressFilter.legacy, questsProgressFilter);
+            }
+        }};
+
+        @SuppressWarnings("unused")
+        @Contract(pure = true)
+        public static @NotNull QuestsProgressFilter fromLegacy(final @NotNull String legacy) {
+            return QuestsProgressFilter.legacyToFilterMap.getOrDefault(legacy, QuestsProgressFilter.ALL);
+        }
+    }
+
+    /**
      * It's equivalent to {@code QuestProgressFile#setModified(false)}.
      *
      * @see QuestProgressFile#setModified(boolean)
@@ -429,14 +501,5 @@ public final class QuestProgressFile {
     @Deprecated(forRemoval = true)
     public void resetModified() {
         this.setModified(false);
-    }
-
-    /**
-     * @param modified whether the object has been modified and needs to be saved
-     */
-    public void setModified(final boolean modified) {
-        for (final QuestProgress questProgress : this.questProgressMap.values()) {
-            questProgress.setModified(modified);
-        }
     }
 }
