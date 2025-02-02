@@ -5,14 +5,14 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ConjunctionQuestProgressFilter extends ArrayQuestProgressFilter {
 
-    ConjunctionQuestProgressFilter(final @NotNull QuestProgressFilter @NotNull ... filters) {
+    public ConjunctionQuestProgressFilter(final @NotNull QuestProgressFilter @NotNull ... filters) {
         super(filters);
     }
 
     @Override
-    public boolean matches(final @NotNull QuestProgress questProgress) {
+    public boolean matchesProgress(final @NotNull QuestProgress questProgress) {
         for (final QuestProgressFilter filter : this.filters) {
-            if (!filter.matches(questProgress)) {
+            if (!filter.matchesProgress(questProgress)) {
                 return false;
             }
         }

@@ -91,17 +91,11 @@ public final class QuestProgressFile {
         final List<Quest> quests = new ArrayList<>();
 
         for (final QuestProgress questProgress : this.questProgressMap.values()) {
-            final boolean matches = filter.matches(questProgress);
-            if (!matches) {
-                continue;
-            }
+            final Quest quest = this.getQuestFromProgress(filter, questProgress);
 
-            final Quest quest = this.plugin.getQuestManager().getQuestById(questProgress.getQuestId());
-            if (quest == null) {
-                continue;
+            if (quest != null) {
+                quests.add(quest);
             }
-
-            quests.add(quest);
         }
 
         return quests;
@@ -119,20 +113,33 @@ public final class QuestProgressFile {
         int count = 0;
 
         for (final QuestProgress questProgress : this.questProgressMap.values()) {
-            final boolean matches = filter.matches(questProgress);
-            if (!matches) {
-                continue;
-            }
+            final Quest quest = this.getQuestFromProgress(filter, questProgress);
 
-            final Quest quest = this.plugin.getQuestManager().getQuestById(questProgress.getQuestId());
-            if (quest == null) {
-                continue;
+            if (quest != null) {
+                count++;
             }
-
-            count++;
         }
 
         return count;
+    }
+
+    private @Nullable Quest getQuestFromProgress(final @NotNull QuestProgressFilter filter, final QuestProgress questProgress) {
+        final boolean matchesProgress = filter.matchesProgress(questProgress);
+        if (!matchesProgress) {
+            return null;
+        }
+
+        final Quest quest = this.plugin.getQuestManager().getQuestById(questProgress.getQuestId());
+        if (quest == null) {
+            return null;
+        }
+
+        final boolean matchesQuest = filter.matchesQuest(quest);
+        if (!matchesQuest) {
+            return null;
+        }
+
+        return quest;
     }
 
     /**
@@ -436,28 +443,28 @@ public final class QuestProgressFile {
             @Override
             @Contract(pure = true)
             public boolean matches(final @NotNull QuestProgress questProgress) {
-                return QuestProgressFilter.ALL.matches(questProgress);
+                return QuestProgressFilter.ALL.matchesProgress(questProgress);
             }
         },
         COMPLETED("completed") {
             @Override
             @Contract(pure = true)
             public boolean matches(final @NotNull QuestProgress questProgress) {
-                return QuestProgressFilter.COMPLETED.matches(questProgress);
+                return QuestProgressFilter.COMPLETED.matchesProgress(questProgress);
             }
         },
         COMPLETED_BEFORE("completedBefore") {
             @Override
             @Contract(pure = true)
             public boolean matches(final @NotNull QuestProgress questProgress) {
-                return QuestProgressFilter.COMPLETED_BEFORE.matches(questProgress);
+                return QuestProgressFilter.COMPLETED_BEFORE.matchesProgress(questProgress);
             }
         },
         STARTED("started") {
             @Override
             @Contract(pure = true)
             public boolean matches(final @NotNull QuestProgress questProgress) {
-                return QuestProgressFilter.STARTED.matches(questProgress);
+                return QuestProgressFilter.STARTED.matchesProgress(questProgress);
             }
         };
 
