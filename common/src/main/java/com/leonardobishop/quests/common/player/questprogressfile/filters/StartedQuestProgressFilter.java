@@ -5,11 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class StartedQuestProgressFilter implements QuestProgressFilter {
 
-    StartedQuestProgressFilter() {
-    }
-
     @Override
-    public boolean matches(final @NotNull QuestProgress questProgress) {
+    public boolean matchesProgress(final @NotNull QuestProgress questProgress) {
         return questProgress.isStarted();
     }
 }
