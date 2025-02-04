@@ -61,7 +61,7 @@ public final class FarmingTaskType extends BukkitTaskType {
 
         boolean performAgeCheck = true;
 
-        if (type == Material.BAMBOO || type == Material.CACTUS || type == Material.KELP || type == Material.SUGAR_CANE) {
+        if (type == Material.BAMBOO || type == Material.CACTUS || type == Material.KELP || type == Material.KELP_PLANT || type == Material.SUGAR_CANE) {
             performAgeCheck = false;
 
             Block anotherBlock = block.getRelative(BlockFace.UP);
@@ -69,7 +69,8 @@ public final class FarmingTaskType extends BukkitTaskType {
             while (true) {
                 Material anotherType = anotherBlock.getType();
 
-                if (anotherType == type) {
+                // We need a way more elegant solution to check the kelp thing
+                if (anotherType == type || (type == Material.KELP_PLANT && anotherType == Material.KELP)) {
                     brokenBlocks.add(anotherBlock);
                 } else {
                     break;
