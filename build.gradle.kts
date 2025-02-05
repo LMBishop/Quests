@@ -64,15 +64,14 @@ tasks.register<Jar>("allJar") {
 }
 
 fun gitCommitHash(): String {
-    val outputStream = ByteArrayOutputStream()
-
-    project.exec {
+    val execOutput = providers.exec {
         commandLine = "git rev-parse --verify --short HEAD".split(" ")
-        standardOutput = outputStream
     }
 
-    val gitCommitHashBytes = outputStream.toByteArray()
-    return String(gitCommitHashBytes).trim()
+    val gitCommitHashProvider = execOutput.standardOutput.asText
+    val gitCommitHashString = gitCommitHashProvider.getOrElse("unknown")
+
+    return gitCommitHashString.trim()
 }
 
 val javaVersions = listOf(
