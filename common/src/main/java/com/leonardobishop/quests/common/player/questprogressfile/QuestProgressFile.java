@@ -24,6 +24,9 @@ import java.util.concurrent.TimeUnit;
  */
 public final class QuestProgressFile {
 
+    // https://github.com/LMBishop/Quests/issues/760
+    private static final boolean DEBUG_ISSUE_760 = Boolean.getBoolean("Quests.DebugIssue760");
+
     private final Quests plugin;
     private final UUID playerUUID;
     private final Map<String, QuestProgress> questProgressMap;
@@ -267,7 +270,7 @@ public final class QuestProgressFile {
      * @return {@link QuestProgress} or a blank generated one if the quest does not exist
      */
     public @NotNull QuestProgress getQuestProgress(final @NotNull Quest quest) {
-        if (!this.plugin.isPrimaryThread()) {
+        if (DEBUG_ISSUE_760 && !this.plugin.isPrimaryThread()) {
             //noinspection CallToPrintStackTrace
             new IllegalStateException("async getQuestProgress call").printStackTrace();
         }
