@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.bukkit.hook.itemgetter;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.NamespacedKeyUtils;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -129,9 +131,6 @@ public class ItemGetter20 extends ItemGetter {
         // item flags
         List<String> itemFlagStrings = config.getStringList("itemflags");
         if (!itemFlagStrings.isEmpty() && !filters.contains(Filter.ITEM_FLAGS)) {
-            // in case some idiot adds a flag twice - not sure about its behaviour
-            boolean modifiersAdded = false;
-
             for (String itemFlagString : itemFlagStrings) {
                 ItemFlag itemFlag;
                 try {
@@ -140,16 +139,10 @@ public class ItemGetter20 extends ItemGetter {
                     continue;
                 }
 
-                if (!modifiersAdded && itemFlag == ItemFlag.HIDE_ATTRIBUTES) {
-                    Material type = item.getType();
-
-                    for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-                        Multimap<Attribute, AttributeModifier> attributeModifiers = type.getDefaultAttributeModifiers(equipmentSlot);
-
-                        attributeModifiers.forEach(meta::addAttributeModifier);
-                    }
-
-                    modifiersAdded = true;
+                if (itemFlag == ItemFlag.HIDE_ATTRIBUTES) {
+                    // I don't like the solution due to the loss of the original attributes,
+                    // however ItemGetters are used only for GUIs so it's not a real loss.
+                    meta.setAttributeModifiers(ImmutableMultimap.of());
                 }
 
                 meta.addItemFlags(itemFlag);
