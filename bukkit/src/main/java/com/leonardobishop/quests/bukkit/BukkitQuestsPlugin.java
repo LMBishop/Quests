@@ -64,6 +64,7 @@ import com.leonardobishop.quests.bukkit.storage.ModernYAMLStorageProvider;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskTypeManager;
 import com.leonardobishop.quests.bukkit.tasktype.type.BarteringTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BlockItemdroppingTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.BlockfertilizingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BlockshearingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BreedingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BrewingTaskType;
@@ -164,7 +165,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -466,6 +466,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             // Register task types with class/method compatibility requirement
             taskTypeManager.registerTaskType(() -> new BarteringTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.entity.PiglinBarterEvent"));
             taskTypeManager.registerTaskType(() -> new BlockItemdroppingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.block.BlockDropItemEvent"));
+            taskTypeManager.registerTaskType(() -> new BlockfertilizingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.block.BlockFertilizeEvent"));
             taskTypeManager.registerTaskType(() -> new BlockshearingTaskType(this), () -> CompatUtils.classExists("io.papermc.paper.event.block.PlayerShearBlockEvent"));
             taskTypeManager.registerTaskType(() -> new BrewingTaskType(this), () -> CompatUtils.classWithMethodExists("org.bukkit.event.inventory.BrewEvent", "getResults"));
             taskTypeManager.registerTaskType(() -> new BucketEntityTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.player.PlayerBucketEntityEvent"));
