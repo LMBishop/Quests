@@ -165,8 +165,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -179,8 +181,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.function.BiFunction;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
@@ -981,5 +985,48 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @Override
     public boolean isPrimaryThread() {
         return Bukkit.isPrimaryThread();
+    }
+
+    private final WeakHashMap<Player, Pattern> playerPatternMap = new WeakHashMap<>();
+
+    /**
+     * Applies {player} internal placeholder (using cache for patterns) and PAPI placeholders
+     * for the player while respecting the plugin config.
+     *
+     * @param type type of config option
+     * @param player the player to apply placeholders for
+     * @param str string to apply placeholders in
+     * @return string with all the placeholders applied
+     */
+    @Contract(value = "_, _, null -> null; _, _, !null -> !null")
+    public @org.jspecify.annotations.Nullable String applyPlayerAndPAPI(final @NonNull PAPIType type, final @org.jspecify.annotations.Nullable Player player, @org.jspecify.annotations.Nullable String str) {
+        if (str == null) {
+            return null;
+        }
+
+        // Handle internal {player} replacement
+        if (player != null) {
+            final Pattern pattern = this.playerPatternMap.computeIfAbsent(player, key -> Pattern.compile('{' + key.getName() + '}', Pattern.LITERAL));
+            str = pattern.matcher(str).replaceAll(player.getName());
+        }
+
+        // Handle PlaceholderAPI placeholders
+        if (this.getConfig().getBoolean(type.configKey)) {
+            return this.placeholderAPIProcessor.apply(player, str);
+        } else {
+            return str;
+        }
+    }
+
+    public enum PAPIType {
+        GUI("options.gui-use-placeholderapi"),
+        PROGRESS("options.progress-use-placeholderapi"),
+        QUESTS("options.quests-use-placeholderapi");
+
+        private final String configKey;
+
+        PAPIType(final String configKey) {
+            this.configKey = configKey;
+        }
     }
 }

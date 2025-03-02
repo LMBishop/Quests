@@ -13,6 +13,10 @@ public class PlaceholderAPIHook implements AbstractPlaceholderAPIHook {
             return null;
         }
 
+        if (text.indexOf('%') == -1) {
+            return text;
+        }
+
         return PlaceholderAPI.setPlaceholders(player, text);
     }
 
