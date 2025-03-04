@@ -987,11 +987,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         return Bukkit.isPrimaryThread();
     }
 
-    private final WeakHashMap<Player, Pattern> playerPatternMap = new WeakHashMap<>();
+    private static final Pattern PLAYER_PATTERN = Pattern.compile("\\{player}");
 
     /**
-     * Applies {player} internal placeholder (using cache for patterns) and PAPI placeholders
-     * for the player while respecting the plugin config.
+     * Applies {player} internal placeholder and PAPI placeholders for the player while respecting the plugin config.
      *
      * @param type type of config option
      * @param player the player to apply placeholders for
@@ -1006,8 +1005,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
         // Handle internal {player} replacement
         if (player != null) {
-            final Pattern pattern = this.playerPatternMap.computeIfAbsent(player, key -> Pattern.compile('{' + key.getName() + '}', Pattern.LITERAL));
-            str = pattern.matcher(str).replaceAll(player.getName());
+            str = PLAYER_PATTERN.matcher(str).replaceAll(player.getName());
         }
 
         // Handle PlaceholderAPI placeholders
