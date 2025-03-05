@@ -30,7 +30,7 @@ public class QuestQMenu extends PaginatedQMenu {
         this.categoryName = categoryName;
 
         BackMenuElement backMenuElement = categoryQMenu != null
-                ? new BackMenuElement(config, owner.getPlayerUUID(), plugin.getMenuController(), categoryQMenu)
+                ? new BackMenuElement(plugin, owner.getPlayerUUID(), plugin.getMenuController(), categoryQMenu)
                 : null;
 
         List<MenuElement> filteredQuests = new ArrayList<>();

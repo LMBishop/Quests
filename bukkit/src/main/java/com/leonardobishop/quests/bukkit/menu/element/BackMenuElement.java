@@ -1,9 +1,11 @@
 package com.leonardobishop.quests.bukkit.menu.element;
 
+import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.menu.ClickResult;
 import com.leonardobishop.quests.bukkit.menu.MenuController;
 import com.leonardobishop.quests.bukkit.menu.QMenu;
+import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,13 +16,13 @@ import java.util.UUID;
  */
 public class BackMenuElement extends MenuElement {
 
-    private final BukkitQuestsConfig config;
+    private final BukkitQuestsPlugin plugin;
     private final UUID player;
     private final MenuController controller;
     private final QMenu previousMenu;
 
-    public BackMenuElement(BukkitQuestsConfig config, UUID player, MenuController controller, QMenu previousMenu) {
-        this.config = config;
+    public BackMenuElement(BukkitQuestsPlugin plugin, UUID player, MenuController controller, QMenu previousMenu) {
+        this.plugin = plugin;
         this.player = player;
         this.controller = controller;
         this.previousMenu = previousMenu;
@@ -28,7 +30,7 @@ public class BackMenuElement extends MenuElement {
 
     @Override
     public ItemStack asItemStack() {
-        return config.getItem("gui.back-button");
+        return MenuUtils.applyPlaceholders(plugin, player, ((BukkitQuestsConfig) plugin.getQuestsConfig()).getItem("gui.back-button"));
     }
 
     @Override
@@ -38,11 +40,11 @@ public class BackMenuElement extends MenuElement {
     }
     
     public int getSlot() {
-        return config.getInt("gui.back-button.slot", 45);
+        return plugin.getQuestsConfig().getInt("gui.back-button.slot", 45);
     }
     
     @Override
     public boolean isEnabled() {
-        return config.getBoolean("gui.back-button.enabled", true);
+        return plugin.getQuestsConfig().getBoolean("gui.back-button.enabled", true);
     }
 }
