@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.menu.ClickResult;
 import com.leonardobishop.quests.bukkit.menu.QMenu;
+import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.quest.Quest;
 import org.bukkit.event.inventory.ClickType;
@@ -25,7 +26,7 @@ public class ConfirmCancelMenuElement extends MenuElement {
 
     @Override
     public ItemStack asItemStack() {
-        return ((BukkitQuestsConfig) plugin.getQuestsConfig()).getItem("gui.quest-cancel-yes");
+        return MenuUtils.applyPlaceholders(plugin, owner.getPlayerUUID(), ((BukkitQuestsConfig) plugin.getQuestsConfig()).getItem("gui.quest-cancel-yes"));
     }
 
     @Override
