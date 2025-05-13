@@ -4,9 +4,10 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFi
 import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.questcontroller.QuestController;
 import com.leonardobishop.quests.common.storage.StorageProvider;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.leonardobishop.quests.common.util.Modern;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -20,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * The QPlayerManager is responsible for keeping a reference to all players on the server and is used to
  * obtain an instance of a player, load new players and save current players.
  */
+@Modern(type = Modern.Type.FULL)
+@NullMarked
 public final class QPlayerManager {
 
     private final Quests plugin;
@@ -27,7 +30,7 @@ public final class QPlayerManager {
     private final Map<UUID, QPlayer> qPlayerMap;
     private QuestController activeQuestController;
 
-    public QPlayerManager(final @NotNull Quests plugin, final @NotNull StorageProvider storageProvider, final @NotNull QuestController questController) {
+    public QPlayerManager(final Quests plugin, final StorageProvider storageProvider, final QuestController questController) {
         this.plugin = Objects.requireNonNull(plugin, "plugin cannot be null");
         this.storageProvider = Objects.requireNonNull(storageProvider, "storageProvider cannot be null");
         this.activeQuestController = Objects.requireNonNull(questController, "questController cannot be null");
@@ -40,7 +43,7 @@ public final class QPlayerManager {
      * @param uuid the uuid
      * @return {@link QPlayer} if they are loaded, otherwise null
      */
-    public @Nullable QPlayer getPlayer(final @NotNull UUID uuid) {
+    public @Nullable QPlayer getPlayer(final UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
 //        QPlayer qPlayer = qPlayers.get(uuid);
@@ -58,7 +61,7 @@ public final class QPlayerManager {
      *
      * @param uuid the uuid of the player
      */
-    public void removePlayer(final @NotNull UUID uuid) {
+    public void removePlayer(final UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
         this.plugin.getQuestsLogger().debug("Unloading and saving player " + uuid + "...");
@@ -73,7 +76,7 @@ public final class QPlayerManager {
      * @param uuid the uuid of the player
      * @return completable future
      */
-    public @NotNull CompletableFuture<Void> savePlayer(final @NotNull UUID uuid) {
+    public CompletableFuture<@Nullable Void> savePlayer(final UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
         final QPlayer qPlayer = this.getPlayer(uuid);
@@ -88,10 +91,10 @@ public final class QPlayerManager {
      * Schedules a save for the player with a specified {@link QuestProgressFile}. The modified status of the
      * specified progress file will be reset.
      */
-    public @NotNull CompletableFuture<Void> savePlayer(final @NotNull QPlayerData playerData) {
+    public CompletableFuture<@Nullable Void> savePlayer(final QPlayerData playerData) {
         Objects.requireNonNull(playerData, "playerData cannot be null");
 
-        final CompletableFuture<Void> future = new CompletableFuture<>();
+        final CompletableFuture<@Nullable Void> future = new CompletableFuture<>();
         final QPlayerData clonedPlayerData = new QPlayerData(playerData);
         playerData.setModified(false);
 
@@ -109,7 +112,7 @@ public final class QPlayerManager {
      *
      * @param uuid the uuid of the player
      */
-    public void savePlayerSync(final @NotNull UUID uuid) {
+    public void savePlayerSync(final UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
         final QPlayer qPlayer = this.getPlayer(uuid);
@@ -124,11 +127,11 @@ public final class QPlayerManager {
      * Immediately saves the player with a specified {@link QuestProgressFile}, on the same thread. The modified status
      * of the specified progress file is not changed.
      */
-    public void savePlayerSync(final @NotNull QPlayerData playerData) {
+    public void savePlayerSync(final QPlayerData playerData) {
         this.save(playerData);
     }
 
-    private void save(@NotNull QPlayerData playerData) {
+    private void save(final QPlayerData playerData) {
         Objects.requireNonNull(playerData, "playerData cannot be null");
 
         final String uuidString = playerData.playerUUID().toString();
@@ -146,7 +149,7 @@ public final class QPlayerManager {
      *
      * @param uuid the uuid of the player
      */
-    public void dropPlayer(final @NotNull UUID uuid) {
+    public void dropPlayer(final UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
         this.plugin.getQuestsLogger().debug("Dropping player " + uuid + ".");
@@ -158,8 +161,7 @@ public final class QPlayerManager {
      *
      * @return immutable collection of quest players
      */
-    @UnmodifiableView
-    public @NotNull Collection<QPlayer> getQPlayers() {
+    public @UnmodifiableView Collection<QPlayer> getQPlayers() {
         return Collections.unmodifiableCollection(this.qPlayerMap.values());
     }
 
@@ -170,12 +172,12 @@ public final class QPlayerManager {
      * @param uuid the uuid of the player
      * @return completable future with the loaded player, or null if there was an error
      */
-    public @NotNull CompletableFuture<QPlayer> loadPlayer(final @NotNull UUID uuid) {
+    public CompletableFuture<@Nullable QPlayer> loadPlayer(final UUID uuid) {
         Objects.requireNonNull(uuid, "uuid cannot be null");
 
         final String uuidString = uuid.toString();
         this.plugin.getQuestsLogger().debug("Loading player " + uuidString + "...");
-        final CompletableFuture<QPlayer> future = new CompletableFuture<>();
+        final CompletableFuture<@Nullable QPlayer> future = new CompletableFuture<>();
 
         this.plugin.getScheduler().doAsync(() -> {
             final QPlayerData playerData = this.storageProvider.loadPlayerData(uuid);
@@ -201,15 +203,15 @@ public final class QPlayerManager {
      *
      * @return {@link StorageProvider}
      */
-    public @NotNull StorageProvider getStorageProvider() {
+    public StorageProvider getStorageProvider() {
         return this.storageProvider;
     }
 
-    public @NotNull QuestController getActiveQuestController() {
+    public QuestController getActiveQuestController() {
         return this.activeQuestController;
     }
 
-    public void setActiveQuestController(final @NotNull QuestController activeQuestController) {
+    public void setActiveQuestController(final QuestController activeQuestController) {
         this.activeQuestController = Objects.requireNonNull(activeQuestController, "activeQuestController cannot be null");
 
         for (final QPlayer qPlayer : this.qPlayerMap.values()) {

@@ -1,60 +1,70 @@
 package com.leonardobishop.quests.common.quest;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.leonardobishop.quests.common.util.Modern;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.UnmodifiableView;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Task {
+@Modern(type = Modern.Type.FULL)
+@NullMarked
+public final class Task {
 
-    private final Map<String, Object> configValues = new HashMap<>();
     private final String id;
     private final String type;
+    private final Map<String, Object> configValues;
 
-    public Task(String id, String type) {
+    public Task(final String id, final String type) {
         this.id = id;
         this.type = type;
+        this.configValues = new HashMap<>();
     }
 
     /**
-     * @return the id of this task
+     * @return the id of the task
      */
-    public @NotNull String getId() {
-        return id;
+    @Contract(pure = true)
+    public String getId() {
+        return this.id;
     }
 
     /**
      * @return the configured task type for this task
      */
-    public @NotNull String getType() {
-        return type;
+    @Contract(pure = true)
+    public String getType() {
+        return this.type;
     }
 
     /**
      * Check if a config value is set for this task
      *
-     * @param key key of config value to check
-     * @return whether it exists
+     * @param key key of the config value to check
+     * @return whether the specified key exists
      */
-    public boolean hasConfigKey(@NotNull String key) {
+    @Contract(pure = true)
+    public boolean hasConfigKey(final String key) {
         Objects.requireNonNull(key, "key cannot be null");
 
-        return configValues.containsKey(key);
+        return this.configValues.containsKey(key);
     }
 
     /**
      * Get a specific configuration value for this task
      *
-     * @param key key of config value to get
+     * @param key key of the config value to get
      * @return config value, or null
      */
-    public @Nullable Object getConfigValue(@NotNull String key) {
+    @Contract(pure = true)
+    public @Nullable Object getConfigValue(final String key) {
         Objects.requireNonNull(key, "key cannot be null");
 
-        return configValues.getOrDefault(key, null); //??? this will return null without the need of `OrDefault(key, null)`
+        return this.configValues.get(key);
     }
 
     /**
@@ -62,32 +72,34 @@ public class Task {
      *
      * @param key key of config value to get
      * @param def default value if null
-     * @return config value, or null
+     * @return config value, or default
      */
-    public @Nullable Object getConfigValue(@NotNull String key, @Nullable Object def) {
+    @Contract(pure = true)
+    public Object getConfigValue(final String key, final Object def) {
         Objects.requireNonNull(key, "key cannot be null");
+        Objects.requireNonNull(def, "def cannot be null");
 
-        return configValues.getOrDefault(key, def);
+        return this.configValues.getOrDefault(key, def);
     }
 
     /**
-     * @return immutable list containing all config values
+     * @return immutable map of the config values
      */
-    public @NotNull Map<String, Object> getConfigValues() {
-        return Collections.unmodifiableMap(configValues);
+    @Contract(pure = true)
+    public @UnmodifiableView Map<String, Object> getConfigValues() {
+        return Collections.unmodifiableMap(this.configValues);
     }
 
     /**
      * Add a key-value pair to this tasks configuration
      *
-     * @param key key
+     * @param key   key
      * @param value value
      */
-    public void addConfigValue(@NotNull String key, @NotNull Object value) {
+    public void addConfigValue(final String key, final Object value) {
         Objects.requireNonNull(key, "key cannot be null");
         Objects.requireNonNull(value, "value cannot be null");
 
-        configValues.put(key, value);
+        this.configValues.put(key, value);
     }
-
 }

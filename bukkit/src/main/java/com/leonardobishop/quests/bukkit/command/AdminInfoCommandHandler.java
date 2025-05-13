@@ -25,16 +25,16 @@ public class AdminInfoCommandHandler implements CommandHandler {
         if (args.length == 2) {
             sender.sendMessage(ChatColor.GRAY + "Loaded quests:");
             int i = 0;
-            for (Quest quest : plugin.getQuestManager().getQuests().values()) {
+            for (Quest quest : plugin.getQuestManager().getQuestMap().values()) {
                 sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + quest.getId() + ChatColor.GRAY + " [" + quest.getTasks().size() + " tasks]");
                 i++;
-                if (i == 25 && plugin.getQuestManager().getQuests().size() > 25) {
-                    sender.sendMessage(ChatColor.DARK_GRAY + " ... and " + (plugin.getQuestManager().getQuests().size() - 25) + " more ...");
+                if (i == 25 && plugin.getQuestManager().getQuestMap().size() > 25) {
+                    sender.sendMessage(ChatColor.DARK_GRAY + " ... and " + (plugin.getQuestManager().getQuestMap().size() - 25) + " more ...");
                     break;
                 }
             }
             sender.sendMessage(ChatColor.GRAY + "Quest controller: " + ChatColor.RED + plugin.getQuestController().getName());
-            sender.sendMessage(ChatColor.GRAY.toString() + plugin.getQuestManager().getQuests().size() + " registered.");
+            sender.sendMessage(ChatColor.GRAY.toString() + plugin.getQuestManager().getQuestMap().size() + " registered.");
             sender.sendMessage(ChatColor.DARK_GRAY + "View info using /q a info [quest].");
         } else {
             Quest quest = plugin.getQuestManager().getQuestById(args[2]);

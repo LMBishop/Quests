@@ -3,113 +3,93 @@ package com.leonardobishop.quests.common.tasktype;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.leonardobishop.quests.common.util.Modern;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.UnmodifiableView;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 /**
- * A task type which can be used within Quests. A {@link Quest}
- * will be registered to this if it contains at least 1 task
- * which is of this type. This is so you do not have to
- * iterate through every single quest.
+ * Represents a type of task that can be used within quests. A {@link Quest}
+ * will be associated with this task type if it contains at least one task
+ * of this type, allowing for efficient quest management without the need
+ * to iterate through every single quest.
  */
+@Modern(type = Modern.Type.FULL)
+@NullMarked
 public abstract class TaskType {
 
     protected final String type;
-    private final String author;
-    private final String description;
-    private final Set<String> aliases;
-    private final Set<Quest> quests;
-    private final Set<ConfigValidator> configValidators;
+    private final @Nullable String author;
+    private final @Nullable String description;
+    private final List<String> aliases;
+    private final List<ConfigValidator> configValidators;
+    private final List<Quest> quests;
 
     /**
-     * Constructs a TaskType.
+     * Constructs a new TaskType with the specified parameters.
      *
-     * @param type the name of the task type, should not contain spaces
-     * @param author the name of the person (or people) who wrote it
-     * @param description a short, simple description of the task type
-     * @param aliases the aliases of the task type, should not contain spaces
+     * @param type        the name of the task type; must not contain spaces
+     * @param author      the name of the person (or people) who created this task type; can be null
+     * @param description a short description of the task type; can be null
+     * @param aliases     an array of alternative names for this task type; must not be null
      */
-    public TaskType(final @NotNull String type, final @Nullable String author, final @Nullable String description, final @NotNull String @NotNull ... aliases) {
+    public TaskType(final String type, final @Nullable String author, final @Nullable String description, final String... aliases) {
         Objects.requireNonNull(type, "type cannot be null");
         Objects.requireNonNull(aliases, "aliases cannot be null");
 
         this.type = type;
         this.author = author;
         this.description = description;
-        this.aliases = Set.of(aliases);
-        this.quests = new HashSet<>();
-        this.configValidators = new HashSet<>();
+        this.aliases = List.of(aliases);
+        this.configValidators = new ArrayList<>();
+        this.quests = new ArrayList<>();
     }
 
     /**
-     * Constructs a TaskType with the specified type, author, and description.
+     * Constructs a new TaskType with the specified type, author, and description.
      *
-     * @param type the name of the task type, should not contain spaces
-     * @param author the name of the person (or people) who wrote it
-     * @param description a short, simple description of the task type
+     * @param type        the name of the task type; must not contain spaces
+     * @param author      the name of the person (or people) who created this task type; can be null
+     * @param description a short description of the task type; can be null
      */
-    public TaskType(final @NotNull String type, final @Nullable String author, final @Nullable String description) {
+    public TaskType(final String type, final @Nullable String author, final @Nullable String description) {
         this(type, author, description, new String[0]);
     }
 
     /**
-     * Constructs a TaskType with the specified type.
+     * Constructs a new TaskType with the specified type.
      *
-     * @param type the name of the task type, should not contain spaces
+     * @param type the name of the task type; must not contain spaces
      */
-    public TaskType(final @NotNull String type) {
+    public TaskType(final String type) {
         this(type, null, null);
     }
 
     /**
-     * Registers a {@link Quest} to this task type. This is usually done when
-     * all the quests are initially loaded.
+     * Returns the name of this task type.
      *
-     * @param quest the {@link Quest} to register.
+     * @return the task type name
      */
-    public final void registerQuest(final @NotNull Quest quest) {
-        Objects.requireNonNull(quest, "quest cannot be null");
-
-        this.quests.add(quest);
-    }
-
-    /**
-     * Clears the set which contains the registered quests.
-     */
-    protected final void unregisterAll() {
-        this.quests.clear();
-    }
-
-    /**
-     * Returns an immutable set of all registered quests.
-     *
-     * @return immutable {@link Set} of type {@link Quest} of all registered quests.
-     */
-    public final @NotNull Set<Quest> getRegisteredQuests() {
-        return Collections.unmodifiableSet(this.quests);
-    }
-
-    /**
-     * Returns the type of this task type.
-     *
-     * @return the type of this task type
-     */
-    public final @NotNull String getType() {
+    @Contract(pure = true)
+    public final String getType() {
         return this.type;
     }
 
     /**
      * Returns the author of this task type.
      *
-     * @return the author of this task type, or null if not specified
+     * @return the author's name, or null if not specified
      */
+    @Contract(pure = true)
     public final @Nullable String getAuthor() {
         return this.author;
     }
@@ -117,79 +97,114 @@ public abstract class TaskType {
     /**
      * Returns the description of this task type.
      *
-     * @return the description of this task type, or null if not specified
+     * @return the description, or null if not specified
      */
+    @Contract(pure = true)
     public final @Nullable String getDescription() {
         return this.description;
     }
 
     /**
-     * Returns the aliases of this task type.
+     * Returns an unmodifiable list of aliases for this task type.
      *
-     * @return a set of aliases of this task type
+     * @return an unmodifiable list of aliases
      */
-    public final @NotNull Set<String> getAliases() {
+    @Contract(pure = true)
+    public final @Unmodifiable List<String> getAliases() {
         return this.aliases;
     }
 
     /**
-     * Called when Quests has finished registering all quests to the task type.
-     * May be called several times if an operator uses /quests admin reload.
-     */
-    public void onReady() {
-        // not implemented here
-    }
-
-    /**
-     * Called when a player starts a quest containing a task of this type.
+     * Returns an unmodifiable view of the list of configuration validators for this task type.
      *
-     * @param quest the quest containing the task
-     * @param task the task being started
-     * @param playerUUID the UUID of the player starting the task
+     * @return an unmodifiable view of the configuration validators
      */
-    public void onStart(final @NotNull Quest quest, final @NotNull Task task, final @NotNull UUID playerUUID) {
-        // not implemented here
+    @Contract(pure = true)
+    public @UnmodifiableView List<ConfigValidator> getConfigValidators() {
+        return Collections.unmodifiableList(this.configValidators);
     }
 
     /**
-     * Called when a task type is disabled.
-     */
-    public void onDisable() {
-        // not implemented here
-    }
-
-    /**
-     * Adds a config validator to this task type.
+     * Adds a configuration validator to this task type.
      *
-     * @param validator the config validator to add
+     * @param validator the configuration validator to add; must not be null
      */
-    public void addConfigValidator(final @NotNull ConfigValidator validator) {
+    public void addConfigValidator(final ConfigValidator validator) {
         Objects.requireNonNull(validator, "validator cannot be null");
 
         this.configValidators.add(validator);
     }
 
     /**
-     * Returns an immutable set of config validators.
+     * Returns an unmodifiable list of all registered quests for this task type.
      *
-     * @return an immutable set of config validators
+     * @return an unmodifiable list of registered quests
      */
-    public @NotNull Set<ConfigValidator> getConfigValidators() {
-        return Collections.unmodifiableSet(this.configValidators);
+    @Contract(pure = true)
+    public final @UnmodifiableView List<Quest> getRegisteredQuests() {
+        return Collections.unmodifiableList(this.quests);
     }
 
     /**
-     * A functional interface for config validation.
+     * Registers a quest to this task type. This is typically done when
+     * all quests are initially loaded.
+     *
+     * @param quest the quest to register; must not be null
+     */
+    public final void registerQuest(final Quest quest) {
+        Objects.requireNonNull(quest, "quest cannot be null");
+
+        if (!this.quests.contains(quest)) {
+            this.quests.add(quest);
+        }
+    }
+
+    /**
+     * Clears all registered quests from this task type.
+     */
+    public final void unregisterAll() {
+        this.quests.clear();
+    }
+
+    /**
+     * Called when all quests have been registered to this task type.
+     * This method may be called multiple times if an operator uses
+     * the /quests admin reload command.
+     */
+    public void onReady() {
+        // Not implemented here
+    }
+
+    /**
+     * Called when a player starts a quest that contains a task of this type.
+     *
+     * @param quest      the quest being started
+     * @param task       the task being started
+     * @param playerUUID the UUID of the player starting the quest
+     */
+    public void onStart(final Quest quest, final Task task, final UUID playerUUID) {
+        // Not implemented here
+    }
+
+    /**
+     * Called when this task type is disabled.
+     */
+    public void onDisable() {
+        // Not implemented here
+    }
+
+    /**
+     * A functional interface for validating task configuration.
      */
     @FunctionalInterface
     public interface ConfigValidator {
 
         /**
-         * Validates the configuration of a task.
+         * Validates the configuration for a task.
          *
-         * @param taskConfig the configuration of the task
-         * @param problems the set of problems to report validation issues
+         * @param taskConfig the configuration map for the task
+         * @param problems   a list to collect any configuration problems found
          */
-        void validateConfig(final @NotNull Map<String, Object> taskConfig, final @NotNull Set<ConfigProblem> problems);
+        void validateConfig(Map<String, Object> taskConfig, List<ConfigProblem> problems);
     }
 }

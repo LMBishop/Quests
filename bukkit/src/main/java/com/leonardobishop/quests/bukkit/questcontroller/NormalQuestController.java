@@ -18,7 +18,9 @@ import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
+import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
+import com.leonardobishop.quests.common.quest.Category;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import com.leonardobishop.quests.common.questcontroller.QuestController;
@@ -49,7 +51,7 @@ public class NormalQuestController implements QuestController {
         this.config = (BukkitQuestsConfig) plugin.getQuestsConfig();
 
         List<Quest> autoStartQuestCache = new ArrayList<>();
-        for (Quest quest : plugin.getQuestManager().getQuests().values()) {
+        for (Quest quest : plugin.getQuestManager().getQuestMap().values()) {
             if (quest.isAutoStartEnabled()) autoStartQuestCache.add(quest);
         }
         this.autoStartQuestCache = autoStartQuestCache;
@@ -112,7 +114,7 @@ public class NormalQuestController implements QuestController {
             QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
             questProgress.setStarted(true);
             questProgress.setStartedDate(System.currentTimeMillis());
-            for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
+            for (TaskProgress taskProgress : questProgress.getTaskProgresses()) {
                 taskProgress.setCompleted(false);
                 taskProgress.setProgress(null);
             }
@@ -156,58 +158,74 @@ public class NormalQuestController implements QuestController {
     }
 
     @Override
-    public QuestStartResult canPlayerStartQuest(QPlayer qPlayer, Quest quest) {
-        Player p = Bukkit.getPlayer(qPlayer.getPlayerUUID());
-        QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
-        if (!quest.isRepeatable() && questProgress.isCompletedBefore()) {
-            //if (playerUUID != null) {
-            // ???
-            //}
-            return QuestStartResult.QUEST_ALREADY_COMPLETED;
-        }
-        long cooldown = qPlayer.getQuestProgressFile().getCooldownFor(quest);
-        if (cooldown > 0) {
-            return QuestStartResult.QUEST_COOLDOWN;
-        }
-        if (!qPlayer.getQuestProgressFile().hasMetRequirements(quest)) {
-            return QuestStartResult.QUEST_LOCKED;
-        }
-        if (quest.isPermissionRequired()) {
-            if (p != null) {
-                if (!p.hasPermission("quests.quest." + quest.getId())) {
-                    return QuestStartResult.QUEST_NO_PERMISSION;
-                }
-            } else {
-                return QuestStartResult.QUEST_NO_PERMISSION;
+    public @NotNull QuestStartResult canPlayerStartQuest(final @NotNull QPlayer qPlayer, final @NotNull Quest quest) {
+        final QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+        final QuestProgress questProgress = questProgressFile.getQuestProgressOrNull(quest);
+
+        if (questProgress != null) {
+            if (!quest.isRepeatable() && questProgress.isCompleted()) {
+                // if (playerUUID != null) {
+                //     ???
+                // }
+
+                return QuestStartResult.QUEST_ALREADY_COMPLETED;
             }
-        }
-        if (quest.getCategoryId() != null && plugin.getQuestManager().getCategoryById(quest.getCategoryId()) != null && plugin.getQuestManager()
-                .getCategoryById(quest.getCategoryId()).isPermissionRequired()) {
-            if (p != null) {
-                if (!p.hasPermission("quests.category." + quest.getCategoryId())) {
-                    return QuestStartResult.NO_PERMISSION_FOR_CATEGORY;
-                }
-            } else {
-                return QuestStartResult.NO_PERMISSION_FOR_CATEGORY;
+
+            final long cooldown = questProgressFile.getCooldownFor(quest);
+
+            if (cooldown > 0) {
+                return QuestStartResult.QUEST_COOLDOWN;
             }
         }
 
-        boolean autostart = this.config.getBoolean("options.quest-autostart");
-        if (questProgress.isStarted() || quest.isAutoStartEnabled() || autostart) {
+        if (!questProgressFile.hasMetRequirements(quest)) {
+            return QuestStartResult.QUEST_LOCKED;
+        }
+
+        final Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
+        final String questPermission = quest.getPermission();
+
+        if (questPermission != null && (player == null || !player.hasPermission(questPermission))) {
+            return QuestStartResult.QUEST_NO_PERMISSION;
+        }
+
+        final String categoryId = quest.getCategoryId();
+
+        if (categoryId != null) {
+            final Category category = this.plugin.getQuestManager().getCategoryById(categoryId);
+
+            if (category != null) {
+                final String categoryPermission = category.getPermission();
+
+                if (categoryPermission != null && (player == null || !player.hasPermission(categoryPermission))) {
+                    return QuestStartResult.NO_PERMISSION_FOR_CATEGORY;
+                }
+            }
+        }
+
+        final boolean autostart = this.config.getBoolean("options.quest-autostart");
+
+        if (autostart) {
             return QuestStartResult.QUEST_ALREADY_STARTED;
         }
 
         if (quest.doesCountTowardsLimit()) {
-            Set<Quest> startedQuests = getStartedQuestsForPlayer(qPlayer);
+            final Set<Quest> startedQuests = this.getStartedQuestsForPlayer(qPlayer);
             int questLimitCount = 0;
-            for (Quest q : startedQuests) {
-                if (q.doesCountTowardsLimit()) {
+
+            for (final Quest startedQuest : startedQuests) {
+                if (startedQuest.doesCountTowardsLimit()) {
                     questLimitCount++;
                 }
             }
-            if (questLimitCount >= config.getQuestLimit(p)) {
+
+            if (questLimitCount >= this.config.getQuestLimit(player)) {
                 return QuestStartResult.QUEST_LIMIT_REACHED;
             }
+        }
+
+        if (questProgress != null && questProgress.isStarted() || quest.isAutoStartEnabled()) {
+            return QuestStartResult.QUEST_ALREADY_STARTED;
         }
 
         return QuestStartResult.QUEST_SUCCESS;
@@ -218,7 +236,7 @@ public class NormalQuestController implements QuestController {
         QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
         questProgress.setStarted(false);
         questProgress.setStartedDate(System.currentTimeMillis());
-        for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
+        for (TaskProgress taskProgress : questProgress.getTaskProgresses()) {
             taskProgress.setCompleted(false);
             taskProgress.setProgress(null);
         }
@@ -275,7 +293,7 @@ public class NormalQuestController implements QuestController {
     private void resetQuest(QuestProgress questProgress) {
         questProgress.setStarted(false);
         questProgress.setStartedDate(System.currentTimeMillis());
-        for (TaskProgress taskProgress : questProgress.getTaskProgress()) {
+        for (TaskProgress taskProgress : questProgress.getTaskProgresses()) {
             taskProgress.setCompleted(false);
             taskProgress.setProgress(null);
         }
@@ -405,7 +423,7 @@ public class NormalQuestController implements QuestController {
     private Set<Quest> getStartedQuestsForPlayer(QPlayer qPlayer) {
         Set<Quest> startedQuests = new HashSet<>();
         if (config.getBoolean("options.quest-autostart")) {
-            for (Quest quest : plugin.getQuestManager().getQuests().values()) {
+            for (Quest quest : plugin.getQuestManager().getQuestMap().values()) {
                 QuestStartResult response = canPlayerStartQuest(qPlayer, quest);
                 if (response == QuestStartResult.QUEST_SUCCESS || response == QuestStartResult.QUEST_ALREADY_STARTED) {
                     startedQuests.add(quest);

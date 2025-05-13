@@ -63,7 +63,7 @@ farmingmultiple:
   amount: 10                            # amount of blocks to be placed
   blocks:                               # name of blocks which will count towards progress
    - WHEAT
-   - BEETROOT                           
+   - BEETROOTS                          
   worlds:                               # (OPTIONAL) restrict to certain worlds
    - "world"
 ```

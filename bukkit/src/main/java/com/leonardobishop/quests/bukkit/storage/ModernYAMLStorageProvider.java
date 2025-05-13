@@ -193,7 +193,7 @@ public final class ModernYAMLStorageProvider implements StorageProvider {
                 data.set("quest-progress." + questId + ".completed-before", questProgress.isCompletedBefore());
                 data.set("quest-progress." + questId + ".completion-date", questProgress.getCompletionDate());
 
-                for (final TaskProgress taskProgress : questProgress.getAllTaskProgress()) {
+                for (final TaskProgress taskProgress : questProgress.getTaskProgresses()) {
                     final String taskId = taskProgress.getTaskId();
 
                     data.set("quest-progress." + questId + ".task-progress." + taskId + ".completed", taskProgress.isCompleted());

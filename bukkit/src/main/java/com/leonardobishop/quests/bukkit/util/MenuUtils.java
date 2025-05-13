@@ -75,7 +75,7 @@ public class MenuUtils {
             plugin.getMenuController().openMenu(player, categoryQMenu);
         } else {
             List<Quest> quests = new ArrayList<>();
-            for (Map.Entry<String, Quest> entry : plugin.getQuestManager().getQuests().entrySet()) {
+            for (Map.Entry<String, Quest> entry : plugin.getQuestManager().getQuestMap().entrySet()) {
                 quests.add(entry.getValue());
             }
             Collections.sort(quests);
@@ -119,7 +119,7 @@ public class MenuUtils {
         }
 
         List<QuestSortWrapper> quests = new ArrayList<>();
-        for (Map.Entry<String, Quest> entry : plugin.getQuestManager().getQuests().entrySet()) {
+        for (Map.Entry<String, Quest> entry : plugin.getQuestManager().getQuestMap().entrySet()) {
             quests.add(new QuestSortWrapper(plugin, entry.getValue()));
         }
         Collections.sort(quests);

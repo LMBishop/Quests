@@ -227,7 +227,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                     configValues.put(key, config.get(taskRoot + "." + key));
                                 }
 
-                                Set<ConfigProblem> taskProblems = new HashSet<>();
+                                List<ConfigProblem> taskProblems = new ArrayList<>();
                                 for (TaskType.ConfigValidator validator : t.getConfigValidators()) {
                                     validator.validateConfig(configValues, taskProblems);
                                 }
@@ -426,7 +426,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
             e.printStackTrace();
         }
 
-        questsLogger.info(questManager.getQuests().size() + " quests have been registered.");
+        questsLogger.info(questManager.getQuestMap().size() + " quests have been registered.");
 
         // post-load checks
         for (Map.Entry<String, Quest> loadedQuest : pathToQuest.entrySet()) {

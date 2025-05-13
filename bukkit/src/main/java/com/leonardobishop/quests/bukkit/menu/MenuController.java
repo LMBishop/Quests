@@ -88,7 +88,7 @@ public class MenuController implements Listener {
 //
 //        StartedQMenu startedQMenu = new StartedQMenu(plugin, qPlayer);
 //        List<QuestSortWrapper> quests = new ArrayList<>();
-//        for (Map.Entry<String, Quest> entry : plugin.getQuestManager().getQuests().entrySet()) {
+//        for (Map.Entry<String, Quest> entry : plugin.getQuestManager().getQuestMap().entrySet()) {
 //            quests.add(new QuestSortWrapper(plugin, entry.getValue()));
 //        }
 //        startedQMenu.populate(quests);

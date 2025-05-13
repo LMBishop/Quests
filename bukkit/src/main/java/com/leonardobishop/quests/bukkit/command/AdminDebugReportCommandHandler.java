@@ -98,12 +98,12 @@ public class AdminDebugReportCommandHandler implements CommandHandler {
             lines.add("");
             printList(lines, 0, "Task types available", plugin.getTaskTypeManager().getTaskTypes(), TaskType::getType);
             lines.add("");
-            printList(lines, 0, "Quests", plugin.getQuestManager().getQuests().values(), Quest::getId);
+            printList(lines, 0, "Quests", plugin.getQuestManager().getQuestMap().values(), Quest::getId);
             lines.add("");
             printList(lines, 0, "Categories", plugin.getQuestManager().getCategories(), Category::getId);
             lines.add("");
             BukkitQuestCompleter completer = (BukkitQuestCompleter) plugin.getQuestCompleter();
-            printList(lines, 0, "Completion queue", completer.getCompletionQueue(), questProgress -> questProgress.getPlayer().toString());
+            printList(lines, 0, "Completion queue", completer.getCompletionQueue(), questProgress -> questProgress.getPlayerUUID().toString());
             lines.add("");
             printList(lines, 0, "Full check queue", completer.getFullCheckQueue(), questProgressFile -> questProgressFile.getPlayerUUID().toString());
             lines.add("");
@@ -181,9 +181,9 @@ public class AdminDebugReportCommandHandler implements CommandHandler {
             lines.add("#            Quests            #");
             lines.add("################################");
             lines.add("");
-            lines.add("Number of quests: " + plugin.getQuestManager().getQuests().size());
+            lines.add("Number of quests: " + plugin.getQuestManager().getQuestMap().size());
             lines.add("");
-            for (Quest quest : plugin.getQuestManager().getQuests().values()) {
+            for (Quest quest : plugin.getQuestManager().getQuestMap().values()) {
                 Map<String, Object> questValues = getFieldValues(quest.getClass(), quest, "tasks", "tasksByType");
                 try {
                     Field tasksField = quest.getClass().getDeclaredField("tasks");

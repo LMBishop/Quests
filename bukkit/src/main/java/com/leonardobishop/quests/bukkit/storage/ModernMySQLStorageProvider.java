@@ -372,7 +372,7 @@ public final class ModernMySQLStorageProvider implements StorageProvider {
                 questStmt.setLong(12, questProgress.getCompletionDate());
                 questStmt.addBatch();
 
-                for (final TaskProgress taskProgress : questProgress.getAllTaskProgress()) {
+                for (final TaskProgress taskProgress : questProgress.getTaskProgresses()) {
                     final String taskId = taskProgress.getTaskId();
 
                     final Object progress = taskProgress.getProgress();
