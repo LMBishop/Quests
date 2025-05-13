@@ -5,10 +5,10 @@ import com.leonardobishop.quests.common.player.questprogressfile.filters.QuestPr
 import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import org.jetbrains.annotations.ApiStatus;
+import com.leonardobishop.quests.common.util.Modern;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Represents underlying quest progress for a player.
  */
+@Modern(type = Modern.Type.FULL)
+@NullMarked
 public final class QuestProgressFile {
 
     // https://github.com/LMBishop/Quests/issues/760
@@ -37,7 +39,7 @@ public final class QuestProgressFile {
      * @param plugin     the plugin instance
      * @param playerUUID the associated player UUID
      */
-    public QuestProgressFile(final @NotNull Quests plugin, final @NotNull UUID playerUUID) {
+    public QuestProgressFile(final Quests plugin, final UUID playerUUID) {
         this.plugin = plugin;
         this.playerUUID = playerUUID;
         this.questProgressMap = new HashMap<>();
@@ -48,13 +50,12 @@ public final class QuestProgressFile {
      *
      * @param questProgressFile the quest progress file instance
      */
-    @ApiStatus.Internal
-    public QuestProgressFile(final @NotNull QuestProgressFile questProgressFile) {
+    public QuestProgressFile(final QuestProgressFile questProgressFile) {
         final Set<Map.Entry<String, QuestProgress>> progressEntries = questProgressFile.questProgressMap.entrySet();
 
         this.plugin = questProgressFile.plugin;
         this.playerUUID = questProgressFile.playerUUID;
-        this.questProgressMap = new HashMap<>(progressEntries.size());
+        this.questProgressMap = HashMap.newHashMap(progressEntries.size());
 
         for (final Map.Entry<String, QuestProgress> progressEntry : progressEntries) {
             this.questProgressMap.put(progressEntry.getKey(), new QuestProgress(progressEntry.getValue()));
@@ -64,7 +65,7 @@ public final class QuestProgressFile {
     /**
      * @param questProgress the quest progress to put into the quest progress map
      */
-    public void addQuestProgress(final @NotNull QuestProgress questProgress) {
+    public void addQuestProgress(final QuestProgress questProgress) {
         // TODO don't do that here
         //if (Options.VERIFY_QUEST_EXISTS_ON_LOAD.getBooleanValue(true) && plugin.getQuestManager().getQuestById(questProgress.getQuestId()) == null) {
         //    return;
@@ -80,7 +81,7 @@ public final class QuestProgressFile {
      * @return list of started quests
      */
     @Contract(pure = true)
-    public @NotNull List<Quest> getStartedQuests() {
+    public List<Quest> getStartedQuests() {
         return this.getAllQuestsFromProgress(QuestProgressFilter.STARTED);
     }
 
@@ -90,7 +91,7 @@ public final class QuestProgressFile {
      * @return list of matching quests
      */
     @Contract(pure = true)
-    public @NotNull List<Quest> getAllQuestsFromProgress(final @NotNull QuestProgressFilter filter) {
+    public List<Quest> getAllQuestsFromProgress(final QuestProgressFilter filter) {
         final List<Quest> quests = new ArrayList<>();
 
         for (final QuestProgress questProgress : this.questProgressMap.values()) {
@@ -112,7 +113,7 @@ public final class QuestProgressFile {
      * @return count of matching quests
      */
     @Contract(pure = true)
-    public int getAllQuestsFromProgressCount(final @NotNull QuestProgressFilter filter) {
+    public int getAllQuestsFromProgressCount(final QuestProgressFilter filter) {
         int count = 0;
 
         for (final QuestProgress questProgress : this.questProgressMap.values()) {
@@ -126,7 +127,8 @@ public final class QuestProgressFile {
         return count;
     }
 
-    private @Nullable Quest getQuestFromProgress(final @NotNull QuestProgressFilter filter, final QuestProgress questProgress) {
+    @Contract(pure = true)
+    private @Nullable Quest getQuestFromProgress(final QuestProgressFilter filter, final QuestProgress questProgress) {
         final boolean matchesProgress = filter.matchesProgress(questProgress);
         if (!matchesProgress) {
             return null;
@@ -151,7 +153,7 @@ public final class QuestProgressFile {
      * @return {@code Collection<QuestProgress>} all quest progresses
      */
     @Contract(pure = true)
-    public @NotNull Collection<QuestProgress> getAllQuestProgress() {
+    public Collection<QuestProgress> getAllQuestProgress() {
         return this.questProgressMap.values();
     }
 
@@ -162,7 +164,7 @@ public final class QuestProgressFile {
      * @return true if they have quest progress
      */
     @Contract(pure = true)
-    public boolean hasQuestProgress(final @NotNull Quest quest) {
+    public boolean hasQuestProgress(final Quest quest) {
         return this.questProgressMap.containsKey(quest.getId());
     }
 
@@ -170,11 +172,11 @@ public final class QuestProgressFile {
      * Gets the remaining cooldown before being able to start a specific quest.
      *
      * @param quest the quest to test for
-     * @return 0 if no cooldown remaining, -1 if the cooldown is disabled or the quest is not completed,
+     * @return {@code 0} if no cooldown remaining, {@code -1} if the cooldown is disabled or the quest is not completed,
      * otherwise the cooldown in milliseconds
      */
     @Contract(pure = true)
-    public long getCooldownFor(final @NotNull Quest quest) {
+    public long getCooldownFor(final Quest quest) {
         if (!quest.isCooldownEnabled()) {
             return -1;
         }
@@ -185,7 +187,7 @@ public final class QuestProgressFile {
         }
 
         final long completionDate = questProgress.getCompletionDate();
-        if (completionDate == 0) {
+        if (completionDate == 0L) {
             return -1;
         }
 
@@ -200,11 +202,11 @@ public final class QuestProgressFile {
      * Gets the time remaining before a quest will have expired.
      *
      * @param quest the quest to test for
-     * @return 0 if no time remaining, -1 if the time limit is disabled or the quest is not started,
+     * @return {@code 0} if no time remaining, {@code -1} if the time limit is disabled or the quest is not started,
      * otherwise the time left in milliseconds
      */
     @Contract(pure = true)
-    public long getTimeRemainingFor(final @NotNull Quest quest) {
+    public long getTimeRemainingFor(final Quest quest) {
         if (!quest.isTimeLimitEnabled()) {
             return -1;
         }
@@ -215,7 +217,7 @@ public final class QuestProgressFile {
         }
 
         final long startedDate = questProgress.getStartedDate();
-        if (startedDate == 0) {
+        if (startedDate == 0L) {
             return -1;
         }
 
@@ -234,7 +236,7 @@ public final class QuestProgressFile {
      */
     // TODO possibly move this
     @Contract(pure = true)
-    public boolean hasMetRequirements(final @NotNull Quest quest) {
+    public boolean hasMetRequirements(final Quest quest) {
         for (final String requiredQuestId : quest.getRequirements()) {
             final QuestProgress requiredQuestProgress = this.questProgressMap.get(requiredQuestId);
             if (requiredQuestProgress == null || !requiredQuestProgress.isCompletedBefore()) {
@@ -259,7 +261,7 @@ public final class QuestProgressFile {
      * @return the associated player UUID
      */
     @Contract(pure = true)
-    public @NotNull UUID getPlayerUUID() {
+    public UUID getPlayerUUID() {
         return this.playerUUID;
     }
 
@@ -269,7 +271,7 @@ public final class QuestProgressFile {
      * @param quest the quest to get the progress for
      * @return {@link QuestProgress} or a blank generated one if the quest does not exist
      */
-    public @NotNull QuestProgress getQuestProgress(final @NotNull Quest quest) {
+    public QuestProgress getQuestProgress(final Quest quest) {
         if (DEBUG_ISSUE_760 && !this.plugin.isPrimaryThread()) {
             //noinspection CallToPrintStackTrace
             new IllegalStateException("async getQuestProgress call").printStackTrace();
@@ -286,7 +288,7 @@ public final class QuestProgressFile {
      * @return {@link QuestProgress} or null if the quest does not exist
      */
     @Contract(pure = true)
-    public @Nullable QuestProgress getQuestProgressOrNull(final @NotNull Quest quest) {
+    public @Nullable QuestProgress getQuestProgressOrNull(final Quest quest) {
         return this.questProgressMap.get(quest.getId());
     }
 
@@ -297,7 +299,7 @@ public final class QuestProgressFile {
      * @return true if player has the quest started
      */
     @Contract(pure = true)
-    public boolean hasQuestStarted(final @NotNull Quest quest) {
+    public boolean hasQuestStarted(final Quest quest) {
         final QuestProgress questProgress = this.getQuestProgressOrNull(quest);
         return questProgress != null && questProgress.isStarted();
     }
@@ -308,7 +310,7 @@ public final class QuestProgressFile {
      * @param quest the quest to generate the progress for
      * @return the generated blank {@link QuestProgress}
      */
-    public @NotNull QuestProgress generateBlankQuestProgress(final @NotNull Quest quest) {
+    public QuestProgress generateBlankQuestProgress(final Quest quest) {
         return this.generateBlankQuestProgress(quest, false);
     }
 
@@ -319,7 +321,7 @@ public final class QuestProgressFile {
      * @param modified the modified state of the quest
      * @return the generated blank {@link QuestProgress}
      */
-    public @NotNull QuestProgress generateBlankQuestProgress(final @NotNull Quest quest, final boolean modified) {
+    public QuestProgress generateBlankQuestProgress(final Quest quest, final boolean modified) {
         final QuestProgress questProgress = new QuestProgress(this.plugin, quest.getId(), this.playerUUID, false, 0L, false, false, 0L, modified);
 
         for (final Task task : quest.getTasks()) {
@@ -420,7 +422,7 @@ public final class QuestProgressFile {
      */
     @Deprecated(forRemoval = true)
     @Contract(pure = true)
-    public @NotNull List<Quest> getAllQuestsFromProgress(final @NotNull QuestsProgressFilter filter) {
+    public List<Quest> getAllQuestsFromProgress(final QuestsProgressFilter filter) {
         final List<Quest> quests = new ArrayList<>();
 
         for (final QuestProgress questProgress : this.questProgressMap.values()) {
@@ -445,46 +447,46 @@ public final class QuestProgressFile {
         ALL("all") {
             @Override
             @Contract(pure = true)
-            public boolean matches(final @NotNull QuestProgress questProgress) {
+            public boolean matches(final QuestProgress questProgress) {
                 return QuestProgressFilter.ALL.matchesProgress(questProgress);
             }
         },
         COMPLETED("completed") {
             @Override
             @Contract(pure = true)
-            public boolean matches(final @NotNull QuestProgress questProgress) {
+            public boolean matches(final QuestProgress questProgress) {
                 return QuestProgressFilter.COMPLETED.matchesProgress(questProgress);
             }
         },
         COMPLETED_BEFORE("completedBefore") {
             @Override
             @Contract(pure = true)
-            public boolean matches(final @NotNull QuestProgress questProgress) {
+            public boolean matches(final QuestProgress questProgress) {
                 return QuestProgressFilter.COMPLETED_BEFORE.matchesProgress(questProgress);
             }
         },
         STARTED("started") {
             @Override
             @Contract(pure = true)
-            public boolean matches(final @NotNull QuestProgress questProgress) {
+            public boolean matches(final QuestProgress questProgress) {
                 return QuestProgressFilter.STARTED.matchesProgress(questProgress);
             }
         };
 
         private final String legacy;
 
-        QuestsProgressFilter(final @NotNull String legacy) {
+        QuestsProgressFilter(final String legacy) {
             this.legacy = legacy;
         }
 
         @SuppressWarnings("unused")
         @Contract(pure = true)
-        public @NotNull String getLegacy() {
+        public String getLegacy() {
             return this.legacy;
         }
 
         @Contract(pure = true)
-        public abstract boolean matches(final @NotNull QuestProgress questProgress);
+        public abstract boolean matches(final QuestProgress questProgress);
 
         // And some static things to improve legacy performance (is it even used?)
 
@@ -498,7 +500,7 @@ public final class QuestProgressFile {
 
         @SuppressWarnings("unused")
         @Contract(pure = true)
-        public static @NotNull QuestsProgressFilter fromLegacy(final @NotNull String legacy) {
+        public static QuestsProgressFilter fromLegacy(final String legacy) {
             return QuestsProgressFilter.legacyToFilterMap.getOrDefault(legacy, QuestsProgressFilter.ALL);
         }
     }

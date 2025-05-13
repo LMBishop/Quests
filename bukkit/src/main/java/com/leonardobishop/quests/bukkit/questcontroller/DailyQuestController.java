@@ -63,7 +63,7 @@
 //        random = new Random(refreshTime);
 //        quests = new ArrayList<>();
 //
-//        List<String> questIds = new ArrayList<>(plugin.getQuestManager().getQuests().keySet());
+//        List<String> questIds = new ArrayList<>(plugin.getQuestManager().getQuestMap().keySet());
 //        for (int i = 0; i < 5; i++) {
 //            int randInt = random.nextInt(questIds.size());
 //            quests.add(questIds.get(randInt));

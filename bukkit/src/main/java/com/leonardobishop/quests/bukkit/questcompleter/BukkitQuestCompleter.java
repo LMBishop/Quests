@@ -78,7 +78,7 @@ public class BukkitQuestCompleter implements QuestCompleter, Runnable {
         QuestProgress questProgress = completionQueue.poll();
         if (questProgress == null) return;
 
-        Player player = Bukkit.getPlayer(questProgress.getPlayer());
+        Player player = Bukkit.getPlayer(questProgress.getPlayerUUID());
         if (player != null && player.isOnline()) {
             QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
             if (qPlayer == null) return;

@@ -94,7 +94,7 @@ dependencies {
     // ItemsAdder
     compileOnlyPlugin("com.github.LoneDev6:API-ItemsAdder:3.5.0b")
     // JetBrains Annotations
-    compileOnlyPlugin("org.jetbrains:annotations:24.1.0")
+    compileOnlyPlugin("org.jetbrains:annotations:26.0.2")
     // MMOItems
     compileOnlyPlugin("net.Indyuce:MMOItems-API:6.9.2-SNAPSHOT")
     // MythicLib

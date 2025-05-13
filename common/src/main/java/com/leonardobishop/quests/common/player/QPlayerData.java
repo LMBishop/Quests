@@ -1,24 +1,27 @@
 package com.leonardobishop.quests.common.player;
 
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
-import org.jetbrains.annotations.NotNull;
+import com.leonardobishop.quests.common.util.Modern;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Objects;
 import java.util.UUID;
 
+@Modern(type = Modern.Type.FULL)
+@NullMarked
 public final class QPlayerData {
 
     private final UUID playerUUID;
     private final QPlayerPreferences playerPreferences;
     private final QuestProgressFile questProgressFile;
 
-    public QPlayerData(final @NotNull UUID playerUUID, final @NotNull QPlayerPreferences playerPreferences, final @NotNull QuestProgressFile questProgressFile) {
+    public QPlayerData(final UUID playerUUID, final QPlayerPreferences playerPreferences, final QuestProgressFile questProgressFile) {
         this.playerUUID = Objects.requireNonNull(playerUUID, "playerUUID cannot be null");
         this.playerPreferences = Objects.requireNonNull(playerPreferences, "playerPreferences cannot be null");
         this.questProgressFile = Objects.requireNonNull(questProgressFile, "questProgressFile cannot be null");
     }
 
-    public QPlayerData(final @NotNull QPlayerData playerData) {
+    public QPlayerData(final QPlayerData playerData) {
         Objects.requireNonNull(playerData, "playerData cannot be null");
 
         this.playerUUID = playerData.playerUUID;
@@ -26,15 +29,15 @@ public final class QPlayerData {
         this.questProgressFile = new QuestProgressFile(playerData.questProgressFile);
     }
 
-    public @NotNull UUID playerUUID() {
+    public UUID playerUUID() {
         return this.playerUUID;
     }
 
-    public @NotNull QPlayerPreferences playerPreferences() {
+    public QPlayerPreferences playerPreferences() {
         return this.playerPreferences;
     }
 
-    public @NotNull QuestProgressFile questProgressFile() {
+    public QuestProgressFile questProgressFile() {
         return this.questProgressFile;
     }
 

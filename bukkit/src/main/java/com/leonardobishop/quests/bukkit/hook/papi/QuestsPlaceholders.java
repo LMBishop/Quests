@@ -82,7 +82,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
             switch (args[0].toLowerCase()) {
                 case "all":
                 case "a":
-                    final List<Quest> listAll = new ArrayList<>(plugin.getQuestManager().getQuests().values());
+                    final List<Quest> listAll = new ArrayList<>(plugin.getQuestManager().getQuestMap().values());
                     result = (args.length == 1 ? String.valueOf(listAll.size()) : parseList((List<Quest>) listAll, args[1], split));
                     break;
                 case "completed":

@@ -42,7 +42,7 @@ public class PlayerJoinListener implements Listener {
 
                     // track first quest
                     if (plugin.getConfig().getBoolean("options.allow-quest-track") && plugin.getConfig().getBoolean("options.quest-autotrack")) {
-                        for (Quest quest : plugin.getQuestManager().getQuests().values()) {
+                        for (Quest quest : plugin.getQuestManager().getQuestMap().values()) {
                             if (qPlayer.hasStartedQuest(quest)) {
                                 qPlayer.trackQuest(quest);
                                 break;

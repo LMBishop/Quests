@@ -1,20 +1,22 @@
 package com.leonardobishop.quests.common.player.questprogressfile;
 
-import org.jetbrains.annotations.ApiStatus;
+import com.leonardobishop.quests.common.util.Modern;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
 
+@Modern(type = Modern.Type.FULL)
+@NullMarked
 public final class TaskProgress {
 
-    private final QuestProgress questProgress;
+    private final @Nullable QuestProgress questProgress;
     private final String taskId;
     private final UUID playerUUID;
 
-    private Object progress;
+    private @Nullable Object progress;
     private boolean completed;
     private boolean modified;
 
@@ -28,7 +30,7 @@ public final class TaskProgress {
      * @param completed     whether the task is completed
      * @param modified      whether the object has been modified and needs to be saved
      */
-    public TaskProgress(final @Nullable QuestProgress questProgress, final @NotNull String taskId, final @NotNull UUID playerUUID, final @Nullable Object progress, final boolean completed, final boolean modified) {
+    public TaskProgress(final @Nullable QuestProgress questProgress, final String taskId, final UUID playerUUID, final @Nullable Object progress, final boolean completed, final boolean modified) {
         this.questProgress = questProgress;
         this.taskId = taskId;
         this.playerUUID = playerUUID;
@@ -46,7 +48,7 @@ public final class TaskProgress {
      * @param progress      the progress object
      * @param completed     whether the task is completed
      */
-    public TaskProgress(final @NotNull QuestProgress questProgress, final @NotNull String taskId, final @NotNull UUID playerUUID, final @Nullable Object progress, final boolean completed) {
+    public TaskProgress(final QuestProgress questProgress, final String taskId, final UUID playerUUID, final @Nullable Object progress, final boolean completed) {
         this(questProgress, taskId, playerUUID, progress, completed, false);
     }
 
@@ -55,8 +57,7 @@ public final class TaskProgress {
      *
      * @param taskProgress the task progress instance
      */
-    @ApiStatus.Internal
-    public TaskProgress(final @NotNull TaskProgress taskProgress) {
+    public TaskProgress(final TaskProgress taskProgress) {
         this(null, taskProgress.taskId, taskProgress.playerUUID, taskProgress.progress, taskProgress.completed, taskProgress.modified);
     }
 
@@ -64,25 +65,15 @@ public final class TaskProgress {
      * @return the associated task ID
      */
     @Contract(pure = true)
-    public @NotNull String getTaskId() {
+    public String getTaskId() {
         return this.taskId;
     }
 
     /**
      * @return the associated player ID
-     * @see QuestProgress#getPlayerUUID()
-     */
-    @Deprecated(forRemoval = true)
-    @Contract(pure = true)
-    public @NotNull UUID getPlayer() {
-        return this.playerUUID;
-    }
-
-    /**
-     * @return the associated player ID
      */
     @Contract(pure = true)
-    public @NotNull UUID getPlayerUUID() {
+    public UUID getPlayerUUID() {
         return this.playerUUID;
     }
 
@@ -145,6 +136,25 @@ public final class TaskProgress {
     }
 
     /**
+     * @param modified whether the object has been modified and needs to be saved
+     */
+    public void setModified(final boolean modified) {
+        this.modified = modified;
+    }
+
+    // DEPRECATED AND FOR REMOVAL
+
+    /**
+     * @return the associated player ID
+     * @see QuestProgress#getPlayerUUID()
+     */
+    @Deprecated(forRemoval = true)
+    @Contract(pure = true)
+    public UUID getPlayer() {
+        return this.playerUUID;
+    }
+
+    /**
      * It's equivalent to {@code TaskProgress#setModified(false)}.
      *
      * @see TaskProgress#setModified(boolean)
@@ -152,12 +162,5 @@ public final class TaskProgress {
     @Deprecated(forRemoval = true)
     public void resetModified() {
         this.setModified(false);
-    }
-
-    /**
-     * @param modified whether the object has been modified and needs to be saved
-     */
-    public void setModified(final boolean modified) {
-        this.modified = modified;
     }
 }

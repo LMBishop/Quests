@@ -5,8 +5,9 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFi
 import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.questcontroller.QuestController;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,13 +19,14 @@ import java.util.UUID;
 /**
  * Represents a player.
  */
+@NullMarked
 public final class QPlayer {
 
     private final Quests plugin;
     private final QPlayerData playerData;
     private QuestController questController;
 
-    public QPlayer(final @NotNull Quests plugin, final @NotNull QPlayerData playerData, final @NotNull QuestController questController) {
+    public QPlayer(final Quests plugin, final QPlayerData playerData, final QuestController questController) {
         this.plugin = plugin;
         this.playerData = playerData;
         this.questController = questController;
@@ -35,7 +37,8 @@ public final class QPlayer {
      *
      * @return the players data
      */
-    public @NotNull QPlayerData getPlayerData() {
+    @Contract(pure = true)
+    public QPlayerData getPlayerData() {
         return this.playerData;
     }
 
@@ -44,7 +47,8 @@ public final class QPlayer {
      *
      * @return uuid
      */
-    public @NotNull UUID getPlayerUUID() {
+    @Contract(pure = true)
+    public UUID getPlayerUUID() {
         return this.playerData.playerUUID();
     }
 
@@ -53,7 +57,8 @@ public final class QPlayer {
      *
      * @return the players preferences
      */
-    public @NotNull QPlayerPreferences getPlayerPreferences() {
+    @Contract(pure = true)
+    public QPlayerPreferences getPlayerPreferences() {
         return this.playerData.playerPreferences();
     }
 
@@ -62,8 +67,50 @@ public final class QPlayer {
      *
      * @return the quest progress file
      */
-    public @NotNull QuestProgressFile getQuestProgressFile() {
+    @Contract(pure = true)
+    public QuestProgressFile getQuestProgressFile() {
         return this.playerData.questProgressFile();
+    }
+
+    /**
+     * Check if the player can start a quest.
+     * Warning: will fail if the player is not online.
+     *
+     * @param quest the quest to check
+     * @return the quest start result
+     */
+    @Contract(pure = true)
+    public QuestStartResult canStartQuest(final Quest quest) {
+        Objects.requireNonNull(quest, "quest cannot be null");
+
+        return this.questController.canPlayerStartQuest(this, quest);
+    }
+
+    /**
+     * Gets whether the player has started a specific quest.
+     *
+     * @param quest the quest to test for
+     * @return true if the quest is started or quest autostart is enabled and the quest is ready to start, false otherwise
+     */
+    @Contract(pure = true)
+    public boolean hasStartedQuest(final Quest quest) {
+        Objects.requireNonNull(quest, "quest cannot be null");
+
+        return this.questController.hasPlayerStartedQuest(this, quest);
+    }
+
+    /**
+     * Attempt to start a quest for the player. This will also play all effects (such as titles, messages etc.)
+     * Warning: will fail if the player is not online.
+     *
+     * @param quest the quest to start
+     * @return the quest start result -- {@code QuestStartResult.QUEST_SUCCESS} indicates success
+     */
+    // TODO PlaceholderAPI support
+    public QuestStartResult startQuest(final Quest quest) {
+        Objects.requireNonNull(quest, "quest cannot be null");
+
+        return this.questController.startQuestForPlayer(this, quest);
     }
 
     /**
@@ -73,11 +120,34 @@ public final class QPlayer {
      * @param quest the quest to complete
      * @return true (always)
      */
-    @SuppressWarnings("UnusedReturnValue")
-    public boolean completeQuest(final @NotNull Quest quest) {
+    public boolean completeQuest(final Quest quest) {
         Objects.requireNonNull(quest, "quest cannot be null");
 
         return this.questController.completeQuestForPlayer(this, quest);
+    }
+
+    /**
+     * Attempt to cancel a quest for the player. This will also play all effects (such as titles, messages etc.)
+     *
+     * @param quest the quest to start
+     * @return true if the quest was cancelled, false otherwise
+     */
+    public boolean cancelQuest(final Quest quest) {
+        Objects.requireNonNull(quest, "quest cannot be null");
+
+        return this.questController.cancelQuestForPlayer(this, quest);
+    }
+
+    /**
+     * Attempt to expire a quest for the player. This will also play all effects (such as titles, messages etc.)
+     *
+     * @param quest the quest to start
+     * @return true if the quest was expired, false otherwise
+     */
+    public boolean expireQuest(final Quest quest) {
+        Objects.requireNonNull(quest, "quest cannot be null");
+
+        return this.questController.expireQuestForPlayer(this, quest);
     }
 
     /**
@@ -90,23 +160,12 @@ public final class QPlayer {
     }
 
     /**
-     * Gets whether the player has started a specific quest.
-     *
-     * @param quest the quest to test for
-     * @return true if the quest is started or quest autostart is enabled and the quest is ready to start, false otherwise
-     */
-    public boolean hasStartedQuest(final @NotNull Quest quest) {
-        Objects.requireNonNull(quest, "quest cannot be null");
-
-        return this.questController.hasPlayerStartedQuest(this, quest);
-    }
-
-    /**
      * Gets a list of quests which the player has effectively started. This includes quests started automatically.
      *
      * @return list of effectively started quests
      */
-    public @NotNull List<Quest> getEffectiveStartedQuests() {
+    @Contract(pure = true)
+    public List<Quest> getEffectiveStartedQuests() {
         return this.getEffectiveStartedQuests(-1);
     }
 
@@ -117,9 +176,10 @@ public final class QPlayer {
      * @param limit the maximum number of quests to return. A value of -1 indicates no limit.
      * @return list of effectively started quests, up to the specified limit
      */
-    public @NotNull List<Quest> getEffectiveStartedQuests(final int limit) {
+    @Contract(pure = true)
+    public List<Quest> getEffectiveStartedQuests(final int limit) {
         final Collection<Quest> quests = this.plugin.getQuestManager()
-                .getQuests()
+                .getQuestMap()
                 .values();
 
         final List<Quest> ret;
@@ -152,64 +212,35 @@ public final class QPlayer {
     }
 
     /**
-     * Attempt to start a quest for the player. This will also play all effects (such as titles, messages etc.)
-     * Warning: will fail if the player is not online.
+     * Gets count of quests which the player has effectively started. This includes quests started automatically.
      *
-     * @param quest the quest to start
-     * @return the quest start result -- {@code QuestStartResult.QUEST_SUCCESS} indicates success
+     * @return count of effectively started quests
      */
-    // TODO PlaceholderAPI support
-    public @NotNull QuestStartResult startQuest(final @NotNull Quest quest) {
-        Objects.requireNonNull(quest, "quest cannot be null");
+    @Contract(pure = true)
+    public int getEffectiveStartedQuestsCount() {
+        int count = 0;
 
-        return this.questController.startQuestForPlayer(this, quest);
-    }
+        final Collection<Quest> quests = this.plugin.getQuestManager()
+                .getQuestMap()
+                .values();
 
-    /**
-     * Attempt to cancel a quest for the player. This will also play all effects (such as titles, messages etc.)
-     *
-     * @param quest the quest to start
-     * @return true if the quest was cancelled, false otherwise
-     */
-    public boolean cancelQuest(final @NotNull Quest quest) {
-        Objects.requireNonNull(quest, "quest cannot be null");
+        for (final Quest quest : quests) {
+            if (this.questController.hasPlayerStartedQuest(this, quest)) {
+                count++;
+            }
+        }
 
-        return this.questController.cancelQuestForPlayer(this, quest);
-    }
-
-    /**
-     * Attempt to expire a quest for the player. This will also play all effects (such as titles, messages etc.)
-     *
-     * @param quest the quest to start
-     * @return true if the quest was expired, false otherwise
-     */
-    @SuppressWarnings("UnusedReturnValue")
-    public boolean expireQuest(final @NotNull Quest quest) {
-        Objects.requireNonNull(quest, "quest cannot be null");
-
-        return this.questController.expireQuestForPlayer(this, quest);
-    }
-
-    /**
-     * Check if the player can start a quest.
-     * Warning: will fail if the player is not online.
-     *
-     * @param quest the quest to check
-     * @return the quest start result
-     */
-    public @NotNull QuestStartResult canStartQuest(final @NotNull Quest quest) {
-        Objects.requireNonNull(quest, "quest cannot be null");
-
-        return this.questController.canPlayerStartQuest(this, quest);
+        return count;
     }
 
     /**
      * Get player's associated {@link QuestController}. It's usually the server's active quest controller.
      *
-     * @see QPlayerManager#getActiveQuestController()
      * @return the quest controller for this player
+     * @see QPlayerManager#getActiveQuestController()
      */
-    public @NotNull QuestController getQuestController() {
+    @Contract(pure = true)
+    public QuestController getQuestController() {
         return this.questController;
     }
 
@@ -218,7 +249,7 @@ public final class QPlayer {
      *
      * @param questController new quest controller
      */
-    public void setQuestController(final @NotNull QuestController questController) {
+    public void setQuestController(final QuestController questController) {
         Objects.requireNonNull(questController, "questController cannot be null");
 
         this.questController = questController;

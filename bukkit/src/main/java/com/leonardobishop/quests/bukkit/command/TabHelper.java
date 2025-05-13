@@ -32,12 +32,12 @@ public class TabHelper {
     }
 
     public static List<String> tabCompleteQuests(String arg) {
-        List<String> options = new ArrayList<>(plugin.getQuestManager().getQuests().keySet());
+        List<String> options = new ArrayList<>(plugin.getQuestManager().getQuestMap().keySet());
         return matchTabComplete(arg, options);
     }
 
     public static List<String> tabCompleteQuestsOrWildcard(String arg) {
-        List<String> options = new ArrayList<>(plugin.getQuestManager().getQuests().keySet());
+        List<String> options = new ArrayList<>(plugin.getQuestManager().getQuestMap().keySet());
         options.add("*");
         return matchTabComplete(arg, options);
     }

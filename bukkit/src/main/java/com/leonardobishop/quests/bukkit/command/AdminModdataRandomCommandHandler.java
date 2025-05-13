@@ -33,7 +33,7 @@ public class AdminModdataRandomCommandHandler implements CommandHandler {
                 List<Quest> validQuests = new ArrayList<>();
                 boolean fromCategory = args.length != 4;
                 if (!fromCategory) {
-                    for (Quest quest : plugin.getQuestManager().getQuests().values()) {
+                    for (Quest quest : plugin.getQuestManager().getQuestMap().values()) {
                         if (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS) {
                             validQuests.add(quest);
                         }

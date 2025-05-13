@@ -1,73 +1,116 @@
 package com.leonardobishop.quests.common.quest;
 
-import org.jetbrains.annotations.NotNull;
+import com.leonardobishop.quests.common.util.Modern;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.UnmodifiableView;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class Category {
+/**
+ * Represents a category for organizing quests within the quest system. Each category can have
+ * associated quests, and it can specify whether permission is required to access it and whether
+ * it should be hidden from the plugin menus.
+ */
+@Modern(type = Modern.Type.FULL)
+@NullMarked
+public final class Category {
+
+    private static final String PERMISSION_PREFIX = "quests.category.";
 
     private final String id;
+    private final List<String> registeredQuestIds;
     private final boolean permissionRequired;
-    private final List<String> registeredQuestIds = new ArrayList<>();
     private final boolean hidden;
 
-    public Category(String id, boolean permissionRequired) {
-        this(id, permissionRequired, false);
-    }
-
-    public Category(String id, boolean permissionRequired, boolean hidden) {
-        this.id = id;
+    /**
+     * Constructs a Category with the specified parameters.
+     *
+     * @param id                 the unique identifier for the category; must not be null
+     * @param permissionRequired whether a permission is required to access this category
+     * @param hidden             whether the category should be hidden from view
+     */
+    public Category(final String id, final boolean permissionRequired, final boolean hidden) {
+        this.id = Objects.requireNonNull(id, "id cannot be null");
+        this.registeredQuestIds = new ArrayList<>();
         this.permissionRequired = permissionRequired;
         this.hidden = hidden;
     }
 
     /**
-     * Get the id of this category.
+     * Constructs a Category with {@link Category#hidden} set to {@code false}.
      *
-     * @return id
+     * @param id                 the unique identifier for the category; must not be null
+     * @param permissionRequired whether a permission is required to access this category
      */
-    public @NotNull String getId() {
-        return id;
+    public Category(final String id, final boolean permissionRequired) {
+        this(id, permissionRequired, false);
     }
 
     /**
-     * Get if a specific permission is required to open this category and start quests within it.
-     * This permission will be in the form of "quests.category.[category id]".
+     * Returns the unique identifier of this category.
      *
-     * @return boolean
+     * @return the category ID
      */
+    @Contract(pure = true)
+    public String getId() {
+        return this.id;
+    }
+
+    /**
+     * Checks if a specific permission is required to access this category and start quests within it.
+     * The permission will be in the form of "quests.category.[category id]".
+     *
+     * @return true if permission is required, false otherwise
+     * @see Category#getPermission() Permission getter
+     */
+    @Contract(pure = true)
     public boolean isPermissionRequired() {
-        return permissionRequired;
+        return this.permissionRequired;
     }
 
     /**
-     * Register a new quest ID to this category
+     * Returns the permission required to start quests in this category.
      *
-     * @param questId quest id to register
+     * @return the permission string if required, or null if no permission is needed
      */
-    public void registerQuestId(@NotNull String questId) {
+    @Contract(pure = true)
+    public @Nullable String getPermission() {
+        return this.permissionRequired ? PERMISSION_PREFIX + this.id : null;
+    }
+
+    /**
+     * Registers a new quest ID to this category.
+     *
+     * @param questId the quest ID to register; must not be null
+     */
+    public void registerQuestId(final String questId) {
         Objects.requireNonNull(questId, "questId cannot be null");
-        registeredQuestIds.add(questId);
+
+        this.registeredQuestIds.add(questId);
     }
 
     /**
-     * Get quest IDs which are registered to this category
+     * Returns an unmodifiable list of quest IDs that are registered to this category.
      *
-     * @return immutable list of quest ids
+     * @return an unmodifiable list of registered quest IDs
      */
-    public @NotNull List<String> getRegisteredQuestIds() {
-        return Collections.unmodifiableList(registeredQuestIds);
+    @Contract(pure = true)
+    public @UnmodifiableView List<String> getRegisteredQuestIds() {
+        return Collections.unmodifiableList(this.registeredQuestIds);
     }
 
     /**
-     * Get if this category is hidden
+     * Checks if this category is hidden from view.
      *
-     * @return true if hidden
+     * @return true if the category is hidden, false otherwise
      */
+    @Contract(pure = true)
     public boolean isHidden() {
-        return hidden;
+        return this.hidden;
     }
 }

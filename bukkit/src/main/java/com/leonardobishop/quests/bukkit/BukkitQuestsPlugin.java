@@ -280,7 +280,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         this.logHistory = new LogHistory(true);
         this.generateConfigurations();
         this.questsConfig = new BukkitQuestsConfig(new File(super.getDataFolder() + File.separator + "config.yml"));
-        this.questManager = new QuestManager(this);
+        this.questManager = new QuestManager();
 
         this.serverScheduler = FoliaServerScheduler.FOLIA ? new FoliaServerScheduler(this) : new BukkitServerSchedulerAdapter(this);
         questsLogger.info("Running server scheduler: " + serverScheduler.getServerSchedulerName());

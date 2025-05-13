@@ -109,6 +109,13 @@ public class Quest implements Comparable<Quest> {
     }
 
     /**
+     * @return permission required to start the quest
+     */
+    public @Nullable String getPermission() {
+        return isPermissionRequired() ? "quests.quest." + id : null;
+    }
+
+    /**
      * Get the reward string of the quest.
      * The reward string is a series of messages sent to the player upon completing the quest.
      *
