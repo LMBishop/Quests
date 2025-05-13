@@ -138,7 +138,7 @@ dependencies {
     // bStats
     implementation("org.bstats:bstats-bukkit-lite:1.8")
     // HikariCP
-    implementation("com.zaxxer:HikariCP:6.2.1")
+    implementation("com.zaxxer:HikariCP:6.3.0")
     // slf4j
     implementation("org.slf4j:slf4j-nop:1.7.36")
     // hppc
