@@ -231,6 +231,7 @@ The types of quest items are as follows:
 - `slimefun` (items from Slimefun)
 - `executableitems` (items from ExecutableItems)
 - `itemsadder` (items from ItemsAdder)
+- `nexo` (items from Nexo)
 - `oraxen` (items from Oraxen)
 - `pyrofishingpro` (items from PyroFishingPro)
 
@@ -319,6 +320,19 @@ ItemsAdder plugin.
 type: "itemsadder"
 item:
   id: "itemsadder"  #itemsdadder id
+```
+
+#### Nexo
+
+**Nexo quest items** are ItemStacks which belong to the
+Nexo plugin.
+
+    items/testitem.yml
+
+``` yaml
+type: "nexo"
+item:
+  id: "nexo_id"  #nexo id
 ```
 
 #### Oraxen

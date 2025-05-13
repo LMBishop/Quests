@@ -5,6 +5,7 @@ import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
 import com.leonardobishop.quests.bukkit.item.ExecutableItemsQuestItem;
 import com.leonardobishop.quests.bukkit.item.ItemsAdderQuestItem;
 import com.leonardobishop.quests.bukkit.item.MMOItemsQuestItem;
+import com.leonardobishop.quests.bukkit.item.NexoQuestItem;
 import com.leonardobishop.quests.bukkit.item.OraxenQuestItem;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.PyroFishingProQuestItem;
@@ -510,6 +511,10 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         case "pyrofishingpro":
                             if (!Bukkit.getPluginManager().isPluginEnabled("PyroFishingPro")) return FileVisitResult.CONTINUE;
                             item = new PyroFishingProQuestItem(id, config.getInt("item.fish-number", -1), config.getString("item.tier"));
+                            break;
+                        case "nexo":
+                            if (!Bukkit.getPluginManager().isPluginEnabled("Nexo")) return FileVisitResult.CONTINUE;
+                            item = new NexoQuestItem(id, config.getString("item.id"));
                             break;
                     }
 
