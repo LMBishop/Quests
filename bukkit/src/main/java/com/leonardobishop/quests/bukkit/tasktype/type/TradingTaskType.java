@@ -171,6 +171,7 @@ public final class TradingTaskType extends BukkitTaskType {
                 case RESULT -> resultAmount;
                 case FIRST_INGREDIENT -> firstIngredientAmount;
                 case SECOND_INGREDIENT -> secondIngredientAmount;
+                case COUNT -> 1;
             };
 
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress, itemAmount);
@@ -190,7 +191,8 @@ public final class TradingTaskType extends BukkitTaskType {
     private enum Mode {
         RESULT,
         FIRST_INGREDIENT,
-        SECOND_INGREDIENT;
+        SECOND_INGREDIENT,
+        COUNT;
 
         private static final Map<String, TradingTaskType.Mode> STRING_MODE_MAP = new HashMap<>() {{
             for (final TradingTaskType.Mode mode : TradingTaskType.Mode.values()) {
