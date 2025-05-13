@@ -27,7 +27,7 @@ public final class BedWars1058FinalKillTask extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerKill(PlayerKillEvent event) {
-        final PlayerKillEvent.PlayerKillCause cause = event.getCause();
+        PlayerKillEvent.PlayerKillCause cause = event.getCause();
         if (!cause.isFinalKill()) {
             return;
         }
