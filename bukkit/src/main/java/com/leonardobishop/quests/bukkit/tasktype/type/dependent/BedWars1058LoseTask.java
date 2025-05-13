@@ -13,11 +13,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 
+import java.util.List;
 import java.util.UUID;
 
-public final class BedWars1058LoseTask extends BukkitTaskType implements Listener {
+public final class BedWars1058LoseTask extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
@@ -31,41 +31,44 @@ public final class BedWars1058LoseTask extends BukkitTaskType implements Listene
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onGameEnd(GameEndEvent event) {
+        final List<UUID> loserUniqueIds = event.getLosers();
 
-        for (UUID uuid : event.getLosers()) {
-            Player player = Bukkit.getPlayer(uuid);
+        for (UUID loserUniqueId : loserUniqueIds) {
+            Player loser = Bukkit.getPlayer(loserUniqueId);
 
-            if (player == null) {
-                return;
+            if (loser != null) {
+                this.handle(loser);
+            }
+        }
+    }
+
+    private void handle(final Player loser) {
+        if (loser.hasMetadata("NPC")) {
+            return;
+        }
+
+        QPlayer qLoser = plugin.getPlayerManager().getPlayer(loser.getUniqueId());
+        if (qLoser == null) {
+            return;
+        }
+
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(loser, qLoser, this, TaskConstraintSet.ALL)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
+
+            super.debug("Player lost a BedWars game", quest.getId(), task.getId(), loser.getUniqueId());
+
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), loser.getUniqueId());
+
+            int amount = (int) task.getConfigValue("amount");
+            if (progress >= amount) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), loser.getUniqueId());
+                taskProgress.setCompleted(true);
             }
 
-            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
-            if (qPlayer == null) {
-                return;
-            }
-
-            for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
-                Quest quest = pendingTask.quest();
-                Task task = pendingTask.task();
-                TaskProgress taskProgress = pendingTask.taskProgress();
-
-                super.debug("Player lost a BedWars game", quest.getId(), task.getId(), player.getUniqueId());
-
-                Runnable increment = () -> {
-                    int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-                    super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
-
-                    int amount = (int) task.getConfigValue("amount");
-                    if (progress >= amount) {
-                        super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                        taskProgress.setCompleted(true);
-                    }
-
-                    TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, amount);
-                };
-
-                increment.run();
-            }
+            TaskUtils.sendTrackAdvancement(loser, quest, task, pendingTask, amount);
         }
     }
 }

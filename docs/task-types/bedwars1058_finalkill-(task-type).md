@@ -6,13 +6,13 @@ grand_parent: Task types
 
 # bedwars1058_finalkill (task type)
 
-Since v3.15
+Not released yet (dev builds)
 {: .label .label-green }
 
 Plugin 'BedWars1058' required
 {: .label }
 
-Get a final kill in BedWars1058.
+Get a final kill in a BedWars1058 game.
 
 ## Options
 

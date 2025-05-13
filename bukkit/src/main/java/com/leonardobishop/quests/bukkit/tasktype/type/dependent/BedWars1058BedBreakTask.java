@@ -1,10 +1,7 @@
 package com.leonardobishop.quests.bukkit.tasktype.type.dependent;
 
 import com.andrei1058.bedwars.api.events.player.PlayerBedBreakEvent;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
-import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
@@ -19,7 +16,6 @@ import org.bukkit.event.EventPriority;
 public final class BedWars1058BedBreakTask extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
-    private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
 
     public BedWars1058BedBreakTask(BukkitQuestsPlugin plugin) {
         super("bedwars1058_bedbreak", TaskUtils.TASK_ATTRIBUTION_STRING, "Break a set amount of beds in BedWars1058.");
@@ -29,14 +25,12 @@ public final class BedWars1058BedBreakTask extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
     }
 
-    @Override
-    public void onReady() {
-        fixedQuestItemCache.clear();
-    }
-
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerBedBreak(PlayerBedBreakEvent event) {
         Player player = event.getPlayer();
+        if (player.hasMetadata("NPC")) {
+            return;
+        }
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
         if (qPlayer == null) {
@@ -48,22 +42,18 @@ public final class BedWars1058BedBreakTask extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player break a bed in BedWars", quest.getId(), task.getId(), player.getUniqueId());
+            super.debug("Player broke a bed in BedWars", quest.getId(), task.getId(), player.getUniqueId());
 
-            Runnable increment = () -> {
-                int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-                super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                int amount = (int) task.getConfigValue("amount");
-                if (progress >= amount) {
-                    super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                    taskProgress.setCompleted(true);
-                }
+            int amount = (int) task.getConfigValue("amount");
+            if (progress >= amount) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setCompleted(true);
+            }
 
-                TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, amount);
-            };
-
-            increment.run();
+            TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, amount);
         }
     }
 }

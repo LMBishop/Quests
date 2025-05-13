@@ -6,7 +6,7 @@ grand_parent: Task types
 
 # bedwars1058_bedbreak (task type)
 
-Since v3.15
+Not released yet (dev builds)
 {: .label .label-green }
 
 Plugin 'BedWars1058' required
