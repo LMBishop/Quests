@@ -688,10 +688,13 @@ options:
         password: ""
         address: "localhost:3306"
       connection-pool-settings:
-        maximum-pool-size: 8
         minimum-idle: 8
-        maximum-lifetime: 1800000
+        maximum-pool-size: 8
         connection-timeout: 5000
+        idle-timeout: 600000
+        keepalive-time: 0
+        maximum-lifetime: 1800000
+        data-source-properties: {}
       table-prefix: "quests_"
 ```
 

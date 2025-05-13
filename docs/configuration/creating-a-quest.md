@@ -367,6 +367,33 @@ options:
   counts-towards-limit: false
 ```
 
+### Counts towards completed
+
+
+*`options.counts-towards-completed`*
+
+**Optional.** Whether or not this quest counts towards the players quests
+completed. The option is currently used only for the plugin placeholders.
+
+``` yaml
+options:
+  # ...
+  counts-towards-completed: false
+```
+
+### Hidden
+
+
+*`options.hidden`*
+
+**Optional.** Whether or not this quest should be hidden from the plugin menus.
+
+``` yaml
+options:
+  # ...
+  hidden: true
+```
+
 ### Repeatable
 
   
