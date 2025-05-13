@@ -49,7 +49,7 @@ public class QuestMenuElement extends MenuElement {
         this.dummy = dummy;
 
         this.startClickType = MenuUtils.getClickType(config, "options.gui-actions.start-quest", "LEFT");
-        this.trackClickType = MenuUtils.getClickType(config, "options.gui-actions.track-quest", "MIDDLE");
+        this.trackClickType = MenuUtils.getClickType(config, "options.gui-actions.track-quest", "DROP");
         this.cancelClickType = MenuUtils.getClickType(config, "options.gui-actions.cancel-quest", "RIGHT");
     }
 

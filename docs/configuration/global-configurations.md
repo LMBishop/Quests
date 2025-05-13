@@ -54,12 +54,12 @@ global-quest-display:
     append-started:
       - ""
       - "&aYou have started this quest."
-      - "&eMiddle Click &7to track this quest."
+      - "&ePress Q &7to track this quest."
       - "&eRight Click &7to cancel this quest."
     append-tracked:
       - ""
       - "&aYou are &etracking &athis quest."
-      - "&eMiddle Click &7to stop tracking this quest."
+      - "&ePress Q &7to stop tracking this quest."
       - "&eRight Click &7to cancel this quest."
 ```
 
