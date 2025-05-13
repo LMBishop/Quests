@@ -100,10 +100,13 @@ README](https://github.com/brettwooldridge/HikariCP).
 
 ``` yaml
         connection-pool-settings:
-          maximum-pool-size: 8
-          minimum-idle: 8
-          maximum-lifetime: 1800000
-          connection-timeout: 5000
+        minimum-idle: 8
+        maximum-pool-size: 8
+        connection-timeout: 5000
+        idle-timeout: 600000
+        keepalive-time: 0
+        maximum-lifetime: 1800000
+        data-source-properties: {}
         table-prefix: "quests_"
 ```
 
