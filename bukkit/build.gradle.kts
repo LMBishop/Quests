@@ -17,7 +17,7 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     // Paper (adventure-bom snapshots)
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-    // ASkyBlock, BentoBox, bStats, Citizens
+    // ASkyBlock, BedWars1058, BentoBox, bStats, Citizens
     maven("https://repo.codemc.io/repository/maven-public/")
     // AuthLib
     maven("https://libraries.minecraft.net/")
@@ -51,8 +51,6 @@ repositories {
     maven("https://repo.bg-software.com/repository/api/")
     // ZNPCsPlus
     maven("https://repo.pyr.lol/snapshots")
-    // BedWars1058
-    maven("https://repo.andrei1058.dev/releases/")
 
     // bungeecord-chat, HikariCP, hppc, JetBrains Annotations, slf4j
     mavenCentral()
@@ -69,6 +67,8 @@ dependencies {
     compileOnlyPlugin("com.wasteofplastic:askyblock:3.0.9.4")
     // AuthLib
     compileOnlyPlugin("com.mojang:authlib:1.5.21")
+    // BedWars1058
+    compileOnlyPlugin("com.andrei1058.bedwars:bedwars-api:22.01")
     // BentoBox
     compileOnly("world.bentobox:bentobox:2.5.4-SNAPSHOT")
     compileOnly("world.bentobox:level:2.16.1-SNAPSHOT")
@@ -77,7 +77,7 @@ dependencies {
     // CoreProtect
     compileOnlyPlugin("net.coreprotect:coreprotect:21.2")
     // CustomFishing
-    compileOnlyPlugin("com.github.Xiao-MoMi:Custom-Fishing:2.2.20")
+    compileOnlyPlugin("com.github.Xiao-MoMi:Custom-Fishing:2.3.3")
     // EcoBosses, EcoMobs
     compileOnlyPlugin("com.willfp:EcoBosses:9.14.0")
     compileOnlyPlugin("com.willfp:EcoMobs:10.0.0-b1")
@@ -108,7 +108,7 @@ dependencies {
     // PlayerPoints
     compileOnlyPlugin("org.black_ixx:playerpoints:3.2.5")
     // SCore
-    compileOnlyPlugin("com.github.Ssomar-Developement:SCore:4.24.3.5")
+    compileOnlyPlugin("com.github.Ssomar-Developement:SCore:5.25.3.9")
     // ShopGUIPlus
     compileOnlyPlugin("com.github.brcdev-minecraft:shopgui-api:3.0.0")
     // Slimefun4
@@ -120,13 +120,11 @@ dependencies {
     // Vault
     compileOnlyPlugin("com.github.MilkBowl:VaultAPI:1.7.1")
     // VotingPlugin
-    compileOnlyPlugin("com.bencodez:votingplugin:6.17.2")
+    compileOnlyPlugin("com.bencodez:votingplugin:6.18.4")
     // WildStacker
     compileOnlyPlugin("com.bgsoftware:WildStackerAPI:2023.3")
     // ZNPCsPlus
     compileOnlyPlugin("lol.pyr:znpcsplus-api:2.0.0-SNAPSHOT")
-    // BedWars1058
-    compileOnlyPlugin("com.andrei1058.bedwars:bedwars-api:24.9")
 
     // IridiumSkyblock, PyroFishingPro, uSkyBlock
     compileOnlyLibs("libs", listOf("*.jar"))

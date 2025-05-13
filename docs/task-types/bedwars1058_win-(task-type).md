@@ -6,7 +6,7 @@ grand_parent: Task types
 
 # bedwars1058_win (task type)
 
-Since v3.15
+Not released yet (dev builds)
 {: .label .label-green }
 
 Plugin 'BedWars1058' required
@@ -22,7 +22,7 @@ Win a game of BedWars in BedWars1058.
 
 ## Examples
 
-Win 5 Game:
+Win 5 games:
 
 ``` yaml
 bedwars1058:

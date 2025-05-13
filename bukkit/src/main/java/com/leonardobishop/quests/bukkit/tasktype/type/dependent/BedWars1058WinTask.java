@@ -13,11 +13,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 
+import java.util.List;
 import java.util.UUID;
 
-public final class BedWars1058WinTask extends BukkitTaskType implements Listener {
+public final class BedWars1058WinTask extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
@@ -31,41 +31,44 @@ public final class BedWars1058WinTask extends BukkitTaskType implements Listener
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onGameEnd(GameEndEvent event) {
+        final List<UUID> winnerUniqueIds = event.getLosers();
 
-        for (UUID uuid : event.getWinners()) {
-            Player player = Bukkit.getPlayer(uuid);
+        for (UUID winnerUniqueId : winnerUniqueIds) {
+            Player winner = Bukkit.getPlayer(winnerUniqueId);
 
-            if (player == null) {
-                return;
+            if (winner != null) {
+                this.handle(winner);
+            }
+        }
+    }
+
+    private void handle(final Player winner) {
+        if (winner.hasMetadata("NPC")) {
+            return;
+        }
+
+        QPlayer qWinner = plugin.getPlayerManager().getPlayer(winner.getUniqueId());
+        if (qWinner == null) {
+            return;
+        }
+
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(winner, qWinner, this, TaskConstraintSet.ALL)) {
+            Quest quest = pendingTask.quest();
+            Task task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
+
+            super.debug("Player won a BedWars game", quest.getId(), task.getId(), winner.getUniqueId());
+
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), winner.getUniqueId());
+
+            int amount = (int) task.getConfigValue("amount");
+            if (progress >= amount) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), winner.getUniqueId());
+                taskProgress.setCompleted(true);
             }
 
-            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
-            if (qPlayer == null) {
-                return;
-            }
-
-            for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
-                Quest quest = pendingTask.quest();
-                Task task = pendingTask.task();
-                TaskProgress taskProgress = pendingTask.taskProgress();
-
-                super.debug("Player won a BedWars game", quest.getId(), task.getId(), player.getUniqueId());
-
-                Runnable increment = () -> {
-                    int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-                    super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
-
-                    int amount = (int) task.getConfigValue("amount");
-                    if (progress >= amount) {
-                        super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
-                        taskProgress.setCompleted(true);
-                    }
-
-                    TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, amount);
-                };
-
-                increment.run();
-            }
+            TaskUtils.sendTrackAdvancement(winner, quest, task, pendingTask, amount);
         }
     }
 }

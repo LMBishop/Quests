@@ -12,9 +12,8 @@ import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 
-public final class BedWars1058FinalKillTask extends BukkitTaskType implements Listener {
+public final class BedWars1058FinalKillTask extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
@@ -28,41 +27,38 @@ public final class BedWars1058FinalKillTask extends BukkitTaskType implements Li
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerKill(PlayerKillEvent event) {
+        final PlayerKillEvent.PlayerKillCause cause = event.getCause();
+        if (!cause.isFinalKill()) {
+            return;
+        }
+
         Player killer = event.getKiller();
-        if (killer == null) {
+        if (killer == null || killer.hasMetadata("NPC")) {
             return;
         }
 
-        if (!event.getCause().isFinalKill()) {
+        QPlayer qKiller = plugin.getPlayerManager().getPlayer(killer.getUniqueId());
+        if (qKiller == null) {
             return;
         }
 
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(killer.getUniqueId());
-        if (qPlayer == null) {
-            return;
-        }
-
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(killer, qPlayer, this, TaskConstraintSet.ALL)) {
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(killer, qKiller, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
             super.debug("Player got a final kill", quest.getId(), task.getId(), killer.getUniqueId());
 
-            Runnable increment = () -> {
-                int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-                super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), killer.getUniqueId());
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), killer.getUniqueId());
 
-                int amount = (int) task.getConfigValue("amount");
-                if (progress >= amount) {
-                    super.debug("Marking task as complete", quest.getId(), task.getId(), killer.getUniqueId());
-                    taskProgress.setCompleted(true);
-                }
+            int amount = (int) task.getConfigValue("amount");
+            if (progress >= amount) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), killer.getUniqueId());
+                taskProgress.setCompleted(true);
+            }
 
-                TaskUtils.sendTrackAdvancement(killer, quest, task, pendingTask, amount);
-            };
-
-            increment.run();
+            TaskUtils.sendTrackAdvancement(killer, quest, task, pendingTask, amount);
         }
     }
 }
