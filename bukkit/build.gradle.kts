@@ -31,6 +31,8 @@ repositories {
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
     // MythicMobs 4, MythicMobs 5
     maven("https://mvn.lumine.io/repository/maven-public/")
+    // Nexo
+    maven("https://repo.nexomc.com/releases")
     // NuVotifier
     maven("https://repo.leonardobishop.com/releases/")
     // Oraxen
@@ -99,6 +101,8 @@ dependencies {
     compileOnlyPlugin("io.lumine.xikage:MythicMobs:4.12.0")
     // MythicMobs 5
     compileOnlyPlugin("io.lumine:Mythic-Dist:5.2.0")
+    // Nexo
+    compileOnlyPlugin("com.nexomc:nexo:1.1.0")
     // NuVotifier
     compileOnlyPlugin("com.vexsoftware:NuVotifier:2.7.3")
     // Oraxen
