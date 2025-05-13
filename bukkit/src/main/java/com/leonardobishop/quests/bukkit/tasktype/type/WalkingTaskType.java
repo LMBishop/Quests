@@ -8,6 +8,7 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.Location;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pig;
@@ -39,7 +40,11 @@ public final class WalkingTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
+        final Location from = event.getFrom();
+        final Location to = event.getTo();
+
+        final int distance = Math.abs(to.getBlockX() - from.getBlockX()) + Math.abs(to.getBlockZ() - from.getBlockZ());
+        if (distance == 0) {
             return;
         }
 
@@ -48,24 +53,28 @@ public final class WalkingTaskType extends BukkitTaskType {
             return; // minecarts movement is already handled by VehicleMoveEvent
         }
 
-        handle(player);
+        handle(player, distance);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVehicleMove(VehicleMoveEvent event) {
-        if (event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
+        final Location from = event.getFrom();
+        final Location to = event.getTo();
+
+        final int distance = Math.abs(to.getBlockX() - from.getBlockX()) + Math.abs(to.getBlockZ() - from.getBlockZ());
+        if (distance == 0) {
             return;
         }
 
         List<Entity> entities = event.getVehicle().getPassengers();
         for (Entity entity : entities) {
             if (entity instanceof Player player) {
-                handle(player);
+                handle(player, distance);
             }
         }
     }
 
-    private void handle(Player player) {
+    private void handle(Player player, int distance) {
         if (player.hasMetadata("NPC")) {
             return;
         }
@@ -93,7 +102,7 @@ public final class WalkingTaskType extends BukkitTaskType {
                 continue;
             }
 
-            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress, distance);
             super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
 
             int distanceNeeded = (int) task.getConfigValue("distance");
