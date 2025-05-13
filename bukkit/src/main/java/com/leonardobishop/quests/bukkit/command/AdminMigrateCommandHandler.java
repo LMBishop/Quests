@@ -4,7 +4,6 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.storage.ModernMySQLStorageProvider;
 import com.leonardobishop.quests.bukkit.storage.ModernYAMLStorageProvider;
 import com.leonardobishop.quests.common.player.QPlayerData;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.storage.StorageProvider;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
