@@ -31,7 +31,7 @@ public final class BedWars1058WinTask extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onGameEnd(GameEndEvent event) {
-        final List<UUID> winnerUniqueIds = event.getLosers();
+        List<UUID> winnerUniqueIds = event.getLosers();
 
         for (UUID winnerUniqueId : winnerUniqueIds) {
             Player winner = Bukkit.getPlayer(winnerUniqueId);

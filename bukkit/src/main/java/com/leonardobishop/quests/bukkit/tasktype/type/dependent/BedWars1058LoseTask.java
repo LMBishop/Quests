@@ -31,7 +31,7 @@ public final class BedWars1058LoseTask extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onGameEnd(GameEndEvent event) {
-        final List<UUID> loserUniqueIds = event.getLosers();
+        List<UUID> loserUniqueIds = event.getLosers();
 
         for (UUID loserUniqueId : loserUniqueIds) {
             Player loser = Bukkit.getPlayer(loserUniqueId);
