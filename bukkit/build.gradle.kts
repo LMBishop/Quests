@@ -137,6 +137,8 @@ dependencies {
 
     // bStats
     implementation("org.bstats:bstats-bukkit-lite:1.8")
+    // gson // TODO implement custom metrics without gson
+    implementation("com.google.code.gson:gson:2.13.1")
     // HikariCP
     implementation("com.zaxxer:HikariCP:6.3.0")
     // slf4j

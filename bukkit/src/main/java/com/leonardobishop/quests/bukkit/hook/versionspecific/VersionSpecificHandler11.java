@@ -7,6 +7,8 @@ import org.bukkit.entity.Mule;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SkeletonHorse;
 import org.bukkit.entity.ZombieHorse;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 public class VersionSpecificHandler11 extends VersionSpecificHandler9 implements VersionSpecificHandler {
 
@@ -43,5 +45,20 @@ public class VersionSpecificHandler11 extends VersionSpecificHandler9 implements
     @Override
     public boolean isPlayerOnZombieHorse(Player player) {
         return player.getVehicle() instanceof ZombieHorse;
+    }
+
+    @Override
+    public int removeItem(Inventory inventory, int slot, int amountToRemove) {
+        ItemStack item = inventory.getItem(slot);
+
+        if (item == null) {
+            return 0;
+        }
+
+        int amountInStack = item.getAmount();
+        int newAmountInStack = Math.max(0, amountInStack - amountToRemove);
+        item.setAmount(newAmountInStack);
+
+        return amountInStack - newAmountInStack;
     }
 }
