@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -161,5 +162,24 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
     @Override
     public boolean isGoat(Entity entity) {
         return false;
+    }
+
+    @Override
+    public int removeItem(Inventory inventory, int slot, int amountToRemove) {
+        ItemStack item = inventory.getItem(slot);
+
+        if (item == null) {
+            return 0;
+        }
+
+        int amountInStack = item.getAmount();
+        int newAmountInStack = Math.max(0, amountInStack - amountToRemove);
+        item.setAmount(newAmountInStack);
+
+        // It's needed in older versions
+        // https://github.com/LMBishop/Quests/issues/787
+        inventory.setItem(slot, item);
+
+        return amountInStack - newAmountInStack;
     }
 }
