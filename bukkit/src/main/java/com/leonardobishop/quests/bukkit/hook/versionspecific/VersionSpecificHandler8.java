@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class VersionSpecificHandler8 implements VersionSpecificHandler {
 
@@ -181,5 +182,12 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
         inventory.setItem(slot, item);
 
         return amountInStack - newAmountInStack;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public List<Entity> getPassengers(Entity entity) {
+        final Entity passenger = entity.getPassenger();
+        return passenger != null ? List.of(passenger) : List.of();
     }
 }
