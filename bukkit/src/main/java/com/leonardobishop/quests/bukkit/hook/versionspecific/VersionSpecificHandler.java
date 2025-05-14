@@ -27,6 +27,8 @@ import org.bukkit.inventory.SmithingInventory;
 import org.bukkit.inventory.SmithingTransformRecipe;
 import org.bukkit.inventory.SmithingTrimRecipe;
 
+import java.util.List;
+
 /**
  * Interface used for implementing version-specific features.
  * All information about changes in the API should be documented HERE in the method docs.
@@ -219,4 +221,9 @@ public interface VersionSpecificHandler {
      * <a href="https://github.com/LMBishop/Quests/issues/787">Reason behind moving it to a version specific handler</a>
      */
     int removeItem(Inventory inventory, int slot, int amountToRemove);
+
+    /**
+     * {@link Entity#getPassengers()} method was introduced in {@code 1.11.2}.
+     */
+    List<Entity> getPassengers(final Entity entity);
 }
