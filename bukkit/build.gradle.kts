@@ -65,7 +65,7 @@ dependencies {
     compileOnlyProject(":common")
 
     // Paper
-    compileOnlyServer("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
+    compileOnlyServer("io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT")
 
     // ASkyBlock
     compileOnlyPlugin("com.wasteofplastic:askyblock:3.0.9.4")
@@ -137,8 +137,10 @@ dependencies {
 
     // bStats
     implementation("org.bstats:bstats-bukkit-lite:1.8")
+    // gson // TODO implement custom metrics without gson
+    implementation("com.google.code.gson:gson:2.13.1")
     // HikariCP
-    implementation("com.zaxxer:HikariCP:6.2.1")
+    implementation("com.zaxxer:HikariCP:6.3.0")
     // slf4j
     implementation("org.slf4j:slf4j-nop:1.7.36")
     // hppc
