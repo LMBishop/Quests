@@ -23,6 +23,13 @@ from `config.yml` if a `categories.yml` file is not present.
 ID of category, this is the text you should enter when putting quests
 inside a category.
 
+## GUI title
+
+
+*`gui-name`*
+
+The custom GUI title to be shown in this category quest menu
+
 ## Display
 
   

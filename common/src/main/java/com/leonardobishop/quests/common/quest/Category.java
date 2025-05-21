@@ -23,6 +23,7 @@ public final class Category {
     private static final String PERMISSION_PREFIX = "quests.category.";
 
     private final String id;
+    private final @Nullable String guiName;
     private final List<String> registeredQuestIds;
     private final boolean permissionRequired;
     private final boolean hidden;
@@ -31,24 +32,48 @@ public final class Category {
      * Constructs a Category with the specified parameters.
      *
      * @param id                 the unique identifier for the category; must not be null
+     * @param guiName            the custom GUI title to be shown in this category quest menu
      * @param permissionRequired whether a permission is required to access this category
      * @param hidden             whether the category should be hidden from view
      */
-    public Category(final String id, final boolean permissionRequired, final boolean hidden) {
+    public Category(final String id, final @Nullable String guiName, final boolean permissionRequired, final boolean hidden) {
         this.id = Objects.requireNonNull(id, "id cannot be null");
+        this.guiName = guiName;
         this.registeredQuestIds = new ArrayList<>();
         this.permissionRequired = permissionRequired;
         this.hidden = hidden;
     }
 
     /**
+     * Constructs a Category with no custom {@link Category#guiName}.
+     *
+     * @param id                 the unique identifier for the category; must not be null
+     * @param permissionRequired whether a permission is required to access this category
+     * @param hidden             whether the category should be hidden from view
+     */
+    public Category(final String id, final boolean permissionRequired, final boolean hidden) {
+        this(id, null, permissionRequired, hidden);
+    }
+
+    /**
      * Constructs a Category with {@link Category#hidden} set to {@code false}.
+     *
+     * @param id                 the unique identifier for the category; must not be null
+     * @param guiName            the custom GUI title to be shown in this category quest menu
+     * @param permissionRequired whether a permission is required to access this category
+     */
+    public Category(final String id, final @Nullable String guiName, final boolean permissionRequired) {
+        this(id, guiName, permissionRequired, false);
+    }
+
+    /**
+     * Constructs a Category with no custom {@link Category#guiName} and {@link Category#hidden} set to {@code false}.
      *
      * @param id                 the unique identifier for the category; must not be null
      * @param permissionRequired whether a permission is required to access this category
      */
     public Category(final String id, final boolean permissionRequired) {
-        this(id, permissionRequired, false);
+        this(id, null, permissionRequired);
     }
 
     /**
@@ -59,6 +84,15 @@ public final class Category {
     @Contract(pure = true)
     public String getId() {
         return this.id;
+    }
+
+    /**
+     * Returns the custom GUI title for this category.
+     *
+     * @return the category custom GUI title
+     */
+    public @Nullable String getGUIName() {
+        return this.guiName;
     }
 
     /**
