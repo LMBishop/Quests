@@ -103,7 +103,7 @@ public class MenuUtils {
             }
         }
         Collections.sort(quests);
-        QuestQMenu questQMenu = new QuestQMenu(plugin, qPlayer, quests, category.getId(), superMenu);
+        QuestQMenu questQMenu = new QuestQMenu(plugin, qPlayer, quests, category, superMenu);
         plugin.getMenuController().openMenu(player, questQMenu);
     }
 

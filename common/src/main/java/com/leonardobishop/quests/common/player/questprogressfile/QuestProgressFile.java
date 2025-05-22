@@ -42,7 +42,7 @@ public final class QuestProgressFile {
     public QuestProgressFile(final Quests plugin, final UUID playerUUID) {
         this.plugin = plugin;
         this.playerUUID = playerUUID;
-        this.questProgressMap = new HashMap<>();
+        this.questProgressMap = HashMap.newHashMap(1024); // reduce collisions
     }
 
     /**

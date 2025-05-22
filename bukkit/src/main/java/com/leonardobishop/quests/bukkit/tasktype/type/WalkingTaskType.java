@@ -40,10 +40,10 @@ public final class WalkingTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
-        final Location from = event.getFrom();
-        final Location to = event.getTo();
+        Location from = event.getFrom();
+        Location to = event.getTo();
 
-        final int distance = Math.abs(to.getBlockX() - from.getBlockX()) + Math.abs(to.getBlockZ() - from.getBlockZ());
+        int distance = Math.abs(to.getBlockX() - from.getBlockX()) + Math.abs(to.getBlockZ() - from.getBlockZ());
         if (distance == 0) {
             return;
         }
@@ -58,17 +58,17 @@ public final class WalkingTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVehicleMove(VehicleMoveEvent event) {
-        final Location from = event.getFrom();
-        final Location to = event.getTo();
+        Location from = event.getFrom();
+        Location to = event.getTo();
 
-        final int distance = Math.abs(to.getBlockX() - from.getBlockX()) + Math.abs(to.getBlockZ() - from.getBlockZ());
+        int distance = Math.abs(to.getBlockX() - from.getBlockX()) + Math.abs(to.getBlockZ() - from.getBlockZ());
         if (distance == 0) {
             return;
         }
 
-        List<Entity> entities = event.getVehicle().getPassengers();
-        for (Entity entity : entities) {
-            if (entity instanceof Player player) {
+        List<Entity> passengers = this.plugin.getVersionSpecificHandler().getPassengers(event.getVehicle());
+        for (Entity passenger : passengers) {
+            if (passenger instanceof Player player) {
                 handle(player, distance);
             }
         }

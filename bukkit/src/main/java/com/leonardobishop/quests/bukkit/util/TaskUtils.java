@@ -28,6 +28,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -596,20 +597,14 @@ public class TaskUtils {
     }
 
     public static void removeItemsInSlots(Player player, int[] amountPerSlot, int amountToRemove) {
-        for (int i = 0; i < 36; i++) {
-            if (amountPerSlot[i] == 0) continue;
+        PlayerInventory inventory = player.getInventory();
 
-            ItemStack slot = player.getInventory().getItem(i);
-            if (slot == null) continue;
-
-            int amountInStack = slot.getAmount();
-            int min = Math.max(0, amountInStack - amountToRemove);
-            slot.setAmount(min);
-            amountToRemove = amountToRemove - amountInStack;
-            if (amountToRemove <= 0) break;
+        for (int i = 0; i < 36 && amountToRemove > 0; i++) {
+            if (amountPerSlot[i] != 0) {
+                amountToRemove -= plugin.getVersionSpecificHandler().removeItem(inventory, i, amountToRemove);
+            }
         }
     }
-
 
     /**
      * Returns a config validator which checks if at least one value in the given
