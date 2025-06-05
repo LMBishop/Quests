@@ -1,20 +1,22 @@
 package com.leonardobishop.quests.bukkit.hook.papi;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.common.util.Modern;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+@Modern(type = Modern.Type.FULL)
 @NullMarked
 public final class PlaceholderAPIHook implements AbstractPlaceholderAPIHook {
 
     @Nullable
-    private QuestsPlaceholders placeholder;
+    private QuestsPlaceholders expansion;
 
     public PlaceholderAPIHook() {
-        this.placeholder = null;
+        this.expansion = null;
     }
 
     @Contract(pure = true, value = "_, null -> null; _, !null -> !null")
@@ -38,14 +40,14 @@ public final class PlaceholderAPIHook implements AbstractPlaceholderAPIHook {
 
     @Override
     public void registerExpansion(final BukkitQuestsPlugin plugin) {
-        this.placeholder = new QuestsPlaceholders(plugin);
-        this.placeholder.register();
+        this.expansion = new QuestsPlaceholders(plugin);
+        this.expansion.register();
     }
 
     @Override
     public void unregisterExpansion() {
-        if (this.placeholder != null) {
-            this.placeholder.unregister();
+        if (this.expansion != null) {
+            this.expansion.unregister();
         }
     }
 }
