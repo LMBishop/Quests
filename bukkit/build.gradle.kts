@@ -29,6 +29,8 @@ repositories {
     maven("https://repo.auxilor.io/repository/maven-public/")
     // EssentialsX
     maven("https://repo.essentialsx.net/releases/")
+    // FancyNpcs
+    maven("https://repo.fancyinnovations.com/releases")
     // MMOItems, MythicLib
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
     // MythicMobs 4, MythicMobs 5
@@ -74,8 +76,8 @@ dependencies {
     // BedWars1058
     compileOnlyPlugin("com.andrei1058.bedwars:bedwars-api:22.01")
     // BentoBox
-    compileOnly("world.bentobox:bentobox:2.5.4-SNAPSHOT")
-    compileOnly("world.bentobox:level:2.16.1-SNAPSHOT")
+    compileOnlyPlugin("world.bentobox:bentobox:2.5.4-SNAPSHOT")
+    compileOnlyPlugin("world.bentobox:level:2.16.1-SNAPSHOT")
     // Citizens
     compileOnlyPlugin("net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT")
     // CoreProtect
@@ -89,6 +91,8 @@ dependencies {
     compileOnlyPlugin("com.willfp:libreforge:4.21.1")
     // EssentialsX
     compileOnlyPlugin("net.essentialsx:EssentialsX:2.19.7")
+    // FancyNpcs
+    compileOnlyPlugin("de.oliver:FancyNpcs:2.5.1")
     // IridiumSkyblock TODO fix whenever repo is up
     //compileOnlyPlugin("com.github.Iridium-Development:IridiumSkyblock:master-SNAPSHOT")
     // ItemsAdder
