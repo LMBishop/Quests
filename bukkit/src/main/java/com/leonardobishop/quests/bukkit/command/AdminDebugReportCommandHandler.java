@@ -16,12 +16,15 @@ import com.leonardobishop.quests.common.quest.Task;
 import com.leonardobishop.quests.common.tasktype.TaskType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,6 +42,16 @@ import java.util.UUID;
 import java.util.function.Function;
 
 public class AdminDebugReportCommandHandler implements CommandHandler {
+
+    private static Method getMinecraftServerMethod;
+
+    static {
+        try {
+            getMinecraftServerMethod = Server.class.getMethod("getMinecraftVersion");
+        } catch (NoSuchMethodException ignored) {
+            // introduced in one of 1.15.x versions
+        }
+    }
 
     private final BukkitQuestsPlugin plugin;
 
@@ -85,7 +98,12 @@ public class AdminDebugReportCommandHandler implements CommandHandler {
             lines.add("Server name: " + plugin.getServer().getName());
             lines.add("Server version: " + plugin.getServer().getVersion());
             lines.add("Bukkit version: " + plugin.getServer().getBukkitVersion());
-            lines.add("Minecraft version: " + plugin.getServer().getMinecraftVersion());
+            if (getMinecraftServerMethod != null) {
+                try {
+                    lines.add("Minecraft version: " + getMinecraftServerMethod.invoke(plugin.getServer()));
+                } catch (IllegalAccessException | InvocationTargetException ignored) {
+                }
+            }
             lines.add("Player count: " + plugin.getServer().getOnlinePlayers().size());
             lines.add("");
 

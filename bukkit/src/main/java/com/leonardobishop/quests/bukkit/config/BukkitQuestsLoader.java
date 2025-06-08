@@ -122,10 +122,11 @@ public class BukkitQuestsLoader implements QuestsLoader {
 
         for (String id : categories.getKeys(false)) {
             ItemStack displayItem = plugin.getConfiguredItemStack(id + ".display", categories);
+            String guiName = categories.getString(id + ".gui-name");
             boolean permissionRequired = categories.getBoolean(id + ".permission-required", false);
             boolean hidden = categories.getBoolean(id + ".hidden", false);
 
-            Category category = new Category(id, permissionRequired, hidden);
+            Category category = new Category(id, guiName, permissionRequired, hidden);
             questManager.registerCategory(category);
             qItemStackRegistry.register(category, displayItem);
         }

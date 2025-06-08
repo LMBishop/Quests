@@ -44,7 +44,7 @@ public class CategoryQMenu extends PaginatedQMenu {
                 }
             }
             Collections.sort(quests);
-            QuestQMenu questQMenu = new QuestQMenu(plugin, owner, quests, category.getId(), this);
+            QuestQMenu questQMenu = new QuestQMenu(plugin, owner, quests, category, this);
             MenuElement menuElement = new CategoryMenuElement(plugin, owner.getPlayerUUID(), category, questQMenu);
             categoryMenuElements.add(menuElement);
         }

@@ -29,6 +29,8 @@ repositories {
     maven("https://repo.auxilor.io/repository/maven-public/")
     // EssentialsX
     maven("https://repo.essentialsx.net/releases/")
+    // FancyNpcs
+    maven("https://repo.fancyinnovations.com/releases")
     // MMOItems, MythicLib
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
     // MythicMobs 4, MythicMobs 5
@@ -65,7 +67,7 @@ dependencies {
     compileOnlyProject(":common")
 
     // Paper
-    compileOnlyServer("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
+    compileOnlyServer("io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT")
 
     // ASkyBlock
     compileOnlyPlugin("com.wasteofplastic:askyblock:3.0.9.4")
@@ -74,8 +76,8 @@ dependencies {
     // BedWars1058
     compileOnlyPlugin("com.andrei1058.bedwars:bedwars-api:22.01")
     // BentoBox
-    compileOnly("world.bentobox:bentobox:2.5.4-SNAPSHOT")
-    compileOnly("world.bentobox:level:2.16.1-SNAPSHOT")
+    compileOnlyPlugin("world.bentobox:bentobox:2.5.4-SNAPSHOT")
+    compileOnlyPlugin("world.bentobox:level:2.16.1-SNAPSHOT")
     // Citizens
     compileOnlyPlugin("net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT")
     // CoreProtect
@@ -89,6 +91,8 @@ dependencies {
     compileOnlyPlugin("com.willfp:libreforge:4.21.1")
     // EssentialsX
     compileOnlyPlugin("net.essentialsx:EssentialsX:2.19.7")
+    // FancyNpcs
+    compileOnlyPlugin("de.oliver:FancyNpcs:2.5.1")
     // IridiumSkyblock TODO fix whenever repo is up
     //compileOnlyPlugin("com.github.Iridium-Development:IridiumSkyblock:master-SNAPSHOT")
     // ItemsAdder
@@ -137,8 +141,10 @@ dependencies {
 
     // bStats
     implementation("org.bstats:bstats-bukkit-lite:1.8")
+    // gson // TODO implement custom metrics without gson
+    implementation("com.google.code.gson:gson:2.13.1")
     // HikariCP
-    implementation("com.zaxxer:HikariCP:6.2.1")
+    implementation("com.zaxxer:HikariCP:6.3.0")
     // slf4j
     implementation("org.slf4j:slf4j-nop:1.7.36")
     // hppc

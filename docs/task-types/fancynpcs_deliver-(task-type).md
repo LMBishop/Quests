@@ -1,18 +1,18 @@
 ---
-title: znpcsplus_deliver
+title: fancynpcs_deliver
 parent: External task types
 grand_parent: Task types
 ---
 
-# znpcsplus_deliver (task type)
+# fancynpcs_deliver (task type)
 
-Since v3.15
+Not released yet (dev builds)
 {: .label .label-green }
 
-Plugin 'ZNPCsPlus' required
+Plugin 'FancyNpcs' required
 {: .label }
 
-Deliver a set of items to a ZNPCsPlus NPC.
+Deliver a set of items to a FancyNpcs NPC.
 
 ## Options
 
@@ -33,8 +33,8 @@ Deliver a set of items to a ZNPCsPlus NPC.
 Deliver 8 of `BEEF` to an NPC with ID "gerald":
 
 ``` yaml
-znpcsplusdeliver:
-  type: "znpcsplus_deliver"
+fancynpcsdeliver:
+  type: "fancynpcs_deliver"
   npc-id: "gerald"                      # ID of NPC
   item: BEEF                            # name of item (can be id or minecraft name)
   amount: 8                             # amount of item needed
@@ -48,7 +48,7 @@ Deliver 8 of a specific item to an NPC with ID "gerald":
 
 ``` yaml
 beef:
-  type: "znpcsplus_deliver"
+  type: "fancynpcsplus_deliver"
   npc-id: "gerald"                      # ID of NPC
   item:                                 # SPECIFIC item with name and lore
     name: "&cSpecial Beef"
@@ -67,7 +67,7 @@ Deliver 8 of [quest item](../configuration/defining-items#quest-items)
 
 ``` yaml
 beef:
-  type: "znpcsplus_deliver"
+  type: "fancynpcs_deliver"
   npc-id: "npc1"                        # ID of NPC 
   item:                                 # USING quest-item
     quest-item: "special_beef"

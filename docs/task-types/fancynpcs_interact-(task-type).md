@@ -1,18 +1,18 @@
 ---
-title: servernpc_interact
+title: fancynpcs_interact
 parent: External task types
 grand_parent: Task types
 ---
 
-# servernpc_interact (task type)
+# fancynpcs_interact (task type)
 
-Since v3.15
+Not released yet (dev builds)
 {: .label .label-green }
 
-Plugin 'ServerNPC' required
+Plugin 'FancyNpcs' required
 {: .label }
 
-Interact with a ServerNPC NPC.
+Interact with a FancyNpcs NPC.
 
 ## Options
 
@@ -27,8 +27,8 @@ Interact with a ServerNPC NPC.
 Interact with an NPC with ID "gerald":
 
 ``` yaml
-servernpcinteract:
-  type: "servernpc_interact"
+fancynpcsinteract:
+  type: "fancynpcs_interact
   npc-id: "gerald"                      # ID of NPC
   worlds:                               # (OPTIONAL) restrict to certain worlds
    - "world"

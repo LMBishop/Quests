@@ -38,6 +38,7 @@ import com.leonardobishop.quests.bukkit.hook.vault.AbstractVaultHook;
 import com.leonardobishop.quests.bukkit.hook.vault.VaultHook;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler11;
+import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler12;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler16;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler17;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler20;
@@ -119,6 +120,8 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EcoMobsKillingTa
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsBalanceTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsMoneyEarnTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FabledSkyBlockLevelTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FancyNpcsDeliverTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FancyNpcsInteractTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.IridiumSkyblockValueTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.MythicMobsKillingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.NuVotifierVoteTaskType;
@@ -351,7 +354,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         } else {
             this.versionSpecificHandler = switch (version) {
                 case 9, 10 -> new VersionSpecificHandler9();
-                case 11, 12, 13, 14, 15 -> new VersionSpecificHandler11();
+                case 11 -> new VersionSpecificHandler11();
+                case 12, 13, 14, 15 -> new VersionSpecificHandler12();
                 case 16 -> new VersionSpecificHandler16();
                 case 17, 18, 19 -> new VersionSpecificHandler17();
                 default -> new VersionSpecificHandler20();
@@ -498,6 +502,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new EssentialsBalanceTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
             taskTypeManager.registerTaskType(() -> new EssentialsMoneyEarnTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
             taskTypeManager.registerTaskType(() -> new FabledSkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("FabledSkyBlock")); // not tested
+            taskTypeManager.registerTaskType(() -> new FancyNpcsDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("FancyNpcs"));
+            taskTypeManager.registerTaskType(() -> new FancyNpcsInteractTaskType(this), () -> CompatUtils.isPluginEnabled("FancyNpcs"));
             taskTypeManager.registerTaskType(() -> new PinataPartyHitTaskType(this), () -> CompatUtils.isPluginEnabled("PinataParty"));
             taskTypeManager.registerTaskType(() -> new PlaceholderAPIEvaluateTaskType(this), () -> CompatUtils.isPluginEnabled("PlaceholderAPI"));
             taskTypeManager.registerTaskType(() -> new PlayerPointsEarnTaskType(this), () -> CompatUtils.isPluginEnabled("PlayerPoints"));

@@ -20,11 +20,14 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.SmithingInventory;
 import org.bukkit.inventory.SmithingTransformRecipe;
 import org.bukkit.inventory.SmithingTrimRecipe;
+
+import java.util.List;
 
 /**
  * Interface used for implementing version-specific features.
@@ -213,4 +216,14 @@ public interface VersionSpecificHandler {
      * @see Goat
      */
     boolean isGoat(Entity entity);
+
+    /**
+     * <a href="https://github.com/LMBishop/Quests/issues/787">Reason behind moving it to a version specific handler</a>
+     */
+    int removeItem(Inventory inventory, int slot, int amountToRemove);
+
+    /**
+     * {@link Entity#getPassengers()} method was introduced in {@code 1.11.2}.
+     */
+    List<Entity> getPassengers(final Entity entity);
 }

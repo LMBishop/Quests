@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * Represents underlying quest progress for a player.
@@ -42,7 +43,7 @@ public final class QuestProgressFile {
     public QuestProgressFile(final Quests plugin, final UUID playerUUID) {
         this.plugin = plugin;
         this.playerUUID = playerUUID;
-        this.questProgressMap = new HashMap<>();
+        this.questProgressMap = HashMap.newHashMap(1024); // reduce collisions
     }
 
     /**
@@ -103,6 +104,20 @@ public final class QuestProgressFile {
         }
 
         return quests;
+    }
+
+    /**
+     * Passes all {@link Quest} a player has encountered (not to be confused with a collection of quest progress) to specified consumer.
+     */
+    @Contract(pure = true)
+    public void getAllQuestsFromProgressConsumer(final QuestProgressFilter filter, final Consumer<Quest> consumer) {
+        for (final QuestProgress questProgress : this.questProgressMap.values()) {
+            final Quest quest = this.getQuestFromProgress(filter, questProgress);
+
+            if (quest != null) {
+                consumer.accept(quest);
+            }
+        }
     }
 
     /**

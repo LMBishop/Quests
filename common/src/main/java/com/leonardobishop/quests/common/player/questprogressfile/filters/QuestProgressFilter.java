@@ -17,6 +17,10 @@ public interface QuestProgressFilter {
     QuestProgressFilter DOES_COUNT_TOWARDS_COMPLETED = new DoesCountTowardsCompletedQuestProgressFilter();
     QuestProgressFilter DOES_COUNT_TOWARDS_LIMIT = new DoesCountTowardsLimitQuestProgressFilter();
 
+    // Counting
+    QuestProgressFilter COMPLETED_COUNT = new ConjunctionQuestProgressFilter(QuestProgressFilter.COMPLETED, QuestProgressFilter.DOES_COUNT_TOWARDS_COMPLETED);
+    QuestProgressFilter COMPLETED_BEFORE_COUNT = new ConjunctionQuestProgressFilter(QuestProgressFilter.COMPLETED_BEFORE, QuestProgressFilter.DOES_COUNT_TOWARDS_COMPLETED);
+
     @Contract(pure = true)
     default boolean matchesQuest(final @NotNull Quest quest) {
         return true;
