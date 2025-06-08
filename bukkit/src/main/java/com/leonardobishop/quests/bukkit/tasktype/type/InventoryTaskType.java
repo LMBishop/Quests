@@ -11,6 +11,7 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +22,8 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+
+import java.util.UUID;
 
 public final class InventoryTaskType extends BukkitTaskType {
 
@@ -49,6 +52,11 @@ public final class InventoryTaskType extends BukkitTaskType {
     @Override
     public void onReady() {
         fixedQuestItemCache.clear();
+    }
+
+    @Override
+    public void onStart(Quest quest, Task task, UUID playerUUID) {
+        checkInventory(Bukkit.getPlayer(playerUUID), 1L);
     }
 
     @SuppressWarnings("deprecation")
@@ -91,7 +99,7 @@ public final class InventoryTaskType extends BukkitTaskType {
     }
 
     private void checkInventory(Player player, long delay) {
-        if (player.hasMetadata("NPC") || !player.isOnline()) return;
+        if (player == null || player.hasMetadata("NPC") || !player.isOnline()) return;
         plugin.getScheduler().runTaskLaterAtLocation(player.getLocation(), () -> checkInventory(player), delay);
     }
 
