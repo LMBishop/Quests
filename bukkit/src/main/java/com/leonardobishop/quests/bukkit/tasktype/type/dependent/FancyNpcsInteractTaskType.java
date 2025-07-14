@@ -18,8 +18,6 @@ public final class FancyNpcsInteractTaskType extends InteractTaskType<String> {
     public FancyNpcsInteractTaskType(BukkitQuestsPlugin plugin) {
         super("fancynpcs_interact", TaskUtils.TASK_ATTRIBUTION_STRING, "Interact with a FancyNpcs NPC to complete the quest.");
         this.plugin = plugin;
-
-        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "npc-id"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

@@ -18,8 +18,6 @@ public final class FancyNpcsDeliverTaskType extends DeliverTaskType<String> {
     public FancyNpcsDeliverTaskType(BukkitQuestsPlugin plugin) {
         super("fancynpcs_deliver", TaskUtils.TASK_ATTRIBUTION_STRING, "Deliver a set of items to a FancyNpcs NPC.");
         this.plugin = plugin;
-
-        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "npc-id"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
