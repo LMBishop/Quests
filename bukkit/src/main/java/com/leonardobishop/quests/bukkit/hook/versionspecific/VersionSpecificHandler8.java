@@ -40,6 +40,11 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
         return player.getVehicle() instanceof Horse horse && horse.getVariant() == Horse.Variant.DONKEY;
     }
 
+    @Override
+    public boolean isPlayerOnHappyGhast(Player player) {
+        return false;
+    }
+
     @SuppressWarnings("deprecation")
     @Override
     public boolean isPlayerOnHorse(Player player) {

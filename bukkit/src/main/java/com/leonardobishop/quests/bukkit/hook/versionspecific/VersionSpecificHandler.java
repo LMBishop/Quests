@@ -7,6 +7,7 @@ import org.bukkit.entity.Camel;
 import org.bukkit.entity.Donkey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Goat;
+import org.bukkit.entity.HappyGhast;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Llama;
 import org.bukkit.entity.Mule;
@@ -64,6 +65,13 @@ public interface VersionSpecificHandler {
      * </p>
      */
     boolean isPlayerOnDonkey(Player player);
+
+    /**
+     * Happy Ghasts were introduced in {@code 1.21.6}.
+     *
+     * @see HappyGhast
+     */
+    boolean isPlayerOnHappyGhast(Player player);
 
     /**
      * Horses were introduced in {@code 1.6.1}.

@@ -9,7 +9,10 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Location;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Boat;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Pig;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.RideableMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -119,7 +122,7 @@ public final class WalkingTaskType extends BukkitTaskType {
             case BOAT -> player.getVehicle() instanceof Boat;
             case CAMEL -> this.plugin.getVersionSpecificHandler().isPlayerOnCamel(player);
             case DONKEY -> this.plugin.getVersionSpecificHandler().isPlayerOnDonkey(player);
-            case GHAST -> player.getVehicle() instanceof Ghast;
+            case HAPPY_GHAST -> this.plugin.getVersionSpecificHandler().isPlayerOnHappyGhast(player);
             case HORSE -> this.plugin.getVersionSpecificHandler().isPlayerOnHorse(player);
             case LLAMA -> this.plugin.getVersionSpecificHandler().isPlayerOnLlama(player);
             case MINECART -> player.getVehicle() instanceof RideableMinecart;
@@ -171,7 +174,7 @@ public final class WalkingTaskType extends BukkitTaskType {
         BOAT,
         CAMEL,
         DONKEY,
-        GHAST,
+        HAPPY_GHAST,
         HORSE,
         LLAMA,
         MINECART,
