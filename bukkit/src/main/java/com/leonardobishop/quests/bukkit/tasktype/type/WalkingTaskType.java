@@ -136,35 +136,35 @@ public final class WalkingTaskType extends BukkitTaskType {
                 // player must be sneaking; cannot be swimming, flying and
                 // gliding because sneaking is used to control the height;
                 // we ignore sprinting, and it shouldn't affect sneaking
-                    player.isSneaking() && !player.isSwimming() && !player.isFlying()
+                    !player.isInsideVehicle() && player.isSneaking() && !player.isSwimming() && !player.isFlying()
                             && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
             case WALKING ->
                 // player cannot be doing anything special as we want the
                 // other actions to be counted towards other task modes
-                    !player.isSneaking() && !player.isSwimming() && !player.isSprinting() && !player.isFlying()
-                            && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
+                    !player.isInsideVehicle() && !player.isSneaking() && !player.isSwimming() && !player.isSprinting()
+                            && !player.isFlying() && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
             case RUNNING ->
                 // player must be sprinting; cannot be sneaking as it makes
                 // running impossible; running and swimming at once is possible,
                 // but it's not real running, so we ignore it; we ignore flying
                 // as it's definitely not running; running and gliding at once
                 // is not possible, so we ignore it as well
-                    !player.isSneaking() && !player.isSwimming() && player.isSprinting() && !player.isFlying()
-                            && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
+                    !player.isInsideVehicle() && !player.isSneaking() && !player.isSwimming() && player.isSprinting()
+                            && !player.isFlying() && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
             case SWIMMING ->
                 // sprinting and sneaking is possible with swimming at once,
                 // so we ignore it but not gliding as it's a bit different
-                    player.isSwimming()
+                    !player.isInsideVehicle() && player.isSwimming()
                             && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
             case FLYING ->
                 // sprinting and sneaking is possible with flying at once,
                 // so we ignore it but not gliding as it's a bit different
-                    player.isFlying()
+                    !player.isInsideVehicle() && player.isFlying()
                             && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
             case ELYTRA ->
                 // we can safely ignore any other actions here as there is
                 // really no better way to detect flying with elytra
-                    this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
+                    !player.isInsideVehicle() && this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
         };
     }
 
