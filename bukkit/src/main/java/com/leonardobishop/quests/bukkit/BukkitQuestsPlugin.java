@@ -42,6 +42,7 @@ import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHand
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler16;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler17;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler20;
+import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler21;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler8;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler9;
 import com.leonardobishop.quests.bukkit.hook.wildstacker.AbstractWildStackerHook;
@@ -358,7 +359,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 case 12, 13, 14, 15 -> new VersionSpecificHandler12();
                 case 16 -> new VersionSpecificHandler16();
                 case 17, 18, 19 -> new VersionSpecificHandler17();
-                default -> new VersionSpecificHandler20();
+                case 20 -> new VersionSpecificHandler20();
+                default -> new VersionSpecificHandler21();
             };
         }
 

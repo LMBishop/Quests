@@ -1,7 +1,7 @@
 package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Strider;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -17,7 +17,7 @@ public class VersionSpecificHandler16 extends VersionSpecificHandler12 implement
 
     @Override
     public boolean isPlayerOnStrider(Player player) {
-        return player.getVehicle() != null && player.getVehicle().getType() == EntityType.STRIDER;
+        return player.getVehicle() instanceof Strider;
     }
 
     @Override
