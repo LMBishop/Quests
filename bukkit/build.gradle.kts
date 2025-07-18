@@ -123,16 +123,16 @@ dependencies {
     compileOnlyPlugin("com.github.brcdev-minecraft:shopgui-api:3.0.0")
     // Slimefun4
     compileOnlyPlugin("com.github.Slimefun:Slimefun4:RC-37")
-    // SuperiorSkyblock2
-    compileOnlyPlugin("com.bgsoftware:SuperiorSkyblockAPI:2022.9")
+    // SuperiorSkyblock2 TODO fix whenever repo is up
+    //compileOnlyPlugin("com.bgsoftware:SuperiorSkyblockAPI:2022.9")
     // uSkyBlock TODO fix whenever repo is up
     //compileOnlyPlugin("ovh.uskyblock:uSkyBlock-API:2.8.9")
     // Vault
     compileOnlyPlugin("com.github.MilkBowl:VaultAPI:1.7.1")
     // VotingPlugin
     compileOnlyPlugin("com.bencodez:votingplugin:6.18.4")
-    // WildStacker
-    compileOnlyPlugin("com.bgsoftware:WildStackerAPI:2023.3")
+    // WildStacker TODO fix whenever repo is up
+    //compileOnlyPlugin("com.bgsoftware:WildStackerAPI:2023.3")
     // ZNPCsPlus
     compileOnlyPlugin("lol.pyr:znpcsplus-api:2.0.0-SNAPSHOT")
 
