@@ -132,14 +132,14 @@ public class QItemStack {
         return is;
     }
 
-    private static final Pattern taskPlaceholderPattern = Pattern.compile("\\{([^}]+):(progress|complete|id)}");
+    public static final Pattern TASK_PLACEHOLDER_PATTERN = Pattern.compile("\\{([^}]+):(progress|goal|complete|id)}");
 
     public static String processPlaceholders(String s, QuestProgress questProgress) {
         return processPlaceholders(s, questProgress, null);
     }
 
     public static String processPlaceholders(String s, QuestProgress questProgress, TaskProgress taskProgress) {
-        Matcher matcher = taskPlaceholderPattern.matcher(s);
+        Matcher matcher = TASK_PLACEHOLDER_PATTERN.matcher(s);
 
         while (matcher.find()) {
             TaskProgress matchedTaskProgress;
@@ -173,6 +173,8 @@ public class QItemStack {
                     }
                 }
 
+                // TODO add goal
+
                 // completion placeholders
                 case "complete" -> {
                     boolean completed = matchedTaskProgress.isCompleted();
@@ -193,7 +195,7 @@ public class QItemStack {
             // update the matcher only if something needs to be replaced
             if (replacement != null) {
                 s = s.substring(0, matcher.start()) + replacement + s.substring(matcher.end());
-                matcher = taskPlaceholderPattern.matcher(s);
+                matcher = TASK_PLACEHOLDER_PATTERN.matcher(s);
             }
         }
 

@@ -550,14 +550,12 @@ public class BukkitQuestsLoader implements QuestsLoader {
         questsLogger.info(questItemRegistry.getAllItems().size() + " quest items have been registered.");
     }
 
-    private static final Pattern taskPlaceholderPattern = Pattern.compile("\\{([^}]+):(progress|complete|id)}");
-
     private void findInvalidTaskReferences(Quest quest, String s, List<ConfigProblem> configProblems, String location) {
         findInvalidTaskReferences(quest, s, configProblems, location, false);
     }
 
     private void findInvalidTaskReferences(Quest quest, String s, List<ConfigProblem> configProblems, String location, boolean allowByThis) {
-        Matcher matcher = taskPlaceholderPattern.matcher(s);
+        Matcher matcher = QItemStack.TASK_PLACEHOLDER_PATTERN.matcher(s);
 
         while (matcher.find()) {
             String taskIdPart = matcher.group(1);
