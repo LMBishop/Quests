@@ -48,6 +48,14 @@ public class CoreProtectHook implements AbstractCoreProtectHook {
             }
 
             List<String[]> blockLookup = api.blockLookup(block, time);
+
+            if (blockLookup == null) {
+                plugin.getLogger().severe("CoreProtect block lookup returned null! Please ensure, that the CoreProtect API is enabled in its config.");
+
+                plugin.getScheduler().doSync(() -> future.complete(true));
+                return;
+            }
+
             boolean first = true;
 
             for (String[] result : blockLookup) {
