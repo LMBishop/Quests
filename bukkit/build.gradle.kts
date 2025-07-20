@@ -154,7 +154,7 @@ dependencies {
     // hppc
     implementation("com.carrotsearch:hppc:0.10.0")
     // bungeecord-chat
-    implementation("net.md-5:bungeecord-chat:1.20-R0.2") { isTransitive = false }
+    implementation("net.md-5:bungeecord-chat:1.21-R0.3") { isTransitive = false }
 }
 
 tasks.shadowJar {
