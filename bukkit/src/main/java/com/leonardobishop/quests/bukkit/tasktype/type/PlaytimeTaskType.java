@@ -15,7 +15,6 @@ import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 public final class PlaytimeTaskType extends BukkitTaskType {
 
@@ -108,7 +107,7 @@ public final class PlaytimeTaskType extends BukkitTaskType {
     }
 
     @Override
-    public @Nullable Object getGoal(final @NonNull Task task) {
-        return task.getConfigValue("minutes");
+    public @NonNull Object getGoal(final @NonNull Task task) {
+        return task.getConfigValue("minutes", "-");
     }
 }
