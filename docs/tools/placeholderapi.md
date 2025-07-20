@@ -78,6 +78,7 @@ The eCloud extension called 'Quests' is not for this plugin, do not download it!
 | `%quests_quest:<quest-id>_meetsrequirements%`        | Returns **true/false** on whether or not the player has completed the required quests for the quest **`<quest-id>`**.        |
 | `%quests_quest:<quest-id>_task:<task-id>_progress%`  | Returns the **progress** of task **`task-id`** on the quest **`<quest-id>`**.                                                |
 | `%quests_quest:<quest-id>_task:<task-id>_completed%` | Returns **true/false** on whether or not the task **`task-id`** on the quest **`<quest-id>`** is completed by the player.    |
+| `%quests_quest:<quest-id>_task:<task-id>_goal%`      | Returns the **goal** of task **`task-id`** on the quest **`<quest-id>`**.                                                    |
 | `%quests_quest:<quest-id>_p:<placeholder>%`          | Returns the **local quest placeholder `<placeholder>`** for the quest **`<quest-id>`**.                                      |
 
 | Placeholder                                 | Description                                                                                                                     |
@@ -108,12 +109,12 @@ The eCloud extension called 'Quests' is not for this plugin, do not download it!
 
 ### Per-category quest lists
 
-|Placeholder|Description|
-|---|---|
-|`%quests_category:<category-id>_all_list%`|Returns a **comma-seperated\*\* list** of quest **names** on the server.|
-|`%quests_category:<category-id>_completed_list%`|\* Returns a **comma-seperated\*\* list** of quest **names** in the category **`<category-id>`** the player has completed.|
-|`%quests_category:<category-id>_completedbefore_list%`|Returns a **comma-seperated\*\* list** of quest **names** in the category **`<category-id>`** the player has completed **at least once**.|
-|`%quests_category:<category-id>_started_list%`|Returns a **comma-seperated\*\* list** of quest **names** in the category **`<category-id>`** which are active for the player.|
+| Placeholder                                            | Description                                                                                                                               |
+|--------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `%quests_category:<category-id>_all_list%`             | Returns a **comma-seperated\*\* list** of quest **names** on the server.                                                                  |
+| `%quests_category:<category-id>_completed_list%`       | \* Returns a **comma-seperated\*\* list** of quest **names** in the category **`<category-id>`** the player has completed.                |
+| `%quests_category:<category-id>_completedbefore_list%` | Returns a **comma-seperated\*\* list** of quest **names** in the category **`<category-id>`** the player has completed **at least once**. |
+| `%quests_category:<category-id>_started_list%`         | Returns a **comma-seperated\*\* list** of quest **names** in the category **`<category-id>`** which are active for the player.            |
 
 ### Per-category quest ID lists
 
