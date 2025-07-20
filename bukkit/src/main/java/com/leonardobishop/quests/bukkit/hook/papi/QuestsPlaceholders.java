@@ -7,6 +7,7 @@ import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.quest.Category;
 import com.leonardobishop.quests.common.quest.Quest;
@@ -83,7 +84,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                 case "all":
                 case "a":
                     final List<Quest> listAll = new ArrayList<>(plugin.getQuestManager().getQuestMap().values());
-                    result = (args.length == 1 ? String.valueOf(listAll.size()) : parseList((List<Quest>) listAll, args[1], split));
+                    result = (args.length == 1 ? String.valueOf(listAll.size()) : parseList(listAll, args[1], split));
                     break;
                 case "completed":
                 case "c":
@@ -153,36 +154,37 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                         result = getQuestDisplayNameStripped(quest);
                     } else {
                         switch (args[1].toLowerCase()) {
-                            case "started":
-                            case "s":
-                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted() ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
-                                break;
-                            case "starteddate":
-                            case "sd":
-                                if (qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted()) {
-                                    result = parseDate(args, qPlayer.getQuestProgressFile().getQuestProgress(quest).getStartedDate());
+                            case "started", "s" -> {
+                                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgressOrNull(quest);
+                                result = ((questProgress != null && questProgress.isStarted()) ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
+                            }
+                            case "starteddate", "sd" -> {
+                                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgressOrNull(quest);
+                                if (questProgress != null && questProgress.isStarted()) {
+                                    result = parseDate(args, questProgress.getStartedDate());
                                 } else {
                                     result = "Never";
                                 }
-                                break;
-                            case "completed":
-                            case "c":
-                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompleted() ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
-                                break;
-                            case "completedbefore":
-                            case "cb":
-                                result = (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompletedBefore() ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
-                                break;
-                            case "completiondate":
-                            case "cd":
-                                if (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompleted()) {
-                                    result = parseDate(args, qPlayer.getQuestProgressFile().getQuestProgress(quest).getCompletionDate());
+                            }
+                            case "completed", "c" -> {
+                                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgressOrNull(quest);
+                                result = ((questProgress != null && questProgress.isCompleted()) ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
+                            }
+                            case "completedbefore", "cb" -> {
+                                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgressOrNull(quest);
+                                result = ((questProgress != null && questProgress.isCompletedBefore()) ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
+                            }
+                            case "completiondate", "cd" -> {
+                                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgressOrNull(quest);
+                                if (questProgress != null && questProgress.isCompleted()) {
+                                    result = parseDate(args, questProgress.getCompletionDate());
                                 } else {
                                     result = "Never";
                                 }
-                                break;
-                            case "cooldown":
-                                if (qPlayer.getQuestProgressFile().getQuestProgress(quest).isCompleted()) {
+                            }
+                            case "cooldown" -> {
+                                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgressOrNull(quest);
+                                if (questProgress != null && questProgress.isCompleted()) {
                                     final long questCooldown = qPlayer.getQuestProgressFile().getCooldownFor(quest);
                                     if (questCooldown > 0) {
                                         final long questCooldownMillis = TimeUnit.SECONDS.convert(questCooldown, TimeUnit.MILLISECONDS);
@@ -194,22 +196,20 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                 } else {
                                     result = "0";
                                 }
-                                break;
-                            case "timeleft":
+                            }
+                            case "timeleft" -> {
                                 if (qPlayer.hasStartedQuest(quest)) {
                                     long timeLeft = qPlayer.getQuestProgressFile().getTimeRemainingFor(quest);
                                     result = timeLeft != -1 ? FormatUtils.time(TimeUnit.SECONDS.convert(timeLeft, TimeUnit.MILLISECONDS)) : Messages.PLACEHOLDERAPI_NO_TIME_LIMIT.getMessage();
                                 } else {
                                     result = "0";
                                 }
-                                break;
-                            case "canaccept":
-                                result = (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
-                                break;
-                            case "meetsrequirements":
-                                result = (qPlayer.getQuestProgressFile().hasMetRequirements(quest) ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
-                                break;
-                            default:
+                            }
+                            case "canaccept" ->
+                                    result = (qPlayer.canStartQuest(quest) == QuestStartResult.QUEST_SUCCESS ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
+                            case "meetsrequirements" ->
+                                    result = (qPlayer.getQuestProgressFile().hasMetRequirements(quest) ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
+                            default -> {
                                 if (!args[1].contains(":"))
                                     return args[0] + "_" + args[1] + " is not a valid placeholder";
 
@@ -217,18 +217,21 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                 if (t[0].equalsIgnoreCase("task") || t[0].equalsIgnoreCase("t")) {
                                     if (t.length == 1) return "Please specify task name";
 
+                                    QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgressOrNull(quest);
+                                    assert questProgress != null;
+
                                     if (args.length == 2) {
-                                        result = qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).getTaskId();
+                                        result = questProgress.getTaskProgress(t[1]).getTaskId();
                                     } else {
                                         switch (args[2].toLowerCase()) {
                                             case "progress":
                                             case "p":
-                                                final Object progress = qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).getProgress();
+                                                final Object progress = questProgress.getTaskProgress(t[1]).getProgress();
                                                 result = (progress == null ? "0" : String.valueOf(progress));
                                                 break;
                                             case "completed":
                                             case "c":
-                                                result = String.valueOf(qPlayer.getQuestProgressFile().getQuestProgress(quest).getTaskProgress(t[1]).isCompleted() ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
+                                                result = String.valueOf(questProgress.getTaskProgress(t[1]).isCompleted() ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
                                                 break;
                                             default:
                                                 return args[0] + "_" + args[1] + "_" + args[2] + " is not a valid placeholder";
@@ -241,11 +244,16 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                     if (placeholder == null) {
                                         return t[1] + " is not a valid placeholder within quest " + quest.getId();
                                     }
-                                    placeholder = QItemStack.processPlaceholders(Chat.legacyColor(placeholder), qPlayer.getQuestProgressFile().getQuestProgress(quest));
+
+                                    QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgressOrNull(quest);
+                                    assert questProgress != null;
+
+                                    placeholder = QItemStack.processPlaceholders(Chat.legacyColor(placeholder), questProgress);
                                     return placeholder;
                                 } else {
                                     return args[0] + "_" + args[1] + " is not a valid placeholder";
                                 }
+                            }
                         }
                     }
                     break;
@@ -346,20 +354,25 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
             Quest quest = plugin.getQuestManager().getQuestById(q);
             if (quest != null) {
                 switch (filter) {
-                    case STARTED:
-                        if (questP.getQuestProgressFile().getQuestProgress(quest).isStarted())
+                    case STARTED -> {
+                        QuestProgress qp = questP.getQuestProgressFile().getQuestProgressOrNull(quest);
+                        if (qp != null && qp.isStarted()) {
                             categoryQuests.add(quest);
-                        break;
-                    case COMPLETED:
-                        if (questP.getQuestProgressFile().getQuestProgress(quest).isCompleted())
+                        }
+                    }
+                    case COMPLETED -> {
+                        QuestProgress qp = questP.getQuestProgressFile().getQuestProgressOrNull(quest);
+                        if (qp != null && qp.isCompleted()) {
                             categoryQuests.add(quest);
-                        break;
-                    case COMPLETED_BEFORE:
-                        if (questP.getQuestProgressFile().getQuestProgress(quest).isCompletedBefore())
+                        }
+                    }
+                    case COMPLETED_BEFORE -> {
+                        QuestProgress qp = questP.getQuestProgressFile().getQuestProgressOrNull(quest);
+                        if (qp != null && qp.isCompletedBefore()) {
                             categoryQuests.add(quest);
-                        break;
-                    default:
-                        categoryQuests.add(quest);
+                        }
+                    }
+                    default -> categoryQuests.add(quest);
                 }
             }
         });
