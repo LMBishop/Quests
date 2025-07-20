@@ -1,6 +1,9 @@
 package com.leonardobishop.quests.bukkit.tasktype.type;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
@@ -16,11 +19,13 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 
 public final class DealDamageTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
+    private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
 
     public DealDamageTaskType(BukkitQuestsPlugin plugin) {
         super("dealdamage", TaskUtils.TASK_ATTRIBUTION_STRING, "Deal a certain amount of damage.");
@@ -30,15 +35,22 @@ public final class DealDamageTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useEntityListConfigValidator(this, "mob", "mobs"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "allow-only-creatures"));
+        super.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "item"));
+        super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity damager = event.getDamager();
+        ItemStack weapon = null;
         Player player;
 
         if (damager instanceof Player) {
             player = (Player) damager;
+
+            // It can be set there, but unfortunately we are unable to handle bows properly
+            weapon = player.getInventory().getItemInMainHand();
         } else if (damager instanceof Projectile projectile) {
             ProjectileSource source = projectile.getShooter();
 
@@ -88,6 +100,30 @@ public final class DealDamageTaskType extends BukkitTaskType {
             if (!TaskUtils.matchEntity(this, pendingTask, entity, player.getUniqueId())) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
+            }
+
+            if (task.hasConfigKey("item")) {
+                if (weapon == null) {
+                    super.debug("Specific item is required, player has no item in hand; continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+
+                super.debug("Specific item is required; player held item is of type '" + weapon.getType() + "'", quest.getId(), task.getId(), player.getUniqueId());
+
+                QuestItem qi;
+                if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                    QuestItem fetchedItem = TaskUtils.getConfigQuestItem(task, "item", "data");
+                    fixedQuestItemCache.put(quest.getId(), task.getId(), fetchedItem);
+                    qi = fetchedItem;
+                }
+
+                boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
+                if (!qi.compareItemStack(weapon, exactMatch)) {
+                    super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                } else {
+                    super.debug("Item matches required item", quest.getId(), task.getId(), player.getUniqueId());
+                }
             }
 
             int amount = (int) task.getConfigValue("amount");
