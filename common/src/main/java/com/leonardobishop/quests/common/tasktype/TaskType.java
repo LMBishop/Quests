@@ -196,7 +196,7 @@ public abstract class TaskType {
     /**
      * Returns the goal of a task.
      */
-    public @Nullable Object getGoal(final Task task) {
+    public Object getGoal(final Task task) {
         return task.getConfigValue("amount", "-");
     }
 

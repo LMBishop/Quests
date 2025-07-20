@@ -14,6 +14,7 @@ import com.leonardobishop.quests.common.quest.Task;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Arrays;
 import java.util.WeakHashMap;
@@ -220,5 +221,10 @@ public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
         };
 
         public abstract boolean compare(double evaluated, double evaluates);
+    }
+
+    @Override
+    public @NonNull Object getGoal(final @NonNull Task task) {
+        return task.getConfigValue("evaluates", "-");
     }
 }
