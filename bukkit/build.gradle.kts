@@ -29,6 +29,8 @@ repositories {
     maven("https://repo.auxilor.io/repository/maven-public/")
     // EssentialsX
     maven("https://repo.essentialsx.net/releases/")
+    // EvenMoreFish TODO fix when they stop publishing 20 MB fat jar (it breaks annotations and not limited to)
+    //maven("https://repo.codemc.io/repository/EvenMoreFish/")
     // FancyNpcs
     maven("https://repo.fancyinnovations.com/releases")
     // MMOItems, MythicLib
@@ -91,6 +93,8 @@ dependencies {
     compileOnlyPlugin("com.willfp:libreforge:4.21.1")
     // EssentialsX
     compileOnlyPlugin("net.essentialsx:EssentialsX:2.19.7")
+    // EvenMoreFish TODO fix when they stop publishing 20 MB fat jar (it breaks annotations and not limited to)
+    //compileOnlyPlugin("com.oheers.evenmorefish:even-more-fish-plugin:2.0.7")
     // FancyNpcs
     compileOnlyPlugin("de.oliver:FancyNpcs:2.5.1")
     // IridiumSkyblock TODO fix whenever repo is up
@@ -123,16 +127,16 @@ dependencies {
     compileOnlyPlugin("com.github.brcdev-minecraft:shopgui-api:3.0.0")
     // Slimefun4
     compileOnlyPlugin("com.github.Slimefun:Slimefun4:RC-37")
-    // SuperiorSkyblock2 TODO fix whenever repo is up
-    //compileOnlyPlugin("com.bgsoftware:SuperiorSkyblockAPI:2022.9")
+    // SuperiorSkyblock2
+    compileOnlyPlugin("com.bgsoftware:SuperiorSkyblockAPI:2025.1")
     // uSkyBlock TODO fix whenever repo is up
     //compileOnlyPlugin("ovh.uskyblock:uSkyBlock-API:2.8.9")
     // Vault
     compileOnlyPlugin("com.github.MilkBowl:VaultAPI:1.7.1")
     // VotingPlugin
     compileOnlyPlugin("com.bencodez:votingplugin:6.18.4")
-    // WildStacker TODO fix whenever repo is up
-    //compileOnlyPlugin("com.bgsoftware:WildStackerAPI:2023.3")
+    // WildStacker
+    compileOnlyPlugin("com.bgsoftware:WildStackerAPI:2025.1")
     // ZNPCsPlus
     compileOnlyPlugin("lol.pyr:znpcsplus-api:2.0.0-SNAPSHOT")
 
