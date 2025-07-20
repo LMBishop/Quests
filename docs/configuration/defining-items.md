@@ -229,6 +229,7 @@ The types of quest items are as follows:
 - `defined` (items manually written following the format above)
 - `mmoitems` (items from MMOItems)
 - `slimefun` (items from Slimefun)
+- `customfishing` (items from CustomFishing)
 - `executableitems` (items from ExecutableItems)
 - `itemsadder` (items from ItemsAdder)
 - `nexo` (items from Nexo)
@@ -294,6 +295,27 @@ plugin.
 type: "slimefun"
 item:
   id: "slimefun_item_id"  #slimefun id
+```
+
+#### CustomFishing
+
+**CustomFishing quest items** are ItemStacks which belong to the
+CustomFishing plugin.
+
+    items/testitem.yml
+
+``` yaml
+type: "customfishing"
+item:
+  id: "customfishing_id"  #customfishing id
+```
+or
+``` yaml
+type: "customfishing"
+item:
+  ids:  #customfishing ids
+  - "customfishing_id_1"
+  - "customfishing_id_2"
 ```
 
 #### ExecutableItems
