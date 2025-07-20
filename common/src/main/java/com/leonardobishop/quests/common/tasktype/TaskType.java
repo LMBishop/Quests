@@ -194,6 +194,13 @@ public abstract class TaskType {
     }
 
     /**
+     * Returns the goal of a task.
+     */
+    public @Nullable Object getGoal(final Task task) {
+        return task.getConfigValue("amount", "-");
+    }
+
+    /**
      * A functional interface for validating task configuration.
      */
     @FunctionalInterface

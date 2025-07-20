@@ -11,6 +11,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.quest.Category;
 import com.leonardobishop.quests.common.quest.Quest;
+import com.leonardobishop.quests.common.quest.Task;
 import me.clip.placeholderapi.expansion.Cacheable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -76,7 +77,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
         if (qPlayer == null) return Messages.PLACEHOLDERAPI_DATA_NOT_LOADED.getMessageLegacyColor();
         String split = args[args.length - 1];
 
-        String result = "null";
+        String result;
         if (!args[0].contains(":") && !args[0].equalsIgnoreCase("tracked")) {
             if (args.length > 1 && split.equals(args[1])) split = ",";
 
@@ -232,6 +233,11 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                             case "completed":
                                             case "c":
                                                 result = String.valueOf(questProgress.getTaskProgress(t[1]).isCompleted() ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
+                                                break;
+                                            case "goal":
+                                            case "g":
+                                                final Task task = quest.getTaskById(t[1]);
+                                                result = (task != null ? String.valueOf(plugin.getTaskTypeManager().getTaskType(task.getType()).getGoal(task)) : "0");
                                                 break;
                                             default:
                                                 return args[0] + "_" + args[1] + "_" + args[2] + " is not a valid placeholder";

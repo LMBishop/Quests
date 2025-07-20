@@ -14,6 +14,8 @@ import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public final class PlaytimeTaskType extends BukkitTaskType {
 
@@ -103,5 +105,10 @@ public final class PlaytimeTaskType extends BukkitTaskType {
 //        if (this.poll != null) {
 //            this.poll.cancel();
 //        }
+    }
+
+    @Override
+    public @Nullable Object getGoal(final @NonNull Task task) {
+        return task.getConfigValue("minutes");
     }
 }
