@@ -2,6 +2,7 @@ package com.leonardobishop.quests.bukkit.config;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
+import com.leonardobishop.quests.bukkit.item.CustomFishingQuestItem;
 import com.leonardobishop.quests.bukkit.item.ExecutableItemsQuestItem;
 import com.leonardobishop.quests.bukkit.item.ItemsAdderQuestItem;
 import com.leonardobishop.quests.bukkit.item.MMOItemsQuestItem;
@@ -518,6 +519,10 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         case "nexo":
                             if (!Bukkit.getPluginManager().isPluginEnabled("Nexo")) return FileVisitResult.CONTINUE;
                             item = new NexoQuestItem(id, config.getString("item.id"));
+                            break;
+                        case "customfishing":
+                            if (!Bukkit.getPluginManager().isPluginEnabled("CustomFishing")) return FileVisitResult.CONTINUE;
+                            item = new CustomFishingQuestItem(id, config.contains("item.ids") ? config.getStringList("item.ids") : Collections.singletonList(config.getString("item.id")));
                             break;
                     }
 
