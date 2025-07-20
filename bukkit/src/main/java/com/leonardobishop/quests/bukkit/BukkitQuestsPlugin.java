@@ -120,6 +120,8 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EcoBossesKilling
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EcoMobsKillingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsBalanceTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsMoneyEarnTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EvenMoreFishFishingTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EvenMoreFishHuntingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FabledSkyBlockLevelTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FancyNpcsDeliverTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FancyNpcsInteractTaskType;
@@ -503,6 +505,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new EcoMobsKillingTaskType(this), () -> CompatUtils.isPluginEnabled("EcoMobs"));
             taskTypeManager.registerTaskType(() -> new EssentialsBalanceTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
             taskTypeManager.registerTaskType(() -> new EssentialsMoneyEarnTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
+            taskTypeManager.registerTaskType(() -> new EvenMoreFishFishingTaskType(this), () -> CompatUtils.isPluginEnabled("EvenMoreFish"));
+            taskTypeManager.registerTaskType(() -> new EvenMoreFishHuntingTaskType(this), () -> CompatUtils.isPluginEnabled("EvenMoreFish"));
             taskTypeManager.registerTaskType(() -> new FabledSkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("FabledSkyBlock")); // not tested
             taskTypeManager.registerTaskType(() -> new FancyNpcsDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("FancyNpcs"));
             taskTypeManager.registerTaskType(() -> new FancyNpcsInteractTaskType(this), () -> CompatUtils.isPluginEnabled("FancyNpcs"));

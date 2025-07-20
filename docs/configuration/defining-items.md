@@ -230,6 +230,7 @@ The types of quest items are as follows:
 - `mmoitems` (items from MMOItems)
 - `slimefun` (items from Slimefun)
 - `customfishing` (items from CustomFishing)
+- `evenmorefish` (items from EvenMoreFish)
 - `executableitems` (items from ExecutableItems)
 - `itemsadder` (items from ItemsAdder)
 - `nexo` (items from Nexo)
@@ -316,6 +317,20 @@ item:
   ids:  #customfishing ids
   - "customfishing_id_1"
   - "customfishing_id_2"
+```
+
+#### EvenMoreFish
+
+**EvenMoreFish quest items** are ItemStacks which belong to the
+EvenMoreFish plugin.
+
+    items/testitem.yml
+
+``` yaml
+type: "evenmorefish"
+item:
+  rarity: "evenmorefish_rarity_id"  #evenmorefish rarity id
+  fish: "evenmorefish_fish_name"  #evenmorefish fish name
 ```
 
 #### ExecutableItems
