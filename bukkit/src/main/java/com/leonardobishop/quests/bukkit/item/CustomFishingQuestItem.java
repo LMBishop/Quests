@@ -27,7 +27,9 @@ public class CustomFishingQuestItem extends QuestItem {
 
     @Override
     public boolean compareItemStack(final ItemStack other, final boolean exactMatch) {
-        final String loot = BukkitCustomFishingPlugin.getInstance().getItemManager().getCustomFishingItemID(other);
-        return this.loots.contains(loot);
+        final String loot = BukkitCustomFishingPlugin.getInstance()
+                .getItemManager()
+                .getCustomFishingItemID(other);
+        return loot != null && this.loots.contains(loot);
     }
 }
