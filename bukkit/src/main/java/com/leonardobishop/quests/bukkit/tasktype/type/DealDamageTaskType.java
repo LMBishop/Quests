@@ -12,9 +12,11 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.projectiles.ProjectileSource;
 
 public final class DealDamageTaskType extends BukkitTaskType {
 
@@ -33,7 +35,19 @@ public final class DealDamageTaskType extends BukkitTaskType {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity damager = event.getDamager();
-        if (!(damager instanceof Player player)) {
+        Player player;
+
+        if (damager instanceof Player) {
+            player = (Player) damager;
+        } else if (damager instanceof Projectile projectile) {
+            ProjectileSource source = projectile.getShooter();
+
+            if (source instanceof Player) {
+                player = (Player) source;
+            } else {
+                return;
+            }
+        } else {
             return;
         }
 
