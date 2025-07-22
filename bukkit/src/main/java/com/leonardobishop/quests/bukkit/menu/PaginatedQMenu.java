@@ -85,30 +85,34 @@ public abstract class PaginatedQMenu extends QMenu {
         SpacerMenuElement spacer = new SpacerMenuElement();
 
         // populate custom elements first
-        if (customElementsPath != null) {
-            if (plugin.getConfig().isConfigurationSection(customElementsPath)) {
-                for (String s : plugin.getConfig().getConfigurationSection(customElementsPath).getKeys(false)) {
-                    if (!StringUtils.isNumeric(s)) continue;
-                    int slot = Integer.parseInt(s);
-                    int repeat = plugin.getConfig().getInt(customElementsPath + "." + s + ".repeat");
-                    boolean staticElement = plugin.getConfig().getBoolean(customElementsPath + "." + s + ".static", false);
-                    MenuElement menuElement;
-                    if (plugin.getConfig().contains(customElementsPath + "." + s + ".display")) {
-                        ItemStack is = plugin.getConfiguredItemStack(customElementsPath + "." + s + ".display", plugin.getConfig());
-                        List<String> commands = plugin.getQuestsConfig().getStringList(customElementsPath + "." + s + ".commands");
-                        menuElement = new CustomMenuElement(plugin, owner.getPlayerUUID(), player.getName(), is, commands);
-                    } else if (plugin.getConfig().getBoolean(customElementsPath + "." + s + ".spacer", false)) {
-                        menuElement = spacer;
-                    } else continue; // user = idiot
+        if (customElementsPath != null && plugin.getConfig().isConfigurationSection(customElementsPath)) {
+            for (String s : plugin.getConfig().getConfigurationSection(customElementsPath).getKeys(false)) {
+                if (!StringUtils.isNumeric(s)) {
+                    continue;
+                }
 
-                    for (int i = 0; i <= repeat; i++) {
-                        if (staticElement) {
-                            int boundedSlot = slot + i % pageSize;
-                            staticMenuElements[boundedSlot] = menuElement;
-                            customStaticElements++;
-                        } else {
-                            menuElements.put(slot + i, menuElement);
-                        }
+                int slot = Integer.parseInt(s);
+                int repeat = plugin.getConfig().getInt(customElementsPath + "." + s + ".repeat");
+                boolean staticElement = plugin.getConfig().getBoolean(customElementsPath + "." + s + ".static", false);
+
+                MenuElement menuElement;
+                if (plugin.getConfig().contains(customElementsPath + "." + s + ".display")) {
+                    ItemStack is = plugin.getConfiguredItemStack(customElementsPath + "." + s + ".display", plugin.getConfig());
+                    List<String> commands = plugin.getQuestsConfig().getStringList(customElementsPath + "." + s + ".commands");
+                    menuElement = new CustomMenuElement(plugin, owner.getPlayerUUID(), player.getName(), is, commands);
+                } else if (plugin.getConfig().getBoolean(customElementsPath + "." + s + ".spacer", false)) {
+                    menuElement = spacer;
+                } else {
+                    continue; // user = idiot
+                }
+
+                for (int i = 0; i <= repeat; i++) {
+                    if (staticElement) {
+                        int boundedSlot = slot + i % pageSize;
+                        staticMenuElements[boundedSlot] = menuElement;
+                        customStaticElements++;
+                    } else {
+                        menuElements.put(slot + i, menuElement);
                     }
                 }
             }
