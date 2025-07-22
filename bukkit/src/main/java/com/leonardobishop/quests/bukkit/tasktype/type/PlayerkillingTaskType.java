@@ -8,11 +8,11 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 public final class PlayerkillingTaskType extends BukkitTaskType {
 
@@ -27,14 +27,12 @@ public final class PlayerkillingTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onMobKill(EntityDeathEvent event) {
-        Player killer = event.getEntity().getKiller();
-        Entity mob = event.getEntity();
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player killed = event.getPlayer();
+        EntityDamageEvent damageEvent = killed.getLastDamageCause();
+        Player killer = plugin.getVersionSpecificHandler().getDamager(damageEvent);
 
-        if (!(mob instanceof Player)
-            || killer == null
-            || killer.hasMetadata("NPC")
-            || mob == killer) {
+        if (killer == null || killer.hasMetadata("NPC") || killer == killed) {
             return;
         }
 

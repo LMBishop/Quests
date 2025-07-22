@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -62,7 +63,8 @@ public final class MobkillingTaskType extends BukkitTaskType {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         public void onEntityDeath(EntityDeathEvent event) {
             LivingEntity entity = event.getEntity();
-            Player player = entity.getKiller();
+            EntityDamageEvent damageEvent = entity.getLastDamageCause();
+            Player player = plugin.getVersionSpecificHandler().getDamager(damageEvent);
 
             handle(player, entity, 1);
         }
@@ -84,11 +86,7 @@ public final class MobkillingTaskType extends BukkitTaskType {
     }
 
     private void handle(Player player, LivingEntity entity, int eventAmount) {
-        if (player == null) {
-            return;
-        }
-
-        if (player.hasMetadata("NPC")) {
+        if (player == null || player.hasMetadata("NPC")) {
             return;
         }
 

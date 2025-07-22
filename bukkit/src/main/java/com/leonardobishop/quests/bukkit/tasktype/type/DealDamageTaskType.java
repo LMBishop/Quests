@@ -15,12 +15,10 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.projectiles.ProjectileSource;
 
 public final class DealDamageTaskType extends BukkitTaskType {
 
@@ -41,29 +39,11 @@ public final class DealDamageTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        Entity damager = event.getDamager();
-        ItemStack weapon = null;
-        Player player;
+    public void onEntityDamage(EntityDamageEvent event) {
+        Entity entity = event.getEntity();
+        Player player = plugin.getVersionSpecificHandler().getDamager(event);
 
-        if (damager instanceof Player) {
-            player = (Player) damager;
-
-            // It can be set there, but unfortunately we are unable to handle bows properly
-            weapon = player.getInventory().getItemInMainHand();
-        } else if (damager instanceof Projectile projectile) {
-            ProjectileSource source = projectile.getShooter();
-
-            if (source instanceof Player) {
-                player = (Player) source;
-            } else {
-                return;
-            }
-        } else {
-            return;
-        }
-
-        if (player.hasMetadata("NPC")) {
+        if (player == null || player.hasMetadata("NPC")) {
             return;
         }
 
@@ -72,7 +52,6 @@ public final class DealDamageTaskType extends BukkitTaskType {
             return;
         }
 
-        Entity entity = event.getEntity();
         if (!(entity instanceof Damageable damageable)) {
             return;
         }
@@ -103,12 +82,13 @@ public final class DealDamageTaskType extends BukkitTaskType {
             }
 
             if (task.hasConfigKey("item")) {
-                if (weapon == null) {
+                ItemStack item = plugin.getVersionSpecificHandler().getItemInMainHand(player);
+                if (item == null) {
                     super.debug("Specific item is required, player has no item in hand; continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
 
-                super.debug("Specific item is required; player held item is of type '" + weapon.getType() + "'", quest.getId(), task.getId(), player.getUniqueId());
+                super.debug("Specific item is required; player held item is of type '" + item.getType() + "'", quest.getId(), task.getId(), player.getUniqueId());
 
                 QuestItem qi;
                 if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
@@ -118,7 +98,7 @@ public final class DealDamageTaskType extends BukkitTaskType {
                 }
 
                 boolean exactMatch = TaskUtils.getConfigBoolean(task, "exact-match", true);
-                if (!qi.compareItemStack(weapon, exactMatch)) {
+                if (!qi.compareItemStack(item, exactMatch)) {
                     super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 } else {

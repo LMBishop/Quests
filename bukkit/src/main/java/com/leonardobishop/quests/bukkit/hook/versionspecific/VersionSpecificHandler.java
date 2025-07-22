@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.SkeletonHorse;
 import org.bukkit.entity.Strider;
 import org.bukkit.entity.ZombieHorse;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -27,6 +28,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.SmithingInventory;
 import org.bukkit.inventory.SmithingTransformRecipe;
 import org.bukkit.inventory.SmithingTrimRecipe;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -233,5 +235,10 @@ public interface VersionSpecificHandler {
     /**
      * {@link Entity#getPassengers()} method was introduced in {@code 1.11.2}.
      */
-    List<Entity> getPassengers(final Entity entity);
+    List<Entity> getPassengers(Entity entity);
+
+    /**
+     * DamageSources were introduced in {@code 1.20.4}.
+     */
+    @Nullable Player getDamager(@Nullable EntityDamageEvent lastDamageCause);
 }
