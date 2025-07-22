@@ -11,13 +11,19 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
 public final class ConsumeTaskType extends BukkitTaskType {
+
+    private static final ItemStack CAKE_ITEM = new ItemStack(Material.CAKE);
 
     private final BukkitQuestsPlugin plugin;
     private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
@@ -40,7 +46,28 @@ public final class ConsumeTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
-        Player player = event.getPlayer();
+        this.handle(event.getPlayer(), event.getItem());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
+        Block block = event.getBlock();
+        Material type = block.getType();
+
+        if (!plugin.getVersionSpecificHandler().isCake(type)) {
+            return;
+        }
+
+        Entity entity = event.getEntity();
+
+        if (!(entity instanceof Player player)) {
+            return;
+        }
+
+        this.handle(player, CAKE_ITEM);
+    }
+
+    public void handle(Player player, ItemStack item) {
         if (player.hasMetadata("NPC")) {
             return;
         }
@@ -49,8 +76,6 @@ public final class ConsumeTaskType extends BukkitTaskType {
         if (qPlayer == null) {
             return;
         }
-
-        ItemStack item = event.getItem();
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();

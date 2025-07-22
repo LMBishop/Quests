@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
+import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
@@ -222,5 +223,10 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean isCake(Material type) {
+        return type == Material.CAKE;
     }
 }

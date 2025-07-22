@@ -1,7 +1,10 @@
 package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
+import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.CaveVinesPlant;
+import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Camel;
 import org.bukkit.entity.Donkey;
@@ -238,7 +241,13 @@ public interface VersionSpecificHandler {
     List<Entity> getPassengers(Entity entity);
 
     /**
-     * DamageSources were introduced in {@code 1.20.4}.
+     * {@link DamageSource}s were introduced in {@code 1.20.4}.
      */
+    @SuppressWarnings("UnstableApiUsage")
     @Nullable Player getDamager(@Nullable EntityDamageEvent lastDamageCause);
+
+    /**
+     * {@link Tag#CANDLE_CAKES} was introduced in {@code 1.17}.
+     */
+    boolean isCake(Material type);
 }
