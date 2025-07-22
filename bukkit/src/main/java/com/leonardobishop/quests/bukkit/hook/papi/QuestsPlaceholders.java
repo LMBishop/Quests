@@ -219,20 +219,20 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                     if (t.length == 1) return "Please specify task name";
 
                                     QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgressOrNull(quest);
-                                    assert questProgress != null;
 
                                     if (args.length == 2) {
-                                        result = questProgress.getTaskProgress(t[1]).getTaskId();
+                                        result = t[1];
                                     } else {
                                         switch (args[2].toLowerCase()) {
                                             case "progress":
                                             case "p":
-                                                final Object progress = questProgress.getTaskProgress(t[1]).getProgress();
+                                                final Object progress = questProgress != null ? questProgress.getTaskProgress(t[1]).getProgress() : null;
                                                 result = (progress == null ? "0" : String.valueOf(progress));
                                                 break;
                                             case "completed":
                                             case "c":
-                                                result = String.valueOf(questProgress.getTaskProgress(t[1]).isCompleted() ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
+                                                final boolean completed = questProgress != null && questProgress.getTaskProgress(t[1]).isCompleted();
+                                                result = String.valueOf(completed ? Messages.PLACEHOLDERAPI_TRUE.getMessageLegacyColor() : Messages.PLACEHOLDERAPI_FALSE.getMessageLegacyColor());
                                                 break;
                                             case "goal":
                                             case "g":
