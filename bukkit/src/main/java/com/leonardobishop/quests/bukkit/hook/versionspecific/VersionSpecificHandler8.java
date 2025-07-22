@@ -4,6 +4,9 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -13,6 +16,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.projectiles.ProjectileSource;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -192,7 +197,30 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
     @SuppressWarnings("deprecation")
     @Override
     public List<Entity> getPassengers(Entity entity) {
-        final Entity passenger = entity.getPassenger();
+        Entity passenger = entity.getPassenger();
         return passenger != null ? List.of(passenger) : List.of();
+    }
+
+    @Override
+    public @Nullable Player getDamager(@Nullable EntityDamageEvent event) {
+        if (!(event instanceof EntityDamageByEntityEvent byEntityEvent)) {
+            return null;
+        }
+
+        Entity damager = byEntityEvent.getDamager();
+
+        if (damager instanceof Player) {
+            return (Player) damager;
+        }
+
+        if (damager instanceof Projectile projectile) {
+            ProjectileSource shooter = projectile.getShooter();
+
+            if (shooter instanceof Player) {
+                return (Player) shooter;
+            }
+        }
+
+        return null;
     }
 }
