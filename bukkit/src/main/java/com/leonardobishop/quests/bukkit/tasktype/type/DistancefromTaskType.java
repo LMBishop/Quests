@@ -8,12 +8,12 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.util.NumberConversions;
 
 public final class DistancefromTaskType extends BukkitTaskType {
 
@@ -84,8 +84,7 @@ public final class DistancefromTaskType extends BukkitTaskType {
             int distance = (int) task.getConfigValue("distance");
             int distanceSquared = distance * distance;
 
-            Location location = new Location(world, x, y, z);
-            double playerDistanceSquared = player.getLocation().distanceSquared(location);
+            double playerDistanceSquared = distanceSquarred(player, x, y, z);
 
             super.debug("Player is " + playerDistanceSquared + "m squared away", quest.getId(), task.getId(), player.getUniqueId());
 
@@ -94,5 +93,11 @@ public final class DistancefromTaskType extends BukkitTaskType {
                 taskProgress.setCompleted(true);
             }
         }
+    }
+
+    private static double distanceSquarred(Player player, int x, int y, int z) {
+        return NumberConversions.square(player.getX() - x)
+                + NumberConversions.square(player.getY() - y)
+                + NumberConversions.square(player.getZ() - z);
     }
 }
