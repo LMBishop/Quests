@@ -126,7 +126,7 @@ options:
   # PlayerBlockTracker class to be used with the hook
   # Original solution: https://github.com/Flo0/PlayerBlockTracker
   # Modern alternative: https://github.com/Krakenied/BlockTracker
-  playerblocktracker-class-name: "com.gestankbratwurst.playerblocktracker.PlayerBlockTracker"
+  playerblocktracker-class-name: "dev.krakenied.blocktracker.bukkit.BukkitBlockTrackerPlugin"
   # How frequently placeholderapi_evaluate task placeholders will be refreshed (def=30 - 1.5s)
   # (multiply SECONDS by 20 to get the number of ticks)
   placeholderapi-global-refresh-ticks: 30
