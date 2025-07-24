@@ -11,10 +11,10 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.quest.Category;
 import com.leonardobishop.quests.common.quest.Quest;
 import org.bukkit.Bukkit;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Represents a menu for a specified category (or all if they are disabled),
@@ -24,12 +24,12 @@ public class QuestQMenu extends PaginatedQMenu {
 
     private final String categoryName;
 
-    public QuestQMenu(BukkitQuestsPlugin plugin, QPlayer owner, List<Quest> quests, Category category, CategoryQMenu categoryQMenu) {
-        super(owner, Chat.legacyColor(Objects.requireNonNullElseGet(category.getGUIName(), () -> plugin.getQuestsConfig().getString("options.guinames.quests-menu"))),
+    public QuestQMenu(BukkitQuestsPlugin plugin, QPlayer owner, List<Quest> quests, @Nullable Category category, CategoryQMenu categoryQMenu) {
+        super(owner, Chat.legacyColor(guiName(plugin, category)),
                 plugin.getQuestsConfig().getBoolean("options.trim-gui-size.quests-menu"), 54, plugin);
 
         BukkitQuestsConfig config = (BukkitQuestsConfig) plugin.getQuestsConfig();
-        this.categoryName = category.getId();
+        this.categoryName = category != null ? category.getId() : null;
 
         BackMenuElement backMenuElement = categoryQMenu != null
                 ? new BackMenuElement(plugin, owner.getPlayerUUID(), plugin.getMenuController(), categoryQMenu)
@@ -65,4 +65,15 @@ public class QuestQMenu extends PaginatedQMenu {
         return categoryName;
     }
 
+    private static String guiName(final BukkitQuestsPlugin plugin, final @Nullable Category category) {
+        if (category != null) {
+            final String guiName = category.getGUIName();
+
+            if (guiName != null) {
+                return guiName;
+            }
+        }
+
+        return plugin.getQuestsConfig().getString("options.guinames.quests-menu");
+    }
 }
