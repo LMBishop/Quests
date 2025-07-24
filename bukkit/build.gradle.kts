@@ -165,6 +165,8 @@ tasks.shadowJar {
     relocate("org.slf4j", "com.leonardobishop.quests.libs.slf4j")
     relocate("com.carrotsearch.hppc", "com.leonardobishop.quests.libs.hppc")
     relocate("net.md_5.bungee", "com.leonardobishop.quests.libs.bungee")
+    relocate("com.google.gson", "com.leonardobishop.quests.libs.gson")
+    relocate("com.google.errorprone", "com.leonardobishop.quests.libs.errorprone")
 
     minimize {
         exclude(dependency("org.bstats:.*:.*"))
