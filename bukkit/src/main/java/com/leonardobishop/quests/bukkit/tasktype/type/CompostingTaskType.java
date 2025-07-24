@@ -34,6 +34,11 @@ public final class CompostingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
     }
 
+    @Override
+    public void onReady() {
+        fixedQuestItemCache.clear();
+    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityCompostItem(EntityCompostItemEvent event) {
         Entity entity = event.getEntity();

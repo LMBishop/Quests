@@ -33,13 +33,6 @@ public final class MythicMobsKillingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "min-level"));
         super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "name-match-mode"));
 
-        // MythicMobs 4
-        try {
-            Class.forName("io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent");
-            plugin.getServer().getPluginManager().registerEvents(new MythicMobs4Listener(), plugin);
-            return;
-        } catch (ClassNotFoundException | NoSuchFieldException ignored) { } // MythicMobs version cannot support task type
-
         // MythicMobs 5
         try {
             Class.forName("io.lumine.mythic.bukkit.events.MythicMobDeathEvent");
@@ -47,7 +40,14 @@ public final class MythicMobsKillingTaskType extends BukkitTaskType {
             return;
         } catch (ClassNotFoundException ignored) { } // MythicMobs version cannot support task type
 
-        plugin.getLogger().severe("Failed to register event handler for MythicMobs task type!");
+        // MythicMobs 4
+        try {
+            Class.forName("io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent");
+            plugin.getServer().getPluginManager().registerEvents(new MythicMobs4Listener(), plugin);
+            return;
+        } catch (ClassNotFoundException | NoSuchFieldException ignored) { } // MythicMobs version cannot support task type
+
+        plugin.getLogger().severe("Failed to register event handler for MythicMobs killing task type!");
         plugin.getLogger().severe("MythicMobs version detected: " + CompatUtils.getPluginVersion("MythicMobs"));
     }
 
