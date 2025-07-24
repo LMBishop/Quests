@@ -505,8 +505,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new EcoMobsKillingTaskType(this), () -> CompatUtils.isPluginEnabled("EcoMobs"));
             taskTypeManager.registerTaskType(() -> new EssentialsBalanceTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
             taskTypeManager.registerTaskType(() -> new EssentialsMoneyEarnTaskType(this), () -> CompatUtils.isPluginEnabled("Essentials"));
-            taskTypeManager.registerTaskType(() -> new EvenMoreFishFishingTaskType(this), () -> CompatUtils.isPluginEnabled("EvenMoreFish"));
-            taskTypeManager.registerTaskType(() -> new EvenMoreFishHuntingTaskType(this), () -> CompatUtils.isPluginEnabled("EvenMoreFish"));
+            taskTypeManager.registerTaskType(() -> new EvenMoreFishFishingTaskType(this), () -> CompatUtils.isPluginEnabled("EvenMoreFish")); // not tested
+            taskTypeManager.registerTaskType(() -> new EvenMoreFishHuntingTaskType(this), () -> CompatUtils.isPluginEnabled("EvenMoreFish")); // not tested
             taskTypeManager.registerTaskType(() -> new FabledSkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("FabledSkyBlock")); // not tested
             taskTypeManager.registerTaskType(() -> new FancyNpcsDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("FancyNpcs"));
             taskTypeManager.registerTaskType(() -> new FancyNpcsInteractTaskType(this), () -> CompatUtils.isPluginEnabled("FancyNpcs"));
