@@ -19,6 +19,7 @@ import com.leonardobishop.quests.common.quest.Task;
 import com.leonardobishop.quests.common.tasktype.TaskType;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
@@ -60,22 +61,21 @@ public class TaskUtils {
         };
     }
 
-    public static boolean validateBiome(final Player player, final Task task) {
-        final Object biomes = task.getConfigValue("biomes");
-
+    public static boolean validateBiome(final String biomeKey, final @NotNull Object biomes) {
         return switch (biomes) {
-            case final List<?> allowedBiomeNames -> allowedBiomeNames.contains(getBiomeName(player));
-            case final String allowedBiomeName -> allowedBiomeName.equals(getBiomeName(player));
-            case null, default -> true;
+            case final List<?> allowedBiomeKeys-> allowedBiomeKeys.contains(biomeKey);
+            case final String allowedBiomeKey -> allowedBiomeKey.equals(biomeKey);
+            default -> true;
         };
     }
 
-    private static String getBiomeName(final Player player) {
-        return plugin.getVersionSpecificHandler().getBiomeKey(player.getWorld().getBiome(
+    private static String getBiomeKey(final @NotNull Player player) {
+        final Biome biome = player.getWorld().getBiome(
                 NumberConversions.floor(player.getX()),
                 NumberConversions.floor(player.getY()),
                 NumberConversions.floor(player.getZ())
-        ));
+        );
+        return plugin.getVersionSpecificHandler().getBiomeKey(biome);
     }
 
     public static boolean doesConfigStringListExist(final @NotNull Task task, final @NotNull String key) {
@@ -274,6 +274,9 @@ public class TaskUtils {
     public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type, TaskConstraintSet constraintSet) {
         List<PendingTask> tasks = new ArrayList<>();
 
+        // Cache it as getting it requires some complex math
+        String biomeKey = null;
+
         for (Quest quest : type.getRegisteredQuests()) {
             if (qPlayer.hasStartedQuest(quest)) {
                 QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
@@ -285,8 +288,19 @@ public class TaskUtils {
                         }
                     }
 
+                    BIOME_CHECK:
                     if (constraintSet.contains(TaskConstraint.BIOME)) {
-                        if (!TaskUtils.validateBiome(player, task)) {
+                        final Object biomes = task.getConfigValue("biomes");
+
+                        if (biomes == null) {
+                            break BIOME_CHECK;
+                        }
+
+                        if (biomeKey == null) {
+                            biomeKey = getBiomeKey(player);
+                        }
+
+                        if (!TaskUtils.validateBiome(biomeKey, biomes)) {
                             continue;
                         }
                     }
