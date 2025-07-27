@@ -81,10 +81,10 @@ public class AdminDebugPlayerCommandHandler implements CommandHandler {
                         } else if (progress != null) {
                             progressString = String.valueOf(progress);
                         } else {
-                            progressString = "init";
+                            progressString = "null";
                         }
                     } else {
-                        progressString = "null";
+                        progressString = "init";
                     }
 
                     sb.append(task.getId());
@@ -97,7 +97,7 @@ public class AdminDebugPlayerCommandHandler implements CommandHandler {
                     }
                 }
             } else {
-                sb.append("null");
+                sb.append("init");
             }
 
             sb.append("]");
