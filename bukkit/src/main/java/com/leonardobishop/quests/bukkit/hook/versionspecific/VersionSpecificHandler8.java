@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
@@ -228,5 +229,11 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
     @Override
     public boolean isCake(Material type) {
         return type == Material.CAKE;
+    }
+
+    @SuppressWarnings({"removal", "UnstableApiUsage"})
+    @Override
+    public String getBiomeKey(Biome biome) {
+        return biome.name();
     }
 }

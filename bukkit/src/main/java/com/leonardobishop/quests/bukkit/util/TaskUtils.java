@@ -29,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.util.NumberConversions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,28 +50,32 @@ public class TaskUtils {
         plugin = BukkitQuestsPlugin.getPlugin(BukkitQuestsPlugin.class);
     }
 
-    public static boolean validateWorld(Player player, Task task) {
-        return validateWorld(player.getLocation().getWorld().getName(), task.getConfigValue("worlds"));
+    public static boolean validateWorld(final Player player, final Task task) {
+        final Object worlds = task.getConfigValue("worlds");
+
+        return switch (worlds) {
+            case final List<?> allowedWorldNames -> allowedWorldNames.contains(player.getWorld().getName());
+            case final String allowedWorldName -> allowedWorldName.equals(player.getWorld().getName());
+            case null, default -> true;
+        };
     }
 
-    public static boolean validateWorld(String worldName, Task task) {
-        return validateWorld(worldName, task.getConfigValue("worlds"));
+    public static boolean validateBiome(final Player player, final Task task) {
+        final Object biomes = task.getConfigValue("biomes");
+
+        return switch (biomes) {
+            case final List<?> allowedBiomeNames -> allowedBiomeNames.contains(getBiomeName(player));
+            case final String allowedBiomeName -> allowedBiomeName.equals(getBiomeName(player));
+            case null, default -> true;
+        };
     }
 
-    public static boolean validateWorld(String worldName, Object configurationData) {
-        if (configurationData == null) {
-            return true;
-        }
-
-        if (configurationData instanceof List<?> allowedWorldNames) {
-            return allowedWorldNames.contains(worldName);
-        }
-
-        if (configurationData instanceof String allowedWorldName) {
-            return worldName.equals(allowedWorldName);
-        }
-
-        return true;
+    private static String getBiomeName(final Player player) {
+        return plugin.getVersionSpecificHandler().getBiomeKey(player.getWorld().getBiome(
+                NumberConversions.floor(player.getX()),
+                NumberConversions.floor(player.getY()),
+                NumberConversions.floor(player.getZ())
+        ));
     }
 
     public static boolean doesConfigStringListExist(final @NotNull Task task, final @NotNull String key) {
@@ -276,6 +281,12 @@ public class TaskUtils {
                 for (Task task : quest.getTasksOfType(type.getType())) {
                     if (constraintSet.contains(TaskConstraint.WORLD)) {
                         if (!TaskUtils.validateWorld(player, task)) {
+                            continue;
+                        }
+                    }
+
+                    if (constraintSet.contains(TaskConstraint.BIOME)) {
+                        if (!TaskUtils.validateBiome(player, task)) {
                             continue;
                         }
                     }
