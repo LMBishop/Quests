@@ -1,0 +1,120 @@
+package com.leonardobishop.quests.bukkit.command;
+
+import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
+import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
+import com.leonardobishop.quests.common.player.questprogressfile.filters.QuestProgressFilter;
+import com.leonardobishop.quests.common.quest.Quest;
+import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Iterator;
+import java.util.List;
+
+public class AdminDebugPlayerCommandHandler implements CommandHandler {
+
+    private final BukkitQuestsPlugin plugin;
+
+    public AdminDebugPlayerCommandHandler(BukkitQuestsPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    @Override
+    public void handle(CommandSender sender, String[] args) {
+        // /q a debug player <player>
+        //    0 1     2      3
+        Player target = args.length > 3
+                ? Bukkit.getPlayer(args[3])
+                : (sender instanceof Player ? (Player) sender : null);
+        if (target == null) {
+            sender.sendMessage(ChatColor.RED + "Player not found.");
+            return;
+        }
+
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(target.getUniqueId());
+        if (qPlayer == null) {
+            sender.sendMessage(ChatColor.RED + "Player data file is not loaded.");
+            return;
+        }
+
+        sender.sendMessage("=== Quests debug data for " + target.getUniqueId());
+        sender.sendMessage("List of " + target.getName() + " effectively started quests:");
+
+        QuestProgressFile qpf = qPlayer.getQuestProgressFile();
+        Iterator<Quest> questIter = qPlayer.getEffectiveStartedQuests().iterator();
+
+        StringBuilder sb = new StringBuilder("[");
+
+        while (questIter.hasNext()) {
+            Quest quest = questIter.next();
+            // [QUEST_ID: TASK_1{PROGRESS}, TASK_2{PROGRESS}], ...
+
+            sb.append("[");
+            sb.append(quest.getId());
+            sb.append(": ");
+
+            QuestProgress qp = qpf.getQuestProgressOrNull(quest);
+
+            if (qp != null) {
+                Iterator<Task> taskIter = quest.getTasks().iterator();
+
+                while (taskIter.hasNext()) {
+                    Task task = taskIter.next();
+
+                    sb.append(task.getId());
+                    sb.append("{");
+                    sb.append(qp.getTaskProgressOrNull(task.getId()));
+                    sb.append("}");
+
+                    if (taskIter.hasNext()) {
+                        sb.append(", ");
+                    }
+                }
+            } else {
+                sb.append("null");
+            }
+
+            sb.append("]");
+
+            if (questIter.hasNext()) {
+                sb.append(", ");
+            }
+        }
+
+        sender.sendMessage(sb.toString());
+
+        sender.sendMessage("List of " + target.getName() + " completed quests:");
+
+        sb.setLength(0);
+
+        qpf.getAllQuestsFromProgressConsumer(QuestProgressFilter.COMPLETED, quest -> {
+            sb.append(quest.getId());
+            sb.append(", ");
+        });
+
+        if (!sb.isEmpty()) {
+            sb.delete(sb.length() - ", ".length(), sb.length());
+        }
+
+        sender.sendMessage(sb.toString());
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        if (args.length == 4) {
+            return null;
+        } else {
+            return List.of();
+        }
+    }
+
+    @Override
+    public @Nullable String getPermission() {
+        return "quests.admin";
+    }
+}

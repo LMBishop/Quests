@@ -10,6 +10,7 @@ public class AdminDebugCommandSwitcher extends CommandSwitcher {
     public AdminDebugCommandSwitcher(BukkitQuestsPlugin plugin) {
         super(2);
 
+        super.subcommands.put("player", new AdminDebugPlayerCommandHandler(plugin));
         super.subcommands.put("quest", new AdminDebugQuestCommandHandler(plugin));
         super.subcommands.put("report", new AdminDebugReportCommandHandler(plugin));
     }
@@ -19,6 +20,8 @@ public class AdminDebugCommandSwitcher extends CommandSwitcher {
         sender.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "------------=[" + ChatColor.RED + " Quests Admin: debug " + ChatColor
                 .GRAY + ChatColor.STRIKETHROUGH + "]=------------");
         sender.sendMessage(ChatColor.GRAY + "The following commands are available: ");
+        sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a debug player <player> " + ChatColor.DARK_GRAY
+                + ": show quests progression data of a player");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a debug report " + ChatColor.DARK_GRAY
                 + ": generate a debug report");
         sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.RED + "/quests a debug quest <player> <self|all> " + ChatColor.DARK_GRAY
