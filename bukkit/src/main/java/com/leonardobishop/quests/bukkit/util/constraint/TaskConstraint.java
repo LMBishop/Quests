@@ -1,7 +1,8 @@
 package com.leonardobishop.quests.bukkit.util.constraint;
 
 public enum TaskConstraint {
-    WORLD(0x00000001);
+    WORLD(0b00000001),
+    BIOME(0x00000010);
 
     private final int value;
 

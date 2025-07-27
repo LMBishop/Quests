@@ -8,7 +8,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-public class VersionSpecificHandler16 extends VersionSpecificHandler12 implements VersionSpecificHandler {
+public class VersionSpecificHandler16 extends VersionSpecificHandler14 implements VersionSpecificHandler {
 
     @Override
     public int getMinecraftVersion() {

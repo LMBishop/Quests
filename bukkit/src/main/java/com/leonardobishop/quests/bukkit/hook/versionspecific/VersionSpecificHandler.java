@@ -1,7 +1,9 @@
 package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
+import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.Tag;
+import org.bukkit.block.Biome;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.CaveVinesPlant;
 import org.bukkit.damage.DamageSource;
@@ -250,4 +252,9 @@ public interface VersionSpecificHandler {
      * {@link Tag#CANDLE_CAKES} was introduced in {@code 1.17}.
      */
     boolean isCake(Material type);
+
+    /**
+     * {@link Biome} implements {@link Keyed} from {@code 1.14}.
+     */
+    String getBiomeKey(Biome biome);
 }

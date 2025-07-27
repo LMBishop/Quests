@@ -39,6 +39,7 @@ import com.leonardobishop.quests.bukkit.hook.vault.VaultHook;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler11;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler12;
+import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler14;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler16;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler17;
 import com.leonardobishop.quests.bukkit.hook.versionspecific.VersionSpecificHandler20;
@@ -358,7 +359,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             this.versionSpecificHandler = switch (version) {
                 case 9, 10 -> new VersionSpecificHandler9();
                 case 11 -> new VersionSpecificHandler11();
-                case 12, 13, 14, 15 -> new VersionSpecificHandler12();
+                case 12, 13 -> new VersionSpecificHandler12();
+                case 14, 15 -> new VersionSpecificHandler14();
                 case 16 -> new VersionSpecificHandler16();
                 case 17, 18, 19 -> new VersionSpecificHandler17();
                 case 20 -> new VersionSpecificHandler20();
