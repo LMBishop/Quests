@@ -127,6 +127,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FabledSkyBlockLe
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FancyNpcsDeliverTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FancyNpcsInteractTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.IridiumSkyblockValueTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.MythicMobsDealDamageTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.MythicMobsKillingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.NuVotifierVoteTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PinataPartyHitTaskType;
@@ -189,6 +190,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -533,10 +535,12 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 String pluginVersion = CompatUtils.getPluginVersion("IridiumSkyblock");
                 return pluginVersion != null && pluginVersion.startsWith("2");
             });
-            taskTypeManager.registerTaskType(() -> new MythicMobsKillingTaskType(this), () -> {
+            BooleanSupplier mythicMobsCompat = () -> {
                 String pluginVersion = CompatUtils.getPluginVersion("MythicMobs");
                 return pluginVersion != null && (pluginVersion.startsWith("4") || pluginVersion.startsWith("5"));
-            });
+            };
+            taskTypeManager.registerTaskType(() -> new MythicMobsDealDamageTaskType(this), mythicMobsCompat);
+            taskTypeManager.registerTaskType(() -> new MythicMobsKillingTaskType(this), mythicMobsCompat);
 
             // Close task type registrations
             taskTypeManager.closeRegistrations();
