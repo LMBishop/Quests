@@ -1,9 +1,11 @@
 package com.leonardobishop.quests.bukkit.command;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.util.FormatUtils;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
+import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.filters.QuestProgressFilter;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -13,6 +15,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,10 +69,27 @@ public class AdminDebugPlayerCommandHandler implements CommandHandler {
 
                 while (taskIter.hasNext()) {
                     Task task = taskIter.next();
+                    TaskProgress tp = qp.getTaskProgressOrNull(task.getId());
+
+                    String progressString;
+                    if (tp != null) {
+                        Object progress = tp.getProgress();
+                        if (progress instanceof Float || progress instanceof Double || progress instanceof BigDecimal) {
+                            progressString = FormatUtils.floating((Number) progress);
+                        } else if (progress instanceof Integer || progress instanceof Long || progress instanceof BigInteger) {
+                            progressString = FormatUtils.integral((Number) progress);
+                        } else if (progress != null) {
+                            progressString = String.valueOf(progress);
+                        } else {
+                            progressString = "init";
+                        }
+                    } else {
+                        progressString = "null";
+                    }
 
                     sb.append(task.getId());
                     sb.append("{");
-                    sb.append(qp.getTaskProgressOrNull(task.getId()));
+                    sb.append(progressString);
                     sb.append("}");
 
                     if (taskIter.hasNext()) {
