@@ -46,6 +46,8 @@ also be viewed in-game by simply running `/quests`.
       a player a quest item.
   - **/quests a/admin debug** - view help for the [quest
     debugger](tools/quest-debugger).
+    - **/quests a/admin debug player \<player\> - show quests progression
+      data of a player.
     - **/quests a/admin debug report** - generate a debug report.
     - **/quests a/admin debug quest \<quest/\*\> \<all/self\>** - enable
       debug messages for a specific quest, or all of them.
