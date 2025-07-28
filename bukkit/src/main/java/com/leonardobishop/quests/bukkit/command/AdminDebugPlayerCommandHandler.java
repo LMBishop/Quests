@@ -47,82 +47,95 @@ public class AdminDebugPlayerCommandHandler implements CommandHandler {
         }
 
         sender.sendMessage("=== Quests debug data for " + target.getUniqueId());
-        sender.sendMessage("List of " + target.getName() + " effectively started quests:");
 
         QuestProgressFile qpf = qPlayer.getQuestProgressFile();
         Iterator<Quest> questIter = qPlayer.getEffectiveStartedQuests().iterator();
 
-        StringBuilder sb = new StringBuilder("[");
+        if (questIter.hasNext()) {
+            sender.sendMessage("List of " + target.getName() + " started quests:");
 
-        while (questIter.hasNext()) {
-            Quest quest = questIter.next();
-            // [QUEST_ID: TASK_1{PROGRESS}, TASK_2{PROGRESS}], ...
+            StringBuilder sb = new StringBuilder("[");
 
-            sb.append("[");
-            sb.append(quest.getId());
-            sb.append(": ");
+            while (questIter.hasNext()) {
+                Quest quest = questIter.next();
+                // [QUEST_ID: TASK_1{PROGRESS}, TASK_2{PROGRESS}], ...
 
-            QuestProgress qp = qpf.getQuestProgressOrNull(quest);
+                sb.append("[");
+                sb.append(quest.getId());
+                sb.append(": ");
 
-            if (qp != null) {
-                Iterator<Task> taskIter = quest.getTasks().iterator();
+                QuestProgress qp = qpf.getQuestProgressOrNull(quest);
 
-                while (taskIter.hasNext()) {
-                    Task task = taskIter.next();
-                    TaskProgress tp = qp.getTaskProgressOrNull(task.getId());
+                if (qp != null) {
+                    Iterator<Task> taskIter = quest.getTasks().iterator();
 
-                    String progressString;
-                    if (tp != null) {
-                        Object progress = tp.getProgress();
-                        if (progress instanceof Float || progress instanceof Double || progress instanceof BigDecimal) {
-                            progressString = FormatUtils.floating((Number) progress);
-                        } else if (progress instanceof Integer || progress instanceof Long || progress instanceof BigInteger) {
-                            progressString = FormatUtils.integral((Number) progress);
-                        } else if (progress != null) {
-                            progressString = String.valueOf(progress);
+                    while (taskIter.hasNext()) {
+                        Task task = taskIter.next();
+                        TaskProgress tp = qp.getTaskProgressOrNull(task.getId());
+
+                        String progressString;
+                        if (tp != null) {
+                            Object progress = tp.getProgress();
+                            if (progress instanceof Float || progress instanceof Double || progress instanceof BigDecimal) {
+                                progressString = FormatUtils.floating((Number) progress);
+                            } else if (progress instanceof Integer || progress instanceof Long || progress instanceof BigInteger) {
+                                progressString = FormatUtils.integral((Number) progress);
+                            } else if (progress != null) {
+                                progressString = String.valueOf(progress);
+                            } else {
+                                progressString = "null";
+                            }
                         } else {
-                            progressString = "null";
+                            progressString = "init";
                         }
-                    } else {
-                        progressString = "init";
-                    }
 
-                    sb.append(task.getId());
-                    sb.append("{");
-                    sb.append(progressString);
-                    sb.append("}");
+                        sb.append(task.getId());
+                        sb.append("{");
+                        sb.append(progressString);
+                        sb.append("}");
 
-                    if (taskIter.hasNext()) {
-                        sb.append(", ");
+                        if (taskIter.hasNext()) {
+                            sb.append(", ");
+                        }
                     }
+                } else {
+                    sb.append("init");
                 }
-            } else {
-                sb.append("init");
+
+                sb.append("]");
+
+                if (questIter.hasNext()) {
+                    sb.append(", ");
+                }
+            }
+
+            sender.sendMessage(sb.toString());
+        } else {
+            sender.sendMessage("No started quests found for " + target.getName() + "!");
+        }
+
+        questIter = qpf.getAllQuestsFromProgress(QuestProgressFilter.COMPLETED).iterator();
+
+        if (questIter.hasNext()) {
+            sender.sendMessage("List of " + target.getName() + " completed quests:");
+
+            StringBuilder sb = new StringBuilder("[");
+
+            while (questIter.hasNext()) {
+                Quest quest = questIter.next();
+                sb.append(quest.getId());
+
+                if (questIter.hasNext()) {
+                    sb.append(", ");
+                }
             }
 
             sb.append("]");
 
-            if (questIter.hasNext()) {
-                sb.append(", ");
-            }
+            sender.sendMessage(sb.toString());
+        } else {
+            sender.sendMessage("No completed quests found for " + target.getName() + "!");
         }
-
-        sender.sendMessage(sb.toString());
-
-        sender.sendMessage("List of " + target.getName() + " completed quests:");
-
-        sb.setLength(0);
-
-        qpf.getAllQuestsFromProgressConsumer(QuestProgressFilter.COMPLETED, quest -> {
-            sb.append(quest.getId());
-            sb.append(", ");
-        });
-
-        if (!sb.isEmpty()) {
-            sb.delete(sb.length() - ", ".length(), sb.length());
-        }
-
-        sender.sendMessage(sb.toString());
     }
 
     @Override
