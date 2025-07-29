@@ -7,6 +7,7 @@ import com.leonardobishop.quests.bukkit.menu.QMenu;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.quest.Quest;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,7 +31,7 @@ public class ConfirmCancelMenuElement extends MenuElement {
     }
 
     @Override
-    public ClickResult handleClick(ClickType clickType) {
+    public ClickResult handleClick(Player whoClicked, ClickType clickType) {
         if (clickType == ClickType.LEFT) {
             if (owner.cancelQuest(quest)) {
                 if (returnMenu != null) {

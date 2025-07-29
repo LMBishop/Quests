@@ -121,7 +121,8 @@ display:
 
 **Optional.** This is a list of commands which will be executed when the
 player completes the quest. You can use `{player}` and the players name
-will be substituted in place.
+will be substituted in place. Commands starting with `player: ` will be
+dispatched by the player.
 
 ``` yaml
 rewards:
@@ -135,7 +136,8 @@ rewards:
 
 **Optional.** This is a list of commands which will be executed when the
 player starts the quest. You can use `{player}` and the player's name
-will be substituted in place.
+will be substituted in place. Commands starting with `player: ` will be
+dispatched by the player.
 
 ``` yaml
 startcommands:
@@ -149,7 +151,8 @@ startcommands:
 
 **Optional.** This is a list of commands which will be executed when the
 player cancels the quest. You can use `{player}` and the player's name
-will be substituted in place.
+will be substituted in place. Commands starting with `player: ` will be
+dispatched by the player.
 
 ``` yaml
 cancelcommands:
@@ -163,7 +166,8 @@ cancelcommands:
 
 **Optional.** This is a list of commands which will be executed when the
 the player's quest expires. You can use `{player}` and the player's name
-will be substituted in place.
+will be substituted in place. Commands starting with `player: ` will be
+dispatched by the player.
 
 ``` yaml
 expirycommands:

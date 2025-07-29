@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.menu.ClickResult;
 import com.leonardobishop.quests.bukkit.menu.PaginatedQMenu;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
@@ -28,7 +29,7 @@ public class PageDescMenuElement extends MenuElement {
     }
 
     @Override
-    public ClickResult handleClick(ClickType clickType) {
+    public ClickResult handleClick(Player whoClicked, ClickType clickType) {
         return ClickResult.DO_NOTHING;
     }
     
