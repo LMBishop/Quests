@@ -254,7 +254,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                     QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgressOrNull(quest);
                                     assert questProgress != null;
 
-                                    placeholder = QItemStack.processPlaceholders(Chat.legacyColor(placeholder), questProgress);
+                                    placeholder = QItemStack.processPlaceholders(plugin, Chat.legacyColor(placeholder), questProgress);
                                     return placeholder;
                                 } else {
                                     return args[0] + "_" + args[1] + " is not a valid placeholder";
