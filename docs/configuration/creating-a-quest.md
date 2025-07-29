@@ -89,7 +89,8 @@ quest is started. This is a good place to put progression details. To
 get the progression of a player in a task, write `{TASKID:progress}` and
 replace `TASKID` with the ID of the task you want to get the progress
 for. Alternatively, you can write `{TASKID:complete}` to get if the task
-is complete.
+is complete. There is also `{TASKID:goal}` returning the progress to be
+reached.
 
 ``` yaml
 display:
@@ -244,7 +245,8 @@ vaultreward: 600.0
 PlaceholderAPI. To get the progression of a player in a task, write
 `{TASKID:progress}` and replace `TASKID` with the ID of the task you
 want to get the progress for. Alternatively, you can write
-`{TASKID:complete}` to get if the task is complete.
+`{TASKID:complete}` to get if the task is complete. There is also
+`{TASKID:goal}` returning the progress to be reached.
 
 ``` yaml
 placeholders:

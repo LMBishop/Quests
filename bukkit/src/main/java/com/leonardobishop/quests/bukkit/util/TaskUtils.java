@@ -221,7 +221,7 @@ public class TaskUtils {
         }
 
         QuestProgress questProgress = pendingTask.questProgress();
-        title = QItemStack.processPlaceholders(title, questProgress, taskProgress);
+        title = QItemStack.processPlaceholders(plugin, title, questProgress, taskProgress);
 
         boolean usePlaceholderAPI = plugin.getQuestsConfig().getBoolean("options.progress-use-placeholderapi", false);
         if (usePlaceholderAPI) {
