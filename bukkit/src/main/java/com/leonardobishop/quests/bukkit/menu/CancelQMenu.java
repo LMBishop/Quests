@@ -33,7 +33,7 @@ public class CancelQMenu extends QMenu {
         MenuElement questMenuElement = new QuestMenuElement(plugin, quest, this, true);
         MenuElement confirmCancelMenuElement = new ConfirmCancelMenuElement(plugin, owner, quest, superMenu);
         MenuElement abortCancelMenuElement = new AbortCancelMenuElement(plugin, owner, superMenu);
-        MenuElement border = new CustomMenuElement(plugin, owner.getPlayerUUID(), null, config.getItem("gui.quest-cancel-background"));
+        MenuElement border = new CustomMenuElement(plugin, owner.getPlayerUUID(), config.getItem("gui.quest-cancel-background"));
 
         for (int i = 0; i < 27; i++) {
             menuElements.put(i, border);

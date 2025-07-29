@@ -11,6 +11,7 @@ import com.leonardobishop.quests.bukkit.api.event.PreStartQuestEvent;
 import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.hook.vault.rewards.VaultReward;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
+import com.leonardobishop.quests.bukkit.util.DispatchUtils;
 import com.leonardobishop.quests.bukkit.util.FormatUtils;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.bukkit.util.SoundUtils;
@@ -139,7 +140,7 @@ public class NormalQuestController implements QuestController {
                     );
                 }
                 for (String s : quest.getStartCommands()) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s));
+                    DispatchUtils.dispatchCommand(player, this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s));
                 }
                 for (String s : quest.getStartString()) {
                     Chat.send(player, this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s), true);
@@ -262,7 +263,7 @@ public class NormalQuestController implements QuestController {
                 vaultReward.give(player);
 
                 for (String s : quest.getRewards()) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s));
+                    DispatchUtils.dispatchCommand(player, this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s));
                 }
             });
             Messages.send(questFinishEvent.getQuestFinishMessage(), player);
@@ -325,7 +326,7 @@ public class NormalQuestController implements QuestController {
             // PlayerCancelQuestEvent -- end
             Messages.send(questCancelEvent.getQuestCancelMessage(), player);
             for (String s : quest.getCancelCommands()) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s));
+                DispatchUtils.dispatchCommand(player, this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s));
             }
             for (String s : quest.getCancelString()) {
                 Chat.send(player, this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s), true);
@@ -359,7 +360,7 @@ public class NormalQuestController implements QuestController {
             // PlayerCancelQuestEvent -- end
             Messages.send(questCancelEvent.getQuestExpireMessage(), player);
             for (String s : quest.getExpiryCommands()) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s));
+                DispatchUtils.dispatchCommand(player, this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s));
             }
             for (String s : quest.getExpiryString()) {
                 Chat.send(player, this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s), true);

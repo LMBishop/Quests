@@ -6,6 +6,7 @@ import com.leonardobishop.quests.bukkit.menu.ClickResult;
 import com.leonardobishop.quests.bukkit.menu.QMenu;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import com.leonardobishop.quests.common.player.QPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,7 +28,7 @@ public class AbortCancelMenuElement extends MenuElement {
     }
 
     @Override
-    public ClickResult handleClick(ClickType clickType) {
+    public ClickResult handleClick(Player whoClicked, ClickType clickType) {
         if (clickType == ClickType.LEFT) {
             if (returnMenu != null) {
                 plugin.getMenuController().openMenu(owner.getPlayerUUID(), returnMenu);

@@ -61,7 +61,7 @@ public class MenuController implements Listener {
             if (menuElement == null) {
                 return;
             }
-            ClickResult result = menuElement.handleClick(event.getClick());
+            ClickResult result = menuElement.handleClick(player, event.getClick());
             if (result == ClickResult.DO_NOTHING) {
                 return;
             }

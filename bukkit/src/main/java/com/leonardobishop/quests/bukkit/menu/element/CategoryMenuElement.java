@@ -45,7 +45,7 @@ public class CategoryMenuElement extends MenuElement {
     }
 
     @Override
-    public ClickResult handleClick(ClickType clickType) {
+    public ClickResult handleClick(Player whoClicked, ClickType clickType) {
         Player player = Bukkit.getPlayer(owner);
         if (player == null) {
             return ClickResult.DO_NOTHING;

@@ -6,6 +6,7 @@ import com.leonardobishop.quests.bukkit.menu.ClickResult;
 import com.leonardobishop.quests.bukkit.menu.MenuController;
 import com.leonardobishop.quests.bukkit.menu.QMenu;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
@@ -34,7 +35,7 @@ public class BackMenuElement extends MenuElement {
     }
 
     @Override
-    public ClickResult handleClick(ClickType clickType) {
+    public ClickResult handleClick(Player whoClicked, ClickType clickType) {
         controller.openMenu(player, previousMenu);
         return ClickResult.DO_NOTHING;
     }

@@ -5,6 +5,7 @@ import com.leonardobishop.quests.bukkit.menu.ClickResult;
 import com.leonardobishop.quests.bukkit.menu.PaginatedQMenu;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,7 +31,7 @@ public class PageNextMenuElement extends MenuElement {
     }
 
     @Override
-    public ClickResult handleClick(ClickType clickType) {
+    public ClickResult handleClick(Player whoClicked, ClickType clickType) {
         if (menu.getCurrentPage() == menu.getMaxPage()) {
             return ClickResult.DO_NOTHING;
         }
