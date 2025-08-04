@@ -163,6 +163,16 @@ public final class QuestProgressFile {
     }
 
     /**
+     * Gets map of quest id to quest progress.
+     *
+     * @return {@code Map<String, QuestProgress>} quest progress map
+     */
+    @Contract(pure = true)
+    public Map<String, QuestProgress> getQuestProgressMap() {
+        return this.questProgressMap;
+    }
+
+    /**
      * Gets all the quest progress that it has ever encountered.
      *
      * @return {@code Collection<QuestProgress>} all quest progresses
