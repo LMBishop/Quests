@@ -236,32 +236,23 @@ public class AdminDebugReportCommandHandler implements CommandHandler {
                 printMap(lines, 1, "Preferences", getFieldValues(preferences.getClass(), preferences));
 
                 QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-                try {
-                    Field questProgressField = questProgressFile.getClass().getDeclaredField("questProgress");
-                    questProgressField.setAccessible(true);
-                    Map<String, QuestProgress> questProgressMap = (Map<String, QuestProgress>) questProgressField.get(questProgressFile);
-                    Map<String, Object> questProgressValues = new LinkedHashMap<>();
-                    for (Map.Entry<String, QuestProgress> entry : questProgressMap.entrySet()) {
-                        QuestProgress questProgress = entry.getValue();
-                        Map<String, Object> questProgressValue = getFieldValues(questProgress.getClass(), questProgress, "plugin", "taskProgress");
+                Map<String, QuestProgress> questProgressMap = questProgressFile.getQuestProgressMap();
+                Map<String, Object> questProgressValues = new LinkedHashMap<>();
+                for (Map.Entry<String, QuestProgress> entry : questProgressMap.entrySet()) {
+                    QuestProgress questProgress = entry.getValue();
+                    Map<String, Object> questProgressValue = getFieldValues(questProgress.getClass(), questProgress, "plugin", "taskProgressMap");
 
-                        Field taskProgressField = questProgress.getClass().getDeclaredField("taskProgress");
-                        taskProgressField.setAccessible(true);
-                        Map<String, TaskProgress> taskProgressMap = (Map<String, TaskProgress>) taskProgressField.get(questProgress);
-                        Map<String, Object> taskProgressValues = new LinkedHashMap<>();
-                        for (Map.Entry<String, TaskProgress> taskEntry : taskProgressMap.entrySet()) {
-                            TaskProgress taskProgress = taskEntry.getValue();
-                            taskProgressValues.put(taskEntry.getKey(), getFieldValues(taskProgress.getClass(), taskProgress, "plugin", "linkedQuestProgress"));
-                        }
-                        questProgressValue.put("taskProgress", taskProgressValues);
-
-                        questProgressValues.put(entry.getKey(), questProgressValue);
+                    Map<String, TaskProgress> taskProgressMap = questProgress.getTaskProgressMap();
+                    Map<String, Object> taskProgressValues = new LinkedHashMap<>();
+                    for (Map.Entry<String, TaskProgress> taskEntry : taskProgressMap.entrySet()) {
+                        TaskProgress taskProgress = taskEntry.getValue();
+                        taskProgressValues.put(taskEntry.getKey(), getFieldValues(taskProgress.getClass(), taskProgress, "plugin", "questProgress"));
                     }
-                    printMap(lines, 1, "Quest progress", questProgressValues);
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    error("Failed to get quest progress for QPlayer " + qPlayer.getPlayerUUID() + ": " + e.getClass().getSimpleName() + "(" + e.getMessage() + ")");
-                    e.printStackTrace();
+                    questProgressValue.put("taskProgress", taskProgressValues);
+
+                    questProgressValues.put(entry.getKey(), questProgressValue);
                 }
+                printMap(lines, 1, "Quest progress", questProgressValues);
                 lines.add("    Quest controller: " + qPlayer.getQuestController().getName());
                 lines.add("");
             }
