@@ -28,7 +28,7 @@ public final class PlayerkillingTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
-        Player killed = event.getPlayer();
+        Player killed = event.getEntity();
         EntityDamageEvent damageEvent = killed.getLastDamageCause();
         Player killer = plugin.getVersionSpecificHandler().getDamager(damageEvent);
 
