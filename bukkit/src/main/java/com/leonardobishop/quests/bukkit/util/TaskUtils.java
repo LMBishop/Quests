@@ -17,6 +17,12 @@ import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import com.leonardobishop.quests.common.tasktype.TaskType;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
@@ -61,9 +67,40 @@ public class TaskUtils {
         };
     }
 
+    public static boolean validateRegion(@NotNull Player player, @NotNull Task task) {
+        final Object cfg = task.getConfigValue(
+                task.getConfigValues().containsKey("region") ? "region" : "regions");
+        if (cfg == null) return true;
+        if (!Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) return true;
+
+        try {
+            RegionContainer container = WorldGuard.getInstance()
+                    .getPlatform().getRegionContainer();
+            RegionQuery query = container.createQuery();
+            ApplicableRegionSet set = query.getApplicableRegions(
+                    BukkitAdapter.adapt(player.getLocation()));
+
+            if (set == null || set.size() == 0) return false;
+
+            java.util.Set<String> active = new java.util.HashSet<>();
+            set.getRegions().forEach(r -> active.add(r.getId()));
+
+            if (cfg instanceof java.util.List<?> list) {
+                for (Object o : list) if (active.contains(String.valueOf(o))) return true;
+                return false;
+            } else if (cfg instanceof String s) {
+                return active.contains(s);
+            } else {
+                return true;
+            }
+        } catch (NoClassDefFoundError ignored) {
+            return true;
+        }
+    }
+
     public static boolean validateBiome(final String biomeKey, final @NotNull Object biomes) {
         return switch (biomes) {
-            case final List<?> allowedBiomeKeys-> allowedBiomeKeys.contains(biomeKey);
+            case final List<?> allowedBiomeKeys -> allowedBiomeKeys.contains(biomeKey);
             case final String allowedBiomeKey -> allowedBiomeKey.equals(biomeKey);
             default -> true;
         };
@@ -88,7 +125,7 @@ public class TaskUtils {
         Object configObject = task.getConfigValue(key);
         if (configObject instanceof List list) {
             return List.copyOf(list);
-        } else if (configObject instanceof String s){
+        } else if (configObject instanceof String s) {
             return List.of(s);
         } else {
             return null;
@@ -100,7 +137,7 @@ public class TaskUtils {
         Object configObject = task.getConfigValue(key);
         if (configObject instanceof List list) {
             return List.copyOf(list);
-        } else if (configObject instanceof Integer i){
+        } else if (configObject instanceof Integer i) {
             return List.of(i);
         } else {
             return null;
@@ -177,7 +214,7 @@ public class TaskUtils {
         return progress;
     }
 
-	public static void sendTrackAdvancement(Player player, Quest quest, Task task, PendingTask pendingTask, Number amount) {
+    public static void sendTrackAdvancement(Player player, Quest quest, Task task, PendingTask pendingTask, Number amount) {
         TaskProgress taskProgress = pendingTask.taskProgress();
 
         boolean useActionBar = plugin.getConfig().getBoolean("options.actionbar.progress", false)
@@ -288,6 +325,12 @@ public class TaskUtils {
                         }
                     }
 
+                    if (constraintSet.contains(TaskConstraint.REGION)) {
+                        if (!TaskUtils.validateRegion(player, task)) {
+                            continue;
+                        }
+                    }
+
                     BIOME_CHECK:
                     if (constraintSet.contains(TaskConstraint.BIOME)) {
                         final Object biomes = task.getConfigValue("biomes");
@@ -319,7 +362,8 @@ public class TaskUtils {
         return tasks;
     }
 
-    public record PendingTask(Quest quest, Task task, QuestProgress questProgress, TaskProgress taskProgress) { }
+    public record PendingTask(Quest quest, Task task, QuestProgress questProgress, TaskProgress taskProgress) {
+    }
 
     public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable Block block, @NotNull UUID player) {
         return matchBlock(type, pendingTask, block, player, "block", "blocks");
@@ -1059,7 +1103,7 @@ public class TaskUtils {
     /**
      * Returns a config validator which checks if at least one value in the given
      * paths is present in the enum.
-     *
+     * <p>
      * Should be used for small enums only as it lists possible values in config
      * problem extended description.
      *
@@ -1082,7 +1126,7 @@ public class TaskUtils {
      * paths is a value in the list of accepted values.
      *
      * @param acceptedValues a list of accepted values
-     * @param paths a list of valid paths for task
+     * @param paths          a list of valid paths for task
      * @return config validator
      */
     public static TaskType.ConfigValidator useAcceptedValuesConfigValidator(TaskType type, Collection<String> acceptedValues, String... paths) {
@@ -1101,9 +1145,9 @@ public class TaskUtils {
                         extendedDescription += "<br> - " + value;
                     }
                     problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.NOT_ACCEPTED_VALUE.getDescription(String.valueOf(configObject), type.getType()),
-                        extendedDescription,
-                        path));
+                            ConfigProblemDescriptions.NOT_ACCEPTED_VALUE.getDescription(String.valueOf(configObject), type.getType()),
+                            extendedDescription,
+                            path));
                 }
 
                 break;

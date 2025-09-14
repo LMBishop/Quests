@@ -38,6 +38,7 @@ softdepend:
 - Votifier
 - VotingPlugin
 - WildStacker
+- WorldGuard
 - ZNPCsPlus
 prefix: Quests
 api-version: "1.13" # allows new API features but Quests will still work pre-1.13
