@@ -108,42 +108,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.SmithingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.TamingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.TradingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.WalkingTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ASkyBlockLevelTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058BedBreakTask;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058FinalKillTask;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058LoseTask;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058WinTask;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BentoBoxLevelTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensDeliverTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensInteractTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CustomFishingFishingTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EcoBossesKillingTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EcoMobsKillingTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsBalanceTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EssentialsMoneyEarnTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EvenMoreFishFishingTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.EvenMoreFishHuntingTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FabledSkyBlockLevelTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FancyNpcsDeliverTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.FancyNpcsInteractTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.IridiumSkyblockValueTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.MythicMobsDealDamageTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.MythicMobsKillingTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.NuVotifierVoteTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PinataPartyHitTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PlaceholderAPIEvaluateTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PlayerPointsEarnTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.PyroFishingProFishingTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ServerNPCDeliverTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ServerNPCInteractTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ShopGUIPlusBuyTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ShopGUIPlusSellTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.SuperiorSkyblockLevelType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.SuperiorSkyblockWorthType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.VotingPluginVoteType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ZNPCsPlusDeliverTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ZNPCsPlusInteractTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.uSkyBlockLevelTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.*;
 import com.leonardobishop.quests.bukkit.util.CompatUtils;
 import com.leonardobishop.quests.bukkit.util.FormatUtils;
 import com.leonardobishop.quests.bukkit.util.LogHistory;
@@ -501,6 +466,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(() -> new BedWars1058FinalKillTask(this), () -> CompatUtils.isPluginEnabled("BedWars1058")); // not tested
             taskTypeManager.registerTaskType(() -> new BedWars1058LoseTask(this), () -> CompatUtils.isPluginEnabled("BedWars1058")); // not tested
             taskTypeManager.registerTaskType(() -> new BedWars1058WinTask(this), () -> CompatUtils.isPluginEnabled("BedWars1058")); // not tested
+            taskTypeManager.registerTaskType(() -> new BedWars1058BuyTask(this), () -> CompatUtils.isPluginEnabled("BedWars1058")); // not tested
+            taskTypeManager.registerTaskType(() -> new BedWars1058GeneratorCollectTask(this), () -> CompatUtils.isPluginEnabled("BedWars1058")); // not tested
             taskTypeManager.registerTaskType(() -> new BentoBoxLevelTaskType(this), () -> CompatUtils.isPluginEnabled("BentoBox") && CompatUtils.classExists("world.bentobox.level.events.IslandLevelCalculatedEvent"));
             taskTypeManager.registerTaskType(() -> new CitizensDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));
             taskTypeManager.registerTaskType(() -> new CitizensInteractTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));
