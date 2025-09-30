@@ -80,8 +80,15 @@ public final class BedWars1058BuyTask extends BukkitTaskType {
                 continue;
             }
 
-            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-            int amount = ((int) task.getConfigValue("amount"));
+            int boughtAmount = (boughtStack != null) ? boughtStack.getAmount() : 1;
+
+            int progress = taskProgress.getProgress() instanceof Integer
+                    ? (int) taskProgress.getProgress()
+                    : 0;
+            progress += boughtAmount;
+            taskProgress.setProgress(progress);
+
+            int amount = (int) task.getConfigValue("amount");
 
             super.debug("Progress " + progress + "/" + amount,
                     quest.getId(), task.getId(), buyer.getUniqueId());
