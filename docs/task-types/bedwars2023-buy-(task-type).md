@@ -1,18 +1,18 @@
 ---
-title: bedwars1058_buy
+title: bedwars2023_buy
 parent: External task types
 grand_parent: Task types
 ---
 
-# bedwars1058_buy (task type)
+# bedwars2023_buy (task type)
 
 Not released yet (dev builds)
 {: .label .label-green }
 
-Plugin 'BedWars1058' required  
+Plugin 'BedWars2023' required  
 {: .label }
 
-Buy a specific item from the BedWars1058 shop.
+Buy a specific item from the BedWars2023 shop.
 
 ## Options
 
@@ -26,8 +26,8 @@ Buy a specific item from the BedWars1058 shop.
 Buy 3 Ender Pearls:
 
 ``` yaml
-bedwars1058:
-  type: "bedwars1058_buy"
+bedwars2023:
+  type: "bedwars2023_buy"
   item: "ENDER_PEARL"
   amount: 3
 ```

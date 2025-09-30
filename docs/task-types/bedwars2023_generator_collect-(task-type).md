@@ -1,18 +1,18 @@
 ---
-title: bedwars1058_generator_collect
+title: bedwars2023_generator_collect
 parent: External task types
 grand_parent: Task types
 ---
 
-# bedwars1058_generator_collect (task type)
+# bedwars2023_generator_collect (task type)
 
 Not released yet (dev builds)
 {: .label .label-green }
 
-Plugin 'BedWars1058' required  
+Plugin 'BedWars2023' required  
 {: .label }
 
-Collect a specific item from generators in BedWars1058.
+Collect a specific item from generators in BedWars2023.
 
 ## Options
 
@@ -26,8 +26,8 @@ Collect a specific item from generators in BedWars1058.
 Collect 10 diamonds:
 
 ``` yaml
-bedwars1058:
-  type: "bedwars1058_generator_collect"
+bedwars2023:
+  type: "bedwars2023_generator_collect"
   item: "DIAMOND"
   amount: 10
 ```
