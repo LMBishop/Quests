@@ -197,7 +197,13 @@ public abstract class TaskType {
      * Returns the goal of a task.
      */
     public Object getGoal(final Task task) {
-        return task.getConfigValue("amount", "-");
+        for (String key : List.of("amount", "distance", "minutes", "level", "worth", "value")) {
+            Object goal = task.getConfigValue(key);
+            if (goal != null) {
+                return goal;
+            }
+        }
+        return "-";
     }
 
     /**
