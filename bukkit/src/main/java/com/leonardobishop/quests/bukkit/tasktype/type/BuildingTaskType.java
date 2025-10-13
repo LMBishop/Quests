@@ -73,6 +73,10 @@ public final class BuildingTaskType extends BukkitTaskType {
     // subtract if enabled
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
+        Block block = event.getBlock();
+        if (block.hasMetadata("blockbreakevent-ignore"))
+            return;
+
         Player player = event.getPlayer();
         if (player.hasMetadata("NPC")) {
             return;
@@ -83,7 +87,6 @@ public final class BuildingTaskType extends BukkitTaskType {
             return;
         }
 
-        Block block = event.getBlock();
 
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
