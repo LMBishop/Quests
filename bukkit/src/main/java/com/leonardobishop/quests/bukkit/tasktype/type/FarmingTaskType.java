@@ -54,7 +54,7 @@ public final class FarmingTaskType extends BukkitTaskType {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (block.hasMetadata("blockbreakevent-ignore"))
+        if (block.getType().isAir())
             return;
         Material type = block.getType();
 
