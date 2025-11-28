@@ -6,7 +6,7 @@ grand_parent: Task types
 
 # blockfertilizing (task type)
 
-Not released yet (dev builds)
+Since v3.16
 {: .label .label-green }
 
 Minecraft 1.13+ required

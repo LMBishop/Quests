@@ -6,7 +6,7 @@ grand_parent: Task types
 
 # bedwars1058_lose (task type)
 
-Not released yet (dev builds)
+Since v3.16
 {: .label .label-green }
 
 Plugin 'BedWars1058' required

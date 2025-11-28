@@ -6,7 +6,7 @@ grand_parent: Task types
 
 # fancynpcs_deliver (task type)
 
-Not released yet (dev builds)
+Since v3.16
 {: .label .label-green }
 
 Plugin 'FancyNpcs' required
