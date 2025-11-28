@@ -69,7 +69,7 @@ dependencies {
     compileOnlyProject(":common")
 
     // Paper
-    compileOnlyServer("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    compileOnlyServer("io.papermc.paper:paper-api:1.21.11-pre3-R0.1-SNAPSHOT")
 
     // ASkyBlock
     compileOnlyPlugin("com.wasteofplastic:askyblock:3.0.9.4")
@@ -146,15 +146,15 @@ dependencies {
     // bStats
     implementation("org.bstats:bstats-bukkit-lite:1.8")
     // gson // TODO implement custom metrics without gson
-    implementation("com.google.code.gson:gson:2.13.1")
+    implementation("com.google.code.gson:gson:2.13.2")
     // HikariCP
-    implementation("com.zaxxer:HikariCP:6.3.0")
+    implementation("com.zaxxer:HikariCP:7.0.2")
     // slf4j
     implementation("org.slf4j:slf4j-nop:1.7.36")
     // hppc
     implementation("com.carrotsearch:hppc:0.10.0")
     // bungeecord-chat
-    implementation("net.md-5:bungeecord-chat:1.21-R0.3") { isTransitive = false }
+    implementation("net.md-5:bungeecord-chat:1.21-R0.4") { isTransitive = false }
 }
 
 tasks.shadowJar {
