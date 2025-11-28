@@ -161,5 +161,5 @@ publishing {
 
 fun findPropertyString(propertyName: String): String? {
     val propertyValue = project.findProperty(propertyName)
-    return if (propertyValue is String) propertyValue else null
+    return propertyValue as? String
 }
