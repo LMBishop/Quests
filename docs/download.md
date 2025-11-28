@@ -11,7 +11,7 @@ outdated versions.
 ## Release builds
 
 - [SpigotMC
-  (preferred)](https://www.spigotmc.org/resources/quests-1-8-1-19-set-up-goals-for-players.23696/)
+  (preferred)](https://www.spigotmc.org/resources/quests-1-8-1-21-set-up-goals-for-players.23696/)
 - [Hangar](https://hangar.papermc.io/LMBishop/Quests)
 - [Modrinth](https://modrinth.com/mod/quests)
 - [GitHub](https://github.com/LMBishop/Quests/releases)
