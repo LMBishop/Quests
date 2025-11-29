@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
+
 plugins {
     id("com.gradleup.shadow")
 }
@@ -150,7 +152,7 @@ dependencies {
     // HikariCP
     implementation("com.zaxxer:HikariCP:7.0.2")
     // slf4j
-    implementation("org.slf4j:slf4j-nop:1.7.36")
+    implementation("org.slf4j:slf4j-nop:2.0.17")
     // hppc
     implementation("com.carrotsearch:hppc:0.10.0")
     // bungeecord-chat
@@ -173,6 +175,9 @@ tasks.shadowJar {
         exclude(dependency("com.zaxxer:.*:.*"))
         exclude(dependency("org.slf4j:.*:.*"))
     }
+
+    // Required for proper relocated SLF4J provider detection
+    transform(ServiceFileTransformer::class.java)
 
     archiveClassifier.set(null as String?)
 }
