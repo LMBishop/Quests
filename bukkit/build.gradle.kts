@@ -61,6 +61,8 @@ repositories {
     maven("https://repo.bg-software.com/repository/api/")
     // ZNPCsPlus
     maven("https://repo.pyr.lol/snapshots")
+    // WorldGuard / WorldEdit
+    maven("https://maven.enginehub.org/repo/")
 
     // bungeecord-chat, HikariCP, hppc, JetBrains Annotations, slf4j
     mavenCentral()
@@ -157,6 +159,10 @@ dependencies {
     implementation("com.carrotsearch:hppc:0.10.0")
     // bungeecord-chat
     implementation("net.md-5:bungeecord-chat:1.21-R0.4") { isTransitive = false }
+
+    compileOnlyPlugin("com.sk89q.worldguard:worldguard-core:7.0.14")
+    compileOnlyPlugin("com.sk89q.worldedit:worldedit-bukkit:7.3.13")
+    compileOnlyPlugin("com.sk89q.worldedit:worldedit-core:7.3.13")
 }
 
 tasks.shadowJar {
