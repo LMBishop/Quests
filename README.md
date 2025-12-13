@@ -74,7 +74,7 @@ Full documentation can be found at [https://quests.leonardobishop.com/](https://
 Documentation is built directly from this repository, from the `/docs` directory.
 
 ## 💡 Support
-For support please open a [GitHub issue](https://github.com/LMBishop/Quests/issues) or join our [Discord server](https://discord.gg/mQ2RcJC). Please provide information of the issue, any errors that may come up and make sure you are using the latest version of the plugin.
+For support please open a [GitHub issue](https://github.com/LMBishop/Quests/issues) or join our [Discord server](https://discord.gg/SwUPVENQsd). Please provide information of the issue, any errors that may come up and make sure you are using the latest version of the plugin.
 
 #### ⁉️ Issue Tracker
 **This is the preferred method of bug reporting & feature requests**. Please use one of the two templates which are provided. If it is neither a bug report or a feature request and is a question, Discord would be a better place to ask this instead.
