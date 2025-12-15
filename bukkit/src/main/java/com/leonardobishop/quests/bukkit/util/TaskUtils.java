@@ -22,6 +22,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @SuppressWarnings({"deprecation", "BooleanMethodIsAlwaysInverted"})
 public class TaskUtils {
@@ -329,23 +331,34 @@ public class TaskUtils {
         return matchBlock(type, pendingTask, block != null ? block.getState() : null, player, stringKey, listKey);
     }
 
+    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable BlockData data, @NotNull UUID player) {
+        return matchBlock(type, pendingTask, data, player, "block", "blocks");
+    }
+
+    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable BlockData data, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
+        return matchBlock(type, pendingTask, data != null ? data.getMaterial() : null, () -> (byte) 0, player, stringKey, listKey);
+    }
+
     public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable BlockState state, @NotNull UUID player) {
         return matchBlock(type, pendingTask, state, player, "block", "blocks");
     }
 
     public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable BlockState state, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
+        return matchBlock(type, pendingTask, state != null ? state.getType() : null, () -> state.getRawData(), player, stringKey, listKey);
+    }
+
+    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable Material blockMaterial, @NotNull Supplier<Byte> rawDataSupplier, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
         Task task = pendingTask.task;
 
         List<String> checkBlocks = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
         if (checkBlocks == null) {
             return true;
         } else if (checkBlocks.isEmpty()) {
-            return state == null;
+            return blockMaterial == null;
         }
 
         Object configData = task.getConfigValue("data");
 
-        Material blockMaterial = state.getType();
         // do not set block data here as it will initialize Legacy Material Support
         Byte blockData = null;
 
@@ -374,7 +387,7 @@ public class TaskUtils {
 
                 // delay legacy material support initialization
                 if (blockData == null) {
-                    blockData = state.getRawData();
+                    blockData = rawDataSupplier.get();
                 }
 
                 if (blockData == comparableData) {
