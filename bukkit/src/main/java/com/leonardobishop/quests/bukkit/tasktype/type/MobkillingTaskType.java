@@ -106,6 +106,11 @@ public final class MobkillingTaskType extends BukkitTaskType {
             return;
         }
 
+        EntityDamageEvent lastDamageCause = entity.getLastDamageCause();
+        Entity directSource = plugin.getVersionSpecificHandler().getDirectSource(lastDamageCause);
+        ItemStack bowItem = directSource != null ? plugin.getProjectile2ItemCache().getItem(directSource) : null;
+        ItemStack item = bowItem != null ? bowItem : plugin.getVersionSpecificHandler().getItemInMainHand(player);
+
         //noinspection deprecation
         String customName = entity.getCustomName();
 
@@ -144,7 +149,6 @@ public final class MobkillingTaskType extends BukkitTaskType {
             }
 
             if (task.hasConfigKey("item")) {
-                ItemStack item = plugin.getVersionSpecificHandler().getItemInMainHand(player);
                 if (item == null) {
                     super.debug("Specific item is required, player has no item in hand; continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;

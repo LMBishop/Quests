@@ -227,6 +227,11 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
     }
 
     @Override
+    public @Nullable Entity getDirectSource(@Nullable EntityDamageEvent lastDamageCause) {
+        return null;
+    }
+
+    @Override
     public boolean isCake(Material type) {
         return type == Material.CAKE;
     }

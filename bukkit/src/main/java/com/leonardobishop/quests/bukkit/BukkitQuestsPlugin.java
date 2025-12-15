@@ -147,6 +147,7 @@ import com.leonardobishop.quests.bukkit.tasktype.type.dependent.uSkyBlockLevelTa
 import com.leonardobishop.quests.bukkit.util.CompatUtils;
 import com.leonardobishop.quests.bukkit.util.FormatUtils;
 import com.leonardobishop.quests.bukkit.util.LogHistory;
+import com.leonardobishop.quests.bukkit.util.Projectile2ItemCache;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.config.QuestsConfig;
@@ -226,6 +227,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private QuestsBossBar bossBarHandle;
     private QuestsActionBar actionBarHandle;
     private VersionSpecificHandler versionSpecificHandler;
+    private Projectile2ItemCache projectile2ItemCache;
 
     private LogHistory logHistory;
     private WrappedTask questAutoSaveTask;
@@ -369,6 +371,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
                 default -> new VersionSpecificHandler21();
             };
         }
+
+        // Instantiate Projectile to ItemStack cache
+        this.projectile2ItemCache = new Projectile2ItemCache();
+        this.projectile2ItemCache.registerEvents(this);
 
         // Set item getter to be used by Quests config
         this.questsConfig.setItemGetter(this.itemGetter);
@@ -970,6 +976,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     public VersionSpecificHandler getVersionSpecificHandler() {
         return versionSpecificHandler;
+    }
+
+    public Projectile2ItemCache getProjectile2ItemCache() {
+        return projectile2ItemCache;
     }
 
     public QuestItemRegistry getQuestItemRegistry() {

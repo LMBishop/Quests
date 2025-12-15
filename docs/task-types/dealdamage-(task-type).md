@@ -23,9 +23,6 @@ Deal a certain amount of damage.
 | `exact-match`          | Whether the item should exactly match what is defined. | Boolean                              | No       | true    | \-                                                                                                                                                                                                 |
 | `worlds`               | Worlds which should count towards the progress.        | List of world names                  | No       | \-      | \-                                                                                                                                                                                                 |
 
-{: .caution }
-It's not possible to use item option for projectile weapons (like bow or other projectile shooters). Currently, the API is insufficient to implement such a feature without any unwanted side effects.
-
 ## Examples
 
 Deal 100 HP of damage:
