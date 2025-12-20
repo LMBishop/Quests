@@ -63,8 +63,7 @@ public final class MobkillingTaskType extends BukkitTaskType {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         public void onEntityDeath(EntityDeathEvent event) {
             LivingEntity entity = event.getEntity();
-            EntityDamageEvent damageEvent = entity.getLastDamageCause();
-            Player player = plugin.getVersionSpecificHandler().getDamager(damageEvent);
+            Player player = entity.getKiller();
 
             handle(player, entity, 1);
         }
