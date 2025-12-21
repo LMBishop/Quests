@@ -245,8 +245,12 @@ public interface VersionSpecificHandler {
     /**
      * {@link DamageSource}s were introduced in {@code 1.20.4}.
      */
-    @SuppressWarnings("UnstableApiUsage")
     @Nullable Player getDamager(@Nullable EntityDamageEvent lastDamageCause);
+
+    /**
+     * {@link DamageSource}s were introduced in {@code 1.20.4}.
+     */
+    @Nullable Entity getDirectSource(@Nullable EntityDamageEvent lastDamageCause);
 
     /**
      * {@link Tag#CANDLE_CAKES} was introduced in {@code 1.17}.

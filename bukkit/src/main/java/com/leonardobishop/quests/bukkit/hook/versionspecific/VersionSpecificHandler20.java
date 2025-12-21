@@ -54,7 +54,6 @@ public class VersionSpecificHandler20 extends VersionSpecificHandler17 implement
         }
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @Override
     public @Nullable Player getDamager(@Nullable EntityDamageEvent event) {
         if (!DAMAGE_SOURCE_API) {
@@ -73,5 +72,19 @@ public class VersionSpecificHandler20 extends VersionSpecificHandler17 implement
         }
 
         return null;
+    }
+
+    @Override
+    public @Nullable Entity getDirectSource(@Nullable EntityDamageEvent event) {
+        if (!DAMAGE_SOURCE_API) {
+            return super.getDamager(event);
+        }
+
+        if (event == null) {
+            return null;
+        }
+
+        DamageSource source = event.getDamageSource();
+        return source.getDirectEntity();
     }
 }

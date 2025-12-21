@@ -100,7 +100,6 @@ public final class MythicMobsDealDamageTaskType extends BukkitTaskType {
     }
 
     private void handle(final EntityDamageEvent event, final String mobName, final double level) {
-        Entity entity = event.getEntity();
         Player player = plugin.getVersionSpecificHandler().getDamager(event);
 
         if (player == null || player.hasMetadata("NPC")) {
@@ -112,9 +111,14 @@ public final class MythicMobsDealDamageTaskType extends BukkitTaskType {
             return;
         }
 
+        Entity entity = event.getEntity();
         if (!(entity instanceof Damageable damageable)) {
             return;
         }
+
+        Entity directSource = plugin.getVersionSpecificHandler().getDirectSource(event);
+        ItemStack bowItem = directSource != null ? plugin.getProjectile2ItemCache().getItem(directSource) : null;
+        ItemStack item = bowItem != null ? bowItem : plugin.getVersionSpecificHandler().getItemInMainHand(player);
 
         // Clamp entity damage as getDamage() returns Float.MAX_VALUE for killing a parrot with a cookie
         // https://github.com/LMBishop/Quests/issues/753
@@ -147,7 +151,6 @@ public final class MythicMobsDealDamageTaskType extends BukkitTaskType {
             }
 
             if (task.hasConfigKey("item")) {
-                ItemStack item = plugin.getVersionSpecificHandler().getItemInMainHand(player);
                 if (item == null) {
                     super.debug("Specific item is required, player has no item in hand; continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
