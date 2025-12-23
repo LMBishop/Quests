@@ -5,12 +5,15 @@ import com.google.common.collect.Table;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
+import com.leonardobishop.quests.bukkit.util.NamespacedKeyUtils;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -19,14 +22,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
+
+import java.util.UUID;
 
 public final class MobkillingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
     private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
+    private final NamespacedKey LAST_HIT_KEY = NamespacedKeyUtils.fromString("quests:lasthitby");
 
     public MobkillingTaskType(BukkitQuestsPlugin plugin) {
         super("mobkilling", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of a entity type.", "mobkillingcertain");
@@ -63,17 +69,15 @@ public final class MobkillingTaskType extends BukkitTaskType {
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         public void onEntityDeath(EntityDeathEvent event) {
             LivingEntity entity = event.getEntity();
-            Player killer = entity.getKiller();
-            Player player;
+            Player killer;
 
-            if (killer != null) {
-                player = killer;
-            } else {
-                EntityDamageEvent damageEvent = entity.getLastDamageCause();
-                player = plugin.getVersionSpecificHandler().getDamager(damageEvent);
+            String uuid = entity.getPersistentDataContainer().get(LAST_HIT_KEY, PersistentDataType.STRING);
+
+            if (uuid != null) {
+                killer = Bukkit.getPlayer(UUID.fromString(uuid));
+
+                handle(killer, entity, 1);
             }
-
-            handle(player, entity, 1);
         }
     }
 
