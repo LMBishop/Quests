@@ -31,7 +31,13 @@ public class Quest implements Comparable<Quest> {
     private int cooldown;
     private boolean timeLimitEnabled;
     private int timeLimit;
+
+    // Manteniamo sortOrder per compatibilità ma useremo displaySlot per l'ordinamento
     private int sortOrder;
+
+    // NUOVO CAMPO
+    private int displaySlot;
+
     private boolean permissionRequired;
     private boolean autoStartEnabled;
     private boolean cancellable;
@@ -312,6 +318,14 @@ public class Quest implements Comparable<Quest> {
     }
 
     /**
+     * Get the specific display slot for this quest.
+     * * @return the slot index (0-53) or -1 if not set
+     */
+    public int getDisplaySlot() {
+        return displaySlot;
+    }
+
+    /**
      * Get if quest-specific autostart is enabled for this quest.
      *
      * @return boolean
@@ -357,7 +371,8 @@ public class Quest implements Comparable<Quest> {
     }
 
     /**
-     * Compare the sort orders for this quest with another quest.
+     * Compare the quests. 
+     * Modified to prioritise displaySlot over sortOrder.
      *
      * @see Comparable#compareTo(Object)
      * @param quest the quest to compare with
@@ -365,7 +380,8 @@ public class Quest implements Comparable<Quest> {
      */
     @Override
     public int compareTo(@NotNull Quest quest) {
-        return (sortOrder - quest.sortOrder);
+        // MODIFICA: Utilizza displaySlot per il confronto
+        return Integer.compare(this.displaySlot, quest.displaySlot);
     }
 
     public static class Builder {
@@ -387,6 +403,8 @@ public class Quest implements Comparable<Quest> {
         private boolean timeLimitEnabled = false;
         private int timeLimit = 0;
         private int sortOrder = 1;
+        // NUOVO CAMPO NEL BUILDER
+        private int displaySlot = -1;
         private boolean permissionRequired = false;
         private boolean autoStartEnabled = false;
         private boolean cancellable = true;
@@ -453,6 +471,12 @@ public class Quest implements Comparable<Quest> {
 
         public Builder withSortOrder(int sortOrder) {
             this.sortOrder = sortOrder;
+            return this;
+        }
+
+        // NUOVO METODO NEL BUILDER
+        public Builder withDisplaySlot(int displaySlot) {
+            this.displaySlot = displaySlot;
             return this;
         }
 
@@ -545,6 +569,8 @@ public class Quest implements Comparable<Quest> {
             quest.timeLimitEnabled = this.timeLimitEnabled;
             quest.timeLimit = this.timeLimit;
             quest.sortOrder = this.sortOrder;
+            // ASSEGNAZIONE NUOVO CAMPO
+            quest.displaySlot = this.displaySlot;
             quest.permissionRequired = this.permissionRequired;
             quest.autoStartEnabled = this.autoStartEnabled;
             quest.countsTowardsLimit = this.countsTowardsLimit;

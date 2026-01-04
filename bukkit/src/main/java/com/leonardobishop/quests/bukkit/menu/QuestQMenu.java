@@ -10,6 +10,8 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.quest.Category;
 import com.leonardobishop.quests.common.quest.Quest;
+import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.jspecify.annotations.Nullable;
 
@@ -25,7 +27,7 @@ public class QuestQMenu extends PaginatedQMenu {
     private final String categoryName;
 
     public QuestQMenu(BukkitQuestsPlugin plugin, QPlayer owner, List<Quest> quests, @Nullable Category category, CategoryQMenu categoryQMenu) {
-        super(owner, Chat.legacyColor(guiName(plugin, category)),
+        super(owner, Chat.legacyColor(PlaceholderAPI.setPlaceholders(Bukkit.getPlayer(owner.getPlayerUUID()) ,(guiName(plugin, category)))),
                 plugin.getQuestsConfig().getBoolean("options.trim-gui-size.quests-menu"), 54, plugin);
 
         BukkitQuestsConfig config = (BukkitQuestsConfig) plugin.getQuestsConfig();
@@ -58,7 +60,7 @@ public class QuestQMenu extends PaginatedQMenu {
         } else {
             path = "custom-elements.quests";
         }
-        super.populate(path, filteredQuests, backMenuElement);
+        super.populate(path, filteredQuests, backMenuElement, plugin, this);
     }
 
     public String getCategoryName() {
@@ -66,6 +68,7 @@ public class QuestQMenu extends PaginatedQMenu {
     }
 
     private static String guiName(final BukkitQuestsPlugin plugin, final @Nullable Category category) {
+
         if (category != null) {
             final String guiName = category.getGUIName();
 
@@ -73,7 +76,6 @@ public class QuestQMenu extends PaginatedQMenu {
                 return guiName;
             }
         }
-
         return plugin.getQuestsConfig().getString("options.guinames.quests-menu");
     }
 }
