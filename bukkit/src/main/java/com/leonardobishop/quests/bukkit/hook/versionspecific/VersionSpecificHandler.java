@@ -16,6 +16,7 @@ import org.bukkit.entity.HappyGhast;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Llama;
 import org.bukkit.entity.Mule;
+import org.bukkit.entity.Nautilus;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SkeletonHorse;
 import org.bukkit.entity.Strider;
@@ -110,6 +111,13 @@ public interface VersionSpecificHandler {
      * </p>
      */
     boolean isPlayerOnMule(Player player);
+
+    /**
+     * Nautiluses were introduced in {@code 1.21.11}.
+     *
+     * @see Nautilus
+     */
+    boolean isPlayerOnNautilus(Player player);
 
     /**
      * Skeleton horses were introduced in {@code 1.6.1}.

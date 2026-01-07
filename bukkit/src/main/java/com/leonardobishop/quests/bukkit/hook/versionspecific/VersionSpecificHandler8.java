@@ -69,6 +69,11 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
         return player.getVehicle() instanceof Horse horse && horse.getVariant() == Horse.Variant.MULE;
     }
 
+    @Override
+    public boolean isPlayerOnNautilus(Player player) {
+        return false;
+    }
+
     @SuppressWarnings("deprecation")
     @Override
     public boolean isPlayerOnSkeletonHorse(Player player) {

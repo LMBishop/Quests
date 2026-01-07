@@ -127,6 +127,7 @@ public final class WalkingTaskType extends BukkitTaskType {
             case LLAMA -> this.plugin.getVersionSpecificHandler().isPlayerOnLlama(player);
             case MINECART -> player.getVehicle() instanceof RideableMinecart;
             case MULE -> this.plugin.getVersionSpecificHandler().isPlayerOnMule(player);
+            case NAUTILUS -> this.plugin.getVersionSpecificHandler().isPlayerOnNautilus(player);
             case PIG -> player.getVehicle() instanceof Pig;
             case SKELETON_HORSE -> this.plugin.getVersionSpecificHandler().isPlayerOnSkeletonHorse(player);
             case STRIDER -> this.plugin.getVersionSpecificHandler().isPlayerOnStrider(player);
@@ -166,6 +167,26 @@ public final class WalkingTaskType extends BukkitTaskType {
                 // we can safely ignore any other actions here as there is
                 // really no better way to detect flying with elytra
                     !player.isInsideVehicle() && this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
+
+            // Grouped
+            case GROUND ->
+                // player is sneaking, walking or running
+                    !player.isInsideVehicle() && !player.isSwimming() && !player.isFlying()
+                            && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case MANUAL_NO_FLIGHT ->
+                // player is sneaking, walking, running, or swimming
+                    !player.isInsideVehicle() && !player.isFlying()
+                            && !this.plugin.getVersionSpecificHandler().isPlayerGliding(player);
+            case MANUAL_NO_SWIM ->
+                // player is sneaking, walking, running, or flying (creative or elytra)
+                    !player.isInsideVehicle() && (!player.isSwimming() || player.isFlying()
+                            || this.plugin.getVersionSpecificHandler().isPlayerGliding(player));
+            case MANUAL ->
+                // player is sneaking, walking, running, swimming or flying (creative or elytra)
+                    !player.isInsideVehicle();
+            case VEHICLE ->
+                // player is in any vehicle
+                    player.isInsideVehicle();
         };
     }
 
@@ -179,6 +200,7 @@ public final class WalkingTaskType extends BukkitTaskType {
         LLAMA,
         MINECART,
         MULE,
+        NAUTILUS,
         PIG,
         SKELETON_HORSE,
         STRIDER,
@@ -190,7 +212,14 @@ public final class WalkingTaskType extends BukkitTaskType {
         RUNNING,
         SWIMMING,
         FLYING,
-        ELYTRA;
+        ELYTRA,
+
+        // Grouped
+        GROUND,           // walking, running, sneaking
+        MANUAL_NO_FLIGHT, // walking, running, sneaking, swimming
+        MANUAL_NO_SWIM,   // walking, running, sneaking, flying
+        MANUAL,           // walking, running, sneaking, swimming, flying
+        VEHICLE;          // any vehicle
 
         private static final Map<String, Mode> STRING_MODE_MAP = new HashMap<>() {{
             for (final Mode mode : Mode.values()) {
