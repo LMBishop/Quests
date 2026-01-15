@@ -51,6 +51,11 @@ public final class MiningTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
+        Block block = event.getBlock();
+
+        if (block.getType().isAir())
+            return;
+
         Player player = event.getPlayer();
         if (player.hasMetadata("NPC")) {
             return;
@@ -61,7 +66,7 @@ public final class MiningTaskType extends BukkitTaskType {
             return;
         }
 
-        Block block = event.getBlock();
+
         ItemStack item = plugin.getVersionSpecificHandler().getItemInMainHand(player);
         boolean silkTouchPresent = item != null && item.getEnchantmentLevel(Enchantment.SILK_TOUCH) > 0;
 
