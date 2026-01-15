@@ -35,17 +35,24 @@ item:
 
 ## Options
 
-| Field                | Optional        | Minecraft Version | More Information             |
-|----------------------|-----------------|-------------------|------------------------------|
-| `item`               | ❌               | \-                | [Jump](#item)                |
-| `name`               | ✅ <sup>\*</sup> | \-                | [Jump](#name)                |
-| `lore`               | ✅               | \-                | [Jump](#lore)                |
-| `enchantments`       | ✅               | \-                | [Jump](#enchantments)        |
-| `itemflags`          | ✅               | 1.8+              | [Jump](#item-flags)          |
-| `unbreakable`        | ✅               | 1.13+             | [Jump](#unbreakable)         |
-| `attributemodifiers` | ✅               | 1.13+             | [Jump](#attribute-modifiers) |
-| `custommodeldata`    | ✅               | 1.14+             | [Jump](#custom-model-data)   |
-| `owner-[...]`        | ✅               | 1.8+              | [Jump](#owner)               |
+| Field                      | Optional        | Minecraft Version | More Information                    |
+|----------------------------|-----------------|-------------------|-------------------------------------|
+| `item`                     | ❌               | \-                | [Jump](#item)                       |
+| `name`                     | ✅ <sup>\*</sup> | \-                | [Jump](#name)                       |
+| `lore`                     | ✅               | \-                | [Jump](#lore)                       |
+| `enchantments`             | ✅               | \-                | [Jump](#enchantments)               |
+| `itemflags`                | ✅               | 1.8+              | [Jump](#item-flags)                 |
+| `unbreakable`              | ✅               | 1.8+              | [Jump](#unbreakable)                |
+| `attributemodifiers`       | ✅               | 1.13+             | [Jump](#attribute-modifiers)        |
+| `custommodeldata`          | ✅               | 1.14+             | [Jump](#custom-model-data)          |
+| `custommodeldata-colors`   | ✅               | 1.21.4+           | [Jump](#custom-model-data-colors)   |
+| `custommodeldata-flags`    | ✅               | 1.21.4+           | [Jump](#custom-model-data-flags)    |
+| `custommodeldata-floats`   | ✅               | 1.21.4+           | [Jump](#custom-model-data-floats)   |
+| `custommodeldata-strings`  | ✅               | 1.21.4+           | [Jump](#custom-model-data-strings)  |
+| `itemmodel`                | ✅               | 1.21.4+           | [Jump](#item-model)                 |
+| `enchantmentglintoverride` | ✅               | 1.20+             | [Jump](#enchantment-glint-override) |
+| `hidetooltip`              | ✅               | 1.20+             | [Jump](#hide-tooltip)               |
+| `owner-[...]`              | ✅               | 1.8+              | [Jump](#owner)                      |
 
 <sup>\*: The name must be defined for the display item of Quests.</sup>
 
@@ -132,7 +139,7 @@ item:
 
 ### Unbreakable
 
-- *1.13+*'
+- *1.8+*'
 
 ``` yaml
 item:
@@ -177,6 +184,81 @@ item:
 item:
   custommodeldata: 12345
   # ...
+```
+
+### Custom model data colors
+
+**1.21.4+**
+
+```yaml
+item:
+  custommodeldata-colors: # use ARGB
+  - 4294901760 # red    FFFF0000
+  - 4278255360 # green  FF00FF00
+  - 4278190335 # blue   FF0000FF
+```
+
+### Custom model data flags
+
+**1.21.4+**
+
+```yaml
+item:
+  custommodeldata-flags:
+  - true
+  - true
+  - false
+```
+
+### Custom model data floats
+
+**1.21.4+**
+
+```yaml
+item:
+  custommodeldata-floats:
+  - 3.14
+  - 2.7182
+  - 1.618033
+```
+
+### Custom model data strings
+
+**1.21.4+**
+
+```yaml
+item:
+  custommodeldata-strings: # hopefully there are no constraints for these lol
+  - "the_best_quests_plugin"
+  - "WHEEEEEEEN UPDATEEEEEEEEEEEEEE"
+  - "https://github.com/LMBishop/Quests/pull/842"
+```
+
+### Item model
+
+**1.21.4+**
+
+```yaml
+item:
+  itemmodel: "namespaced_key_of:the_model"
+```
+
+### Enchantment glint override
+
+**1.20+**
+
+```yaml
+item:
+  enchantmentglintoverride: true
+```
+
+### Hide tooltip
+
+**1.20+**
+
+```yaml
+item:
+  hidetooltip: true
 ```
 
 ### Owner
