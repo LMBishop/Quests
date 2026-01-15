@@ -2,8 +2,10 @@ package com.leonardobishop.quests.bukkit.hook.itemgetter;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.util.CompatUtils;
 import com.leonardobishop.quests.bukkit.util.NamespacedKeyUtils;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -16,7 +18,9 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,10 +45,14 @@ import java.util.UUID;
 @SuppressWarnings("DuplicatedCode")
 public class ItemGetter20 extends ItemGetter {
 
+    // Introduced in 1.21.4 (technically, a new item getter could be created, but it doesn't really make sense as the check would still be needed)
+    private static final boolean V1_21_4_OR_HIGHER = CompatUtils.classWithMethodExists("org.bukkit.inventory.meta.ItemMeta", "setItemModel", NamespacedKey.class);
+
     public ItemGetter20(BukkitQuestsPlugin plugin) {
         super(plugin);
     }
 
+    @SuppressWarnings({"UnstableApiUsage", "removal", "deprecation"})
     @Override
     public ItemStack getItem(String path, ConfigurationSection config, Filter... excludes) {
         config = config.getConfigurationSection(path);
@@ -234,6 +242,61 @@ public class ItemGetter20 extends ItemGetter {
         Integer customModelData = (Integer) config.get("custommodeldata");
         if (customModelData != null && !filters.contains(Filter.CUSTOM_MODEL_DATA)) {
             meta.setCustomModelData(customModelData);
+        }
+
+        if (V1_21_4_OR_HIGHER) {
+            // item model
+            String itemModelString = (String) config.get("itemmodel");
+            if (itemModelString != null && !filters.contains(Filter.ITEM_MODEL)) {
+                NamespacedKey itemModel = NamespacedKeyUtils.fromString(itemModelString);
+
+                if (itemModel != null) {
+                    meta.setItemModel(itemModel);
+                }
+            }
+
+            // custom model data colors
+            List<Integer> argbs = config.getIntegerList("custommodeldata-colors");
+            if (!argbs.isEmpty() && !filters.contains(Filter.CUSTOM_MODEL_DATA)) {
+                List<Color> colors = new ArrayList<>(argbs.size());
+
+                for (Integer argb : argbs) {
+                    if (argb == null) {
+                        continue; // probably impossible
+                    }
+
+                    Color color = Color.fromARGB(argb);
+                    colors.add(color);
+                }
+
+                final CustomModelDataComponent customModelDataComponent = meta.getCustomModelDataComponent();
+                customModelDataComponent.setColors(colors);
+                meta.setCustomModelDataComponent(customModelDataComponent);
+            }
+
+            // custom model data flags
+            List<Boolean> flags = config.getBooleanList("custommodeldata-flags");
+            if (!flags.isEmpty() && !filters.contains(Filter.CUSTOM_MODEL_DATA)) {
+                final CustomModelDataComponent customModelDataComponent = meta.getCustomModelDataComponent();
+                customModelDataComponent.setFlags(flags);
+                meta.setCustomModelDataComponent(customModelDataComponent);
+            }
+
+            // custom model data floats
+            List<Float> floats = config.getFloatList("custommodeldata-floats");
+            if (!floats.isEmpty() && !filters.contains(Filter.CUSTOM_MODEL_DATA)) {
+                final CustomModelDataComponent customModelDataComponent = meta.getCustomModelDataComponent();
+                customModelDataComponent.setFloats(floats);
+                meta.setCustomModelDataComponent(customModelDataComponent);
+            }
+
+            // custom model data strings
+            List<String> strings = config.getStringList("custommodeldata-strings");
+            if (!strings.isEmpty() && !filters.contains(Filter.CUSTOM_MODEL_DATA)) {
+                final CustomModelDataComponent customModelDataComponent = meta.getCustomModelDataComponent();
+                customModelDataComponent.setStrings(strings);
+                meta.setCustomModelDataComponent(customModelDataComponent);
+            }
         }
 
         // enchantment glint override

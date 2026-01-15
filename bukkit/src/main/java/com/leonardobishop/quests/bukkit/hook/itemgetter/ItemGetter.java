@@ -52,6 +52,7 @@ public abstract class ItemGetter {
         UNBREAKABLE,
         ATTRIBUTE_MODIFIER,
         CUSTOM_MODEL_DATA,
+        ITEM_MODEL,
         ENCHANTMENT_GLINT_OVERRIDE,
         HIDE_TOOLTIP
     }
