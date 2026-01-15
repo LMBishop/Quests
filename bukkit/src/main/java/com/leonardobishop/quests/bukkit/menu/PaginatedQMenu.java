@@ -9,16 +9,19 @@ import com.leonardobishop.quests.bukkit.menu.element.MenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.PageDescMenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.PageNextMenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.PagePrevMenuElement;
+import com.leonardobishop.quests.bukkit.menu.element.QuestMenuElement;
 import com.leonardobishop.quests.bukkit.menu.element.SpacerMenuElement;
 import com.leonardobishop.quests.bukkit.util.MenuUtils;
 import com.leonardobishop.quests.bukkit.util.lang3.StringUtils;
 import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.quest.Quest; // Import necessario per accedere al metodo getDisplaySlot
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class PaginatedQMenu extends QMenu {
@@ -75,6 +78,10 @@ public abstract class PaginatedQMenu extends QMenu {
     }
 
     public void populate(String customElementsPath, List<MenuElement> menuElementsToFill, BackMenuElement backMenuElement) {
+        populate(customElementsPath, menuElementsToFill, backMenuElement, null, null);
+    }
+
+    protected void populate(String customElementsPath, List<MenuElement> menuElementsToFill, BackMenuElement backMenuElement, BukkitQuestsPlugin questPlugin, QMenu questMenu) {
         Player player = Bukkit.getPlayer(owner.getPlayerUUID());
         if (player == null) {
             return;
@@ -95,15 +102,22 @@ public abstract class PaginatedQMenu extends QMenu {
                 int repeat = plugin.getConfig().getInt(customElementsPath + "." + s + ".repeat");
                 boolean staticElement = plugin.getConfig().getBoolean(customElementsPath + "." + s + ".static", false);
 
-                MenuElement menuElement;
+                MenuElement menuElement = null;
                 if (plugin.getConfig().contains(customElementsPath + "." + s + ".display")) {
                     ItemStack is = plugin.getConfiguredItemStack(customElementsPath + "." + s + ".display", plugin.getConfig());
                     List<String> commands = plugin.getQuestsConfig().getStringList(customElementsPath + "." + s + ".commands");
                     menuElement = new CustomMenuElement(plugin, owner.getPlayerUUID(), is, commands);
                 } else if (plugin.getConfig().getBoolean(customElementsPath + "." + s + ".spacer", false)) {
                     menuElement = spacer;
-                } else {
-                    continue; // user = idiot
+                } else if (plugin.getConfig().contains(customElementsPath + "." + s + ".quest-id")) {
+                    String questId = plugin.getConfig().getString(customElementsPath + "." + s + ".quest-id");
+                    if (questPlugin != null && questId != null) {
+                        menuElement = createQuestMenuElement(questPlugin, questId, menuElementsToFill, questMenu);
+                    }
+                }
+
+                if (menuElement == null) {
+                    continue;
                 }
 
                 for (int i = 0; i <= repeat; i++) {
@@ -147,8 +161,8 @@ public abstract class PaginatedQMenu extends QMenu {
 
             // else find a place for the back button if needed
         } else if (backMenuElement != null && backMenuElement.isEnabled()) {
-            int slot = trim ? MenuUtils.getHigherOrEqualMultiple(menuElements.size() + menuElementsToFill.size() + customStaticElements, 9) 
-                            : backMenuElement.getSlot(); // place the back button at the defined slot
+            int slot = trim ? MenuUtils.getHigherOrEqualMultiple(menuElements.size() + menuElementsToFill.size() + customStaticElements, 9)
+                    : backMenuElement.getSlot(); // place the back button at the defined slot
             staticMenuElements[slot] = backMenuElement;
         }
 
@@ -164,16 +178,39 @@ public abstract class PaginatedQMenu extends QMenu {
             return;
         }
 
-        // fill in the remaining menu elements into empty slots
+        // --- INIZIO MODIFICA: Logica Slot Manuali ---
+        // 1. Prima inseriamo gli elementi che hanno uno slot specifico (displaySlot)
+        // Usiamo un iteratore per poter rimuovere gli elementi dalla lista "da riempire"
+        Iterator<MenuElement> iterator = menuElementsToFill.iterator();
+        while (iterator.hasNext()) {
+            MenuElement element = iterator.next();
+            if (element instanceof QuestMenuElement) {
+                QuestMenuElement qElement = (QuestMenuElement) element;
+                // Metodo getQuest() è presente in QuestMenuElement (verifica ok)
+                Quest quest = qElement.getQuest();
+                if (quest != null) {
+                    int manualSlot = quest.getDisplaySlot();
+                    // Se lo slot è valido (es. 22), lo inseriamo direttamente
+                    if (manualSlot >= 0) {
+                        menuElements.put(manualSlot, element);
+                        iterator.remove(); // Rimuoviamo dalla lista così non viene reinserito dopo
+                    }
+                }
+            }
+        }
+
+        // 2. Riempiamo gli spazi vuoti con gli elementi rimanenti (senza slot specifico)
         int slot = 0;
         for (MenuElement element : menuElementsToFill) {
             fillStaticMenuElements(slot, staticMenuElements);
+            // Cerca il prossimo slot libero (salta quelli occupati da elementi statici o quest manuali)
             while (menuElements.containsKey(slot)) {
                 slot++;
                 fillStaticMenuElements(slot, staticMenuElements);
             }
             menuElements.put(slot, element);
         }
+        // --- FINE MODIFICA ---
 
         this.minPage = 1;
         this.maxPage = (menuElements.isEmpty() ? 0 : Ints.max(menuElements.keys)) / pageSize + 1;
@@ -236,5 +273,19 @@ public abstract class PaginatedQMenu extends QMenu {
     public @Nullable MenuElement getMenuElementAt(int slot) {
         int pageOffset = (currentPage - 1) * pageSize;
         return super.getMenuElementAt(slot + pageOffset);
+    }
+
+    private MenuElement createQuestMenuElement(BukkitQuestsPlugin questPlugin, String questId, List<MenuElement> menuElementsToFill, QMenu questMenu) {
+        Iterator<MenuElement> iterator = menuElementsToFill.iterator();
+        while (iterator.hasNext()) {
+            MenuElement element = iterator.next();
+            if (element instanceof QuestMenuElement questMenuElement) {
+                if (questMenuElement.getQuestId().equals(questId)) {
+                    iterator.remove();
+                    return element;
+                }
+            }
+        }
+        return null;
     }
 }

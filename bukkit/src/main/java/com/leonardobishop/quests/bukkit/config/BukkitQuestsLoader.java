@@ -290,7 +290,11 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         boolean hidden = config.getBoolean("options.hidden", false);
                         int cooldownTime = config.getInt("options.cooldown.time", 10);
                         int timeLimtTime = config.getInt("options.time-limit.time", 10);
+
+                        // Modifica: Lettura slot manuale (default -1) e ordinamento
+                        int displaySlot = config.getInt("options.display-slot", -1);
                         int sortOrder = config.getInt("options.sort-order", 1);
+
                         String category = config.getString("options.category");
                         Map<String, String> placeholders = new HashMap<>();
                         Map<String, String> progressPlaceholders = new HashMap<>();
@@ -320,6 +324,8 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 .withProgressPlaceholders(progressPlaceholders)
                                 .withCooldown(cooldownTime)
                                 .withTimeLimit(timeLimtTime)
+                                // Modifica: Passiamo al builder il displaySlot
+                                .withDisplaySlot(displaySlot)
                                 .withSortOrder(sortOrder)
                                 .withCooldownEnabled(cooldown)
                                 .withTimeLimitEnabled(timeLimit)
