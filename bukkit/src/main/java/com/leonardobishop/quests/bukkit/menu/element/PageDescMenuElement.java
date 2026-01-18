@@ -21,7 +21,12 @@ public class PageDescMenuElement extends MenuElement {
     @Override
     public ItemStack asItemStack() {
         ItemStack is = config.getItem("gui.page-desc");
-        is.setAmount(menu.getCurrentPage());
+
+        // Do not change it for menus bigger than stack size as it looks weird
+        // https://github.com/LMBishop/Quests/issues/832
+        if (menu.getMaxPage() <= is.getMaxStackSize()) {
+            is.setAmount(menu.getCurrentPage());
+        }
 
         return MenuUtils.applyPlaceholders(null, null,
                 is,
