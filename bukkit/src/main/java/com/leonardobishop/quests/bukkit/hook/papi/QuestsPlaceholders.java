@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.bukkit.hook.papi;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.config.BukkitQuestsConfig;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.util.FormatUtils;
 import com.leonardobishop.quests.bukkit.util.Messages;
@@ -104,6 +105,10 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                     //TODO cache started quests somewhere, or make a effective started method
                     final List<Quest> listStarted = qPlayer.getEffectiveStartedQuests();
                     result = (args.length == 1 ? String.valueOf(listStarted.size()) : parseList(listStarted, args[1], split));
+                    break;
+                case "limit":
+                case "l":
+                    result = String.valueOf(((BukkitQuestsConfig) plugin.getQuestsConfig()).getQuestLimit(p));
                     break;
                 case "categories":
                     if (args.length == 1) {

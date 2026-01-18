@@ -34,6 +34,7 @@ The eCloud extension called 'Quests' is not for this plugin, do not download it!
 | `%quests_completed%`       | **\*** Returns the **number** of quests the player has completed.            |
 | `%quests_completedbefore%` | Returns the **number** of quests the player has completed **at least once**. |
 | `%quests_started%`         | Returns the **number** of quests which are active for the player.            |
+| `%quests_limit%`           | Returns the **number** of quests the player can have started simultaneously. |
 | `%quests_categories%`      | Returns the **number** of categories on the server.                          |
 
 ### Quest lists
