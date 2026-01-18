@@ -99,7 +99,16 @@ public abstract class PaginatedQMenu extends QMenu {
                 if (plugin.getConfig().contains(customElementsPath + "." + s + ".display")) {
                     ItemStack is = plugin.getConfiguredItemStack(customElementsPath + "." + s + ".display", plugin.getConfig());
                     List<String> commands = plugin.getQuestsConfig().getStringList(customElementsPath + "." + s + ".commands");
-                    menuElement = new CustomMenuElement(plugin, owner.getPlayerUUID(), is, commands);
+                    String resultString = plugin.getConfig().getString(customElementsPath + "." + s + ".result", ClickResult.DO_NOTHING.name());
+
+                    ClickResult result;
+                    try {
+                        result = ClickResult.valueOf(resultString);
+                    } catch (final IllegalArgumentException e) {
+                        result = ClickResult.DO_NOTHING;
+                    }
+
+                    menuElement = new CustomMenuElement(plugin, owner.getPlayerUUID(), is, commands, result);
                 } else if (plugin.getConfig().getBoolean(customElementsPath + "." + s + ".spacer", false)) {
                     menuElement = spacer;
                 } else {
