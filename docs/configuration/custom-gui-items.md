@@ -22,6 +22,7 @@ custom-elements:
           - ""
           - "&7Two empty slots should follow."
         type: "DIAMOND_BLOCK"
+      result: "CLOSE_MENU" # by default DO_NOTHING, can be also REFRESH_PANE
     1:   # <--- start from slot 2
       spacer: true # empty slot in GUI
       repeat: 2 # repeats for 2 slots
