@@ -121,6 +121,7 @@ public final class WalkingTaskType extends BukkitTaskType {
             // Vehicles
             case BOAT -> player.getVehicle() instanceof Boat;
             case CAMEL -> this.plugin.getVersionSpecificHandler().isPlayerOnCamel(player);
+            case CAMEL_HUSK -> this.plugin.getVersionSpecificHandler().isPlayerOnCamelHusk(player);
             case DONKEY -> this.plugin.getVersionSpecificHandler().isPlayerOnDonkey(player);
             case HAPPY_GHAST -> this.plugin.getVersionSpecificHandler().isPlayerOnHappyGhast(player);
             case HORSE -> this.plugin.getVersionSpecificHandler().isPlayerOnHorse(player);
@@ -194,6 +195,7 @@ public final class WalkingTaskType extends BukkitTaskType {
         // Vehicles
         BOAT,
         CAMEL,
+        CAMEL_HUSK,
         DONKEY,
         HAPPY_GHAST,
         HORSE,
