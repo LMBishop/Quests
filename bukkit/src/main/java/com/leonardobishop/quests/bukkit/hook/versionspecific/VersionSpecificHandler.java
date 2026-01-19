@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
+import com.leonardobishop.quests.common.versioning.Version;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -9,6 +10,7 @@ import org.bukkit.block.data.type.CaveVinesPlant;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Camel;
+import org.bukkit.entity.CamelHusk;
 import org.bukkit.entity.Donkey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Goat;
@@ -36,7 +38,12 @@ import org.bukkit.inventory.SmithingTransformRecipe;
 import org.bukkit.inventory.SmithingTrimRecipe;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.NavigableSet;
+import java.util.Objects;
+import java.util.TreeSet;
 
 /**
  * Interface used for implementing version-specific features.
@@ -45,8 +52,42 @@ import java.util.List;
 @SuppressWarnings({"deprecation", "BooleanMethodIsAlwaysInverted"})
 public interface VersionSpecificHandler {
 
+    NavigableSet<Version> IMPLEMENTATIONS = Collections.unmodifiableNavigableSet(new TreeSet<>() {{
+        this.add(Version.V1_8);
+        this.add(Version.V1_9);
+        this.add(Version.V1_11);
+        this.add(Version.V1_11_2);
+        this.add(Version.V1_14);
+        this.add(Version.V1_15_2);
+        this.add(Version.V1_16);
+        this.add(Version.V1_17);
+        this.add(Version.V1_19_2);
+        this.add(Version.V1_20);
+        this.add(Version.V1_20_4);
+        this.add(Version.V1_21_6);
+        this.add(Version.V1_21_11);
+    }});
+
+    static VersionSpecificHandler getImplementation(final Version serverVersion) {
+        final Version matchedVersion = Objects.requireNonNullElseGet(
+                IMPLEMENTATIONS.floor(serverVersion),
+                IMPLEMENTATIONS::first
+        );
+
+        final String clazzName = String.format("%s_%s",
+                VersionSpecificHandler.class.getCanonicalName(),
+                matchedVersion.toClassNameString()
+        );
+
+        try {
+            return (VersionSpecificHandler) Class.forName(clazzName).getConstructor().newInstance();
+        } catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException("Failed to construct version specific handler", e);
+        }
+    }
+
     @SuppressWarnings("unused")
-    int getMinecraftVersion();
+    Version getMinecraftVersion();
 
     /**
      * Elytra were introduced in {@code 1.9}.
@@ -63,6 +104,13 @@ public interface VersionSpecificHandler {
     boolean isPlayerOnCamel(Player player);
 
     /**
+     * Camel Husks were introduced in {@code 1.21.11}.
+     *
+     * @see CamelHusk
+     */
+    boolean isPlayerOnCamelHusk(Player player);
+
+    /**
      * Donkeys were introduced in {@code 1.6.1}.
      *
      * <p>
@@ -72,6 +120,7 @@ public interface VersionSpecificHandler {
      * in modern versions is {@link Donkey}.
      * </p>
      */
+    @SuppressWarnings("removal")
     boolean isPlayerOnDonkey(Player player);
 
     /**
@@ -91,6 +140,7 @@ public interface VersionSpecificHandler {
      * in modern versions is {@link Horse}.
      * </p>
      */
+    @SuppressWarnings("removal")
     boolean isPlayerOnHorse(Player player);
 
     /**
@@ -110,6 +160,7 @@ public interface VersionSpecificHandler {
      * in modern versions is {@link Mule}.
      * </p>
      */
+    @SuppressWarnings("removal")
     boolean isPlayerOnMule(Player player);
 
     /**
@@ -129,6 +180,7 @@ public interface VersionSpecificHandler {
      * interface in modern versions is {@link SkeletonHorse}.
      * </p>
      */
+    @SuppressWarnings("removal")
     boolean isPlayerOnSkeletonHorse(Player player);
 
     /**
@@ -148,6 +200,7 @@ public interface VersionSpecificHandler {
      * interface in modern versions is {@link ZombieHorse}.
      * </p>
      */
+    @SuppressWarnings("removal")
     boolean isPlayerOnZombieHorse(Player player);
 
     /**
@@ -170,8 +223,38 @@ public interface VersionSpecificHandler {
      * the extra slots of player inventories.
      *
      * @apiNote This method is intended to be used as a check for item crafting related task types.
+     * @see VersionSpecificHandler#getStorageContents(PlayerInventory)
      */
-    int getAvailableSpace(Player player, ItemStack newItemStack);
+    default int getAvailableSpace(Player player, ItemStack item) {
+        PlayerInventory inventory = player.getInventory();
+        HashMap<Integer, ? extends ItemStack> itemsOfType = inventory.all(item.getType());
+        int availableSpace = 0;
+
+        for (ItemStack existingItem : itemsOfType.values()) {
+            if (item.isSimilar(existingItem)) {
+                availableSpace += (item.getMaxStackSize() - existingItem.getAmount());
+            }
+        }
+
+        for (ItemStack existingItem : this.getStorageContents(inventory)) {
+            if (existingItem == null) {
+                availableSpace += item.getMaxStackSize();
+            }
+        }
+
+        return availableSpace;
+    }
+
+    /**
+     * Initially, the proper method to get an inventory contents except armor and other extra slots
+     * (not allowing player to store results of crafting actions) was {@link PlayerInventory#getContents()}.
+     * In {@code 1.9} {@link PlayerInventory#getStorageContents()} method was introduced superseding the old
+     * one. In newer versions {@link PlayerInventory#getContents()} method returns all the items including
+     * the extra slots of player inventories.
+     *
+     * @apiNote This method is intended to be used as a check for item crafting related task types.
+     */
+    @Nullable ItemStack[] getStorageContents(PlayerInventory inventory);
 
     /**
      * Initially, clicking with a number key on a crafting result made the item go to the selected slot.

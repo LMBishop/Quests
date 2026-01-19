@@ -1,5 +1,6 @@
 package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
+import com.leonardobishop.quests.common.versioning.Version;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.data.BlockData;
@@ -21,14 +22,13 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 
-public class VersionSpecificHandler8 implements VersionSpecificHandler {
+public class VersionSpecificHandler_V1_8 implements VersionSpecificHandler {
 
     @Override
-    public int getMinecraftVersion() {
-        return 8;
+    public Version getMinecraftVersion() {
+        return Version.V1_8;
     }
 
     @Override
@@ -41,7 +41,12 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
+    @Override
+    public boolean isPlayerOnCamelHusk(Player player) {
+        return false;
+    }
+
+    @SuppressWarnings({"deprecation", "removal"})
     @Override
     public boolean isPlayerOnDonkey(Player player) {
         return player.getVehicle() instanceof Horse horse && horse.getVariant() == Horse.Variant.DONKEY;
@@ -52,7 +57,7 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "removal"})
     @Override
     public boolean isPlayerOnHorse(Player player) {
         return player.getVehicle() instanceof Horse horse && horse.getVariant() == Horse.Variant.HORSE;
@@ -63,7 +68,7 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "removal"})
     @Override
     public boolean isPlayerOnMule(Player player) {
         return player.getVehicle() instanceof Horse horse && horse.getVariant() == Horse.Variant.MULE;
@@ -74,7 +79,7 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "removal"})
     @Override
     public boolean isPlayerOnSkeletonHorse(Player player) {
         return player.getVehicle() instanceof Horse horse && horse.getVariant() == Horse.Variant.SKELETON_HORSE;
@@ -85,7 +90,7 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "removal"})
     @Override
     public boolean isPlayerOnZombieHorse(Player player) {
         return player.getVehicle() instanceof Horse horse && horse.getVariant() == Horse.Variant.UNDEAD_HORSE;
@@ -102,23 +107,8 @@ public class VersionSpecificHandler8 implements VersionSpecificHandler {
     }
 
     @Override
-    public int getAvailableSpace(Player player, ItemStack newItemStack) {
-        int availableSpace = 0;
-        PlayerInventory inventory = player.getInventory();
-        HashMap<Integer, ? extends ItemStack> itemStacksWithSameMaterial = inventory.all(newItemStack.getType());
-        for (ItemStack existingItemStack : itemStacksWithSameMaterial.values()) {
-            if (newItemStack.isSimilar(existingItemStack)) {
-                availableSpace += (newItemStack.getMaxStackSize() - existingItemStack.getAmount());
-            }
-        }
-
-        for (ItemStack existingItemStack : inventory.getContents()) {
-            if (existingItemStack == null) {
-                availableSpace += newItemStack.getMaxStackSize();
-            }
-        }
-
-        return availableSpace;
+    public @Nullable ItemStack[] getStorageContents(PlayerInventory inventory) {
+        return inventory.getContents();
     }
 
     @Override

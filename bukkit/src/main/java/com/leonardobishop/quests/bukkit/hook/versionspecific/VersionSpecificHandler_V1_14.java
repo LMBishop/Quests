@@ -1,12 +1,13 @@
 package com.leonardobishop.quests.bukkit.hook.versionspecific;
 
+import com.leonardobishop.quests.common.versioning.Version;
 import org.bukkit.block.Biome;
 
-public class VersionSpecificHandler14 extends VersionSpecificHandler12 implements VersionSpecificHandler {
+public class VersionSpecificHandler_V1_14 extends VersionSpecificHandler_V1_11_2 {
 
     @Override
-    public int getMinecraftVersion() {
-        return 14;
+    public Version getMinecraftVersion() {
+        return Version.V1_14;
     }
 
     @Override

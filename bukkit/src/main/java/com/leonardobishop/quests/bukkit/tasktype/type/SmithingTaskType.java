@@ -11,6 +11,7 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import com.leonardobishop.quests.common.versioning.Version;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,7 +38,7 @@ public final class SmithingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
 
-        if (plugin.getVersionSpecificHandler().getMinecraftVersion() < 20) {
+        if (plugin.getVersionSpecificHandler().getMinecraftVersion().isLowerThan(Version.V1_20)) {
             return;
         }
 
