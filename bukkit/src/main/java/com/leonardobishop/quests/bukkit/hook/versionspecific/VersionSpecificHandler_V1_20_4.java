@@ -5,8 +5,10 @@ import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public class VersionSpecificHandler_V1_20_4 extends VersionSpecificHandler_V1_20 {
 
     @Override

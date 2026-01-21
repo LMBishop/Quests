@@ -6,7 +6,10 @@ import org.bukkit.entity.Strider;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public class VersionSpecificHandler_V1_16 extends VersionSpecificHandler_V1_15_2 {
 
     @Override
@@ -25,8 +28,8 @@ public class VersionSpecificHandler_V1_16 extends VersionSpecificHandler_V1_15_2
     }
 
     @Override
-    public ItemStack[] getSmithItems(SmithItemEvent event) {
-        return new ItemStack[]{
+    public @Nullable ItemStack[] getSmithItems(SmithItemEvent event) {
+        return new @Nullable ItemStack[]{
                 event.getInventory().getInputEquipment(),
                 event.getInventory().getInputMineral()
         };

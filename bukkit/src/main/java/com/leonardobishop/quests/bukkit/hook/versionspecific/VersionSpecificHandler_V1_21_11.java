@@ -4,7 +4,9 @@ import com.leonardobishop.quests.common.versioning.Version;
 import org.bukkit.entity.CamelHusk;
 import org.bukkit.entity.Nautilus;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class VersionSpecificHandler_V1_21_11 extends VersionSpecificHandler_V1_21_6 {
 
     @Override
