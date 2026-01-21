@@ -39,6 +39,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -273,7 +274,7 @@ public class TaskUtils {
         return getApplicableTasks(player, qPlayer, type, TaskConstraintSet.NONE);
     }
 
-    public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type, TaskConstraintSet constraintSet) {
+    public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type, EnumSet<TaskConstraint> constraintSet) {
         List<PendingTask> tasks = new ArrayList<>();
 
         // Cache it as getting it requires some complex math
