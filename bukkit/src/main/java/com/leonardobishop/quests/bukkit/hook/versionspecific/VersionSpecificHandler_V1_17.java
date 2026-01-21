@@ -7,7 +7,9 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.CaveVinesPlant;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Goat;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class VersionSpecificHandler_V1_17 extends VersionSpecificHandler_V1_16 {
 
     @Override

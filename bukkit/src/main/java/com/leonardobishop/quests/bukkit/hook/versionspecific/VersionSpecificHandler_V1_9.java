@@ -7,8 +7,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public class VersionSpecificHandler_V1_9 extends VersionSpecificHandler_V1_8 {
 
     @Override
@@ -43,7 +45,7 @@ public class VersionSpecificHandler_V1_9 extends VersionSpecificHandler_V1_8 {
 
     @SuppressWarnings("deprecation")
     @Override
-    public ItemStack getItemInEquipmentSlot(PlayerInventory inventory, EquipmentSlot slot) {
+    public @Nullable ItemStack getItemInEquipmentSlot(PlayerInventory inventory, EquipmentSlot slot) {
         return switch (slot) {
             case CHEST -> inventory.getChestplate();
             case FEET -> inventory.getBoots();
@@ -58,7 +60,7 @@ public class VersionSpecificHandler_V1_9 extends VersionSpecificHandler_V1_8 {
     }
 
     @Override
-    public EquipmentSlot getHand(PlayerInteractEvent event) {
+    public @Nullable EquipmentSlot getHand(PlayerInteractEvent event) {
         return event.getHand();
     }
 

@@ -20,10 +20,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.projectiles.ProjectileSource;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+@NullMarked
 public class VersionSpecificHandler_V1_8 implements VersionSpecificHandler {
 
     @Override
@@ -129,7 +131,7 @@ public class VersionSpecificHandler_V1_8 implements VersionSpecificHandler {
 
     @SuppressWarnings("deprecation")
     @Override
-    public ItemStack getItemInEquipmentSlot(PlayerInventory inventory, EquipmentSlot slot) {
+    public @Nullable ItemStack getItemInEquipmentSlot(PlayerInventory inventory, EquipmentSlot slot) {
         return switch (slot) {
             case CHEST -> inventory.getChestplate();
             case FEET -> inventory.getBoots();
@@ -148,7 +150,7 @@ public class VersionSpecificHandler_V1_8 implements VersionSpecificHandler {
     }
 
     @Override
-    public EquipmentSlot getHand(PlayerInteractEvent event) {
+    public @Nullable EquipmentSlot getHand(PlayerInteractEvent event) {
         return EquipmentSlot.HAND;
     }
 
@@ -158,12 +160,12 @@ public class VersionSpecificHandler_V1_8 implements VersionSpecificHandler {
     }
 
     @Override
-    public ItemStack[] getSmithItems(SmithItemEvent event) {
+    public @Nullable ItemStack[] getSmithItems(SmithItemEvent event) {
         return new ItemStack[0];
     }
 
     @Override
-    public String getSmithMode(SmithItemEvent event) {
+    public @Nullable String getSmithMode(SmithItemEvent event) {
         return null;
     }
 

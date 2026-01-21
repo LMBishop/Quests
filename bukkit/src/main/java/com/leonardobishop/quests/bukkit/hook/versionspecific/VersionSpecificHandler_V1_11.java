@@ -10,7 +10,9 @@ import org.bukkit.entity.SkeletonHorse;
 import org.bukkit.entity.ZombieHorse;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class VersionSpecificHandler_V1_11 extends VersionSpecificHandler_V1_9 {
 
     @Override

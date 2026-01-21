@@ -36,6 +36,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.SmithingInventory;
 import org.bukkit.inventory.SmithingTransformRecipe;
 import org.bukkit.inventory.SmithingTrimRecipe;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
@@ -50,6 +51,7 @@ import java.util.TreeSet;
  * All information about changes in the API should be documented HERE in the method docs.
  */
 @SuppressWarnings({"deprecation", "BooleanMethodIsAlwaysInverted"})
+@NullMarked
 public interface VersionSpecificHandler {
 
     NavigableSet<Version> IMPLEMENTATIONS = Collections.unmodifiableNavigableSet(new TreeSet<>() {{
@@ -283,7 +285,7 @@ public interface VersionSpecificHandler {
      * to get specified equipment slot item still hasn't existed. In {@code 1.15.2} the method was finally introduced
      * {@link PlayerInventory#getItem(EquipmentSlot)} making us able to no longer maintain this one.
      */
-    ItemStack getItemInEquipmentSlot(PlayerInventory inventory, EquipmentSlot slot);
+    @Nullable ItemStack getItemInEquipmentSlot(PlayerInventory inventory, EquipmentSlot slot);
 
     /**
      * Dual-wielding system was introduced in {@code 1.9}.
@@ -295,7 +297,7 @@ public interface VersionSpecificHandler {
     /**
      * Dual-wielding system was introduced in {@code 1.9}.
      */
-    EquipmentSlot getHand(PlayerInteractEvent event);
+    @Nullable EquipmentSlot getHand(PlayerInteractEvent event);
 
     /**
      * Dual-wielding system was introduced in {@code 1.9}.
@@ -307,14 +309,14 @@ public interface VersionSpecificHandler {
      * and {@link SmithingInventory#getInputMineral()}. In {@code 1.20} the feature was extended to support templates.
      * Due to the following reason, new method was added: {@link SmithingInventory#getInputTemplate()}.
      */
-    ItemStack[] getSmithItems(SmithItemEvent event);
+    @Nullable ItemStack[] getSmithItems(SmithItemEvent event);
 
     /**
      * Items smithing system was introduced in {@code 1.16} with {@link SmithingTransformRecipe}.
      * In {@code 1.20} the feature was extended to support templates. Due to the following reason,
      * new class has been added {@link SmithingTrimRecipe}.
      */
-    String getSmithMode(SmithItemEvent event);
+    @Nullable String getSmithMode(SmithItemEvent event);
 
     /**
      * Goats were introduced in {@code 1.17}.

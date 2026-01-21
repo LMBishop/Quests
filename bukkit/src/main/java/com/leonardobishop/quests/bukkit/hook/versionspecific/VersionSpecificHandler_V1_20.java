@@ -8,7 +8,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.SmithingTransformRecipe;
 import org.bukkit.inventory.SmithingTrimRecipe;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public class VersionSpecificHandler_V1_20 extends VersionSpecificHandler_V1_19_2 {
 
     @Override
@@ -22,8 +25,8 @@ public class VersionSpecificHandler_V1_20 extends VersionSpecificHandler_V1_19_2
     }
 
     @Override
-    public ItemStack[] getSmithItems(SmithItemEvent event) {
-        return new ItemStack[]{
+    public @Nullable ItemStack[] getSmithItems(SmithItemEvent event) {
+        return new @Nullable ItemStack[]{
                 event.getInventory().getInputEquipment(),
                 event.getInventory().getInputMineral(),
                 event.getInventory().getInputTemplate()
@@ -31,7 +34,7 @@ public class VersionSpecificHandler_V1_20 extends VersionSpecificHandler_V1_19_2
     }
 
     @Override
-    public String getSmithMode(SmithItemEvent event) {
+    public @Nullable String getSmithMode(SmithItemEvent event) {
         Recipe recipe = event.getInventory().getRecipe();
         if (recipe instanceof SmithingTransformRecipe) {
             return "transform";
