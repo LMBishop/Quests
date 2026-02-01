@@ -6,6 +6,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
 
+@SuppressWarnings("ClassCanBeRecord")
 @NullMarked
 public final class Version implements Comparable<Version> {
 
@@ -20,6 +21,7 @@ public final class Version implements Comparable<Version> {
     public static final Version V1_19_2 = new Version(1, 19, 2);
     public static final Version V1_20 = new Version(1, 20);
     public static final Version V1_20_4 = new Version(1, 20, 4);
+    public static final Version V1_21_2 = new Version(1, 21, 2);
     public static final Version V1_21_6 = new Version(1, 21, 6);
     public static final Version V1_21_11 = new Version(1, 21, 11);
     public static final Version UNKNOWN = new Version(Integer.MAX_VALUE);

@@ -119,6 +119,11 @@ public class VersionSpecificHandler_V1_8 implements VersionSpecificHandler {
     }
 
     @Override
+    public boolean isCraftingControlDropAllSupported() {
+        return false;
+    }
+
+    @Override
     public boolean isCaveVinesPlantWithBerries(BlockData blockData) {
         return false;
     }

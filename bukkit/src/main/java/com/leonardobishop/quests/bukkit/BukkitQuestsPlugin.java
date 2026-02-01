@@ -191,6 +191,7 @@ import java.util.regex.Pattern;
 public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     private QuestsLogger questsLogger;
+    private Version serverVersion;
     private QuestManager questManager;
     private TaskTypeManager taskTypeManager;
     private QPlayerManager qPlayerManager;
@@ -230,6 +231,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     @Override
     public @NotNull QuestsLogger getQuestsLogger() {
         return questsLogger;
+    }
+
+    @Override
+    public @NotNull Version getServerVersion() {
+        return serverVersion;
     }
 
     @Override
@@ -279,9 +285,29 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     @Override
     public void onEnable() {
-        // Initial module initialization
+        // Initialize logger
         this.questsLogger = new BukkitQuestsLogger(this);
         this.logHistory = new LogHistory(true);
+
+        // Resolve server version
+        Version serverVersion;
+        try {
+            serverVersion = Version.fromString(Bukkit.getBukkitVersion());
+            this.questsLogger.info("Your server is running version " + serverVersion);
+        } catch (final IllegalArgumentException e) {
+            // all server versions supported by Quests fulfill this format,
+            // so we assume that some future version can possibly break it,
+            // and we want to load the latest and not the oldest handler
+            serverVersion = Version.UNKNOWN;
+            this.questsLogger.warning("Failed to resolve server version - some features may not work! (" + e.getMessage() + ")");
+        }
+
+        // Set the latest supported version specific handler
+        this.serverVersion = serverVersion;
+        this.versionSpecificHandler = VersionSpecificHandler.getImplementation(serverVersion);
+        this.questsLogger.info("Using " + this.versionSpecificHandler.getClass().getSimpleName() + " for version compatibility!");
+
+        // Initial module initialization
         this.generateConfigurations();
         this.questsConfig = new BukkitQuestsConfig(new File(super.getDataFolder() + File.separator + "config.yml"));
         this.questManager = new QuestManager();
@@ -334,23 +360,6 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
         // (skulls)
         this.setSkullGetter();
-
-        // Resolve server version
-        Version serverVersion;
-        try {
-            serverVersion = Version.fromString(Bukkit.getBukkitVersion());
-            this.questsLogger.info("Your server is running version " + serverVersion);
-        } catch (final IllegalArgumentException e) {
-            // all server versions supported by Quests fulfill this format,
-            // so we assume that some future version can possibly break it,
-            // and we want to load the latest and not the oldest handler
-            serverVersion = Version.UNKNOWN;
-            this.questsLogger.warning("Failed to resolve server version - some features may not work! (" + e.getMessage() + ")");
-        }
-
-        // Set the latest supported version specific handler
-        this.versionSpecificHandler = VersionSpecificHandler.getImplementation(serverVersion);
-        this.questsLogger.info("Using " + this.versionSpecificHandler.getClass().getSimpleName() + " for version compatibility!");
 
         // Instantiate Projectile to ItemStack cache
         this.projectile2ItemCache = new Projectile2ItemCache();
