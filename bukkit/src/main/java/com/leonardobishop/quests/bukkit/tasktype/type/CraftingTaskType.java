@@ -61,21 +61,31 @@ public final class CraftingTaskType extends BukkitTaskType {
         }
 
         ItemStack item = event.getCurrentItem();
-
         int eventAmount = item.getAmount();
-        if (event.isShiftClick() && event.getClick() != ClickType.CONTROL_DROP) { // https://github.com/LMBishop/Quests/issues/317
+
+        boolean shiftCraftToInventory = event.isShiftClick() && event.getClick() != ClickType.CONTROL_DROP;
+        boolean controlCraftDropAll = plugin.getVersionSpecificHandler().isCraftingControlDropAllSupported() && !event.isShiftClick() && event.getClick() == ClickType.CONTROL_DROP;
+
+        if (shiftCraftToInventory || controlCraftDropAll) { // https://github.com/LMBishop/Quests/issues/317
             int maxAmount = event.getInventory().getMaxStackSize();
             ItemStack[] matrix = event.getInventory().getMatrix();
+
             for (ItemStack itemStack : matrix) {
                 if (itemStack != null && itemStack.getType() != Material.AIR) {
                     int itemStackAmount = itemStack.getAmount();
+
                     if (itemStackAmount < maxAmount && itemStackAmount > 0) {
                         maxAmount = itemStackAmount;
                     }
                 }
             }
+
             eventAmount *= maxAmount;
-            eventAmount = Math.min(eventAmount, plugin.getVersionSpecificHandler().getAvailableSpace(player, item));
+
+            if (shiftCraftToInventory) {
+                eventAmount = Math.min(eventAmount, plugin.getVersionSpecificHandler().getAvailableSpace(player, item));
+            }
+
             if (eventAmount == 0) {
                 return;
             }

@@ -10,6 +10,7 @@ import com.leonardobishop.quests.common.scheduler.ServerScheduler;
 import com.leonardobishop.quests.common.storage.StorageProvider;
 import com.leonardobishop.quests.common.tasktype.TaskTypeManager;
 import com.leonardobishop.quests.common.updater.Updater;
+import com.leonardobishop.quests.common.versioning.Version;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
@@ -22,6 +23,14 @@ public interface Quests {
      * @return quests logger
      */
     QuestsLogger getQuestsLogger();
+
+    /**
+     * Obtain an instance of the server version.
+     *
+     * @see Version
+     * @return server version
+     */
+    Version getServerVersion();
 
     /**
      * Obtain an instance of the QuestManager.

@@ -38,7 +38,7 @@ public final class SmithingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
 
-        if (plugin.getVersionSpecificHandler().getMinecraftVersion().isLowerThan(Version.V1_20)) {
+        if (plugin.getServerVersion().isLowerThan(Version.V1_20)) {
             return;
         }
 

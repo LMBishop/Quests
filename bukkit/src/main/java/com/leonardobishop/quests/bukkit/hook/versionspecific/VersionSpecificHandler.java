@@ -49,6 +49,7 @@ import java.util.TreeSet;
 /**
  * Interface used for implementing version-specific features.
  * All information about changes in the API should be documented HERE in the method docs.
+ * Every implementation version must be added to the constant in the interface class.
  */
 @SuppressWarnings({"deprecation", "BooleanMethodIsAlwaysInverted"})
 @NullMarked
@@ -66,6 +67,7 @@ public interface VersionSpecificHandler {
         this.add(Version.V1_19_2);
         this.add(Version.V1_20);
         this.add(Version.V1_20_4);
+        this.add(Version.V1_21_2);
         this.add(Version.V1_21_6);
         this.add(Version.V1_21_11);
     }});
@@ -265,6 +267,16 @@ public interface VersionSpecificHandler {
      * @apiNote This method is intended to be used as a check for item crafting related task types.
      */
     boolean isHotbarMoveAndReaddSupported();
+
+    /**
+     * Initially, drop key clicking with control pressed on a crafting result resulted in dropping
+     * the recipe amount of an item. Starting with {@code 1.21.2} clicking it results in dropping
+     * the max craftable amount possible - <a href="https://github.com/LMBishop/Quests/issues/317">
+     * related issue</a>.
+     *
+     * @apiNote This method is intended to be used as a check for item crafting related task types.
+     */
+    boolean isCraftingControlDropAllSupported();
 
     /**
      * Cave vines plants were introduced in {@code 1.17}.
