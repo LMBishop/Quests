@@ -11,23 +11,22 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import org.bukkit.block.BlockState;
-import org.bukkit.entity.Item;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.block.BlockDispenseLootEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public final class BlockItemdroppingTaskType extends BukkitTaskType {
+public final class BlockLootdispensingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
     private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
 
-    public BlockItemdroppingTaskType(BukkitQuestsPlugin plugin) {
-        super("blockitemdropping", TaskUtils.TASK_ATTRIBUTION_STRING, "Drop certain amount of items from a block.");
+    public BlockLootdispensingTaskType(BukkitQuestsPlugin plugin) {
+        super("blocklootdispensing", TaskUtils.TASK_ATTRIBUTION_STRING, "Dispense certain amount of loot from a block.");
         this.plugin = plugin;
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
@@ -36,7 +35,7 @@ public final class BlockItemdroppingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
         super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, TaskUtils.MaterialListConfigValidatorMode.BLOCK, "block", "blocks"));
-        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "count-drops"));
+        super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "count-dispenses"));
     }
 
     @Override
@@ -45,9 +44,9 @@ public final class BlockItemdroppingTaskType extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onBlockDropItem(BlockDropItemEvent event) {
+    public void onBlockDispenseLoot(BlockDispenseLootEvent event) {
         Player player = event.getPlayer();
-        if (player.hasMetadata("NPC")) {
+        if (player == null || player.hasMetadata("NPC")) {
             return;
         }
 
@@ -56,30 +55,30 @@ public final class BlockItemdroppingTaskType extends BukkitTaskType {
             return;
         }
 
-        BlockState state = event.getBlockState();
-        List<Item> drops = event.getItems();
+        Block block = event.getBlock();
+        List<ItemStack> loots = event.getDispensedLoot();
 
-        if (drops.isEmpty()) {
-            handle(player, qPlayer, state, null, 0);
+        if (loots.isEmpty()) {
+            handle(player, qPlayer, block, null, 0);
         }
 
-        for (int i = 0; i < drops.size(); i++) {
-            handle(player, qPlayer, state, drops.get(i).getItemStack(), i);
+        for (int i = 0; i < loots.size(); i++) {
+            handle(player, qPlayer, block, loots.get(i), i);
         }
     }
 
-    private void handle(Player player, QPlayer qPlayer, BlockState state, ItemStack item, int i) {
+    private void handle(Player player, QPlayer qPlayer, Block block, ItemStack item, int i) {
         for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player dropped item from block", quest.getId(), task.getId(), player.getUniqueId());
+            super.debug("Player dispensed loot from block", quest.getId(), task.getId(), player.getUniqueId());
 
-            Boolean countDrops = (Boolean) task.getConfigValue("count-drops");
+            Boolean countDispenses = (Boolean) task.getConfigValue("count-dispenses");
             final int amountToIncrease;
 
-            if (Boolean.TRUE.equals(countDrops)) {
+            if (Boolean.TRUE.equals(countDispenses)) {
                 if (i != 0) {
                     continue;
                 }
@@ -113,7 +112,7 @@ public final class BlockItemdroppingTaskType extends BukkitTaskType {
                 amountToIncrease = item != null ? item.getAmount() : 0;
             }
 
-            if (!TaskUtils.matchBlock(this, pendingTask, state, player.getUniqueId())) {
+            if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
                 continue;
             }
