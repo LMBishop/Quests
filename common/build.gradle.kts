@@ -11,10 +11,10 @@ dependencies {
     api("org.jspecify:jspecify:1.0.0")
 
     // Use it for contracts and unmodifiability annotations
-    api("org.jetbrains:annotations:26.0.2")
+    api("org.jetbrains:annotations:26.1.0")
 
     // Testing dependencies
-    testImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

@@ -74,7 +74,7 @@ dependencies {
     compileOnlyProject(":common")
 
     // Paper
-    compileOnly("io.papermc.paper:paper-api:26.1.1.build.+")
+    compileOnlyServer("io.papermc.paper:paper-api:26.1.1.build.+")
 
     // ASkyBlock
     compileOnlyPlugin("com.wasteofplastic:askyblock:3.0.9.4")
@@ -159,7 +159,7 @@ dependencies {
     // hppc
     implementation("com.carrotsearch:hppc:0.10.0")
     // bungeecord-chat
-    implementation("net.md-5:bungeecord-chat:1.21-R0.4") { isTransitive = false }
+    implementation("net.md-5:bungeecord-chat:26.1-R0.1-SNAPSHOT") { isTransitive = false }
 }
 
 tasks.shadowJar {

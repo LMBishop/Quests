@@ -11,7 +11,7 @@ allprojects {
     apply(plugin = "java")
 
     group = "com.leonardobishop"
-    version = "3.16.1"
+    version = "3.16.2"
 
     java {
         toolchain {
@@ -91,7 +91,7 @@ val javaVersions = listOf(
     // from 1.18 to 1.20.4
     JavaVersion.VERSION_17,
 
-    // from 1.20.4 to 1.21.11
+    // from 1.20.5 to 1.21.11
     JavaVersion.VERSION_21
 )
 
