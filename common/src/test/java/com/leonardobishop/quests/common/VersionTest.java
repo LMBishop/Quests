@@ -97,6 +97,8 @@ public final class VersionTest {
         assertEquals("1.21.11-rc2-R0.1-SNAPSHOT", Version.fromString("1.21.11-rc2-R0.1-SNAPSHOT").toString());
         assertEquals("1.21.11-rc3-R0.1-SNAPSHOT", Version.fromString("1.21.11-rc3-R0.1-SNAPSHOT").toString());
         assertEquals("1.21.11-R0.1-SNAPSHOT", Version.fromString("1.21.11-R0.1-SNAPSHOT").toString());
+        assertEquals("26.1-R0.1-SNAPSHOT", Version.fromString("26.1-R0.1-SNAPSHOT").toString());
+        assertEquals("26.1.1-R0.1-SNAPSHOT", Version.fromString("26.1.1-R0.1-SNAPSHOT").toString());
     }
 
     @Test

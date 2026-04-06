@@ -24,6 +24,8 @@ public final class Version implements Comparable<Version> {
     public static final Version V1_21_2 = new Version(1, 21, 2);
     public static final Version V1_21_6 = new Version(1, 21, 6);
     public static final Version V1_21_11 = new Version(1, 21, 11);
+    public static final Version V26_1 = new Version(26, 1);
+    public static final Version V26_1_1 = new Version(26, 1, 1);
     public static final Version UNKNOWN = new Version(Integer.MAX_VALUE);
 
     private final @Nullable String preRelease;
