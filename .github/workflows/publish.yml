@@ -3,7 +3,7 @@ name: Publish plugin to repository
 on:
   push:
     tags:
-    - '*'
+      - '*'
 
 jobs:
   publish:
