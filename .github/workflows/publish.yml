@@ -1,21 +1,26 @@
 name: Publish plugin to repository
+
 on:
   push:
     tags:
     - '*'
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+
     steps:
     - uses: actions/checkout@v6
+
     - name: Set up Java
       uses: actions/setup-java@v5
       with:
         java-version: '8.0'
         distribution: 'adopt'
+
     - name: Publish to repository
       run: gradle publish
       env:
