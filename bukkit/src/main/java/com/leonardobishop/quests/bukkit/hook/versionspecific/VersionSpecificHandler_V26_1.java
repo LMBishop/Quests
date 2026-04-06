@@ -4,6 +4,7 @@ import com.leonardobishop.quests.common.versioning.Version;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
+@SuppressWarnings("PMD.ClassNamingConventions")
 public class VersionSpecificHandler_V26_1 extends VersionSpecificHandler_V1_21_11 {
 
     @Override
