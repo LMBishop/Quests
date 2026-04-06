@@ -166,7 +166,10 @@ public final class Version implements Comparable<Version> {
                 : null;
 
         final int optionalIndex = minusIndex != -1 ? minusIndex : plusIndex;
-        final String versionCore = optionalIndex != -1 ? str.substring(0, optionalIndex) : str;
+        String versionCore = optionalIndex != -1 ? str.substring(0, optionalIndex) : str;
+        if (versionCore.contains(".build")) {
+            versionCore = versionCore.substring(0, versionCore.indexOf(".build"));
+        }
         final String[] stringVersionParts = versionCore.split("\\.");
         final int[] versionParts = new int[stringVersionParts.length];
 

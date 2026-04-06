@@ -70,6 +70,8 @@ public interface VersionSpecificHandler {
         this.add(Version.V1_21_2);
         this.add(Version.V1_21_6);
         this.add(Version.V1_21_11);
+        this.add(Version.V26_1);
+        this.add(Version.V26_1_1);
     }});
 
     static VersionSpecificHandler getImplementation(final Version serverVersion) {
