@@ -16,7 +16,10 @@ tasks.withType<ProcessResources> {
 
 repositories {
     // Paper
-    maven("https://repo.papermc.io/repository/maven-public/")
+    maven {
+        name = "papermc"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
     // Paper (adventure-bom snapshots)
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     // ASkyBlock, BedWars1058, BentoBox, bStats, Citizens
@@ -71,7 +74,7 @@ dependencies {
     compileOnlyProject(":common")
 
     // Paper
-    compileOnlyServer("io.papermc.paper:paper-api:1.21.11-pre3-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:26.1.1.build.+")
 
     // ASkyBlock
     compileOnlyPlugin("com.wasteofplastic:askyblock:3.0.9.4")
