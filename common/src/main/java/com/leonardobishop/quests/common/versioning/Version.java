@@ -4,11 +4,65 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @SuppressWarnings("ClassCanBeRecord")
 @NullMarked
 public final class Version implements Comparable<Version> {
+
+    private static final int MIN_INT_PART_VALUE = 0;
+
+    private enum CustomPart {
+        BUILD("build");
+
+        private final String name;
+        private final int value;
+
+        CustomPart(final String name) {
+            this.name = name;
+            this.value = Integer.MIN_VALUE + this.ordinal(); // only unsigned ints are used in numeric version parts
+
+            //noinspection ConstantValue
+            if (this.value >= MIN_INT_PART_VALUE) {
+                throw new IllegalStateException("custom part value must be negative");
+            }
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        public int getValue() {
+            return this.value;
+        }
+
+        private static final Map<String, CustomPart> byNameMap;
+        private static final Map<Integer, CustomPart> byValueMap;
+
+        static {
+            final Map<String, CustomPart> mutByNameMap = new HashMap<>();
+            final Map<Integer, CustomPart> mutByValueMap = new HashMap<>();
+
+            for (final CustomPart part : values()) {
+                mutByNameMap.put(part.name, part);
+                mutByValueMap.put(part.value, part);
+            }
+
+            byNameMap = Collections.unmodifiableMap(mutByNameMap);
+            byValueMap = Collections.unmodifiableMap(mutByValueMap);
+        }
+
+        public static @Nullable CustomPart getByName(final String name) {
+            return byNameMap.get(name);
+        }
+
+        public static @Nullable CustomPart getByValue(final int value) {
+            return byValueMap.get(value);
+        }
+    }
 
     public static final Version V1_8 = new Version(1, 8);
     public static final Version V1_9 = new Version(1, 9);
@@ -131,7 +185,19 @@ public final class Version implements Comparable<Version> {
         final StringBuilder builder = new StringBuilder();
 
         for (int i = 0; i < this.versionParts.length; i++) {
-            builder.append(this.versionParts[i]);
+            final int versionPart = this.versionParts[i];
+
+            if (versionPart >= MIN_INT_PART_VALUE) {
+                builder.append(versionPart);
+            } else {
+                final CustomPart customPart = CustomPart.getByValue(versionPart);
+
+                if (customPart != null) {
+                    builder.append(customPart.getName());
+                } else {
+                    throw new IllegalStateException("Failed to serialize (" + versionPart + ") version part");
+                }
+            }
 
             if (i != this.versionParts.length - 1) {
                 builder.append('.');
@@ -170,12 +236,17 @@ public final class Version implements Comparable<Version> {
 
         for (int i = 0; i < stringVersionParts.length; i++) {
             final String stringVersionPart = stringVersionParts[i];
+            final CustomPart customPart = CustomPart.getByName(stringVersionPart);
             final int versionPart;
 
-            try {
-                versionPart = Integer.parseUnsignedInt(stringVersionPart);
-            } catch (final NumberFormatException e) {
-                throw new IllegalArgumentException("Unparsable version part: '" + stringVersionPart + "'");
+            if (customPart != null) {
+                versionPart = customPart.getValue();
+            } else {
+                try {
+                    versionPart = Integer.parseUnsignedInt(stringVersionPart);
+                } catch (final NumberFormatException e) {
+                    throw new IllegalArgumentException("Unparsable version part: '" + stringVersionPart + "'");
+                }
             }
 
             versionParts[i] = versionPart;
