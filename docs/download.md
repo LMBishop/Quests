@@ -40,14 +40,15 @@ Starting with Minecraft version 1.12, the minimum required version
 of Java became Java 1.8. In version 1.17, the minimum requirement
 was temporarily raised to Java 16. From version 1.18 onward, Java 17
 became the minimum requirement. With the 1.20.5 update, Java 21
-became the required version.
+became the required version. Starting with version 26.1, Minecraft
+requires Java 25.
 
 However, these are only the [minimum requirements](https://minecraft.wiki/w/Tutorials/Update_Java#Why_update?).
 Since version 1.13.2, Spigot has included the ASM dependency, which allows for bytecode
 manipulation while also [limiting the maximum version of Java](https://asm.ow2.io/versions.html)
 that a plugin can use for proper processing by ASM. Additionally, for some versions
 of Paper running on higher-than-recommended versions of Java, it may be necessary to use
-[`-DPaper.IgnoreJavaVersion=true`](https://docs.papermc.io/paper/reference/system-properties#paperignorejavaversion)
+[`-DPaper.IgnoreJavaVersion=true`](https://docs.papermc.io/paper/reference/system-properties/#paperignorejavaversion)
 system property (add it to the startup script directly after `java`) to bypass Java version checks.
 
 Below is a table containing three columns. The first lists the Spigot API versions.
@@ -62,7 +63,8 @@ but expected to work.
 | 1.9 - 1.13.1       | 1.8                               | 21, 17, 11                                                                                          |
 | 1.13.2 - 1.16.4    | 11                                | 1.8 (limit: [ASM 7.1 - 8.0.1](https://asm.ow2.io/versions.html))                                    |
 | 1.16.5 - 1.19.4    | 17 (read the caution below)       | 11, 1.8 (limit: [ASM 9.1 - 9.4](https://asm.ow2.io/versions.html))                                  |
-| 1.20 - 1.21.8      | 21                                | 17, 11, 1.8 (limit: [ASM 9.5 - 9.8](https://asm.ow2.io/versions.html))                              |
+| 1.20 - 1.21.4      | 21                                | 17, 11, 1.8 (limit: [ASM 9.5 - 9.7.1](https://asm.ow2.io/versions.html))                            |
+| 1.21.5 - 26.1.2    | 25                                | 21, 17, 11, 1.8 (limit: [ASM 9.8 - 9.9.1](https://asm.ow2.io/versions.html))                        |
 
 {: .caution }
 Please note that downgraded versions (e.g., the one downgraded to Java 17) may require
