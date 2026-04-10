@@ -1,5 +1,6 @@
 import xyz.wagyourtail.jvmdg.gradle.task.DowngradeJar
 import xyz.wagyourtail.jvmdg.gradle.task.ShadeJar
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 plugins {
     java
@@ -15,7 +16,7 @@ allprojects {
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
+            languageVersion = JavaLanguageVersion.of(25)
         }
     }
 }
@@ -24,7 +25,7 @@ subprojects {
     tasks.withType<JavaCompile> {
         options.compilerArgs = listOf("-Xlint:deprecation", "-Xlint:unchecked")
         options.encoding = Charsets.UTF_8.name()
-        options.release = 21
+        options.release = 25
     }
 
     tasks.withType<Javadoc> {
@@ -89,7 +90,10 @@ val javaVersions = listOf(
     JavaVersion.VERSION_16,
 
     // from 1.18 to 1.20.4
-    JavaVersion.VERSION_17
+    JavaVersion.VERSION_17,
+
+    // from 1.20.5 to 1.21.11
+    JavaVersion.VERSION_21
 )
 
 for (javaVersion in javaVersions) {

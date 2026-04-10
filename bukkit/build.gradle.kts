@@ -71,7 +71,7 @@ dependencies {
     compileOnlyProject(":common")
 
     // Paper
-    compileOnlyServer("io.papermc.paper:paper-api:1.21.11-pre3-R0.1-SNAPSHOT")
+    compileOnlyServer("io.papermc.paper:paper-api:26.1.1.build.29-alpha")
 
     // ASkyBlock
     compileOnlyPlugin("com.wasteofplastic:askyblock:3.0.9.4")
@@ -134,7 +134,7 @@ dependencies {
     // uSkyBlock TODO fix whenever repo is up
     //compileOnlyPlugin("ovh.uskyblock:uSkyBlock-API:2.8.9")
     // Vault
-    compileOnlyPlugin("com.github.MilkBowl:VaultAPI:1.7.1")
+    compileOnlyPlugin("com.github.MilkBowl:VaultAPI:1.7")
     // VotingPlugin
     compileOnlyPlugin("com.bencodez:votingplugin:6.18.4")
     // WildStacker
