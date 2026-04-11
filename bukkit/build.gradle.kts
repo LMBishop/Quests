@@ -48,7 +48,15 @@ repositories {
     // PlaceholderAPI
     maven("https://repo.extendedclip.com/releases")
     // ItemsAdder, SCore, ShopGUIPlus, Slimefun4, Vault
-    maven("https://jitpack.io/")
+    maven("https://jitpack.io/") {
+        content {
+            includeGroup("com.github.LoneDev6")
+            includeGroup("com.github.Ssomar-Developement")
+            includeGroup("com.github.brcdev-minecraft")
+            includeGroup("com.github.Slimefun")
+            includeGroup("com.github.MilkBowl")
+        }
+    }
     // PlayerPoints
     maven("https://repo.rosewooddev.io/repository/public/")
     // SuperiorSkyblock2
