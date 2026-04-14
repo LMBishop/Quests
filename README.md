@@ -19,7 +19,7 @@
 
 ## 💾 Downloads / Building
 The latest release version of Quests can be found [here](https://quests.leonardobishop.com/download.html).
-The latest build of Quests (development version) can be found on [GitHub](https://github.com/LMBishop/Quests/actions).
+The latest build of Quests (development version) can be found on [GitHub](https://github.com/LMBishop/Quests/actions?query=workflow%3A%22Build+plugin%22+event%3Apush+branch%3Amaster).
 
 Alternatively, you can build Quests via Gradle. Release versions of Quests are built using **Gradle**, targeting **Java 17**. You can change the target version in ``build.gradle``.
 * Ensure Java is installed on your machine

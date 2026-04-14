@@ -23,7 +23,7 @@ before downloading.
 
 ## Development builds
 
-- [GitHub Actions](https://github.com/LMBishop/Quests/actions)
+- [GitHub Actions](https://github.com/LMBishop/Quests/actions?query=workflow%3A%22Build+plugin%22+event%3Apush+branch%3Amaster)
 
 Development builds are automatically built by GitHub. You may need a
 GitHub account to see or download these artifacts.
