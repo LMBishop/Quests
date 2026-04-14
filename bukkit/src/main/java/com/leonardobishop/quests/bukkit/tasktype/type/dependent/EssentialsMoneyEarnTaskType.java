@@ -66,7 +66,7 @@ public final class EssentialsMoneyEarnTaskType extends BukkitTaskType {
 
             int earningsNeeded = (int) task.getConfigValue("amount");
             BigDecimal amount = BigDecimal.valueOf(earningsNeeded);
-            if (newProgress.compareTo(amount) > 0) {
+            if (newProgress.compareTo(amount) >= 0) {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
             }
