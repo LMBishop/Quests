@@ -58,6 +58,7 @@ import com.leonardobishop.quests.bukkit.storage.ModernYAMLStorageProvider;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskTypeManager;
 import com.leonardobishop.quests.bukkit.tasktype.type.BarteringTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BlockItemdroppingTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.BlockLootdispensingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BlockchangingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BlockfertilizingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.BlockshearingTaskType;
@@ -476,6 +477,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             // Register task types with class/method compatibility requirement
             taskTypeManager.registerTaskType(() -> new BarteringTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.entity.PiglinBarterEvent"));
             taskTypeManager.registerTaskType(() -> new BlockItemdroppingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.block.BlockDropItemEvent"));
+            taskTypeManager.registerTaskType(() -> new BlockLootdispensingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.block.BlockDispenseLootEvent"));
             taskTypeManager.registerTaskType(() -> new BlockchangingTaskType(this), () -> CompatUtils.classWithMethodExists("org.bukkit.event.entity.EntityChangeBlockEvent", "getBlockData"));
             taskTypeManager.registerTaskType(() -> new BlockfertilizingTaskType(this), () -> CompatUtils.classExists("org.bukkit.event.block.BlockFertilizeEvent"));
             taskTypeManager.registerTaskType(() -> new BlockshearingTaskType(this), () -> CompatUtils.classExists("io.papermc.paper.event.block.PlayerShearBlockEvent"));
