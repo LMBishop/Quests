@@ -61,7 +61,7 @@ public final class EssentialsBalanceTaskType extends BukkitTaskType {
 
         int earningsNeeded = (int) task.getConfigValue("amount");
         BigDecimal amount = BigDecimal.valueOf(earningsNeeded);
-        if (balance.compareTo(amount) > 0) {
+        if (balance.compareTo(amount) >= 0) {
             super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
             taskProgress.setCompleted(true);
         }
@@ -92,7 +92,7 @@ public final class EssentialsBalanceTaskType extends BukkitTaskType {
 
             int earningsNeeded = (int) task.getConfigValue("amount");
             BigDecimal amount = BigDecimal.valueOf(earningsNeeded);
-            if (balance.compareTo(amount) > 0) {
+            if (balance.compareTo(amount) >= 0) {
                 super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                 taskProgress.setCompleted(true);
             }

@@ -55,7 +55,7 @@ public final class SuperiorSkyblockWorthType extends BukkitTaskType {
                 taskProgress.setProgress(event.getNewLevel().doubleValue());
                 super.debug("Updating task progress (now " + event.getNewLevel().doubleValue() + ")", quest.getId(), task.getId(), player.getUniqueId());
 
-                if (event.getNewLevel().compareTo(bd) > 0) {
+                if (event.getNewLevel().compareTo(bd) >= 0) {
                     super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
                     taskProgress.setCompleted(true);
                 }
