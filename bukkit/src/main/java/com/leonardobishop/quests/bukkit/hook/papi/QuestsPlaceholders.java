@@ -104,6 +104,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                 case "s":
                     //TODO cache started quests somewhere, or make a effective started method
                     final List<Quest> listStarted = qPlayer.getEffectiveStartedQuests();
+                    listStarted.removeIf(quest -> !quest.doesCountTowardsLimit());
                     result = (args.length == 1 ? String.valueOf(listStarted.size()) : parseList(listStarted, args[1], split));
                     break;
                 case "limit":
