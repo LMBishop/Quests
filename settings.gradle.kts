@@ -8,7 +8,7 @@ pluginManagement {
 
     plugins {
         id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-        id("com.gradleup.shadow") version "9.4.1"
+        id("com.gradleup.shadow") version "9.4.2"
         id("xyz.wagyourtail.jvmdowngrader") version "1.3.6"
     }
 }
