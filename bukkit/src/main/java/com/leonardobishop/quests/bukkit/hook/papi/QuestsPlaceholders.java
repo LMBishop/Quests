@@ -71,7 +71,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
         String[] args = params.split("_", 4);
         if (args.length < 1) return "Invalid Placeholder";
 
-        final boolean save = args[args.length - 1].toLowerCase().equals("cache");
+        final boolean save = args[args.length - 1].equalsIgnoreCase("cache");
         if (save) args = Arrays.copyOf(args, args.length - 1);
 
         final QPlayer qPlayer = plugin.getPlayerManager().getPlayer(p.getUniqueId());
