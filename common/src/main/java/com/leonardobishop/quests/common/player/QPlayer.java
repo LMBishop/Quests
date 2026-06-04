@@ -114,6 +114,21 @@ public final class QPlayer {
     }
 
     /**
+     * Gets whether the player has completed a specific quest.
+     * 
+     * For repeatable quests, this returns true if the player has completed the current quest cycle.
+     *
+     * @param quest the quest to test for
+     * @return true if the quest is completed, false otherwise
+     */
+    @Contract(pure = true)
+    public boolean hasCompletedQuest(final Quest quest) {
+        Objects.requireNonNull(quest, "quest cannot be null");
+
+        return this.questController.hasPlayerCompletedQuest(this, quest);
+    }
+    
+    /**
      * Attempt to complete a quest for the player. This will also play all effects (such as titles, messages etc.)
      * and also dispatches all rewards for the player.
      *

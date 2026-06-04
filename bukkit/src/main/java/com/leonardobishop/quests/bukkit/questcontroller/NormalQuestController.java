@@ -291,6 +291,12 @@ public class NormalQuestController implements QuestController {
                 : qPlayer.getQuestProgressFile().hasQuestStarted(quest);
     }
 
+    @Override
+    public boolean hasPlayerCompletedQuest(QPlayer qPlayer, Quest quest) {
+        QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgressOrNull(quest);
+        return questProgress != null && questProgress.isCompleted();
+    }
+
     private void resetQuest(QuestProgress questProgress) {
         questProgress.setStarted(false);
         questProgress.setStartedDate(System.currentTimeMillis());

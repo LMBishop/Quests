@@ -25,6 +25,9 @@ public interface QuestController {
     @Contract(pure = true)
     boolean hasPlayerStartedQuest(QPlayer qPlayer, Quest quest);
 
+    @Contract(pure = true)
+    boolean hasPlayerCompletedQuest(QPlayer qPlayer, Quest quest);
+
     QuestStartResult startQuestForPlayer(QPlayer qPlayer, Quest quest);
 
     boolean completeQuestForPlayer(QPlayer qPlayer, Quest quest);
