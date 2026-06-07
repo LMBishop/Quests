@@ -31,7 +31,7 @@ public final class MythicMobsKillingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "level"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "min-level"));
-        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "name-match-mode"));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "name-match-mode", null, false));
 
         // MythicMobs 5
         try {

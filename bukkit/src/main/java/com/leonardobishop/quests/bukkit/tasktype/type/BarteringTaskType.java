@@ -48,7 +48,7 @@ public final class BarteringTaskType extends BukkitTaskType {
         this.addConfigValidator(TaskUtils.useItemStackConfigValidator(this, "output"));
         this.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "input-exact-match"));
         this.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "output-exact-match"));
-        this.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Mode.STRING_MODE_MAP.keySet(), "mode"));
+        this.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Mode.STRING_MODE_MAP.keySet(), "mode", null, false));
     }
 
     @Override

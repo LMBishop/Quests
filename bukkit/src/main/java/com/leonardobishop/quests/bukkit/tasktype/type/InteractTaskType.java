@@ -36,10 +36,10 @@ public final class InteractTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "data"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
         super.addConfigValidator(TaskUtils.useMaterialListConfigValidator(this, TaskUtils.MaterialListConfigValidatorMode.BLOCK, "block", "blocks"));
-        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, Action.class, "action", "actions"));
-        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, EquipmentSlot.class, "hand", "hands"));
-        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, Event.Result.class, "use-interacted-block-result", "use-interacted-block-results"));
-        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, Event.Result.class, "use-item-in-hand-result", "use-item-in-hand-results"));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, Action.class, "action", "actions", false));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, EquipmentSlot.class, "hand", "hands", false));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, Event.Result.class, "use-interacted-block-result", "use-interacted-block-results", false));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, Event.Result.class, "use-item-in-hand-result", "use-item-in-hand-results", false));
     }
 
     @Override

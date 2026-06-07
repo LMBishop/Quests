@@ -23,7 +23,7 @@ public final class CommandTaskType extends BukkitTaskType {
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "command"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "ignore-case"));
-        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "command-match-mode"));
+        super.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "command-match-mode", null, false));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

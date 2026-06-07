@@ -40,7 +40,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -1071,56 +1075,118 @@ public class TaskUtils {
     }
 
     /**
-     * Returns a config validator which checks if at least one value in the given
-     * paths is present in the enum.
+     * Returns a config validator which checks if values in the given
+     * paths are present in the enum.
      *
      * Should be used for small enums only as it lists possible values in config
      * problem extended description.
      *
      * @param clazz the enum class
-     * @param paths a list of valid paths for task
+     * @param stringPath path to the string value
+     * @param listPath path to the list value
+     * @param required whether there must be at least 1 value set
      * @return config validator
      */
-    public static <T extends Enum<T>> TaskType.ConfigValidator useEnumConfigValidator(TaskType type, Class<T> clazz, String... paths) {
-        List<String> acceptedValues = new ArrayList<>();
-        T[] constants = clazz.getEnumConstants();
-        for (T constant : constants) {
-            String acceptedValue = constant.name();
-            acceptedValues.add(acceptedValue);
+    public static <T extends Enum<T>> TaskType.ConfigValidator useEnumConfigValidator(final TaskType type, final Class<T> clazz, final @Nullable String stringPath, final @Nullable String listPath, final boolean required) {
+        final Set<String> acceptedValues = new HashSet<>();
+        final T[] constants = clazz.getEnumConstants();
+
+        for (final T constant : constants) {
+            acceptedValues.add(constant.name());
         }
-        return useAcceptedValuesConfigValidator(type, acceptedValues, paths);
+
+        return useAcceptedValuesConfigValidator(type, acceptedValues, stringPath, listPath, required);
     }
 
     /**
-     * Returns a config validator which checks if at least one value in the given
-     * paths is a value in the list of accepted values.
+     * Returns a config validator which checks if values in the given
+     * paths are present in the list of accepted values.
      *
      * @param acceptedValues a list of accepted values
-     * @param paths a list of valid paths for task
+     * @param stringPath path to the string value
+     * @param listPath path to the list value
+     * @param required whether there must be at least 1 value set
      * @return config validator
      */
-    public static TaskType.ConfigValidator useAcceptedValuesConfigValidator(TaskType type, Collection<String> acceptedValues, String... paths) {
-        return (config, problems) -> {
-            for (String path : paths) {
-                Object configObject = config.get(path);
+    public static TaskType.ConfigValidator useAcceptedValuesConfigValidator(final TaskType type, final Collection<String> acceptedValues, final @Nullable String stringPath, final @Nullable String listPath, final boolean required) {
+        if (stringPath == null && listPath == null) {
+            throw new IllegalArgumentException("string path and list path cannot be both null");
+        }
 
-                if (configObject == null) {
+        return (config, problems) -> {
+            final List<Object> values = new ArrayList<>();
+
+            if (!Objects.equals(stringPath, listPath)) {
+                if (stringPath != null) {
+                    final Object stringObject = config.get(stringPath);
+
+                    if (stringObject != null) {
+                        values.add(stringObject);
+                    }
+                }
+
+                if (listPath != null) {
+                    final Object listObject = config.get(listPath);
+
+                    if (listObject != null) {
+                        final List<?> list;
+
+                        try {
+                            list = (List<?>) listObject;
+
+                            values.addAll(list);
+                        } catch (final ClassCastException e) {
+                            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING, "Expected a list for '" + listPath + "', but got '" + listObject + "' instead", null, listPath));
+                        }
+                    }
+                }
+            } else {
+                final Object object = config.get(stringPath);
+
+                if (object instanceof final List<?> list) {
+                    values.addAll(list);
+                } else if (object instanceof final String string) {
+                    values.add(string);
+                } else if (object != null) {
+                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING, "Expected a string or list for '" + stringPath + "', but got '" + object + "' instead", null, stringPath));
+                }
+            }
+
+            final String path = stringPath != null ? (listPath != null && !listPath.equals(stringPath) ? "'" + stringPath + "' or '" + listPath + "'" : "'" + stringPath + "'") : "'" + listPath + "'";
+            final Iterator<Object> valueIter = values.iterator();
+
+            while (valueIter.hasNext()) {
+                final Object stringObject = valueIter.next();
+                final String stringValue;
+
+                try {
+                    stringValue = (String) stringObject;
+                } catch (final ClassCastException e) {
+                    // TODO use single path for string/list options in next release
+
+                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING, "Expected a string for " + path + ", but got '" + stringObject + "' instead", null, stringPath));
+                    valueIter.remove();
                     continue;
                 }
 
-                if (!acceptedValues.contains(String.valueOf(configObject))) {
-                    String extendedDescription =
-                            "The accepted values are:";
-                    for (String value : acceptedValues) {
-                        extendedDescription += "<br> - " + value;
-                    }
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.NOT_ACCEPTED_VALUE.getDescription(String.valueOf(configObject), type.getType()),
-                        extendedDescription,
-                        path));
-                }
+                if (!acceptedValues.contains(stringValue)) {
+                    String extendedDescription = "The accepted values are:";
 
-                break;
+                    for (final String acceptedValue : acceptedValues) {
+                        extendedDescription += "<br> - " + acceptedValue;
+                    }
+
+                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                            ConfigProblemDescriptions.NOT_ACCEPTED_VALUE.getDescription(stringValue, type.getType()),
+                            extendedDescription,
+                            stringPath));
+
+                    valueIter.remove();
+                }
+            }
+
+            if (required && values.isEmpty()) {
+                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR, "Expected at least one correct value for " + path, null, stringPath));
             }
         };
     }
