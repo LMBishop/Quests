@@ -47,7 +47,7 @@ public final class SmeltingTaskType extends BukkitTaskType {
                 "smoker",
                 "blast_furnace",
                 "furnace"
-        ), "mode"));
+        ), "mode", null, false));
     }
 
     @Override

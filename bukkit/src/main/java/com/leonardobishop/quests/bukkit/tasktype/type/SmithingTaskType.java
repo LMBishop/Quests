@@ -42,12 +42,11 @@ public final class SmithingTaskType extends BukkitTaskType {
             return;
         }
 
-        super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "mode"));
         super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Arrays.asList(
                 "any", // for clarity reasons we want the user to specify the mode on 1.20+
                 "transform",
                 "trim"
-        ), "mode"));
+        ), "mode", null, true));
     }
 
     @Override

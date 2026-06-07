@@ -46,7 +46,7 @@ public final class TradingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "exact-match"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "first-ingredient-exact-match"));
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "second-ingredient-exact-match"));
-        super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Mode.STRING_MODE_MAP.keySet(), "mode"));
+        super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Mode.STRING_MODE_MAP.keySet(), "mode", null, false));
     }
 
     @Override

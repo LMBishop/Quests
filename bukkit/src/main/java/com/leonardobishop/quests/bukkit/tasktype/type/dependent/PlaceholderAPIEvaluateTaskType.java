@@ -37,7 +37,7 @@ public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
                 "GREATER_THAN_OR_EQUAL_TO",
                 "LESS_THAN",
                 "LESS_THAN_OR_EQUAL_TO"
-        ),"operator"));
+        ), "operator", null, false));
         super.addConfigValidator((config, problems) -> {
             if (config.containsKey("operator")) {
                 String evalStr = String.valueOf(config.get("evaluates"));

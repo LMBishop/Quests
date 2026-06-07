@@ -21,8 +21,8 @@ public abstract class EvenMoreFishFishTaskType extends BukkitTaskType {
 
         this.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
         this.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "amount"));
-        this.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "fish-match-mode"));
-        this.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "rarity-match-mode"));
+        this.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "fish-match-mode", null, false));
+        this.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "rarity-match-mode", null, false));
     }
 
     protected void handle(Player player, Fish fish) {
