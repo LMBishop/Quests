@@ -69,8 +69,10 @@ public class NormalQuestController implements QuestController {
     public QuestStartResult startQuestForPlayer(QPlayer qPlayer, Quest quest) {
         Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
         QuestStartResult code = canPlayerStartQuest(qPlayer, quest);
+
         if (player != null) {
             String questResultMessage = null;
+
             switch (code) {
                 case QUEST_SUCCESS:
                     // This one is hacky
@@ -99,7 +101,9 @@ public class NormalQuestController implements QuestController {
                     questResultMessage = Messages.QUEST_CATEGORY_QUEST_PERMISSION.getMessage();
                     break;
             }
+
             questResultMessage = this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, questResultMessage);
+
             // PreStartQuestEvent -- start
             PreStartQuestEvent preStartQuestEvent = new PreStartQuestEvent(player, qPlayer, questResultMessage, code);
             Bukkit.getPluginManager().callEvent(preStartQuestEvent);
@@ -111,42 +115,59 @@ public class NormalQuestController implements QuestController {
                 Messages.send(preStartQuestEvent.getQuestResultMessage(), player);
             }
         }
+
         if (code == QuestStartResult.QUEST_SUCCESS) {
             QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
             questProgress.setStarted(true);
             questProgress.setStartedDate(System.currentTimeMillis());
+
             for (TaskProgress taskProgress : questProgress.getTaskProgresses()) {
                 taskProgress.setCompleted(false);
                 taskProgress.setProgress(null);
             }
+
             if (config.getBoolean("options.allow-quest-track") && config.getBoolean("options.quest-autotrack")) {
                 qPlayer.trackQuest(quest);
             }
+
             questProgress.setCompleted(false);
+
             if (player != null) {
                 QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(quest);
                 String displayName = qItemStack.getName();
                 String displayNameStripped = Chat.legacyStrip(displayName);
                 String questStartMessage = this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, Messages.QUEST_START.getMessage().replace("{quest}", displayNameStripped).replace("{questcolored}", displayName));
+
                 // PlayerStartQuestEvent -- start
                 PlayerStartQuestEvent questStartEvent = new PlayerStartQuestEvent(player, qPlayer, questProgress, questStartMessage);
                 Bukkit.getPluginManager().callEvent(questStartEvent);
                 // PlayerStartQuestEvent -- end
+
                 Messages.send(questStartEvent.getQuestStartMessage(), player);
+
                 if (config.getBoolean("options.titles-enabled")) {
-                    this.plugin.getTitleHandle().sendTitle(player,
-                            this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, Messages.TITLE_QUEST_START_TITLE.getMessageLegacyColor().replace("{quest}", displayNameStripped).replace("{questcolored}", displayName)),
-                            this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, Messages.TITLE_QUEST_START_SUBTITLE.getMessageLegacyColor().replace("{quest}", displayNameStripped).replace("{questcolored}", displayName))
-                    );
+                    final String startTitle = Messages.TITLE_QUEST_START_TITLE.getMessageLegacyColor();
+                    final String startSubtitle = Messages.TITLE_QUEST_START_SUBTITLE.getMessageLegacyColor();
+
+                    if (!startTitle.isEmpty() || !startSubtitle.isEmpty()) {
+                        this.plugin.getTitleHandle().sendTitle(player,
+                                this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, startTitle.replace("{quest}", displayNameStripped).replace("{questcolored}", displayName)),
+                                this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, startSubtitle.replace("{quest}", displayNameStripped).replace("{questcolored}", displayName))
+                        );
+                    }
                 }
+
                 for (String s : quest.getStartCommands()) {
                     DispatchUtils.dispatchCommand(player, this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s));
                 }
+
                 for (String s : quest.getStartString()) {
                     Chat.send(player, this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s), true);
                 }
+
                 SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-start"));
             }
+
             for (Task task : quest.getTasks()) {
                 try {
                     plugin.getTaskTypeManager().getTaskType(task.getType()).onStart(quest, task, qPlayer.getPlayerUUID());
@@ -155,6 +176,7 @@ public class NormalQuestController implements QuestController {
                 }
             }
         }
+
         return code;
     }
 
@@ -237,23 +259,28 @@ public class NormalQuestController implements QuestController {
         QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
         questProgress.setStarted(false);
         questProgress.setStartedDate(System.currentTimeMillis());
+
         for (TaskProgress taskProgress : questProgress.getTaskProgresses()) {
             taskProgress.setCompleted(false);
             taskProgress.setProgress(null);
         }
+
         questProgress.setCompleted(true);
         questProgress.setCompletedBefore(true);
         questProgress.setCompletionDate(System.currentTimeMillis());
         Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
+
         if (player != null) {
             QItemStack qItemStack = plugin.getQItemStackRegistry().getQuestItemStack(quest);
             String displayName = qItemStack.getName();
             String displayNameStripped = Chat.legacyStrip(displayName);
             String questFinishMessage = this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, Messages.QUEST_COMPLETE.getMessage().replace("{quest}", displayNameStripped).replace("{questcolored}", displayName));
+
             // PlayerFinishQuestEvent -- start
             PlayerFinishQuestEvent questFinishEvent = new PlayerFinishQuestEvent(player, qPlayer, questProgress, questFinishMessage);
             Bukkit.getPluginManager().callEvent(questFinishEvent);
             // PlayerFinishQuestEvent -- end
+
             plugin.getScheduler().doSync(() -> {
                 final VaultReward vaultReward = this.vaultRewardCache.computeIfAbsent(quest,
                         k -> VaultReward.parse(this.plugin, k.getVaultReward())
@@ -266,21 +293,32 @@ public class NormalQuestController implements QuestController {
                     DispatchUtils.dispatchCommand(player, this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s));
                 }
             });
+
             Messages.send(questFinishEvent.getQuestFinishMessage(), player);
+
             if (config.getBoolean("options.titles-enabled")) {
-                this.plugin.getTitleHandle().sendTitle(player,
-                        this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, Messages.TITLE_QUEST_COMPLETE_TITLE.getMessageLegacyColor().replace("{quest}", displayNameStripped).replace("{questcolored}", displayName)),
-                        this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, Messages.TITLE_QUEST_COMPLETE_SUBTITLE.getMessageLegacyColor().replace("{quest}", displayNameStripped).replace("{questcolored}", displayName))
-                );
+                final String completeTitle = Messages.TITLE_QUEST_COMPLETE_TITLE.getMessageLegacyColor();
+                final String completeSubtitle = Messages.TITLE_QUEST_COMPLETE_SUBTITLE.getMessageLegacyColor();
+
+                if (!completeTitle.isEmpty() || !completeSubtitle.isEmpty()) {
+                    this.plugin.getTitleHandle().sendTitle(player,
+                            this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, completeTitle.replace("{quest}", displayNameStripped).replace("{questcolored}", displayName)),
+                            this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, completeSubtitle.replace("{quest}", displayNameStripped).replace("{questcolored}", displayName))
+                    );
+                }
             }
+
             for (String s : quest.getRewardString()) {
                 Chat.send(player, this.plugin.applyPlayerAndPAPI(BukkitQuestsPlugin.PAPIType.QUESTS, player, s), true);
             }
+
             SoundUtils.playSoundForPlayer(player, plugin.getQuestsConfig().getString("options.sounds.quest-complete"));
         }
+
         if (this.config.getBoolean("options.allow-quest-track") && this.config.getBoolean("options.quest-autotrack")) {
             this.trackNextQuest(qPlayer, quest);
         }
+
         return true;
     }
 
