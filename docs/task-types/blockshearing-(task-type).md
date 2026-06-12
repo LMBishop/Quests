@@ -9,7 +9,7 @@ grand_parent: Task types
 Since v3.13.3
 {: .label .label-green }
 
-Minecraft 1.18.2+ required
+Minecraft 1.16.4+ required
 {: .label .label-purple }
 
 Paper required
