@@ -113,7 +113,7 @@ public final class WalkingTaskType extends BukkitTaskType {
             }
 
             MODE_CHECK:
-            {
+            if (!modeSet.isEmpty()) {
                 for (Mode mode : modeSet) {
                     if (mode.validate(this.plugin, player)) {
                         break MODE_CHECK;
