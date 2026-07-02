@@ -112,16 +112,18 @@ public final class WalkingTaskType extends BukkitTaskType {
                 }
             }
 
-            MODE_CHECK:
-            {
-                for (Mode mode : modeSet) {
-                    if (mode.validate(this.plugin, player)) {
-                        break MODE_CHECK;
+            if (!modeSet.isEmpty()) {
+                MODE_CHECK:
+                {
+                    for (Mode mode : modeSet) {
+                        if (mode.validate(this.plugin, player)) {
+                            break MODE_CHECK;
+                        }
                     }
-                }
 
-                super.debug("Player mode does not match required mode, continuing...", quest.getId(), task.getId(), player.getUniqueId());
-                continue;
+                    super.debug("Player mode does not match required mode, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
             }
 
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress, distance);
