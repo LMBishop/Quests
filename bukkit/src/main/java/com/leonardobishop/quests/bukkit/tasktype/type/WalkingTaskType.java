@@ -224,6 +224,12 @@ public final class WalkingTaskType extends BukkitTaskType {
                 return plugin.getVersionSpecificHandler().isPlayerOnZombieHorse(player);
             }
         },
+        ZOMBIE_NAUTILUS {
+            @Override
+            public boolean validate(final BukkitQuestsPlugin plugin, final Player player) {
+                return plugin.getVersionSpecificHandler().isPlayerOnZombieNautilus(player);
+            }
+        },
 
         // Player movement
         SNEAKING {

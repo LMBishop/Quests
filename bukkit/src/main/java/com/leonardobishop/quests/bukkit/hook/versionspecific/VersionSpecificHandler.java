@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.SkeletonHorse;
 import org.bukkit.entity.Strider;
 import org.bukkit.entity.ZombieHorse;
+import org.bukkit.entity.ZombieNautilus;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.SmithItemEvent;
@@ -206,6 +207,13 @@ public interface VersionSpecificHandler {
      */
     @SuppressWarnings("removal")
     boolean isPlayerOnZombieHorse(Player player);
+
+    /**
+     * Zombie Nautiluses were introduced in {@code 1.21.11}.
+     *
+     * @see ZombieNautilus
+     */
+    boolean isPlayerOnZombieNautilus(Player player);
 
     /**
      * Ability to swap item in hand while hovering over an item was introduced in {@code 1.16}.
