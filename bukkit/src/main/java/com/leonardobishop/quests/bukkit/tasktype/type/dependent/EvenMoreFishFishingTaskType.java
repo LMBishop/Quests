@@ -2,7 +2,7 @@ package com.leonardobishop.quests.bukkit.tasktype.type.dependent;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
-import com.oheers.fish.api.EMFFishEvent;
+import com.oheers.fish.api.events.EMFFishCaughtEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
@@ -13,7 +13,7 @@ public final class EvenMoreFishFishingTaskType extends EvenMoreFishFishTaskType 
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEMFFish(EMFFishEvent event) {
+    public void onEMFFish(EMFFishCaughtEvent event) {
         this.handle(event.getPlayer(), event.getFish());
     }
 }

@@ -1,7 +1,7 @@
 package com.leonardobishop.quests.bukkit.item;
 
-import com.oheers.fish.EvenMoreFish;
-import com.oheers.fish.fishing.items.Fish;
+import com.oheers.fish.api.fishing.items.AbstractFishManager;
+import com.oheers.fish.api.fishing.items.IFish;
 import org.bukkit.inventory.ItemStack;
 
 public class EvenMoreFishQuestItem extends QuestItem {
@@ -17,17 +17,13 @@ public class EvenMoreFishQuestItem extends QuestItem {
 
     @Override
     public ItemStack getItemStack() {
-        final Fish fish = EvenMoreFish.getInstance()
-                .getApi()
-                .getFish(this.rarityName, this.fishName);
+        final IFish fish = AbstractFishManager.getInstance().getFish(this.rarityName, this.fishName);
         return fish != null ? fish.give() : null;
     }
 
     @Override
     public boolean compareItemStack(final ItemStack other, final boolean exactMatch) {
-        final Fish fish = EvenMoreFish.getInstance()
-                .getApi()
-                .getFish(other);
+        final IFish fish = AbstractFishManager.getInstance().getFish(other);
         return fish != null
                 && fish.getRarity().getId().equals(this.rarityName)
                 && fish.getName().equals(this.fishName);

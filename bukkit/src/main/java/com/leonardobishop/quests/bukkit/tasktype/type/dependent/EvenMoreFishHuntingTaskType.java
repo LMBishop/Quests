@@ -2,7 +2,7 @@ package com.leonardobishop.quests.bukkit.tasktype.type.dependent;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
-import com.oheers.fish.api.EMFFishHuntEvent;
+import com.oheers.fish.api.events.EMFFishHuntEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 

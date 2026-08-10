@@ -31,8 +31,8 @@ repositories {
     maven("https://repo.auxilor.io/repository/maven-public/")
     // EssentialsX
     maven("https://repo.essentialsx.net/releases/")
-    // EvenMoreFish TODO fix when they stop publishing 20 MB fat jar (it breaks annotations and not limited to)
-    //maven("https://repo.codemc.io/repository/EvenMoreFish/")
+    // EvenMoreFish
+    maven("https://repo.codemc.io/repository/EvenMoreFish/")
     // FancyNpcs
     maven("https://repo.fancyinnovations.com/releases")
     // MMOItems, MythicLib
@@ -99,8 +99,8 @@ dependencies {
     compileOnlyPlugin("com.willfp:libreforge:4.21.1")
     // EssentialsX
     compileOnlyPlugin("net.essentialsx:EssentialsX:2.19.7")
-    // EvenMoreFish TODO fix when they stop publishing 20 MB fat jar (it breaks annotations and not limited to)
-    //compileOnlyPlugin("com.oheers.evenmorefish:even-more-fish-plugin:2.0.7")
+    // EvenMoreFish
+    compileOnlyPlugin("com.oheers.evenmorefish:even-more-fish-api:2.1.2")
     // FancyNpcs
     compileOnlyPlugin("de.oliver:FancyNpcs:2.5.1")
     // IridiumSkyblock TODO fix whenever repo is up

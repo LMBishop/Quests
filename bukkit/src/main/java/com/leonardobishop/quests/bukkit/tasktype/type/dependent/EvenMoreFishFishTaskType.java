@@ -8,7 +8,7 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import com.oheers.fish.fishing.items.Fish;
+import com.oheers.fish.api.fishing.items.IFish;
 import org.bukkit.entity.Player;
 
 public abstract class EvenMoreFishFishTaskType extends BukkitTaskType {
@@ -25,7 +25,7 @@ public abstract class EvenMoreFishFishTaskType extends BukkitTaskType {
         this.addConfigValidator(TaskUtils.useEnumConfigValidator(this, TaskUtils.StringMatchMode.class, "rarity-match-mode", null, false));
     }
 
-    protected void handle(Player player, Fish fish) {
+    protected void handle(Player player, IFish fish) {
         if (player.hasMetadata("NPC")) {
             return;
         }
