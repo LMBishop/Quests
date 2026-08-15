@@ -11,14 +11,19 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Piglin;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PiglinBarterEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -55,6 +60,36 @@ public final class BarteringTaskType extends BukkitTaskType {
     public void onReady() {
         this.fixedQuestInputCache.clear();
         this.fixedQuestOutputCache.clear();
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerInteractAtEntityEvent(final @NotNull PlayerInteractAtEntityEvent event) {
+        final Entity entity = event.getRightClicked();
+
+        if (!(entity instanceof final Piglin piglin && piglin.isAdult())) {
+            return;
+        }
+
+        final Boolean admiringDisabled = piglin.getMemory(MemoryKey.ADMIRING_DISABLED);
+
+        if (Boolean.TRUE.equals(admiringDisabled)) {
+            return;
+        }
+
+        final Boolean admiringItem = piglin.getMemory(MemoryKey.ADMIRING_ITEM);
+
+        if (Boolean.TRUE.equals(admiringItem)) {
+            return;
+        }
+
+        final Player player = event.getPlayer();
+        final PlayerInventory inventory = player.getInventory();
+        final ItemStack item = inventory.getItem(event.getHand());
+        final Material itemType = item.getType();
+
+        if (itemType == Material.GOLD_INGOT || piglin.getBarterList().contains(itemType)) {
+            this.piglin2ThrowerIdMap.put(piglin, player.getUniqueId());
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
