@@ -25,3 +25,5 @@ UPDATE_MESSAGE
 *.project
 */bin/
 *.settings/
+
+out/
