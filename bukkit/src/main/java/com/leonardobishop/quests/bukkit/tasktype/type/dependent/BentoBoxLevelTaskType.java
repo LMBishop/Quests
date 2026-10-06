@@ -63,9 +63,9 @@ public final class BentoBoxLevelTaskType extends BukkitTaskType {
             this.debug("Player island level updated to " + level, quest.getId(), task.getId(), player.getUniqueId());
 
             //noinspection DataFlowIssue // TODO quest data rework
-            final long levelNeeded = (long) task.getConfigValue("level");
+            final long levelNeeded = ((Number) task.getConfigValue("level")).longValue();
 
-            final long clampedLevel = Math.max(level, levelNeeded);
+            final long clampedLevel = Math.min(level, levelNeeded);
             taskProgress.setProgress(clampedLevel);
             this.debug("Updating task progress (now " + clampedLevel + ")", quest.getId(), task.getId(), player.getUniqueId());
 
