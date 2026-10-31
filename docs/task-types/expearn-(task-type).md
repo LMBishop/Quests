@@ -13,10 +13,11 @@ Earn a set amount of exp after starting the quest.
 
 ## Options
 
-| Key      | Description                                     | Type                | Required | Default | Notes |
-|----------|-------------------------------------------------|---------------------|----------|---------|-------|
-| `amount` | The amount of experience to earn.               | Integer             | Yes      | \-      | \-    |
-| `worlds` | Worlds which should count towards the progress. | List of world names | No       | \-      | \-    |
+| Key              | Description                                         | Type                | Required | Default | Notes |
+|------------------|-----------------------------------------------------|---------------------|----------|---------|-------|
+| `amount`         | The amount of experience to earn.                   | Integer             | Yes      | \-      | \-    |
+| `worlds`         | Worlds which should count towards the progress.     | List of world names | No       | \-      | \-    |
+| `ignored-worlds` | Worlds which should not count towards the progress. | List of world names | No       | \-      | \-    |
 
 ## Examples
 

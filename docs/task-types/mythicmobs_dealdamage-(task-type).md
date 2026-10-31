@@ -27,6 +27,7 @@ Deal a certain amount of damage to a MythicMobs mob.
 | `data`            | The data code for the item.                            | Integer             | No       | 0       | This field is not used in Minecraft versions 1.13+, nor is it compatible with ItemStack definitions.     |
 | `exact-match`     | Whether the item should exactly match what is defined. | Boolean             | No       | true    | \-                                                                                                       |
 | `worlds`          | Worlds which should count towards the progress.        | List of world names | No       | \-      | \-                                                                                                       |
+| `ignored-worlds`  | Worlds which should not count towards the progress.    | List of world names | No       | \-      | \-                                                                                                       |
 
 ## Examples
 

@@ -17,12 +17,14 @@ one. Both names can be used to refer to this task.
 
 ## Options
 
-| Key           | Description                                            | Type                | Required | Default | Notes                                                                |
-|---------------|--------------------------------------------------------|---------------------|----------|---------|----------------------------------------------------------------------|
-| `amount`      | The number of fish to catch.                           | Integer             | Yes      | \-      | \-                                                                   |
-| `item`        | Specific item which should be used to kill mobs.       | ItemStack           | No       | \-      | Accepts standard [item definition](../configuration/defining-items). |
-| `worlds`      | Worlds which should count towards the progress.        | List of world names | No       | \-      | \-                                                                   |
-| `exact-match` | Whether the item should exactly match what is defined. | Boolean             | No       | true    | \-                                                                   |
+| Key              | Description                                            | Type                | Required | Default | Notes                                                                                                |
+|------------------|--------------------------------------------------------|---------------------|----------|---------|------------------------------------------------------------------------------------------------------|
+| `amount`         | The number of fish to catch.                           | Integer             | Yes      | \-      | \-                                                                                                   |
+| `item`           | Specific item which should be used to kill mobs.       | ItemStack           | No       | \-      | Accepts standard [item definition](../configuration/defining-items).                                 |
+| `data`           | The data code for the item.                            | Integer             | No       | 0       | This field is not used in Minecraft versions 1.13+, nor is it compatible with ItemStack definitions. |
+| `exact-match`    | Whether the item should exactly match what is defined. | Boolean             | No       | true    | \-                                                                                                   |
+| `worlds`         | Worlds which should count towards the progress.        | List of world names | No       | \-      | \-                                                                                                   |
+| `ignored-worlds` | Worlds which should not count towards the progress.    | List of world names | No       | \-      | \-                                                                                                   |
 
 ## Examples
 

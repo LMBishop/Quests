@@ -16,11 +16,12 @@ Interact with a ZNPCsPlus NPC.
 
 ## Options
 
-| Key        | Description                                     | Type                | Required | Default | Notes                               |
-|------------|-------------------------------------------------|---------------------|----------|---------|-------------------------------------|
-| `npc-name` | The name of the NPC to interact with.           | String              | No       | \-      | Mutually exclusive with `npc-id`.   |
-| `npc-id`   | The id of the NPC to interact with.             | String              | No       | \-      | Mutually exclusive with `npc-name`. |
-| `worlds`   | Worlds which should count towards the progress. | List of world names | No       | \-      | \-                                  |
+| Key              | Description                                         | Type                | Required | Default | Notes                               |
+|------------------|-----------------------------------------------------|---------------------|----------|---------|-------------------------------------|
+| `npc-name`       | The name of the NPC to interact with.               | String              | No       | \-      | Mutually exclusive with `npc-id`.   |
+| `npc-id`         | The id of the NPC to interact with.                 | String              | No       | \-      | Mutually exclusive with `npc-name`. |
+| `worlds`         | Worlds which should count towards the progress.     | List of world names | No       | \-      | \-                                  |
+| `ignored-worlds` | Worlds which should not count towards the progress. | List of world names | No       | \-      | \-                                  |
 
 ## Examples
 

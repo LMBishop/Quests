@@ -13,10 +13,11 @@ Cure a set amount of zombie villagers.
 
 ## Options
 
-| Key      | Description                                     | Type                | Required | Default | Notes |
-|----------|-------------------------------------------------|---------------------|----------|---------|-------|
-| `amount` | The number of zombie villagers to cure.         | Integer             | Yes      | \-      | \-    |
-| `worlds` | Worlds which should count towards the progress. | List of world names | No       | \-      | \-    |
+| Key              | Description                                         | Type                | Required | Default | Notes |
+|------------------|-----------------------------------------------------|---------------------|----------|---------|-------|
+| `amount`         | The number of zombie villagers to cure.             | Integer             | Yes      | \-      | \-    |
+| `worlds`         | Worlds which should count towards the progress.     | List of world names | No       | \-      | \-    |
+| `ignored-worlds` | Worlds which should not count towards the progress. | List of world names | No       | \-      | \-    |
 
 ## Examples
 
