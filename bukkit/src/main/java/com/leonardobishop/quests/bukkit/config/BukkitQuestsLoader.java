@@ -100,7 +100,8 @@ public class BukkitQuestsLoader implements QuestsLoader {
                 for (String key : questsConfig.getConfig().getConfigurationSection("global-task-configuration.types." + type).getKeys(false)) {
                     configValues.put(key, questsConfig.getConfig().get("global-task-configuration.types." + type + "." + key));
                 }
-                globalTaskConfig.putIfAbsent(type, configValues);
+                String resolvedType = taskTypeManager.resolveTaskTypeName(type);
+                globalTaskConfig.putIfAbsent(resolvedType, configValues);
             }
         }
 
@@ -359,7 +360,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 task.addConfigValue(key, config.get(taskRoot + "." + key));
                             }
 
-                            final Map<String, Object> taskTypeGlobalTaskConfig = globalTaskConfig.getOrDefault(taskType, Map.of());
+                            final Map<String, Object> taskTypeGlobalTaskConfig = globalTaskConfig.getOrDefault(resolvedTaskTypeName, Map.of());
 
                             for (final Map.Entry<String, Object> entry : taskTypeGlobalTaskConfig.entrySet()) {
                                 if (!questsConfig.getBoolean("options.global-task-configuration-override") && task.hasConfigKey(entry.getKey())) {
