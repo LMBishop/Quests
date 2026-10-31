@@ -70,7 +70,7 @@ public class TaskUtils {
         final Object worlds = task.getConfigValue(key);
 
         return switch (worlds) {
-            case final List<?> allowedWorldNames -> allowedWorldNames.contains(player.getWorld().getName());
+            case final Set<?> allowedWorldNames -> allowedWorldNames.contains(player.getWorld().getName());
             case final String allowedWorldName -> allowedWorldName.equals(player.getWorld().getName());
             case null, default -> def;
         };
@@ -78,7 +78,7 @@ public class TaskUtils {
 
     public static boolean validateBiome(final String biomeKey, final @NotNull Object biomes) {
         return switch (biomes) {
-            case final List<?> allowedBiomeKeys-> allowedBiomeKeys.contains(biomeKey);
+            case final Set<?> allowedBiomeKeys-> allowedBiomeKeys.contains(biomeKey);
             case final String allowedBiomeKey -> allowedBiomeKey.equals(biomeKey);
             default -> true;
         };
