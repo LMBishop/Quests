@@ -358,12 +358,14 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 task.addConfigValue(key, config.get(taskRoot + "." + key));
                             }
 
-                            if (globalTaskConfig.containsKey(taskType)) {
-                                for (Map.Entry<String, Object> entry : globalTaskConfig.get(taskType).entrySet()) {
-                                    if (questsConfig.getBoolean("options.global-task-configuration-override") && task.getConfigValue(entry.getKey()) != null)
-                                        continue;
-                                    task.addConfigValue(entry.getKey(), entry.getValue());
+                            final Map<String, Object> taskTypeGlobalTaskConfig = globalTaskConfig.getOrDefault(taskType, Map.of());
+
+                            for (final Map.Entry<String, Object> entry : taskTypeGlobalTaskConfig.entrySet()) {
+                                if (!questsConfig.getBoolean("options.global-task-configuration-override") && task.hasConfigKey(entry.getKey())) {
+                                    continue;
                                 }
+
+                                task.addConfigValue(entry.getKey(), entry.getValue());
                             }
 
                             quest.registerTask(task);
