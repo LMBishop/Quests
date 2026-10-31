@@ -59,12 +59,20 @@ public class TaskUtils {
     }
 
     public static boolean validateWorld(final Player player, final Task task) {
-        final Object worlds = task.getConfigValue("worlds");
+        return validateWorld(player, task, "worlds", true);
+    }
+
+    public static boolean validateIgnoredWorld(final Player player, final Task task) {
+        return !validateWorld(player, task, "ignored-worlds", false);
+    }
+
+    public static boolean validateWorld(final Player player, final Task task, final String key, final boolean def) {
+        final Object worlds = task.getConfigValue(key);
 
         return switch (worlds) {
             case final List<?> allowedWorldNames -> allowedWorldNames.contains(player.getWorld().getName());
             case final String allowedWorldName -> allowedWorldName.equals(player.getWorld().getName());
-            case null, default -> true;
+            case null, default -> def;
         };
     }
 
@@ -291,6 +299,10 @@ public class TaskUtils {
                 for (Task task : quest.getTasksOfType(type.getType())) {
                     if (constraintSet.contains(TaskConstraint.WORLD)) {
                         if (!TaskUtils.validateWorld(player, task)) {
+                            continue;
+                        }
+
+                        if (!TaskUtils.validateIgnoredWorld(player, task)) {
                             continue;
                         }
                     }

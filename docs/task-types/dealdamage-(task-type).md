@@ -24,6 +24,7 @@ Deal a certain amount of damage.
 | `exact-match`                 | Whether the item should exactly match what is defined.                              | Boolean                              | No       | true    | \-                                                                                                                                                                                                 |
 | `projectile-item-exact-match` | Whether the projectile item should exactly match what is defined.                   | Boolean                              | No       | true    | \-                                                                                                                                                                                                 |
 | `worlds`                      | Worlds which should count towards the progress.                                     | List of world names                  | No       | \-      | \-                                                                                                                                                                                                 |
+| `ignored-worlds`              | Worlds which should not count towards the progress.                                 | List of world names                  | No       | \-      | \-                                                                                                                                                                                                 |
 
 ## Examples
 

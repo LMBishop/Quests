@@ -13,10 +13,11 @@ Resurrect a set amount of times (by totem of undying usage).
 
 ## Options
 
-| Key      | Description                                     | Type                | Required | Default | Notes |
-|----------|-------------------------------------------------|---------------------|----------|---------|-------|
-| `amount` | The number of times to resurrect.               | Integer             | Yes      | \-      | \-    |
-| `worlds` | Worlds which should count towards the progress. | List of world names | No       | \-      | \-    |
+| Key              | Description                                         | Type                | Required | Default | Notes |
+|------------------|-----------------------------------------------------|---------------------|----------|---------|-------|
+| `amount`         | The number of times to resurrect.                   | Integer             | Yes      | \-      | \-    |
+| `worlds`         | Worlds which should count towards the progress.     | List of world names | No       | \-      | \-    |
+| `ignored-worlds` | Worlds which should not count towards the progress. | List of world names | No       | \-      | \-    |
 
 ## Examples
 
