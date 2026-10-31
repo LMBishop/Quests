@@ -98,7 +98,8 @@ public final class VersionTest {
             "1.21.11-rc2-R0.1-SNAPSHOT",
             "1.21.11-rc3-R0.1-SNAPSHOT",
             "1.21.11-R0.1-SNAPSHOT",
-            "26.1.1.build.28-alpha"
+            "26.1.1.build.28-alpha",
+            "26.3.build.230-stable"
     );
 
     @Test
