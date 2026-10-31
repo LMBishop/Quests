@@ -50,6 +50,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -368,9 +369,17 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 task.addConfigValue(entry.getKey(), entry.getValue());
                             }
 
+                            // TODO while the solution is bad, there's no better one
+                            //      possible without rewriting the way tasks are loaded
+                            if (task.getConfigValue("worlds") instanceof final List<?> list) {
+                                task.addConfigValue("worlds", Set.copyOf(list));
+                            }
+                            if (task.getConfigValue("ignored-worlds") instanceof final List<?> list) {
+                                task.addConfigValue("ignored-worlds", Set.copyOf(list));
+                            }
+
                             quest.registerTask(task);
                         }
-
 
                         for (String line : displayItem.getLoreNormal()) {
                             findInvalidTaskReferences(quest, line, problems, "display.lore-normal");
