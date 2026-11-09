@@ -37,7 +37,8 @@ class TaskUtilsTest {
         QuestController controller = mock(QuestController.class, CALLS_REAL_METHODS);
         when(qPlayer.getQuestController()).thenReturn(controller);
         TaskType type = mock(TaskType.class);
-        Quest first = mock(Quest.class), second = mock(Quest.class);
+        Quest first = mock(Quest.class);
+        Quest second = mock(Quest.class);
         when(type.getType()).thenReturn("mobkilling");
         when(type.getRegisteredQuests()).thenReturn(List.of(first, second));
         assertTrue(TaskUtils.getApplicableTasks(player, qPlayer, type).isEmpty());
@@ -67,8 +68,11 @@ class TaskUtilsTest {
         when(qPlayer.getQuestController()).thenReturn(controller);
         QuestProgressFile file = mock(QuestProgressFile.class);
         when(qPlayer.getQuestProgressFile()).thenReturn(file);
-        Quest first = mock(Quest.class), second = mock(Quest.class);
-        Task active = new Task("active", "mobkilling"), completed = new Task("done", "mobkilling"), last = new Task("last", "mobkilling");
+        Quest first = mock(Quest.class);
+        Quest second = mock(Quest.class);
+        Task active = new Task("active", "mobkilling");
+        Task completed = new Task("done", "mobkilling");
+        Task last = new Task("last", "mobkilling");
         TaskType type = mock(TaskType.class);
         when(type.getType()).thenReturn("mobkilling");
         when(type.getRegisteredQuests()).thenReturn(List.of(first, second));
