@@ -71,6 +71,9 @@ repositories {
 }
 
 dependencies {
+    testImplementation("org.junit.jupiter:junit-jupiter:6.0.2")
+    testImplementation("org.mockito:mockito-core:5.23.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     // Quests common module
     compileOnlyProject(":common")
 
@@ -161,6 +164,14 @@ dependencies {
     implementation("com.carrotsearch:hppc:0.10.0")
     // bungeecord-chat
     implementation("net.md-5:bungeecord-chat:1.21-R0.4") { isTransitive = false }
+}
+
+configurations.testImplementation {
+    extendsFrom(configurations.compileOnly.get())
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.shadowJar {

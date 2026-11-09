@@ -60,11 +60,19 @@ public class BukkitQuestsConfig implements QuestsConfig {
 
     @Override
     public boolean getBoolean(@NotNull String path) {
+        Boolean cached = cachedBooleans.get(path);
+        if (cached != null) {
+            return cached;
+        }
         return cachedBooleans.computeIfAbsent(path, s -> config.getBoolean(path));
     }
 
     @Override
     public boolean getBoolean(@NotNull String path, boolean def) {
+        Boolean cached = cachedBooleans.get(path);
+        if (cached != null) {
+            return cached;
+        }
         return cachedBooleans.computeIfAbsent(path, s -> config.getBoolean(path, def));
     }
 

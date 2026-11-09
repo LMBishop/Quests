@@ -38,6 +38,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 public class NormalQuestController implements QuestController {
 
@@ -327,6 +328,18 @@ public class NormalQuestController implements QuestController {
         return quest.isAutoStartEnabled() || config.getBoolean("options.quest-autostart")
                 ? canPlayerStartQuest(qPlayer, quest).hasPlayerStartedQuest()
                 : qPlayer.getQuestProgressFile().hasQuestStarted(quest);
+    }
+
+    @Override
+    public Function<Quest, @org.jspecify.annotations.Nullable QuestProgress> startedProgressResolver(QPlayer qPlayer) {
+        // Bind only for this traversal. Autostart and subclass policies keep the original path.
+        if (getClass() != NormalQuestController.class || config.getBoolean("options.quest-autostart")) {
+            return QuestController.super.startedProgressResolver(qPlayer);
+        }
+        QuestProgressFile progressFile = qPlayer.getQuestProgressFile();
+        return quest -> quest.isAutoStartEnabled()
+                ? (qPlayer.hasStartedQuest(quest) ? progressFile.getQuestProgress(quest) : null)
+                : progressFile.getStartedQuestProgress(quest);
     }
 
     private void resetQuest(QuestProgress questProgress) {

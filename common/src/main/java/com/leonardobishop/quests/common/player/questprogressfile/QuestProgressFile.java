@@ -297,13 +297,26 @@ public final class QuestProgressFile {
      * @return {@link QuestProgress} or a blank generated one if the quest does not exist
      */
     public QuestProgress getQuestProgress(final Quest quest) {
+        checkProgressThread();
+
+        final QuestProgress questProgress = this.getQuestProgressOrNull(quest);
+        return questProgress != null ? questProgress : this.generateBlankQuestProgress(quest);
+    }
+
+    /** Returns existing started progress without a second map lookup or creating progress. */
+    public @Nullable QuestProgress getStartedQuestProgress(final Quest quest) {
+        final QuestProgress progress = this.getQuestProgressOrNull(quest);
+        if (progress == null || !progress.isStarted()) return null;
+        checkProgressThread();
+        return progress;
+    }
+
+    private void checkProgressThread() {
         if (DEBUG_ISSUE_760 && !this.plugin.isPrimaryThread()) {
             //noinspection CallToPrintStackTrace
             new IllegalStateException("async getQuestProgress call").printStackTrace();
         }
 
-        final QuestProgress questProgress = this.getQuestProgressOrNull(quest);
-        return questProgress != null ? questProgress : this.generateBlankQuestProgress(quest);
     }
 
     /**

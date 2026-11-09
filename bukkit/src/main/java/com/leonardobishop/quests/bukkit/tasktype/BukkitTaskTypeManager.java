@@ -80,6 +80,9 @@ public final class BukkitTaskTypeManager extends TaskTypeManager {
      */
     @Override
     public void sendDebug(final @NotNull String message, final @NotNull String taskType, final @NotNull String questId, final @NotNull String taskId, final @NotNull UUID associatedPlayer) {
+        if (QPlayerPreferences.getDebuggers().isEmpty()) {
+            return;
+        }
         String chatHeader = null;
 
         for (final QPlayer qPlayer : QPlayerPreferences.getDebuggers()) {

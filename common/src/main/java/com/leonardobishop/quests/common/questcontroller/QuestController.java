@@ -2,11 +2,14 @@ package com.leonardobishop.quests.common.questcontroller;
 
 import com.leonardobishop.quests.common.enums.QuestStartResult;
 import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.util.Modern;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+
+import java.util.function.Function;
 
 /**
  * The quests controller dictates how the plugin should act and acts as a bridge between a player
@@ -24,6 +27,12 @@ public interface QuestController {
 
     @Contract(pure = true)
     boolean hasPlayerStartedQuest(QPlayer qPlayer, Quest quest);
+
+    /** Resolves progress during one task traversal, preserving custom controller eligibility. */
+    default Function<Quest, @Nullable QuestProgress> startedProgressResolver(QPlayer qPlayer) {
+        return quest -> qPlayer.hasStartedQuest(quest)
+                ? qPlayer.getQuestProgressFile().getQuestProgress(quest) : null;
+    }
 
     QuestStartResult startQuestForPlayer(QPlayer qPlayer, Quest quest);
 

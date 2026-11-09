@@ -292,9 +292,12 @@ public class TaskUtils {
         // Cache it as getting it requires some complex math
         String biomeKey = null;
 
-        for (Quest quest : type.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+        var registeredQuests = type.getRegisteredQuests();
+        if (registeredQuests.isEmpty()) return tasks;
+        var progressResolver = qPlayer.getQuestController().startedProgressResolver(qPlayer);
+        for (Quest quest : registeredQuests) {
+            QuestProgress questProgress = progressResolver.apply(quest);
+            if (questProgress != null) {
 
                 for (Task task : quest.getTasksOfType(type.getType())) {
                     if (constraintSet.contains(TaskConstraint.WORLD)) {
@@ -473,6 +476,9 @@ public class TaskUtils {
 
     public static boolean matchSpawnReason(final @NotNull BukkitTaskType type, final @NotNull PendingTask pendingTask, final @NotNull Entity entity,
                                            final @NotNull UUID player) {
+        if (!pendingTask.task.hasConfigKey("spawn-reason") && !pendingTask.task.hasConfigKey("spawn-reasons")) {
+            return true;
+        }
         if (TaskUtils.getEntitySpawnReasonMethod == null) {
             type.debug("Spawn reason is specified but the server software doesn't have the method necessary to get it", pendingTask.quest.getId(), pendingTask.task.getId(), player);
 
