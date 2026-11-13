@@ -123,7 +123,9 @@ public final class FarmingTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player farmed a crop " + block.getType() + " (mode = " + mode + ")", quest.getId(), task.getId(), player.getUniqueId());
+            if (TaskUtils.isTaskDebuggingEnabled()) {
+                super.debug("Player farmed a crop " + block.getType() + " (mode = " + mode + ")", quest.getId(), task.getId(), player.getUniqueId());
+            }
 
             Object requiredModeObject = task.getConfigValue("mode");
 
@@ -163,7 +165,9 @@ public final class FarmingTaskType extends BukkitTaskType {
 
             Runnable increment = () -> {
                 int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-                super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+                if (TaskUtils.isTaskDebuggingEnabled()) {
+                    super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+                }
 
                 int amount = (int) task.getConfigValue("amount");
                 if (progress >= amount) {
@@ -191,7 +195,9 @@ public final class FarmingTaskType extends BukkitTaskType {
                             increment.run();
                         }
                     }).exceptionally(throwable -> {
-                        super.debug("CoreProtect lookup failed: " + throwable.getMessage(), quest.getId(), task.getId(), player.getUniqueId());
+                        if (TaskUtils.isTaskDebuggingEnabled()) {
+                            super.debug("CoreProtect lookup failed: " + throwable.getMessage(), quest.getId(), task.getId(), player.getUniqueId());
+                        }
                         throwable.printStackTrace();
                         return null;
                     });

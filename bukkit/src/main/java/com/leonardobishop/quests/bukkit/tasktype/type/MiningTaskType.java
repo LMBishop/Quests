@@ -70,7 +70,9 @@ public final class MiningTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player mined block " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
+            if (TaskUtils.isTaskDebuggingEnabled()) {
+                super.debug("Player mined block " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
+            }
 
             boolean allowSilkTouch = TaskUtils.getConfigBoolean(task, "allow-silk-touch", true);
             if (!allowSilkTouch && silkTouchPresent) {
@@ -91,7 +93,9 @@ public final class MiningTaskType extends BukkitTaskType {
                     continue;
                 }
 
-                super.debug("Specific item is required; player held item is of type '" + item.getType() + "'", quest.getId(), task.getId(), player.getUniqueId());
+                if (TaskUtils.isTaskDebuggingEnabled()) {
+                    super.debug("Specific item is required; player held item is of type '" + item.getType() + "'", quest.getId(), task.getId(), player.getUniqueId());
+                }
 
                 QuestItem qi;
                 if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
@@ -131,7 +135,9 @@ public final class MiningTaskType extends BukkitTaskType {
 
             Runnable increment = () -> {
                 int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-                super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+                if (TaskUtils.isTaskDebuggingEnabled()) {
+                    super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+                }
 
                 int amount = (int) task.getConfigValue("amount");
                 if (progress >= amount) {
@@ -159,7 +165,9 @@ public final class MiningTaskType extends BukkitTaskType {
                             increment.run();
                         }
                     }).exceptionally(throwable -> {
-                        super.debug("CoreProtect lookup failed: " + throwable.getMessage(), quest.getId(), task.getId(), player.getUniqueId());
+                        if (TaskUtils.isTaskDebuggingEnabled()) {
+                            super.debug("CoreProtect lookup failed: " + throwable.getMessage(), quest.getId(), task.getId(), player.getUniqueId());
+                        }
                         throwable.printStackTrace();
                         return null;
                     });
@@ -195,7 +203,9 @@ public final class MiningTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player placed block " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
+            if (TaskUtils.isTaskDebuggingEnabled()) {
+                super.debug("Player placed block " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
+            }
 
             boolean reverseIfPlaced = TaskUtils.getConfigBoolean(task, "reverse-if-placed");
             if (!reverseIfPlaced) {
@@ -217,7 +227,9 @@ public final class MiningTaskType extends BukkitTaskType {
             }
 
             int progress = TaskUtils.decrementIntegerTaskProgress(taskProgress);
-            super.debug("Decrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+            if (TaskUtils.isTaskDebuggingEnabled()) {
+                super.debug("Decrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+            }
 
             int amount = (int) task.getConfigValue("amount");
             TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, amount);

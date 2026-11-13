@@ -10,9 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 @NullMarked
 public final class QuestProgress {
+
+    private static final AtomicLong STARTED_REVISION = new AtomicLong();
 
     private final Quests plugin;
     private final String questId;
@@ -172,8 +175,16 @@ public final class QuestProgress {
      * @param started whether the quest is started
      */
     public void setStarted(final boolean started) {
+        final boolean changed = this.started != started;
         this.started = started;
+        if (changed) {
+            STARTED_REVISION.incrementAndGet();
+        }
         this.modified = true;
+    }
+
+    static long getStartedRevision() {
+        return STARTED_REVISION.get();
     }
 
     /**

@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
+import com.leonardobishop.quests.bukkit.questcontroller.NormalQuestController;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraint;
@@ -12,6 +13,7 @@ import com.leonardobishop.quests.bukkit.util.lang3.StringUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.player.QPlayerPreferences;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
@@ -56,6 +58,14 @@ public class TaskUtils {
 
     static {
         plugin = BukkitQuestsPlugin.getPlugin(BukkitQuestsPlugin.class);
+    }
+
+    /**
+     * Checks the live debugger set before constructing messages. Recipient
+     * preferences are still checked when each message is sent.
+     */
+    public static boolean isTaskDebuggingEnabled() {
+        return !QPlayerPreferences.getDebuggers().isEmpty();
     }
 
     public static boolean validateWorld(final Player player, final Task task) {
@@ -292,7 +302,12 @@ public class TaskUtils {
         // Cache it as getting it requires some complex math
         String biomeKey = null;
 
-        for (Quest quest : type.getRegisteredQuests()) {
+        final List<Quest> candidates = qPlayer.getQuestController().getClass() == NormalQuestController.class
+                && !plugin.getQuestsConfig().getBoolean("options.quest-autostart")
+                ? qPlayer.getQuestProgressFile().getStartedQuestCandidates(type)
+                : type.getRegisteredQuests();
+
+        for (Quest quest : candidates) {
             if (qPlayer.hasStartedQuest(quest)) {
                 QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
@@ -394,7 +409,9 @@ public class TaskUtils {
 
             material = Material.getMaterial(parts[0]);
 
-            type.debug("Checking against block " + material + ":" + comparableData, pendingTask.quest.getId(), task.getId(), player);
+            if (isTaskDebuggingEnabled()) {
+                type.debug("Checking against block " + material + ":" + comparableData, pendingTask.quest.getId(), task.getId(), player);
+            }
 
             if (material == blockMaterial) {
                 if (parts.length == 1 && configData == null) {
@@ -448,7 +465,9 @@ public class TaskUtils {
         for (String mobName : checkMobs) {
             mob = EntityType.valueOf(mobName);
 
-            type.debug("Checking against mob " + mob, pendingTask.quest.getId(), task.getId(), player);
+            if (isTaskDebuggingEnabled()) {
+                type.debug("Checking against mob " + mob, pendingTask.quest.getId(), task.getId(), player);
+            }
 
             if (mob == entityType) {
                 type.debug("Mob match", pendingTask.quest.getId(), task.getId(), player);
@@ -507,7 +526,9 @@ public class TaskUtils {
         for (final String checkValueString : checkValueStrings) {
             checkValue = Enum.valueOf(enumClass, checkValueString);
 
-            type.debug("Checking against enum value " + checkValue, pendingTask.quest.getId(), task.getId(), player);
+            if (isTaskDebuggingEnabled()) {
+                type.debug("Checking against enum value " + checkValue, pendingTask.quest.getId(), task.getId(), player);
+            }
 
             if (checkValue == enumValue) {
                 type.debug("Enum value match", pendingTask.quest.getId(), task.getId(), player);
@@ -573,10 +594,14 @@ public class TaskUtils {
             matchMode = StringMatchMode.EQUALS;
         }
 
-        type.debug("Utilising " + matchMode + " mode for checking", pendingTask.quest.getId(), task.getId(), player);
+        if (isTaskDebuggingEnabled()) {
+            type.debug("Utilising " + matchMode + " mode for checking", pendingTask.quest.getId(), task.getId(), player);
+        }
 
         for (String name : checkNames) {
-            type.debug("Checking against name " + string, pendingTask.quest.getId(), task.getId(), player);
+            if (isTaskDebuggingEnabled()) {
+                type.debug("Checking against name " + string, pendingTask.quest.getId(), task.getId(), player);
+            }
 
             if (matchMode.matches(string, name, ignoreCase)) {
                 type.debug("Name match", pendingTask.quest.getId(), task.getId(), player);
@@ -621,10 +646,14 @@ public class TaskUtils {
             matchMode = StringMatchMode.EQUALS;
         }
 
-        type.debug("Utilising " + matchMode + " mode for checking", pendingTask.quest.getId(), task.getId(), player);
+        if (isTaskDebuggingEnabled()) {
+            type.debug("Utilising " + matchMode + " mode for checking", pendingTask.quest.getId(), task.getId(), player);
+        }
 
         for (String name : checkNames) {
-            type.debug("Checking against name " + name, pendingTask.quest.getId(), task.getId(), player);
+            if (isTaskDebuggingEnabled()) {
+                type.debug("Checking against name " + name, pendingTask.quest.getId(), task.getId(), player);
+            }
 
             for (String string : strings) {
                 if (matchMode.matches(string, name, ignoreCase)) {

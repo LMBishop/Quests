@@ -5,6 +5,7 @@ import com.leonardobishop.quests.common.player.questprogressfile.filters.QuestPr
 import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import com.leonardobishop.quests.common.tasktype.TaskType;
 import com.leonardobishop.quests.common.util.Modern;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
@@ -13,6 +14,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +35,10 @@ public final class QuestProgressFile {
     private final Quests plugin;
     private final UUID playerUUID;
     private final Map<String, QuestProgress> questProgressMap;
+    private final Map<TaskType, List<Quest>> startedQuestCandidates = new IdentityHashMap<>();
+    private long startedRevision = -1;
+    private long registrationRevision = -1;
+    private boolean progressMapExposed;
 
     /**
      * Constructs a QuestProgressFile.
@@ -72,6 +78,40 @@ public final class QuestProgressFile {
         //    return;
         //}
         this.questProgressMap.put(questProgress.getQuestId(), questProgress);
+        this.startedQuestCandidates.clear();
+    }
+
+    /**
+     * Returns registered quests which may be started under the normal controller
+     * with global autostart disabled. Autostart quests and custom quest classes
+     * remain candidates so their eligibility can be checked on every event.
+     * Callers must still check the controller and current progress for each quest.
+     */
+    public List<Quest> getStartedQuestCandidates(final TaskType type) {
+        if (this.progressMapExposed) {
+            return type.getRegisteredQuests();
+        }
+
+        final long currentStartedRevision = QuestProgress.getStartedRevision();
+        final long currentRegistrationRevision = TaskType.getRegistrationRevision();
+        if (this.startedRevision != currentStartedRevision || this.registrationRevision != currentRegistrationRevision) {
+            this.startedQuestCandidates.clear();
+            this.startedRevision = currentStartedRevision;
+            this.registrationRevision = currentRegistrationRevision;
+        }
+
+        List<Quest> candidates = this.startedQuestCandidates.get(type);
+        if (candidates == null) {
+            final List<Quest> matching = new ArrayList<>();
+            for (final Quest quest : type.getRegisteredQuests()) {
+                if (quest.getClass() != Quest.class || quest.isAutoStartEnabled() || this.hasQuestStarted(quest)) {
+                    matching.add(quest);
+                }
+            }
+            candidates = List.copyOf(matching);
+            this.startedQuestCandidates.put(type, candidates);
+        }
+        return candidates;
     }
 
     /**
@@ -169,6 +209,10 @@ public final class QuestProgressFile {
      */
     @Contract(pure = true)
     public Map<String, QuestProgress> getQuestProgressMap() {
+        // External code can retain and mutate this map without using our methods.
+        // Keep its mutable API and use the uncached path for this file thereafter.
+        this.progressMapExposed = true;
+        this.startedQuestCandidates.clear();
         return this.questProgressMap;
     }
 
@@ -363,6 +407,7 @@ public final class QuestProgressFile {
      */
     public void clear() {
         this.questProgressMap.clear();
+        this.startedQuestCandidates.clear();
     }
 
     /**

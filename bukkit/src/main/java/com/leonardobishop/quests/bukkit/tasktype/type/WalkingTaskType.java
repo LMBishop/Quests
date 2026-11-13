@@ -125,7 +125,9 @@ public final class WalkingTaskType extends BukkitTaskType {
             }
 
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress, distance);
-            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+            if (TaskUtils.isTaskDebuggingEnabled()) {
+                super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+            }
 
             int distanceNeeded = (int) task.getConfigValue("distance");
 

@@ -50,7 +50,9 @@ public final class BuildingTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player placed block " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
+            if (TaskUtils.isTaskDebuggingEnabled()) {
+                super.debug("Player placed block " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
+            }
 
             if (!TaskUtils.matchBlock(this, pendingTask, block, player.getUniqueId())) {
                 super.debug("Continuing...", quest.getId(), task.getId(), player.getUniqueId());
@@ -58,7 +60,9 @@ public final class BuildingTaskType extends BukkitTaskType {
             }
 
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+            if (TaskUtils.isTaskDebuggingEnabled()) {
+                super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+            }
 
             int amount = (int) task.getConfigValue("amount");
             if (progress >= amount) {
@@ -90,7 +94,9 @@ public final class BuildingTaskType extends BukkitTaskType {
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player mined block " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
+            if (TaskUtils.isTaskDebuggingEnabled()) {
+                super.debug("Player mined block " + block.getType(), quest.getId(), task.getId(), player.getUniqueId());
+            }
 
             boolean reverseIfBroken = TaskUtils.getConfigBoolean(task, "reverse-if-broken");
             if (!reverseIfBroken) {
@@ -112,7 +118,9 @@ public final class BuildingTaskType extends BukkitTaskType {
             }
 
             int progress = TaskUtils.decrementIntegerTaskProgress(taskProgress);
-            super.debug("Decrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+            if (TaskUtils.isTaskDebuggingEnabled()) {
+                super.debug("Decrementing task progress (now " + progress + ")", quest.getId(), task.getId(), player.getUniqueId());
+            }
 
             int amount = (int) task.getConfigValue("amount");
             TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, amount);

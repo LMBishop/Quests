@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Represents a type of task that can be used within quests. A {@link Quest}
@@ -26,6 +27,8 @@ import java.util.UUID;
 @Modern(type = Modern.Type.FULL)
 @NullMarked
 public abstract class TaskType {
+
+    private static final AtomicLong REGISTRATION_REVISION = new AtomicLong();
 
     protected final String type;
     private final @Nullable String author;
@@ -146,6 +149,13 @@ public abstract class TaskType {
     }
 
     /**
+     * Returns the revision of task type registrations, including reloads.
+     */
+    public static long getRegistrationRevision() {
+        return REGISTRATION_REVISION.get();
+    }
+
+    /**
      * Registers a quest to this task type. This is typically done when
      * all quests are initially loaded.
      *
@@ -156,6 +166,7 @@ public abstract class TaskType {
 
         if (!this.quests.contains(quest)) {
             this.quests.add(quest);
+            REGISTRATION_REVISION.incrementAndGet();
         }
     }
 
@@ -164,6 +175,7 @@ public abstract class TaskType {
      */
     public final void unregisterAll() {
         this.quests.clear();
+        REGISTRATION_REVISION.incrementAndGet();
     }
 
     /**
