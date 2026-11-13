@@ -195,10 +195,10 @@ public class TaskUtils {
 	public static void sendTrackAdvancement(Player player, Quest quest, Task task, PendingTask pendingTask, Number amount) {
         TaskProgress taskProgress = pendingTask.taskProgress();
 
-        boolean useActionBar = plugin.getConfig().getBoolean("options.actionbar.progress", false)
-                || (taskProgress.isCompleted() && plugin.getConfig().getBoolean("options.actionbar.complete", false));
-        boolean useBossBar = plugin.getConfig().getBoolean("options.bossbar.progress", false)
-                || (taskProgress.isCompleted() && plugin.getConfig().getBoolean("options.bossbar.complete", false));
+        boolean useActionBar = plugin.getQuestsConfig().getBoolean("options.actionbar.progress", false)
+                || (taskProgress.isCompleted() && plugin.getQuestsConfig().getBoolean("options.actionbar.complete", false));
+        boolean useBossBar = plugin.getQuestsConfig().getBoolean("options.bossbar.progress", false)
+                || (taskProgress.isCompleted() && plugin.getQuestsConfig().getBoolean("options.bossbar.complete", false));
         if (!useActionBar && !useBossBar) {
             return;
         }
@@ -292,12 +292,9 @@ public class TaskUtils {
         // Cache it as getting it requires some complex math
         String biomeKey = null;
 
-        var registeredQuests = type.getRegisteredQuests();
-        if (registeredQuests.isEmpty()) return tasks;
-        var progressResolver = qPlayer.getQuestController().startedProgressResolver(qPlayer);
-        for (Quest quest : registeredQuests) {
-            QuestProgress questProgress = progressResolver.apply(quest);
-            if (questProgress != null) {
+        for (Quest quest : type.getRegisteredQuests()) {
+            if (qPlayer.hasStartedQuest(quest)) {
+                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
                 for (Task task : quest.getTasksOfType(type.getType())) {
                     if (constraintSet.contains(TaskConstraint.WORLD)) {
@@ -348,7 +345,8 @@ public class TaskUtils {
     }
 
     public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable Block block, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
-        return matchBlock(type, pendingTask, block != null ? block.getState() : null, player, stringKey, listKey);
+        return matchBlock(type, pendingTask, block != null ? block.getType() : null,
+                () -> block.getState().getRawData(), player, stringKey, listKey);
     }
 
     public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable BlockData data, @NotNull UUID player) {
@@ -476,9 +474,6 @@ public class TaskUtils {
 
     public static boolean matchSpawnReason(final @NotNull BukkitTaskType type, final @NotNull PendingTask pendingTask, final @NotNull Entity entity,
                                            final @NotNull UUID player) {
-        if (!pendingTask.task.hasConfigKey("spawn-reason") && !pendingTask.task.hasConfigKey("spawn-reasons")) {
-            return true;
-        }
         if (TaskUtils.getEntitySpawnReasonMethod == null) {
             type.debug("Spawn reason is specified but the server software doesn't have the method necessary to get it", pendingTask.quest.getId(), pendingTask.task.getId(), player);
 
