@@ -72,7 +72,7 @@ public final class QuestProgressFile {
     /**
      * @param questProgress the quest progress to put into the quest progress map
      */
-    public void addQuestProgress(final QuestProgress questProgress) {
+    public synchronized void addQuestProgress(final QuestProgress questProgress) {
         // TODO don't do that here
         //if (Options.VERIFY_QUEST_EXISTS_ON_LOAD.getBooleanValue(true) && plugin.getQuestManager().getQuestById(questProgress.getQuestId()) == null) {
         //    return;
@@ -87,7 +87,7 @@ public final class QuestProgressFile {
      * remain candidates so their eligibility can be checked on every event.
      * Callers must still check the controller and current progress for each quest.
      */
-    public List<Quest> getStartedQuestCandidates(final TaskType type) {
+    public synchronized List<Quest> getStartedQuestCandidates(final TaskType type) {
         if (this.progressMapExposed) {
             return type.getRegisteredQuests();
         }
@@ -208,7 +208,7 @@ public final class QuestProgressFile {
      * @return {@code Map<String, QuestProgress>} quest progress map
      */
     @Contract(pure = true)
-    public Map<String, QuestProgress> getQuestProgressMap() {
+    public synchronized Map<String, QuestProgress> getQuestProgressMap() {
         // External code can retain and mutate this map without using our methods.
         // Keep its mutable API and use the uncached path for this file thereafter.
         this.progressMapExposed = true;
@@ -405,7 +405,7 @@ public final class QuestProgressFile {
     /**
      * Clears quest progress map.
      */
-    public void clear() {
+    public synchronized void clear() {
         this.questProgressMap.clear();
         this.startedQuestCandidates.clear();
     }
