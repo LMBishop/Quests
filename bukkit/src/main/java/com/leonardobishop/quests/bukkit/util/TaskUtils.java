@@ -345,7 +345,7 @@ public class TaskUtils {
     }
 
     public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable Block block, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
-        return matchBlock(type, pendingTask, block != null ? block.getState() : null, player, stringKey, listKey);
+        return matchBlock(type, pendingTask, block != null ? plugin.getVersionSpecificHandler().getStateNoSnapshot(block) : null, player, stringKey, listKey);
     }
 
     public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable BlockData data, @NotNull UUID player) {

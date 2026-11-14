@@ -5,6 +5,8 @@ import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.CaveVinesPlant;
 import org.bukkit.damage.DamageSource;
@@ -62,6 +64,7 @@ public interface VersionSpecificHandler {
         this.add(Version.V1_9);
         this.add(Version.V1_11);
         this.add(Version.V1_11_2);
+        this.add(Version.V1_12_2);
         this.add(Version.V1_14);
         this.add(Version.V1_15_2);
         this.add(Version.V1_16);
@@ -383,4 +386,9 @@ public interface VersionSpecificHandler {
      */
     @SuppressWarnings("removal")
     @Nullable ItemStack getAbstractArrowItem(Entity entity);
+
+    /**
+     * Paper introduced {@link Block#getState(boolean)} in {@code 1.12.2}.
+     */
+    BlockState getStateNoSnapshot(Block block);
 }

@@ -5,7 +5,7 @@ import org.bukkit.block.Biome;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
-public class VersionSpecificHandler_V1_14 extends VersionSpecificHandler_V1_11_2 {
+public class VersionSpecificHandler_V1_14 extends VersionSpecificHandler_V1_12_2 {
 
     @Override
     public Version getMinecraftVersion() {
