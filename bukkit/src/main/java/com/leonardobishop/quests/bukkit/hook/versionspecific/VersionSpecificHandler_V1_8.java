@@ -3,6 +3,8 @@ package com.leonardobishop.quests.bukkit.hook.versionspecific;
 import com.leonardobishop.quests.common.versioning.Version;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
@@ -252,5 +254,10 @@ public class VersionSpecificHandler_V1_8 implements VersionSpecificHandler {
     @Override
     public @Nullable ItemStack getAbstractArrowItem(Entity entity) {
         return null;
+    }
+
+    @Override
+    public BlockState getStateNoSnapshot(Block block) {
+        return block.getState();
     }
 }
