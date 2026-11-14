@@ -195,10 +195,10 @@ public class TaskUtils {
 	public static void sendTrackAdvancement(Player player, Quest quest, Task task, PendingTask pendingTask, Number amount) {
         TaskProgress taskProgress = pendingTask.taskProgress();
 
-        boolean useActionBar = plugin.getConfig().getBoolean("options.actionbar.progress", false)
-                || (taskProgress.isCompleted() && plugin.getConfig().getBoolean("options.actionbar.complete", false));
-        boolean useBossBar = plugin.getConfig().getBoolean("options.bossbar.progress", false)
-                || (taskProgress.isCompleted() && plugin.getConfig().getBoolean("options.bossbar.complete", false));
+        boolean useActionBar = plugin.getQuestsConfig().getBoolean("options.actionbar.progress", false)
+                || (taskProgress.isCompleted() && plugin.getQuestsConfig().getBoolean("options.actionbar.complete", false));
+        boolean useBossBar = plugin.getQuestsConfig().getBoolean("options.bossbar.progress", false)
+                || (taskProgress.isCompleted() && plugin.getQuestsConfig().getBoolean("options.bossbar.complete", false));
         if (!useActionBar && !useBossBar) {
             return;
         }
