@@ -232,25 +232,54 @@ public final class QuestProgressFile {
      */
     @Contract(pure = true)
     public long getTimeRemainingFor(final Quest quest) {
-        if (!quest.isTimeLimitEnabled()) {
-            return -1;
+        if (!quest.isTimeLimitEnabled() && !quest.isTimeWindowEnabled()) {
+            return -1L;
         }
 
         final QuestProgress questProgress = this.getQuestProgressOrNull(quest);
+
         if (questProgress == null || !questProgress.isStarted()) {
-            return -1;
+            return -1L;
         }
 
         final long startedDate = questProgress.getStartedDate();
+
         if (startedDate == 0L) {
-            return -1;
+            return -1L;
         }
 
         final long currentTimeMillis = System.currentTimeMillis();
-        final long timeLimitMillis = TimeUnit.MILLISECONDS.convert(quest.getTimeLimit(), TimeUnit.MINUTES);
 
-        // do the subtraction first to prevent overflow
-        return Math.max(0L, startedDate - currentTimeMillis + timeLimitMillis);
+        long millisRemaining = -1L;
+
+        if (quest.isTimeLimitEnabled()) {
+            final long timeLimitMillis = TimeUnit.MILLISECONDS.convert(quest.getTimeLimit(), TimeUnit.MINUTES);
+            final long timeLimitEndMillis = startedDate + timeLimitMillis;
+
+            if (currentTimeMillis >= timeLimitEndMillis) {
+                return 0L;
+            }
+
+            millisRemaining = timeLimitEndMillis - currentTimeMillis;
+        }
+
+        if (quest.isTimeWindowEnabled()) {
+            if (startedDate < quest.getTimeWindowFrom() || startedDate >= quest.getTimeWindowUntil()) {
+                return 0L;
+            }
+
+            if (currentTimeMillis < quest.getTimeWindowFrom() || currentTimeMillis >= quest.getTimeWindowUntil()) {
+                return 0L;
+            }
+
+            final long timeWindowMillisRemaining = quest.getTimeWindowUntil() - currentTimeMillis;
+
+            if (millisRemaining == -1L || timeWindowMillisRemaining < millisRemaining) {
+                millisRemaining = timeWindowMillisRemaining;
+            }
+        }
+
+        return millisRemaining;
     }
 
     /**
@@ -262,6 +291,14 @@ public final class QuestProgressFile {
     // TODO possibly move this
     @Contract(pure = true)
     public boolean hasMetRequirements(final Quest quest) {
+        if (quest.isTimeWindowEnabled()) {
+            final long currentTimeMillis = System.currentTimeMillis();
+
+            if (currentTimeMillis < quest.getTimeWindowFrom() || currentTimeMillis >= quest.getTimeWindowUntil()) {
+                return false;
+            }
+        }
+
         for (final String requiredQuestId : quest.getRequirements()) {
             final QuestProgress requiredQuestProgress = this.questProgressMap.get(requiredQuestId);
             if (requiredQuestProgress == null || !requiredQuestProgress.isCompletedBefore()) {

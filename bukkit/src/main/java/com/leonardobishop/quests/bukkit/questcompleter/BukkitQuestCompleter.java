@@ -1,6 +1,5 @@
 package com.leonardobishop.quests.bukkit.questcompleter;
 
-
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
@@ -11,7 +10,7 @@ import com.leonardobishop.quests.common.quest.QuestCompleter;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -19,16 +18,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-//TODO move complete effects here ?
+@NullMarked
 public class BukkitQuestCompleter implements QuestCompleter, Runnable {
 
-    private final LinkedList<QuestProgress> completionQueue = new LinkedList<>();
-    private final LinkedList<QuestProgressFile> fullCheckQueue = new LinkedList<>();
-    private final LinkedList<UUID> expiredCheckQueue = new LinkedList<>();
     private final BukkitQuestsPlugin plugin;
+    private final LinkedList<UUID> expiredCheckQueue;
+    private final LinkedList<QuestProgress> completionQueue;
+    private final LinkedList<QuestProgressFile> fullCheckQueue;
 
-    public BukkitQuestCompleter(BukkitQuestsPlugin plugin) {
+    public BukkitQuestCompleter(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
+        this.expiredCheckQueue = new LinkedList<>();
+        this.completionQueue = new LinkedList<>();
+        this.fullCheckQueue = new LinkedList<>();
     }
 
     @Override
@@ -38,14 +40,42 @@ public class BukkitQuestCompleter implements QuestCompleter, Runnable {
         this.processFullCheckQueue();
     }
 
-    private void checkExpiredQuests(QPlayer qPlayer) {
-        QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-        for (QuestProgress questProgress : questProgressFile.getAllQuestProgress()) {
+    private void processExpiredCheckQueue() {
+        final UUID who = this.expiredCheckQueue.poll();
+
+        if (who == null) {
+            for (final Player player : Bukkit.getOnlinePlayers()) {
+                this.expiredCheckQueue.add(player.getUniqueId());
+            }
+
+            return;
+        }
+
+        final Player player = Bukkit.getPlayer(who);
+
+        if (player == null || !player.isOnline()) {
+            return;
+        }
+
+        final QPlayer qPlayer = this.plugin.getPlayerManager().getPlayer(player.getUniqueId());
+
+        if (qPlayer == null) {
+            return;
+        }
+
+        this.checkExpiredQuests(qPlayer);
+    }
+
+    private void checkExpiredQuests(final QPlayer qPlayer) {
+        final QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
+
+        for (final QuestProgress questProgress : questProgressFile.getAllQuestProgress()) {
             if (!questProgress.isStarted()) {
                 continue;
             }
 
-            Quest quest = plugin.getQuestManager().getQuestById(questProgress.getQuestId());
+            final Quest quest = this.plugin.getQuestManager().getQuestById(questProgress.getQuestId());
+
             if (quest == null) {
                 continue;
             }
@@ -54,24 +84,6 @@ public class BukkitQuestCompleter implements QuestCompleter, Runnable {
                 qPlayer.expireQuest(quest);
             }
         }
-    }
-
-    private void processExpiredCheckQueue() {
-        UUID who = expiredCheckQueue.poll();
-        if (who == null) {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                expiredCheckQueue.add(player.getUniqueId());
-            }
-            return;
-        }
-
-        Player player = Bukkit.getPlayer(who);
-        if (player == null || !player.isOnline()) return;
-
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
-        if (qPlayer == null) return;
-
-        checkExpiredQuests(qPlayer);
     }
 
     private void processCompletionQueue() {
@@ -135,17 +147,15 @@ public class BukkitQuestCompleter implements QuestCompleter, Runnable {
     }
 
     @Override
-    public void queueSingular(@NotNull QuestProgress questProgress) {
+    public void queueSingular(final QuestProgress questProgress) {
         Objects.requireNonNull(questProgress, "questProgress cannot be null");
-
-        completionQueue.add(questProgress);
+        this.completionQueue.add(questProgress);
     }
 
     @Override
-    public void queueFullCheck(@NotNull QuestProgressFile questProgressFile) {
+    public void queueFullCheck(final QuestProgressFile questProgressFile) {
         Objects.requireNonNull(questProgressFile, "questProgressFile cannot be null");
-
-        fullCheckQueue.add(questProgressFile);
+        this.fullCheckQueue.add(questProgressFile);
     }
 
     public List<QuestProgress> getCompletionQueue() {

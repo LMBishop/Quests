@@ -1,5 +1,8 @@
 package com.leonardobishop.quests.common.enums;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public enum QuestStartResult {
     QUEST_SUCCESS(true), //0
     QUEST_LIMIT_REACHED, //1
@@ -13,16 +16,15 @@ public enum QuestStartResult {
 
     private final boolean playerStartedQuest;
 
+    QuestStartResult(final boolean playerStartedQuest) {
+        this.playerStartedQuest = playerStartedQuest;
+    }
+
     QuestStartResult() {
         this(false);
     }
 
-    QuestStartResult(boolean playerStartedQuest) {
-        this.playerStartedQuest = playerStartedQuest;
-    }
-
     public boolean hasPlayerStartedQuest() {
-        return playerStartedQuest;
+        return this.playerStartedQuest;
     }
-
 }

@@ -115,7 +115,13 @@ public enum ConfigProblemDescriptions {
                     "This may be the result of a cascading error<br>" +
                     "if '%s' failed to load, or a mis-typed ID."
     ),
-    NOT_ACCEPTED_VALUE("Value '%s' is not in the list of accepted values for task %s", null);
+    NOT_ACCEPTED_VALUE("Value '%s' is not in the list of accepted values for task %s", null),
+    INVALID_TIME_WINDOW("Invalid time window configuration",
+            "Time window must have valid 'from' and 'until' values.<br>" +
+                    "Both values are required and must use the format<br>" +
+                    "'yyyy-MM-dd'T'HH:mm:ss'. The 'from' value must be<br>" +
+                    "earlier than 'until'."
+    );
 
     private final String description;
     private final String extendedDescription;
