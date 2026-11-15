@@ -31,6 +31,9 @@ public class Quest implements Comparable<Quest> {
     private int cooldown;
     private boolean timeLimitEnabled;
     private int timeLimit;
+    private boolean timeWindowEnabled;
+    private long timeWindowFrom;
+    private long timeWindowUntil;
     private int sortOrder;
     private boolean permissionRequired;
     private boolean autoStartEnabled;
@@ -275,6 +278,37 @@ public class Quest implements Comparable<Quest> {
     }
 
     /**
+     * Get whether this quest has a time window.
+     *
+     * @return whether the time window is enabled
+     */
+    public boolean isTimeWindowEnabled() {
+        return this.timeWindowEnabled;
+    }
+
+    /**
+     * Get the start of this quest's time window.
+     * The quest cannot be started before this time.
+     * Whether or not this time window is in use depends on {@link Quest#isTimeWindowEnabled()}.
+     *
+     * @return the start time, in milliseconds since the Unix epoch
+     */
+    public long getTimeWindowFrom() {
+        return this.timeWindowFrom;
+    }
+
+    /**
+     * Get the end of this quest's time window.
+     * The quest cannot be started after this time.
+     * Whether or not this time window is in use depends on {@link Quest#isTimeWindowEnabled()}.
+     *
+     * @return the end time, in milliseconds since the Unix epoch
+     */
+    public long getTimeWindowUntil() {
+        return this.timeWindowUntil;
+    }
+
+    /**
      * Get the category id this quest is in.
      *
      * @return the category id, or null
@@ -386,6 +420,9 @@ public class Quest implements Comparable<Quest> {
         private int cooldown = 0;
         private boolean timeLimitEnabled = false;
         private int timeLimit = 0;
+        private boolean timeWindowEnabled = false;
+        private long timeWindowFrom = 0L;
+        private long timeWindowUntil = 0L;
         private int sortOrder = 1;
         private boolean permissionRequired = false;
         private boolean autoStartEnabled = false;
@@ -451,31 +488,6 @@ public class Quest implements Comparable<Quest> {
             return this;
         }
 
-        public Builder withSortOrder(int sortOrder) {
-            this.sortOrder = sortOrder;
-            return this;
-        }
-
-        public Builder withCooldown(int cooldown) {
-            this.cooldown = cooldown;
-            return this;
-        }
-
-        public Builder withTimeLimit(int timeLimit) {
-            this.timeLimit = timeLimit;
-            return this;
-        }
-
-        public Builder withPlaceholders(Map<String, String> placeholders) {
-            this.placeholders = placeholders;
-            return this;
-        }
-
-        public Builder withProgressPlaceholders(Map<String, String> progressPlaceholders) {
-            this.progressPlaceholders = progressPlaceholders;
-            return this;
-        }
-
         public Builder withRepeatEnabled(boolean repeatEnabled) {
             this.repeatEnabled = repeatEnabled;
             return this;
@@ -486,8 +498,38 @@ public class Quest implements Comparable<Quest> {
             return this;
         }
 
+        public Builder withCooldown(int cooldown) {
+            this.cooldown = cooldown;
+            return this;
+        }
+
         public Builder withTimeLimitEnabled(boolean timeLimitEnabled) {
             this.timeLimitEnabled = timeLimitEnabled;
+            return this;
+        }
+
+        public Builder withTimeLimit(int timeLimit) {
+            this.timeLimit = timeLimit;
+            return this;
+        }
+
+        public Builder withTimeWindowEnabled(boolean timeWindowEnabled) {
+            this.timeWindowEnabled = timeWindowEnabled;
+            return this;
+        }
+
+        public Builder withTimeWindowFrom(long timeWindowFrom) {
+            this.timeWindowFrom = timeWindowFrom;
+            return this;
+        }
+
+        public Builder withTimeWindowUntil(long timeWindowUntil) {
+            this.timeWindowUntil = timeWindowUntil;
+            return this;
+        }
+
+        public Builder withSortOrder(int sortOrder) {
+            this.sortOrder = sortOrder;
             return this;
         }
 
@@ -521,6 +563,16 @@ public class Quest implements Comparable<Quest> {
             return this;
         }
 
+        public Builder withPlaceholders(Map<String, String> placeholders) {
+            this.placeholders = placeholders;
+            return this;
+        }
+
+        public Builder withProgressPlaceholders(Map<String, String> progressPlaceholders) {
+            this.progressPlaceholders = progressPlaceholders;
+            return this;
+        }
+
         public Builder inCategory(String categoryid) {
             this.categoryid = categoryid;
             return this;
@@ -544,6 +596,9 @@ public class Quest implements Comparable<Quest> {
             quest.cooldown = this.cooldown;
             quest.timeLimitEnabled = this.timeLimitEnabled;
             quest.timeLimit = this.timeLimit;
+            quest.timeWindowEnabled = this.timeWindowEnabled;
+            quest.timeWindowFrom = this.timeWindowFrom;
+            quest.timeWindowUntil = this.timeWindowUntil;
             quest.sortOrder = this.sortOrder;
             quest.permissionRequired = this.permissionRequired;
             quest.autoStartEnabled = this.autoStartEnabled;

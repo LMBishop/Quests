@@ -35,6 +35,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +46,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -260,6 +264,20 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         }
                     }
 
+                    final boolean timeWindowEnabled = config.getBoolean("options.time-window.enabled", false);
+
+                    if (timeWindowEnabled) {
+                        final long timeWindowFrom = toEpochMilli(config.getString("options.time-window.from", null));
+                        final long timeWindowUntil = toEpochMilli(config.getString("options.time-window.until", null));
+
+                        if (timeWindowFrom == -1L || timeWindowUntil == -1L || timeWindowFrom >= timeWindowUntil) {
+                            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                                    ConfigProblemDescriptions.INVALID_TIME_WINDOW.getDescription(),
+                                    ConfigProblemDescriptions.INVALID_TIME_WINDOW.getExtendedDescription(),
+                                    "options.time-window"));
+                        }
+                    }
+
                     boolean error = false;
                     for (ConfigProblem problem : problems) {
                         if (problem.getType() == ConfigProblem.ConfigProblemType.ERROR) {
@@ -283,15 +301,15 @@ public class BukkitQuestsLoader implements QuestsLoader {
                         String vaultReward = config.getString("vaultreward", null);
                         boolean repeatable = config.getBoolean("options.repeatable", false);
                         boolean cooldown = config.getBoolean("options.cooldown.enabled", false);
+                        int cooldownTime = config.getInt("options.cooldown.time", 10);
                         boolean timeLimit = config.getBoolean("options.time-limit.enabled", false);
+                        int timeLimitTime = config.getInt("options.time-limit.time", 10);
                         boolean permissionRequired = config.getBoolean("options.permission-required", false);
                         boolean autostart = config.getBoolean("options.autostart", false);
                         boolean cancellable = config.getBoolean("options.cancellable", true);
                         boolean countsTowardsLimit = config.getBoolean("options.counts-towards-limit", true);
                         boolean countsTowardsCompleted = config.getBoolean("options.counts-towards-completed", true);
                         boolean hidden = config.getBoolean("options.hidden", false);
-                        int cooldownTime = config.getInt("options.cooldown.time", 10);
-                        int timeLimtTime = config.getInt("options.time-limit.time", 10);
                         int sortOrder = config.getInt("options.sort-order", 1);
                         String category = config.getString("options.category");
                         Map<String, String> placeholders = new HashMap<>();
@@ -318,20 +336,23 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 .withCancelCommands(cancelCommands)
                                 .withExpiryCommands(expiryCommands)
                                 .withVaultReward(vaultReward)
-                                .withPlaceholders(placeholders)
-                                .withProgressPlaceholders(progressPlaceholders)
-                                .withCooldown(cooldownTime)
-                                .withTimeLimit(timeLimtTime)
-                                .withSortOrder(sortOrder)
-                                .withCooldownEnabled(cooldown)
-                                .withTimeLimitEnabled(timeLimit)
-                                .withPermissionRequired(permissionRequired)
                                 .withRepeatEnabled(repeatable)
+                                .withCooldownEnabled(cooldown)
+                                .withCooldown(cooldownTime)
+                                .withTimeLimitEnabled(timeLimit)
+                                .withTimeLimit(timeLimitTime)
+                                .withTimeWindowEnabled(timeWindowEnabled)
+                                .withTimeWindowFrom(toEpochMilli(config.getString("options.time-window.from", null)))
+                                .withTimeWindowUntil(toEpochMilli(config.getString("options.time-window.until", null)))
+                                .withSortOrder(sortOrder)
+                                .withPermissionRequired(permissionRequired)
+                                .withAutoStartEnabled(autostart)
                                 .withCancellable(cancellable)
                                 .withCountsTowardsLimit(countsTowardsLimit)
                                 .withCountsTowardsCompleted(countsTowardsCompleted)
                                 .withHidden(hidden)
-                                .withAutoStartEnabled(autostart)
+                                .withPlaceholders(placeholders)
+                                .withProgressPlaceholders(progressPlaceholders)
                                 .inCategory(category)
                                 .build();
 
@@ -612,4 +633,18 @@ public class BukkitQuestsLoader implements QuestsLoader {
         return new QItemStack(plugin, name, loreNormal, loreStarted, is);
     }
 
+    private static long toEpochMilli(final @Nullable String value) {
+        if (value == null) {
+            return 0L;
+        }
+
+        try {
+            return LocalDateTime.parse(value)
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()
+                    .toEpochMilli();
+        } catch (final DateTimeParseException ignored) {
+            return 0L;
+        }
+    }
 }

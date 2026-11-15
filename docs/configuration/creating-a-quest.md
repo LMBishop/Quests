@@ -446,6 +446,28 @@ options:
     time: 1440     # minutes
 ```
 
+### Time window
+
+
+*`options.time-window`*
+
+**Optional.** Defines the period during which this quest is available.
+The quest cannot be started before `from` or after `until`.
+
+Both `from` and `until` must be specified for the time window to take effect.
+When the `until` time is reached, the quest will automatically end, regardless of its current progress.
+
+Times must use the `yyyy-MM-dd'T'HH:mm:ss` format and are interpreted using the server's default time zone.
+
+```yaml
+options:
+  # ...
+  time-window:
+    enabled: true
+    from: "2026-12-01T00:00:00"
+    until: "2026-12-01T23:59:59"
+```
+
 ### Sort order
 
   

@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -89,58 +90,70 @@ public class QItemStack {
         ItemStack is = new ItemStack(startingItemStack);
         ItemMeta ism = is.getItemMeta();
         ism.setDisplayName(name);
-        List<String> formattedLore = new ArrayList<>();
-        List<String> tempLore = new ArrayList<>();
+
+        List<String> lore = new ArrayList<>();
 
         if (!plugin.getQuestsConfig().getBoolean("options.global-task-configuration-override") || globalLoreAppendNormal.isEmpty()) {
-            tempLore.addAll(loreNormal);
+            lore.addAll(loreNormal);
         }
-        tempLore.addAll(globalLoreAppendNormal);
+
+        lore.addAll(globalLoreAppendNormal);
 
         Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
+
         if (qPlayer.hasStartedQuest(quest)) {
             boolean tracked = quest.getId().equals(qPlayer.getPlayerPreferences().getTrackedQuestId());
+
             if (!plugin.getQuestsConfig().getBoolean("options.global-task-configuration-override")|| globalLoreAppendStarted.isEmpty()) {
-                tempLore.addAll(loreStarted);
+                lore.addAll(loreStarted);
             }
+
             if (tracked) {
-                tempLore.addAll(globalLoreAppendTracked);
+                lore.addAll(globalLoreAppendTracked);
             } else {
-                tempLore.addAll(globalLoreAppendStarted);
+                lore.addAll(globalLoreAppendStarted);
             }
+
             ism.addEnchant(Enchantment.KNOCKBACK, 1, true);
+
             try {
                 ism.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 ism.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
             } catch (Exception ignored) { }
         } else {
-            tempLore.addAll(globalLoreAppendNotStarted);
+            lore.addAll(globalLoreAppendNotStarted);
         }
+
         if (plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
             ism.setDisplayName(plugin.getPlaceholderAPIProcessor().apply(player, ism.getDisplayName()));
         }
+
         if (questProgress != null) {
-            for (String s : tempLore) {
-                s = processPlaceholders(plugin, s, questProgress);
-                s = processTimeLeft(s, quest, qPlayer.getQuestProgressFile());
-                if (plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
-                    s = plugin.getPlaceholderAPIProcessor().apply(player, s);
+            lore.replaceAll(line -> {
+                line = processPlaceholders(this.plugin, line, questProgress);
+                line = processTimeLeft(line, quest, qPlayer.getQuestProgressFile());
+
+                if (this.plugin.getQuestsConfig().getBoolean("options.gui-use-placeholderapi")) {
+                    line = this.plugin.getPlaceholderAPIProcessor().apply(player, line);
                 }
-                formattedLore.add(s);
-            }
+
+                return line;
+            });
         }
-        ism.setLore(formattedLore);
+
+        ism.setLore(lore);
         is.setItemMeta(ism);
+
         return is;
     }
 
     public static final Pattern TASK_PLACEHOLDER_PATTERN = Pattern.compile("\\{([^}]+):(progress|goal|complete|id)}");
 
-    public static String processPlaceholders(BukkitQuestsPlugin plugin, String s, QuestProgress questProgress) {
+    public static String processPlaceholders(BukkitQuestsPlugin plugin, String s, @NotNull QuestProgress questProgress) {
         return processPlaceholders(plugin, s, questProgress, null);
     }
 
-    public static String processPlaceholders(BukkitQuestsPlugin plugin, String s, QuestProgress questProgress, TaskProgress taskProgress) {
+    public static String processPlaceholders(BukkitQuestsPlugin plugin, String s, @NotNull QuestProgress questProgress, TaskProgress taskProgress) {
         Matcher matcher = TASK_PLACEHOLDER_PATTERN.matcher(s);
 
         while (matcher.find()) {
@@ -221,7 +234,7 @@ public class QItemStack {
 
     public static String processTimeLeft(String s, Quest quest, QuestProgressFile questProgressFile) {
         String timeLeft;
-        if (quest.isTimeLimitEnabled()) {
+        if (quest.isTimeLimitEnabled() || quest.isTimeWindowEnabled()) {
             timeLeft = FormatUtils.time(TimeUnit.SECONDS.convert(questProgressFile.getTimeRemainingFor(quest), TimeUnit.MILLISECONDS));
         } else {
             timeLeft = Chat.legacyColor(Messages.UI_PLACEHOLDERS_NO_TIME_LIMIT.getMessageLegacyColor());
