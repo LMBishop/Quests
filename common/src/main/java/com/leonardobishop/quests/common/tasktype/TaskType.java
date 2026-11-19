@@ -33,6 +33,7 @@ public abstract class TaskType {
     private final List<String> aliases;
     private final List<ConfigValidator> configValidators;
     private final List<Quest> quests;
+    private long questRegistrationRevision;
 
     /**
      * Constructs a new TaskType with the specified parameters.
@@ -145,6 +146,10 @@ public abstract class TaskType {
         return Collections.unmodifiableList(this.quests);
     }
 
+    public final long getQuestRegistrationRevision() {
+        return this.questRegistrationRevision;
+    }
+
     /**
      * Registers a quest to this task type. This is typically done when
      * all quests are initially loaded.
@@ -156,6 +161,7 @@ public abstract class TaskType {
 
         if (!this.quests.contains(quest)) {
             this.quests.add(quest);
+            this.questRegistrationRevision++;
         }
     }
 
@@ -164,6 +170,7 @@ public abstract class TaskType {
      */
     public final void unregisterAll() {
         this.quests.clear();
+        this.questRegistrationRevision++;
     }
 
     /**
