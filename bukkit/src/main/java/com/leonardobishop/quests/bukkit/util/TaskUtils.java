@@ -287,12 +287,16 @@ public class TaskUtils {
     }
 
     public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type, EnumSet<TaskConstraint> constraintSet) {
+        return getApplicableTasks(player, qPlayer, type, constraintSet, type.getRegisteredQuests());
+    }
+
+    public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type, EnumSet<TaskConstraint> constraintSet, List<Quest> candidates) {
         List<PendingTask> tasks = new ArrayList<>();
 
         // Cache it as getting it requires some complex math
         String biomeKey = null;
 
-        for (Quest quest : type.getRegisteredQuests()) {
+        for (Quest quest : candidates) {
             if (qPlayer.hasStartedQuest(quest)) {
                 QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 

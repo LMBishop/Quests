@@ -31,6 +31,7 @@ import java.util.Map;
 public final class FarmingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
+    private final BlockQuestIndex blockQuests = new BlockQuestIndex(this);
 
     public FarmingTaskType(BukkitQuestsPlugin plugin) {
         super("farming", TaskUtils.TASK_ATTRIBUTION_STRING, "Break or harvest a set amount of a crop.", "farmingcertain");
@@ -49,6 +50,11 @@ public final class FarmingTaskType extends BukkitTaskType {
         super.addConfigValidator(TaskUtils.useBooleanConfigValidator(this, "check-coreprotect"));
         super.addConfigValidator(TaskUtils.useIntegerConfigValidator(this, "check-coreprotect-time"));
         super.addConfigValidator(TaskUtils.useAcceptedValuesConfigValidator(this, Mode.STRING_MODE_MAP.keySet(), "mode", null, false));
+    }
+
+    @Override
+    public void onReady() {
+        blockQuests.rebuild();
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -111,6 +117,10 @@ public final class FarmingTaskType extends BukkitTaskType {
     }
 
     private void handle(Player player, QPlayer qPlayer, Block block, Mode mode, boolean performAgeCheck) {
+        List<Quest> candidates = blockQuests.candidates(block.getType());
+        if (candidates.isEmpty()) {
+            return;
+        }
         if (performAgeCheck) {
             BlockData blockData = block.getBlockData();
             if (!(blockData instanceof Ageable crop && crop.getAge() == crop.getMaximumAge() || plugin.getVersionSpecificHandler().isCaveVinesPlantWithBerries(blockData))) {
@@ -118,7 +128,7 @@ public final class FarmingTaskType extends BukkitTaskType {
             }
         }
 
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL, candidates)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
