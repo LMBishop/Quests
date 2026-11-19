@@ -23,9 +23,12 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public final class MobkillingTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
+    private final MobQuestIndex mobQuests = new MobQuestIndex(this);
     private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
     private final Table<String, String, QuestItem> fixedQuestProjectileItemCache = HashBasedTable.create();
 
@@ -61,6 +64,7 @@ public final class MobkillingTaskType extends BukkitTaskType {
     public void onReady() {
         fixedQuestItemCache.clear();
         fixedQuestProjectileItemCache.clear();
+        mobQuests.rebuild();
     }
 
     private final class EntityDeathListener implements Listener {
@@ -101,12 +105,17 @@ public final class MobkillingTaskType extends BukkitTaskType {
             return;
         }
 
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
-        if (qPlayer == null) {
+        if (entity instanceof Player) {
             return;
         }
 
-        if (entity instanceof Player) {
+        List<Quest> candidates = mobQuests.candidates(entity.getType());
+        if (candidates.isEmpty()) {
+            return;
+        }
+
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+        if (qPlayer == null) {
             return;
         }
 
@@ -119,7 +128,7 @@ public final class MobkillingTaskType extends BukkitTaskType {
         //noinspection deprecation
         String customName = entity.getCustomName();
 
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL, candidates)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
