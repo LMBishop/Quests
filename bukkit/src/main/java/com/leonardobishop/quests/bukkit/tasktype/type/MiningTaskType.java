@@ -22,9 +22,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public final class MiningTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
+    private final BlockQuestIndex blockQuests = new BlockQuestIndex(this);
     private final Table<String, String, QuestItem> fixedQuestItemCache = HashBasedTable.create();
 
     public MiningTaskType(BukkitQuestsPlugin plugin) {
@@ -47,10 +50,16 @@ public final class MiningTaskType extends BukkitTaskType {
     @Override
     public void onReady() {
         fixedQuestItemCache.clear();
+        blockQuests.rebuild();
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
+        Block block = event.getBlock();
+        List<Quest> candidates = blockQuests.candidates(block.getType());
+        if (candidates.isEmpty()) {
+            return;
+        }
         Player player = event.getPlayer();
         if (player.hasMetadata("NPC")) {
             return;
@@ -61,11 +70,10 @@ public final class MiningTaskType extends BukkitTaskType {
             return;
         }
 
-        Block block = event.getBlock();
         ItemStack item = plugin.getVersionSpecificHandler().getItemInMainHand(player);
         boolean silkTouchPresent = item != null && item.getEnchantmentLevel(Enchantment.SILK_TOUCH) > 0;
 
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL, candidates)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
