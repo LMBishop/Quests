@@ -16,9 +16,9 @@ Reach a certain balance.
 
 ## Options
 
-| Key      | Description          | Type    | Required | Default | Notes |
-|----------|----------------------|---------|----------|---------|-------|
-| `amount` | The amount to reach. | Integer | Yes      | \-      | \-    |
+| Key      | Description          | Type    | Required | Default | Notes               |
+|----------|----------------------|---------|----------|---------|---------------------|
+| `amount` | The amount to reach. | Integer | Yes      | \-      | Must be at least 1. |
 
 ## Examples
 

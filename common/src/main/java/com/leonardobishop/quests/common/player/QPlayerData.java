@@ -1,13 +1,11 @@
 package com.leonardobishop.quests.common.player;
 
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
-import com.leonardobishop.quests.common.util.Modern;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Objects;
 import java.util.UUID;
 
-@Modern(type = Modern.Type.FULL)
 @NullMarked
 public final class QPlayerData {
 

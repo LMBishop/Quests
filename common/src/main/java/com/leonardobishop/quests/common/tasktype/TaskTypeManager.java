@@ -2,7 +2,6 @@ package com.leonardobishop.quests.common.tasktype;
 
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import com.leonardobishop.quests.common.util.Modern;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -26,12 +25,11 @@ import java.util.function.Supplier;
  * Task types can only be registered when registrations are enabled, typically during the startup phase.
  * This ensures that quests are only registered to task types after all task types have been registered.
  */
-@Modern(type = Modern.Type.FULL)
 @NullMarked
 public abstract class TaskTypeManager {
 
     private final Set<String> exclusions;
-    private final Map<String, TaskType> taskTypes;
+    private final Map<String, TaskType<?>> taskTypes;
     private final Map<String, String> aliases;
     private boolean registrationsOpen;
     private int registered;
@@ -78,7 +76,7 @@ public abstract class TaskTypeManager {
      * @return an unmodifiable collection of registered task types
      */
     @Contract(pure = true)
-    public @UnmodifiableView Collection<TaskType> getTaskTypes() {
+    public @UnmodifiableView Collection<TaskType<?>> getTaskTypes() {
         return Collections.unmodifiableCollection(this.taskTypes.values());
     }
 
@@ -89,10 +87,10 @@ public abstract class TaskTypeManager {
      * @return the registered task type, or null if not found
      */
     @Contract(pure = true)
-    public @Nullable TaskType getTaskType(final String type) {
+    public @Nullable TaskType<?> getTaskType(final String type) {
         Objects.requireNonNull(type, "type cannot be null");
 
-        final TaskType taskType = this.taskTypes.get(type);
+        final TaskType<?> taskType = this.taskTypes.get(type);
         if (taskType != null) {
             return taskType;
         }
@@ -126,7 +124,7 @@ public abstract class TaskTypeManager {
      * @param taskType the task type to be registered; must not be null
      * @return whether the task type was successfully registered
      */
-    public boolean registerTaskType(final TaskType taskType) {
+    public boolean registerTaskType(final TaskType<?> taskType) {
         Objects.requireNonNull(taskType, "taskType cannot be null");
 
         if (!this.registrationsOpen) {
@@ -160,7 +158,7 @@ public abstract class TaskTypeManager {
      * @param compatibilitySuppliers suppliers that check for task type compatibility; must not be null
      * @return whether the task type was successfully registered
      */
-    public boolean registerTaskType(final Supplier<TaskType> taskTypeSupplier, final BooleanSupplier... compatibilitySuppliers) {
+    public boolean registerTaskType(final Supplier<? extends TaskType<?>> taskTypeSupplier, final BooleanSupplier... compatibilitySuppliers) {
         Objects.requireNonNull(taskTypeSupplier, "taskTypeSupplier cannot be null");
         Objects.requireNonNull(compatibilitySuppliers, "compatibilitySuppliers cannot be null");
 
@@ -191,7 +189,7 @@ public abstract class TaskTypeManager {
         }
 
         for (final Task task : quest.getTasks()) {
-            final TaskType taskType = this.getTaskType(task.getType());
+            final TaskType<?> taskType = this.getTaskType(task.getType());
 
             if (taskType != null) {
                 taskType.registerQuest(quest);
@@ -203,7 +201,7 @@ public abstract class TaskTypeManager {
      * Resets all quest-to-task type registrations. This does not clear the task types registered with the task type manager.
      */
     public void resetTaskTypes() {
-        for (final TaskType taskType : this.taskTypes.values()) {
+        for (final TaskType<?> taskType : this.taskTypes.values()) {
             taskType.unregisterAll();
         }
     }

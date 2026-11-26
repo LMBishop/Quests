@@ -16,9 +16,9 @@ Earn a certain amount of money after starting quest.
 
 ## Options
 
-| Key      | Description         | Type    | Required | Default | Notes |
-|----------|---------------------|---------|----------|---------|-------|
-| `amount` | The amount to earn. | Integer | Yes      | \-      | \-    |
+| Key      | Description         | Type    | Required | Default | Notes               |
+|----------|---------------------|---------|----------|---------|---------------------|
+| `amount` | The amount to earn. | Integer | Yes      | \-      | Must be at least 1. |
 
 ## Examples
 

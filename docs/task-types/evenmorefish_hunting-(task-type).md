@@ -18,7 +18,7 @@ Hunt a set amount of EvenMoreFish fish.
 
 | Key                   | Description                                         | Type                | Required | Default | Notes                                                       |
 |-----------------------|-----------------------------------------------------|---------------------|----------|---------|-------------------------------------------------------------|
-| `amount`              | The number of fish to hunt.                         | Integer             | Yes      | \-      | \-                                                          |
+| `amount`              | The number of fish to hunt.                         | Integer             | Yes      | \-      | Must be at least 1.                                         |
 | `rarity` / `rarities` | The specific rarity name(s) to hunt.                | String              | No       | \-      | If this value is not specified, then any rarity will count. |
 | `rarity-match-mode`   | The match mode to be used to compare the strings    | String              | No       | EQUALS  | One of: `EQUALS`, `STARTS_WITH`, `ENDS_WITH`.               |
 | `fish` / `fishes`     | The specific fish name(s) to hunt.                  | String              | No       | \-      | If this value is not specified, then any fish will count.   |

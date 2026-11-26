@@ -16,9 +16,9 @@ Reach a certain ASkyBlock level.
 
 ## Options
 
-| Key     | Description         | Type    | Required | Default | Notes |
-|---------|---------------------|---------|----------|---------|-------|
-| `level` | The level to reach. | Integer | Yes      | \-      | \-    |
+| Key     | Description         | Type    | Required | Default | Notes               |
+|---------|---------------------|---------|----------|---------|---------------------|
+| `level` | The level to reach. | Integer | Yes      | \-      | Must be at least 0. |
 
 ## Examples
 

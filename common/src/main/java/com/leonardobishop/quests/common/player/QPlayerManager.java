@@ -4,7 +4,6 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFi
 import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.questcontroller.QuestController;
 import com.leonardobishop.quests.common.storage.StorageProvider;
-import com.leonardobishop.quests.common.util.Modern;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -21,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * The QPlayerManager is responsible for keeping a reference to all players on the server and is used to
  * obtain an instance of a player, load new players and save current players.
  */
-@Modern(type = Modern.Type.FULL)
 @NullMarked
 public final class QPlayerManager {
 

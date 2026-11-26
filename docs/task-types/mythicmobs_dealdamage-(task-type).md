@@ -16,18 +16,18 @@ Deal a certain amount of damage to a MythicMobs mob.
 
 ## Options
 
-| Key               | Description                                            | Type                | Required | Default | Notes                                                                                                    |
-|-------------------|--------------------------------------------------------|---------------------|----------|---------|----------------------------------------------------------------------------------------------------------|
-| `amount`          | The amount of damage needed.                           | Integer             | Yes      | \-      | Damage is measured in HP, 1 heart = 2 HP. A player has 20 HP by default, with no status effects applied. |
-| `name` / `names`  | The MythicMob ID.                                      | String              | Yes      | \-      | \-                                                                                                       |
-| `name-match-mode` | The match mode to be used to compare the strings       | String              | No       | EQUALS  | One of: `EQUALS`, `STARTS_WITH`, `ENDS_WITH`.                                                            |
-| `level`           | The level the mob must be at.                          | Integer             | Yes      | \-      | \-                                                                                                       |
-| `min-level`       | The minimum level the mob must be at.                  | Integer             | Yes      | \-      | \-                                                                                                       |
-| `item`            | Specific item which should be used to deal damage.     | ItemStack           | No       | \-      | Accepts standard [item definition](../configuration/defining-items).                                     |
-| `data`            | The data code for the item.                            | Integer             | No       | 0       | This field is not used in Minecraft versions 1.13+, nor is it compatible with ItemStack definitions.     |
-| `exact-match`     | Whether the item should exactly match what is defined. | Boolean             | No       | true    | \-                                                                                                       |
-| `worlds`          | Worlds which should count towards the progress.        | List of world names | No       | \-      | \-                                                                                                       |
-| `ignored-worlds`  | Worlds which should not count towards the progress.    | List of world names | No       | \-      | \-                                                                                                       |
+| Key               | Description                                            | Type                | Required | Default | Notes                                                                                                                             |
+|-------------------|--------------------------------------------------------|---------------------|----------|---------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `amount`          | The amount of damage needed.                           | Integer             | Yes      | \-      | Damage is measured in HP, 1 heart = 2 HP. A player has 20 HP by default, with no status effects applied. Must be at least 1.      |
+| `name` / `names`  | The MythicMob ID.                                      | String              | Yes      | \-      | \-                                                                                                                                |
+| `name-match-mode` | The match mode to be used to compare the strings       | String              | No       | EQUALS  | One of: `EQUALS`, `STARTS_WITH`, `ENDS_WITH`.                                                                                     |
+| `level`           | The level the mob must be at.                          | Integer             | Yes      | \-      | \-                                                                                                                                |
+| `min-level`       | The minimum level the mob must be at.                  | Integer             | Yes      | \-      | \-                                                                                                                                |
+| `item`            | Specific item which should be used to deal damage.     | ItemStack           | No       | \-      | Accepts standard [item definition](../configuration/defining-items).                                                              |
+| `data`            | The data code for the item.                            | Integer             | No       | 0       | This field is not used in Minecraft versions 1.13+, nor is it compatible with ItemStack definitions. Must be between 0 and 32767. |
+| `exact-match`     | Whether the item should exactly match what is defined. | Boolean             | No       | true    | \-                                                                                                                                |
+| `worlds`          | Worlds which should count towards the progress.        | List of world names | No       | \-      | \-                                                                                                                                |
+| `ignored-worlds`  | Worlds which should not count towards the progress.    | List of world names | No       | \-      | \-                                                                                                                                |
 
 ## Examples
 

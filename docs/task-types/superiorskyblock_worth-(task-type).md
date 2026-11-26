@@ -16,9 +16,9 @@ Reach a certain SuperiorSkyblock worth.
 
 ## Options
 
-| Key     | Description         | Type    | Required | Default | Notes |
-|---------|---------------------|---------|----------|---------|-------|
-| `worth` | The worth to reach. | Integer | Yes      | \-      | \-    |
+| Key     | Description         | Type    | Required | Default | Notes               |
+|---------|---------------------|---------|----------|---------|---------------------|
+| `worth` | The worth to reach. | Integer | Yes      | \-      | Must be at least 0. |
 
 ## Examples
 

@@ -1,9 +1,8 @@
 package com.leonardobishop.quests.common.tasktype;
 
-import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import com.leonardobishop.quests.common.util.Modern;
+import com.leonardobishop.quests.common.tasktype.key.TaskSchema;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -13,7 +12,6 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -22,16 +20,20 @@ import java.util.UUID;
  * will be associated with this task type if it contains at least one task
  * of this type, allowing for efficient quest management without the need
  * to iterate through every single quest.
+ * <p>
+ * Each task type has its own {@link Task} implementation {@code T}, described by a {@link TaskSchema}.
+ * The schema is used once per task while quests are loaded to parse and validate its options.
+ *
+ * @param <T> the task implementation of this task type
  */
-@Modern(type = Modern.Type.FULL)
 @NullMarked
-public abstract class TaskType {
+public abstract class TaskType<T extends Task> {
 
     protected final String type;
     private final @Nullable String author;
     private final @Nullable String description;
+    private final TaskSchema<T> schema;
     private final List<String> aliases;
-    private final List<ConfigValidator> configValidators;
     private final List<Quest> quests;
 
     /**
@@ -40,17 +42,19 @@ public abstract class TaskType {
      * @param type        the name of the task type; must not contain spaces
      * @param author      the name of the person (or people) who created this task type; can be null
      * @param description a short description of the task type; can be null
+     * @param schema      the schema of tasks of this type; must not be null
      * @param aliases     an array of alternative names for this task type; must not be null
      */
-    public TaskType(final String type, final @Nullable String author, final @Nullable String description, final String... aliases) {
+    public TaskType(final String type, final @Nullable String author, final @Nullable String description, final TaskSchema<T> schema, final String... aliases) {
         Objects.requireNonNull(type, "type cannot be null");
+        Objects.requireNonNull(schema, "schema cannot be null");
         Objects.requireNonNull(aliases, "aliases cannot be null");
 
         this.type = type;
         this.author = author;
         this.description = description;
+        this.schema = schema;
         this.aliases = List.of(aliases);
-        this.configValidators = new ArrayList<>();
         this.quests = new ArrayList<>();
     }
 
@@ -60,18 +64,20 @@ public abstract class TaskType {
      * @param type        the name of the task type; must not contain spaces
      * @param author      the name of the person (or people) who created this task type; can be null
      * @param description a short description of the task type; can be null
+     * @param schema      the schema of tasks of this type; must not be null
      */
-    public TaskType(final String type, final @Nullable String author, final @Nullable String description) {
-        this(type, author, description, new String[0]);
+    public TaskType(final String type, final @Nullable String author, final @Nullable String description, final TaskSchema<T> schema) {
+        this(type, author, description, schema, new String[0]);
     }
 
     /**
      * Constructs a new TaskType with the specified type.
      *
-     * @param type the name of the task type; must not contain spaces
+     * @param type   the name of the task type; must not contain spaces
+     * @param schema the schema of tasks of this type; must not be null
      */
-    public TaskType(final String type) {
-        this(type, null, null);
+    public TaskType(final String type, final TaskSchema<T> schema) {
+        this(type, null, null, schema);
     }
 
     /**
@@ -105,6 +111,16 @@ public abstract class TaskType {
     }
 
     /**
+     * Returns the schema describing the options accepted by tasks of this type.
+     *
+     * @return the task schema
+     */
+    @Contract(pure = true)
+    public final TaskSchema<T> getSchema() {
+        return this.schema;
+    }
+
+    /**
      * Returns an unmodifiable list of aliases for this task type.
      *
      * @return an unmodifiable list of aliases
@@ -112,27 +128,6 @@ public abstract class TaskType {
     @Contract(pure = true)
     public final @Unmodifiable List<String> getAliases() {
         return this.aliases;
-    }
-
-    /**
-     * Returns an unmodifiable view of the list of configuration validators for this task type.
-     *
-     * @return an unmodifiable view of the configuration validators
-     */
-    @Contract(pure = true)
-    public @UnmodifiableView List<ConfigValidator> getConfigValidators() {
-        return Collections.unmodifiableList(this.configValidators);
-    }
-
-    /**
-     * Adds a configuration validator to this task type.
-     *
-     * @param validator the configuration validator to add; must not be null
-     */
-    public void addConfigValidator(final ConfigValidator validator) {
-        Objects.requireNonNull(validator, "validator cannot be null");
-
-        this.configValidators.add(validator);
     }
 
     /**
@@ -182,7 +177,7 @@ public abstract class TaskType {
      * @param task       the task being started
      * @param playerUUID the UUID of the player starting the quest
      */
-    public void onStart(final Quest quest, final Task task, final UUID playerUUID) {
+    public void onStart(final Quest quest, final T task, final UUID playerUUID) {
         // Not implemented here
     }
 
@@ -194,24 +189,24 @@ public abstract class TaskType {
     }
 
     /**
-     * Returns the goal of a task.
+     * Returns all tasks of this type in the given quest.
+     *
+     * @param quest the quest
+     * @return tasks of this type
      */
-    public Object getGoal(final Task task) {
-        return task.getConfigValue("amount", "-");
+    @SuppressWarnings("unchecked")
+    @Contract(pure = true)
+    public final List<T> getTasks(final Quest quest) {
+        return (List<T>) quest.getTasksOfType(this.type);
     }
 
     /**
-     * A functional interface for validating task configuration.
+     * Calls {@link #onStart(Quest, Task, UUID)} for a task of unknown static type.
+     *
+     * @throws ClassCastException if the task was not created by this task type
      */
-    @FunctionalInterface
-    public interface ConfigValidator {
-
-        /**
-         * Validates the configuration for a task.
-         *
-         * @param taskConfig the configuration map for the task
-         * @param problems   a list to collect any configuration problems found
-         */
-        void validateConfig(Map<String, Object> taskConfig, List<ConfigProblem> problems);
+    @SuppressWarnings("unchecked")
+    public final void start(final Quest quest, final Task task, final UUID playerUUID) {
+        this.onStart(quest, (T) task, playerUUID);
     }
 }

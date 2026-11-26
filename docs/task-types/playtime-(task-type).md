@@ -18,7 +18,7 @@ Before Quests v2.0, this task was known as `TIMEPLAYED`.
 
 | Key          | Description                            | Type    | Required | Default | Notes                |
 |--------------|----------------------------------------|---------|----------|---------|----------------------|
-| `minutes`    | The number of minutes to play.         | Integer | Yes      | \-      | \-                   |
+| `minutes`    | The number of minutes to play.         | Integer | Yes      | \-      | Must be at least 1.  |
 | `ignore-afk` | Whether AFK players should be ignored. | Boolean | Yes      | \-      | Requires Essentials. |
 
 ## Examples

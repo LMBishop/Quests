@@ -116,6 +116,12 @@ public enum ConfigProblemDescriptions {
                     "if '%s' failed to load, or a mis-typed ID."
     ),
     NOT_ACCEPTED_VALUE("Value '%s' is not in the list of accepted values for task %s", null),
+    UNKNOWN_TASK_OPTION("Option '%s' is not used by task type '%s' and will be ignored",
+            "Option '%s' is not known to task type '%s'.<br>" +
+                    "It may be misspelled, or belong to another task type.<br>" +
+                    "Please review the relevant documentation on the wiki.<br><br>" +
+                    "Known options: %s"
+    ),
     INVALID_TIME_WINDOW("Invalid time window configuration",
             "Time window must have valid 'from' and 'until' values.<br>" +
                     "Both values are required and must use the format<br>" +

@@ -18,7 +18,7 @@ Kill a certain MythicMobs mob.
 
 | Key               | Description                                         | Type                | Required | Default | Notes                                         |
 |-------------------|-----------------------------------------------------|---------------------|----------|---------|-----------------------------------------------|
-| `amount`          | The number of mobs to kill.                         | Integer             | Yes      | \-      | \-                                            |
+| `amount`          | The number of mobs to kill.                         | Integer             | Yes      | \-      | Must be at least 1.                           |
 | `name` / `names`  | The MythicMob ID.                                   | String              | Yes      | \-      | \-                                            |
 | `name-match-mode` | The match mode to be used to compare the strings    | String              | No       | EQUALS  | One of: `EQUALS`, `STARTS_WITH`, `ENDS_WITH`. |
 | `level`           | The level the mob must be at.                       | Integer             | Yes      | \-      | \-                                            |

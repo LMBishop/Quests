@@ -54,7 +54,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -197,6 +196,8 @@ public class BukkitQuestsLoader implements QuestsLoader {
 
                     // CHECK EVERYTHING WRONG WITH THE QUEST FILE BEFORE ACTUALLY LOADING THE QUEST
 
+                    List<Task> loadedTasks = new ArrayList<>();
+
                     if (!config.isConfigurationSection("tasks")) {
                         problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
                                 ConfigProblemDescriptions.NO_TASKS.getDescription(),
@@ -204,8 +205,8 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 "tasks"));
                     } else { //continue
                         int validTasks = 0;
+                        boolean globalOverride = questsConfig.getBoolean("options.global-task-configuration-override");
                         for (String taskId : config.getConfigurationSection("tasks").getKeys(false)) {
-                            boolean isValid = true;
                             String taskRoot = "tasks." + taskId;
                             String taskType = config.getString(taskRoot + ".type");
 
@@ -225,34 +226,47 @@ public class BukkitQuestsLoader implements QuestsLoader {
                                 continue;
                             }
 
-                            // check the tasks
                             String resolvedTaskTypeName = taskTypeManager.resolveTaskTypeName(taskType);
-                            if (resolvedTaskTypeName != null) {
-                                TaskType t = taskTypeManager.getTaskType(resolvedTaskTypeName);
-                                HashMap<String, Object> configValues = new HashMap<>();
-                                for (String key : config.getConfigurationSection(taskRoot).getKeys(false)) {
-                                    configValues.put(key, config.get(taskRoot + "." + key));
-                                }
+                            TaskType<?> t = resolvedTaskTypeName != null ? taskTypeManager.getTaskType(resolvedTaskTypeName) : null;
 
-                                List<ConfigProblem> taskProblems = new ArrayList<>();
-                                for (TaskType.ConfigValidator validator : t.getConfigValidators()) {
-                                    validator.validateConfig(configValues, taskProblems);
-                                }
-
-                                // pre-pend task root to locations
-                                for (ConfigProblem problem : taskProblems) {
-                                    problems.add(new ConfigProblem(problem.getType(), problem.getDescription(),
-                                            problem.getExtendedDescription(), taskRoot + "." + problem.getLocation()));
-                                }
-                            } else {
+                            if (t == null) {
                                 problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
                                         ConfigProblemDescriptions.UNKNOWN_TASK_TYPE.getDescription(taskType),
                                         ConfigProblemDescriptions.UNKNOWN_TASK_TYPE.getExtendedDescription(taskType),
                                         taskRoot));
-                                isValid = false;
+                                continue;
                             }
 
-                            if (isValid) {
+                            // raw values: task section merged with the global task configuration of its type
+                            Map<String, Object> rawValues = new HashMap<>();
+                            for (String key : config.getConfigurationSection(taskRoot).getKeys(false)) {
+                                rawValues.put(key, config.get(taskRoot + "." + key));
+                                if (!key.equals("type") && !t.getSchema().acceptsPath(key)) {
+                                    String knownOptions = String.join(", ", t.getSchema().getPaths());
+                                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                                            ConfigProblemDescriptions.UNKNOWN_TASK_OPTION.getDescription(key, resolvedTaskTypeName),
+                                            ConfigProblemDescriptions.UNKNOWN_TASK_OPTION.getExtendedDescription(key, resolvedTaskTypeName, knownOptions),
+                                            taskRoot + "." + key));
+                                }
+                            }
+                            for (Map.Entry<String, Object> entry : globalTaskConfig.getOrDefault(resolvedTaskTypeName, Map.of()).entrySet()) {
+                                if (globalOverride || !rawValues.containsKey(entry.getKey())) {
+                                    rawValues.put(entry.getKey(), entry.getValue());
+                                }
+                            }
+
+                            // parse every option exactly once
+                            List<ConfigProblem> taskProblems = new ArrayList<>();
+                            Task task = t.getSchema().load(taskId, resolvedTaskTypeName, rawValues, taskProblems);
+
+                            // pre-pend task root to locations
+                            for (ConfigProblem problem : taskProblems) {
+                                String location = problem.getLocation().isEmpty() ? taskRoot : taskRoot + "." + problem.getLocation();
+                                problems.add(new ConfigProblem(problem.getType(), problem.getDescription(), problem.getExtendedDescription(), location));
+                            }
+
+                            if (task != null) {
+                                loadedTasks.add(task);
                                 validTasks++;
                             }
                         }
@@ -369,37 +383,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                             }
                         }
 
-                        for (String taskId : config.getConfigurationSection("tasks").getKeys(false)) {
-                            String taskRoot = "tasks." + taskId;
-                            String taskType = config.getString(taskRoot + ".type");
-                            String resolvedTaskTypeName = taskTypeManager.resolveTaskTypeName(taskType);
-                            if (resolvedTaskTypeName == null) continue;
-
-                            Task task = new Task(taskId, resolvedTaskTypeName);
-
-                            for (String key : config.getConfigurationSection(taskRoot).getKeys(false)) {
-                                task.addConfigValue(key, config.get(taskRoot + "." + key));
-                            }
-
-                            final Map<String, Object> taskTypeGlobalTaskConfig = globalTaskConfig.getOrDefault(resolvedTaskTypeName, Map.of());
-
-                            for (final Map.Entry<String, Object> entry : taskTypeGlobalTaskConfig.entrySet()) {
-                                if (!questsConfig.getBoolean("options.global-task-configuration-override") && task.hasConfigKey(entry.getKey())) {
-                                    continue;
-                                }
-
-                                task.addConfigValue(entry.getKey(), entry.getValue());
-                            }
-
-                            // TODO while the solution is bad, there's no better one
-                            //      possible without rewriting the way tasks are loaded
-                            if (task.getConfigValue("worlds") instanceof final List<?> list) {
-                                task.addConfigValue("worlds", Set.copyOf(list));
-                            }
-                            if (task.getConfigValue("ignored-worlds") instanceof final List<?> list) {
-                                task.addConfigValue("ignored-worlds", Set.copyOf(list));
-                            }
-
+                        for (Task task : loadedTasks) {
                             quest.registerTask(task);
                         }
 
@@ -633,9 +617,12 @@ public class BukkitQuestsLoader implements QuestsLoader {
         return new QItemStack(plugin, name, loreNormal, loreStarted, is);
     }
 
+    /**
+     * @return epoch millis of the given ISO local date-time, or -1 if it is missing or invalid
+     */
     private static long toEpochMilli(final @Nullable String value) {
         if (value == null) {
-            return 0L;
+            return -1L;
         }
 
         try {
@@ -644,7 +631,7 @@ public class BukkitQuestsLoader implements QuestsLoader {
                     .toInstant()
                     .toEpochMilli();
         } catch (final DateTimeParseException ignored) {
-            return 0L;
+            return -1L;
         }
     }
 }

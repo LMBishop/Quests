@@ -16,9 +16,9 @@ Break a set amount of beds in BedWars1058.
 
 ## Options
 
-| Key      | Description                  | Type                | Required | Default | Notes |
-|----------|------------------------------|---------------------|----------|---------|-------|
-| `amount` | The amount of beds to break. | Integer             | Yes      | \-      | \-    |
+| Key      | Description                  | Type    | Required | Default | Notes               |
+|----------|------------------------------|---------|----------|---------|---------------------|
+| `amount` | The amount of beds to break. | Integer | Yes      | \-      | Must be at least 1. |
 
 ## Examples
 

@@ -1,6 +1,5 @@
 package com.leonardobishop.quests.common.player.questprogressfile;
 
-import com.leonardobishop.quests.common.util.Modern;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -8,7 +7,6 @@ import org.jspecify.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-@Modern(type = Modern.Type.FULL)
 @NullMarked
 public final class TaskProgress {
 

@@ -1,6 +1,5 @@
 package com.leonardobishop.quests.bukkit.hook.papi.util;
 
-import com.leonardobishop.quests.common.util.Modern;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Collections;
@@ -8,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Modern(type = Modern.Type.FULL)
 @NullMarked
 public final class EnumUtil {
 

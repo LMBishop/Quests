@@ -16,9 +16,9 @@ Get a final kill in a BedWars1058 game.
 
 ## Options
 
-| Key      | Description                | Type                | Required | Default | Notes |
-|----------|----------------------------|---------------------|----------|---------|-------|
-| `amount` | The amount of final kills. | Integer             | Yes      | \-      | \-    |
+| Key      | Description                | Type    | Required | Default | Notes               |
+|----------|----------------------------|---------|----------|---------|---------------------|
+| `amount` | The amount of final kills. | Integer | Yes      | \-      | Must be at least 1. |
 
 ## Examples
 

@@ -5,12 +5,10 @@ import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.common.quest.Category;
 import com.leonardobishop.quests.common.quest.Quest;
-import com.leonardobishop.quests.common.util.Modern;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-@Modern(type = Modern.Type.FULL)
 @NullMarked
 public final class DisplayNameUtil {
 

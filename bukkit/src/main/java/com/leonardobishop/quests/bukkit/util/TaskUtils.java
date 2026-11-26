@@ -1,30 +1,25 @@
 package com.leonardobishop.quests.bukkit.util;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
-import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
+import com.leonardobishop.quests.bukkit.tasktype.BukkitTask;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.key.BlockSpec;
 import com.leonardobishop.quests.bukkit.util.chat.Chat;
 import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraint;
 import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
 import com.leonardobishop.quests.bukkit.util.lang3.StringUtils;
-import com.leonardobishop.quests.common.config.ConfigProblem;
-import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import com.leonardobishop.quests.common.tasktype.TaskType;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -38,12 +33,8 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -58,32 +49,6 @@ public class TaskUtils {
         plugin = BukkitQuestsPlugin.getPlugin(BukkitQuestsPlugin.class);
     }
 
-    public static boolean validateWorld(final Player player, final Task task) {
-        return validateWorld(player, task, "worlds", true);
-    }
-
-    public static boolean validateIgnoredWorld(final Player player, final Task task) {
-        return !validateWorld(player, task, "ignored-worlds", false);
-    }
-
-    public static boolean validateWorld(final Player player, final Task task, final String key, final boolean def) {
-        final Object worlds = task.getConfigValue(key);
-
-        return switch (worlds) {
-            case final Set<?> allowedWorldNames -> allowedWorldNames.contains(player.getWorld().getName());
-            case final String allowedWorldName -> allowedWorldName.equals(player.getWorld().getName());
-            case null, default -> def;
-        };
-    }
-
-    public static boolean validateBiome(final String biomeKey, final @NotNull Object biomes) {
-        return switch (biomes) {
-            case final Set<?> allowedBiomeKeys-> allowedBiomeKeys.contains(biomeKey);
-            case final String allowedBiomeKey -> allowedBiomeKey.equals(biomeKey);
-            default -> true;
-        };
-    }
-
     private static String getBiomeKey(final @NotNull Player player) {
         final Biome biome = player.getWorld().getBiome(
                 NumberConversions.floor(player.getX()),
@@ -91,67 +56,6 @@ public class TaskUtils {
                 NumberConversions.floor(player.getZ())
         );
         return plugin.getVersionSpecificHandler().getBiomeKey(biome);
-    }
-
-    public static boolean doesConfigStringListExist(final @NotNull Task task, final @NotNull String key) {
-        final Object configObject = task.getConfigValue(key);
-        return configObject instanceof List || configObject instanceof String;
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static @Nullable List<String> getConfigStringList(Task task, String key) {
-        Object configObject = task.getConfigValue(key);
-        if (configObject instanceof List list) {
-            return List.copyOf(list);
-        } else if (configObject instanceof String s){
-            return List.of(s);
-        } else {
-            return null;
-        }
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static @Nullable List<Integer> getConfigIntegerList(Task task, String key) {
-        Object configObject = task.getConfigValue(key);
-        if (configObject instanceof List list) {
-            return List.copyOf(list);
-        } else if (configObject instanceof Integer i){
-            return List.of(i);
-        } else {
-            return null;
-        }
-    }
-
-    public static boolean getConfigBoolean(Task task, String key) {
-        return getConfigBoolean(task, key, false);
-    }
-
-    public static boolean getConfigBoolean(Task task, String key, boolean def) {
-        return task.getConfigValue(key) instanceof Boolean configBoolean ? configBoolean : def;
-    }
-
-    public static QuestItem getConfigQuestItem(Task task, String itemKey, String dataKey) {
-        Object configBlock = task.getConfigValue(itemKey);
-        Object configData = task.getConfigValue(dataKey);
-
-        QuestItem questItem;
-        if (configBlock instanceof ConfigurationSection) {
-            questItem = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
-        } else {
-            Material material = Material.getMaterial(String.valueOf(configBlock));
-            ItemStack is;
-            if (material == null) {
-                material = Material.STONE;
-            }
-            if (configData != null) {
-                is = new ItemStack(material, 1, ((Integer) configData).shortValue());
-            } else {
-                is = new ItemStack(material, 1);
-            }
-            questItem = new ParsedQuestItem("parsed", null, is);
-        }
-
-        return questItem;
     }
 
     public static double getDecimalTaskProgress(TaskProgress taskProgress) {
@@ -192,7 +96,7 @@ public class TaskUtils {
         return progress;
     }
 
-	public static void sendTrackAdvancement(Player player, Quest quest, Task task, PendingTask pendingTask, Number amount) {
+    public static void sendTrackAdvancement(Player player, Quest quest, Task task, PendingTask<?> pendingTask, Number amount) {
         TaskProgress taskProgress = pendingTask.taskProgress();
 
         boolean useActionBar = plugin.getQuestsConfig().getBoolean("options.actionbar.progress", false)
@@ -282,12 +186,12 @@ public class TaskUtils {
         }
     }
 
-    public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type) {
+    public static <T extends BukkitTask> List<PendingTask<T>> getApplicableTasks(Player player, QPlayer qPlayer, BukkitTaskType<T> type) {
         return getApplicableTasks(player, qPlayer, type, TaskConstraintSet.NONE);
     }
 
-    public static List<PendingTask> getApplicableTasks(Player player, QPlayer qPlayer, TaskType type, EnumSet<TaskConstraint> constraintSet) {
-        List<PendingTask> tasks = new ArrayList<>();
+    public static <T extends BukkitTask> List<PendingTask<T>> getApplicableTasks(Player player, QPlayer qPlayer, BukkitTaskType<T> type, EnumSet<TaskConstraint> constraintSet) {
+        List<PendingTask<T>> tasks = new ArrayList<>();
 
         // Cache it as getting it requires some complex math
         String biomeKey = null;
@@ -296,31 +200,24 @@ public class TaskUtils {
             if (qPlayer.hasStartedQuest(quest)) {
                 QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(type.getType())) {
+                for (T task : type.getTasks(quest)) {
                     if (constraintSet.contains(TaskConstraint.WORLD)) {
-                        if (!TaskUtils.validateWorld(player, task)) {
-                            continue;
-                        }
-
-                        if (!TaskUtils.validateIgnoredWorld(player, task)) {
+                        if (!task.isWorldAllowed(player.getWorld().getName())) {
                             continue;
                         }
                     }
 
-                    BIOME_CHECK:
                     if (constraintSet.contains(TaskConstraint.BIOME)) {
-                        final Object biomes = task.getConfigValue("biomes");
+                        final Set<String> biomes = task.getBiomes();
 
-                        if (biomes == null) {
-                            break BIOME_CHECK;
-                        }
+                        if (biomes != null) {
+                            if (biomeKey == null) {
+                                biomeKey = getBiomeKey(player);
+                            }
 
-                        if (biomeKey == null) {
-                            biomeKey = getBiomeKey(player);
-                        }
-
-                        if (!TaskUtils.validateBiome(biomeKey, biomes)) {
-                            continue;
+                            if (!biomes.contains(biomeKey)) {
+                                continue;
+                            }
                         }
                     }
 
@@ -330,7 +227,7 @@ public class TaskUtils {
                         continue;
                     }
 
-                    tasks.add(new PendingTask(quest, task, questProgress, taskProgress));
+                    tasks.add(new PendingTask<>(quest, task, questProgress, taskProgress));
                 }
             }
         }
@@ -338,67 +235,56 @@ public class TaskUtils {
         return tasks;
     }
 
-    public record PendingTask(Quest quest, Task task, QuestProgress questProgress, TaskProgress taskProgress) { }
+    public record PendingTask<T extends Task>(Quest quest, T task, QuestProgress questProgress, TaskProgress taskProgress) { }
 
-    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable Block block, @NotNull UUID player) {
-        return matchBlock(type, pendingTask, block, player, "block", "blocks");
+    // -------------------------------------------------------------------------------------------
+    // Matching against parsed task options
+    // -------------------------------------------------------------------------------------------
+
+    /**
+     * @param blocks configured blocks, or null if the task does not restrict blocks
+     * @param data   configured {@code data} value, or null
+     */
+    public static boolean matchBlock(@NotNull BukkitTaskType<?> type, @NotNull PendingTask<?> pendingTask, @Nullable List<BlockSpec> blocks, @Nullable Integer data, @Nullable Block block, @NotNull UUID player) {
+        return matchBlock(type, pendingTask, blocks, data, block != null ? plugin.getVersionSpecificHandler().getStateNoSnapshot(block) : null, player);
     }
 
-    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable Block block, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
-        return matchBlock(type, pendingTask, block != null ? plugin.getVersionSpecificHandler().getStateNoSnapshot(block) : null, player, stringKey, listKey);
+    public static boolean matchBlock(@NotNull BukkitTaskType<?> type, @NotNull PendingTask<?> pendingTask, @Nullable List<BlockSpec> blocks, @Nullable Integer data, @Nullable BlockData blockData, @NotNull UUID player) {
+        return matchBlock(type, pendingTask, blocks, data, blockData != null ? blockData.getMaterial() : null, () -> (byte) 0, player);
     }
 
-    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable BlockData data, @NotNull UUID player) {
-        return matchBlock(type, pendingTask, data, player, "block", "blocks");
+    public static boolean matchBlock(@NotNull BukkitTaskType<?> type, @NotNull PendingTask<?> pendingTask, @Nullable List<BlockSpec> blocks, @Nullable Integer data, @Nullable BlockState state, @NotNull UUID player) {
+        return matchBlock(type, pendingTask, blocks, data, state != null ? state.getType() : null, () -> state.getRawData(), player);
     }
 
-    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable BlockData data, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
-        return matchBlock(type, pendingTask, data != null ? data.getMaterial() : null, () -> (byte) 0, player, stringKey, listKey);
-    }
-
-    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable BlockState state, @NotNull UUID player) {
-        return matchBlock(type, pendingTask, state, player, "block", "blocks");
-    }
-
-    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable BlockState state, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
-        return matchBlock(type, pendingTask, state != null ? state.getType() : null, () -> state.getRawData(), player, stringKey, listKey);
-    }
-
-    public static boolean matchBlock(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable Material blockMaterial, @NotNull Supplier<Byte> rawDataSupplier, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
-        Task task = pendingTask.task;
-
-        List<String> checkBlocks = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
-        if (checkBlocks == null) {
+    public static boolean matchBlock(@NotNull BukkitTaskType<?> type, @NotNull PendingTask<?> pendingTask, @Nullable List<BlockSpec> blocks, @Nullable Integer data, @Nullable Material blockMaterial, @NotNull Supplier<Byte> rawDataSupplier, @NotNull UUID player) {
+        if (blocks == null) {
             return true;
-        } else if (checkBlocks.isEmpty()) {
+        } else if (blocks.isEmpty()) {
             return blockMaterial == null;
         }
 
-        Object configData = task.getConfigValue("data");
+        String questId = pendingTask.quest().getId();
+        String taskId = pendingTask.task().getId();
 
         // do not set block data here as it will initialize Legacy Material Support
         Byte blockData = null;
 
-        Material material;
-        int comparableData;
-
-        for (String materialName : checkBlocks) {
-            String[] parts = materialName.split(":", 2);
-            if (parts.length == 2) {
-                comparableData = Integer.parseInt(parts[1]);
-            } else if (configData != null) {
-                comparableData = (int) configData;
+        for (BlockSpec spec : blocks) {
+            int comparableData;
+            if (spec.data() != null) {
+                comparableData = spec.data();
+            } else if (data != null) {
+                comparableData = data;
             } else {
                 comparableData = 0;
             }
 
-            material = Material.getMaterial(parts[0]);
+            type.debug("Checking against block " + spec.material() + ":" + comparableData, questId, taskId, player);
 
-            type.debug("Checking against block " + material + ":" + comparableData, pendingTask.quest.getId(), task.getId(), player);
-
-            if (material == blockMaterial) {
-                if (parts.length == 1 && configData == null) {
-                    type.debug("Block match (modern)", pendingTask.quest.getId(), task.getId(), player);
+            if (spec.material() == blockMaterial) {
+                if (spec.data() == null && data == null) {
+                    type.debug("Block match (modern)", questId, taskId, player);
                     return true;
                 }
 
@@ -408,53 +294,44 @@ public class TaskUtils {
                 }
 
                 if (blockData == comparableData) {
-                    type.debug("Block match (legacy)", pendingTask.quest.getId(), task.getId(), player);
+                    type.debug("Block match (legacy)", questId, taskId, player);
                     return true;
                 }
 
-                type.debug("Block mismatch (legacy)", pendingTask.quest.getId(), task.getId(), player);
+                type.debug("Block mismatch (legacy)", questId, taskId, player);
             } else {
-                type.debug("Block mismatch (modern)", pendingTask.quest.getId(), task.getId(), player);
+                type.debug("Block mismatch (modern)", questId, taskId, player);
             }
         }
 
         return false;
     }
 
-    public static boolean matchEntity(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Entity entity, @NotNull UUID player) {
-        return matchEntity(type, pendingTask, entity, player, "mob", "mobs");
+    /**
+     * @param mobs configured entity types, or null if the task does not restrict entities
+     */
+    public static boolean matchEntity(@NotNull BukkitTaskType<?> type, @NotNull PendingTask<?> pendingTask, @Nullable List<EntityType> mobs, @NotNull Entity entity, @NotNull UUID player) {
+        return matchEntity(type, pendingTask, mobs, entity.getType(), player);
     }
 
-    public static boolean matchEntity(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull Entity entity, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
-        return matchEntity(type, pendingTask, entity.getType(), player, stringKey, listKey);
-    }
-
-    public static boolean matchEntity(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull EntityType entityType, @NotNull UUID player) {
-        return matchEntity(type, pendingTask, entityType, player, "mob", "mobs");
-    }
-
-    public static boolean matchEntity(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull EntityType entityType, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey) {
-        Task task = pendingTask.task;
-
-        List<String> checkMobs = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
-        if (checkMobs == null) {
+    public static boolean matchEntity(@NotNull BukkitTaskType<?> type, @NotNull PendingTask<?> pendingTask, @Nullable List<EntityType> mobs, @NotNull EntityType entityType, @NotNull UUID player) {
+        if (mobs == null) {
             return true;
-        } else if (checkMobs.isEmpty()) {
+        } else if (mobs.isEmpty()) {
             return false;
         }
 
-        EntityType mob;
+        String questId = pendingTask.quest().getId();
+        String taskId = pendingTask.task().getId();
 
-        for (String mobName : checkMobs) {
-            mob = EntityType.valueOf(mobName);
-
-            type.debug("Checking against mob " + mob, pendingTask.quest.getId(), task.getId(), player);
+        for (EntityType mob : mobs) {
+            type.debug("Checking against mob " + mob, questId, taskId, player);
 
             if (mob == entityType) {
-                type.debug("Mob match", pendingTask.quest.getId(), task.getId(), player);
+                type.debug("Mob match", questId, taskId, player);
                 return true;
             } else {
-                type.debug("Mob mismatch", pendingTask.quest.getId(), task.getId(), player);
+                type.debug("Mob mismatch", questId, taskId, player);
             }
         }
 
@@ -471,10 +348,17 @@ public class TaskUtils {
         }
     }
 
-    public static boolean matchSpawnReason(final @NotNull BukkitTaskType type, final @NotNull PendingTask pendingTask, final @NotNull Entity entity,
-                                           final @NotNull UUID player) {
+    /**
+     * @param spawnReasons configured spawn reasons, or null if the task does not restrict spawn reasons
+     */
+    public static boolean matchSpawnReason(final @NotNull BukkitTaskType<?> type, final @NotNull PendingTask<?> pendingTask, final @Nullable List<CreatureSpawnEvent.SpawnReason> spawnReasons,
+                                           final @NotNull Entity entity, final @NotNull UUID player) {
+        if (spawnReasons == null) {
+            return true;
+        }
+
         if (TaskUtils.getEntitySpawnReasonMethod == null) {
-            type.debug("Spawn reason is specified but the server software doesn't have the method necessary to get it", pendingTask.quest.getId(), pendingTask.task.getId(), player);
+            type.debug("Spawn reason is specified but the server software doesn't have the method necessary to get it", pendingTask.quest().getId(), pendingTask.task().getId(), player);
 
             // it is supported only on Paper, so we simply ignore it
             return true;
@@ -488,32 +372,31 @@ public class TaskUtils {
             return false;
         }
 
-        return TaskUtils.matchEnum(CreatureSpawnEvent.SpawnReason.class, type, pendingTask, spawnReason, player, "spawn-reason", "spawn-reasons");
+        return TaskUtils.matchEnum(type, pendingTask, spawnReasons, spawnReason, player);
     }
 
-    public static <E extends Enum<E>> boolean matchEnum(final @NotNull Class<E> enumClass, final @NotNull BukkitTaskType type, final @NotNull PendingTask pendingTask,
-                                                        final @Nullable E enumValue, final @NotNull UUID player, final @NotNull String stringKey, final @NotNull String listKey) {
-        final Task task = pendingTask.task;
-
-        final List<String> checkValueStrings = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
-        if (checkValueStrings == null) {
+    /**
+     * @param values configured values, or null if the task does not restrict the value
+     */
+    public static <E extends Enum<E>> boolean matchEnum(final @NotNull BukkitTaskType<?> type, final @NotNull PendingTask<?> pendingTask, final @Nullable List<E> values,
+                                                        final @Nullable E enumValue, final @NotNull UUID player) {
+        if (values == null) {
             return true;
-        } else if (checkValueStrings.isEmpty()) {
+        } else if (values.isEmpty()) {
             return enumValue == null;
         }
 
-        E checkValue;
+        final String questId = pendingTask.quest().getId();
+        final String taskId = pendingTask.task().getId();
 
-        for (final String checkValueString : checkValueStrings) {
-            checkValue = Enum.valueOf(enumClass, checkValueString);
-
-            type.debug("Checking against enum value " + checkValue, pendingTask.quest.getId(), task.getId(), player);
+        for (final E checkValue : values) {
+            type.debug("Checking against enum value " + checkValue, questId, taskId, player);
 
             if (checkValue == enumValue) {
-                type.debug("Enum value match", pendingTask.quest.getId(), task.getId(), player);
+                type.debug("Enum value match", questId, taskId, player);
                 return true;
             } else {
-                type.debug("Enum value mismatch", pendingTask.quest.getId(), task.getId(), player);
+                type.debug("Enum value mismatch", questId, taskId, player);
             }
         }
 
@@ -544,15 +427,13 @@ public class TaskUtils {
     }
 
     /**
+     * @param names       configured names, or null if the task does not restrict the name
      * @param legacyColor whether {@link Chat#legacyColor(String)} method ought to be used on {@code string} before the comparison
      */
-    public static boolean matchString(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @Nullable String string, @NotNull UUID player, @NotNull String stringKey, @NotNull String listKey, boolean legacyColor, @NotNull String matchModeKey, boolean ignoreCase) {
-        Task task = pendingTask.task;
-
-        List<String> checkNames = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
-        if (checkNames == null) {
+    public static boolean matchString(@NotNull BukkitTaskType<?> type, @NotNull PendingTask<?> pendingTask, @Nullable List<String> names, @NotNull StringMatchMode matchMode, @Nullable String string, @NotNull UUID player, boolean legacyColor, boolean ignoreCase) {
+        if (names == null) {
             return true;
-        } else if (checkNames.isEmpty()) {
+        } else if (names.isEmpty()) {
             return string == null;
         }
 
@@ -564,25 +445,19 @@ public class TaskUtils {
             string = Chat.legacyColor(string);
         }
 
-        StringMatchMode matchMode;
+        String questId = pendingTask.quest().getId();
+        String taskId = pendingTask.task().getId();
 
-        String matchModeString = (String) task.getConfigValue(matchModeKey);
-        if (matchModeString != null) {
-            matchMode = StringMatchMode.valueOf(matchModeString);
-        } else {
-            matchMode = StringMatchMode.EQUALS;
-        }
+        type.debug("Utilising " + matchMode + " mode for checking", questId, taskId, player);
 
-        type.debug("Utilising " + matchMode + " mode for checking", pendingTask.quest.getId(), task.getId(), player);
-
-        for (String name : checkNames) {
-            type.debug("Checking against name " + string, pendingTask.quest.getId(), task.getId(), player);
+        for (String name : names) {
+            type.debug("Checking against name " + string, questId, taskId, player);
 
             if (matchMode.matches(string, name, ignoreCase)) {
-                type.debug("Name match", pendingTask.quest.getId(), task.getId(), player);
+                type.debug("Name match", questId, taskId, player);
                 return true;
             } else {
-                type.debug("Name mismatch", pendingTask.quest.getId(), task.getId(), player);
+                type.debug("Name mismatch", questId, taskId, player);
             }
         }
 
@@ -590,15 +465,13 @@ public class TaskUtils {
     }
 
     /**
+     * @param names       configured names, or null if the task does not restrict the names
      * @param legacyColor whether {@link Chat#legacyColor(String)} method ought to be used on {@code strings} before the comparison
      */
-    public static boolean matchAnyString(@NotNull BukkitTaskType type, @NotNull PendingTask pendingTask, @NotNull String @Nullable [] strings, @NotNull UUID player, final @NotNull String stringKey, final @NotNull String listKey, boolean legacyColor, @NotNull String matchModeKey, boolean ignoreCase) {
-        Task task = pendingTask.task;
-
-        List<String> checkNames = TaskUtils.getConfigStringList(task, task.getConfigValues().containsKey(stringKey) ? stringKey : listKey);
-        if (checkNames == null) {
+    public static boolean matchAnyString(@NotNull BukkitTaskType<?> type, @NotNull PendingTask<?> pendingTask, @Nullable List<String> names, @NotNull StringMatchMode matchMode, @NotNull String @Nullable [] strings, @NotNull UUID player, boolean legacyColor, boolean ignoreCase) {
+        if (names == null) {
             return true;
-        } else if (checkNames.isEmpty()) {
+        } else if (names.isEmpty()) {
             return strings == null || strings.length == 0;
         }
 
@@ -612,28 +485,22 @@ public class TaskUtils {
             }
         }
 
-        StringMatchMode matchMode;
+        String questId = pendingTask.quest().getId();
+        String taskId = pendingTask.task().getId();
 
-        String matchModeString = (String) task.getConfigValue(matchModeKey);
-        if (matchModeString != null) {
-            matchMode = StringMatchMode.valueOf(matchModeString);
-        } else {
-            matchMode = StringMatchMode.EQUALS;
-        }
+        type.debug("Utilising " + matchMode + " mode for checking", questId, taskId, player);
 
-        type.debug("Utilising " + matchMode + " mode for checking", pendingTask.quest.getId(), task.getId(), player);
-
-        for (String name : checkNames) {
-            type.debug("Checking against name " + name, pendingTask.quest.getId(), task.getId(), player);
+        for (String name : names) {
+            type.debug("Checking against name " + name, questId, taskId, player);
 
             for (String string : strings) {
                 if (matchMode.matches(string, name, ignoreCase)) {
-                    type.debug("Name match", pendingTask.quest.getId(), task.getId(), player);
+                    type.debug("Name match", questId, taskId, player);
                     return true;
                 }
             }
 
-            type.debug("Name mismatch", pendingTask.quest.getId(), task.getId(), player);
+            type.debug("Name mismatch", questId, taskId, player);
         }
 
         return false;
@@ -659,547 +526,5 @@ public class TaskUtils {
                 amountToRemove -= plugin.getVersionSpecificHandler().removeItem(inventory, i, amountToRemove);
             }
         }
-    }
-
-    /**
-     * Returns a config validator which checks if at least one value in the given
-     * paths exist.
-     *
-     * @param paths a list of valid paths for task
-     * @return config validator
-     */
-    public static TaskType.ConfigValidator useRequiredConfigValidator(TaskType type, String... paths) {
-        return (config, problems) -> {
-            for (String path : paths) {
-                Object object = config.get(path);
-
-                if (object != null) {
-                    return;
-                }
-            }
-            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                    ConfigProblemDescriptions.TASK_MISSING_FIELD.getDescription(paths[0], type.getType()),
-                    ConfigProblemDescriptions.TASK_MISSING_FIELD.getExtendedDescription(paths[0], type.getType()),
-                    paths[0]));
-        };
-    }
-
-    /**
-     * Returns a config validator which checks if at least one value in the given
-     * paths is an item stack.
-     *
-     * @param paths a list of valid paths for task
-     * @return config validator
-     */
-    public static TaskType.ConfigValidator useItemStackConfigValidator(TaskType type, String... paths) {
-        return (config, problems) -> {
-            for (String path : paths) {
-                Object object = config.get(path);
-
-                if (object == null) {
-                    continue;
-                }
-
-                if (object instanceof ConfigurationSection section) {
-
-                    if (section.contains("quest-item")) {
-                        String itemType = section.getString("quest-item");
-                        if (plugin.getQuestItemRegistry().getItem(itemType) == null) {
-                            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                    ConfigProblemDescriptions.UNKNOWN_QUEST_ITEM.getDescription(itemType),
-                                    ConfigProblemDescriptions.UNKNOWN_QUEST_ITEM.getExtendedDescription(itemType),
-                                    path + ".quest-item"));
-                        }
-                    } else {
-                        String materialLoc = "item";
-                        if (!section.contains("item")) {
-                            materialLoc = "type";
-                        }
-
-                        if (!section.contains(materialLoc)) {
-                            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                    ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(""),
-                                    ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(""),
-                                    path + ".type"));
-                        } else {
-                            String material = String.valueOf(section.get(materialLoc));
-                            if (!plugin.getItemGetter().isValidMaterial(material)) {
-                                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(material),
-                                        ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(material),
-                                        path + "." + materialLoc));
-                            }
-                        }
-                    }
-                } else {
-                    if (Material.getMaterial(String.valueOf(object)) == null) {
-                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(object)),
-                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(String.valueOf(object)),
-                                path));
-                    }
-                }
-                break;
-            }
-        };
-    }
-
-    /**
-     * Returns a config validator which checks if at least one value in the given
-     * paths is a long.
-     *
-     * @param paths a list of valid paths for task
-     * @return config validator
-     */
-    public static TaskType.ConfigValidator useLongConfigValidator(TaskType type, String... paths) {
-        return (config, problems) -> {
-            for (String path : paths) {
-                Object object = config.get(path);
-
-                if (object == null) {
-                    continue;
-                }
-
-                try {
-                    Long l = (Long) object;
-                } catch (ClassCastException ex) {
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                            "Expected a long for '" + path + "', but got '" + object + "' instead", null, path));
-                }
-                break;
-            }
-        };
-    }
-
-    /**
-     * Returns a config validator which checks if at least one value in the given
-     * paths is an integer.
-     *
-     * @param paths a list of valid paths for task
-     * @return config validator
-     */
-    public static TaskType.ConfigValidator useIntegerConfigValidator(TaskType type, String... paths) {
-        return (config, problems) -> {
-            for (String path : paths) {
-                Object object = config.get(path);
-
-                if (object == null) {
-                    continue;
-                }
-
-                try {
-                    Integer i = (Integer) object;
-                } catch (ClassCastException ex) {
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                            "Expected an integer for '" + path + "', but got '" + object + "' instead", null, path));
-                }
-                break;
-            }
-        };
-    }
-
-    /**
-     * Returns a config validator which checks if at least one value in the given
-     * paths is a boolean.
-     *
-     * @param paths a list of valid paths for task
-     * @return config validator
-     */
-    public static TaskType.ConfigValidator useBooleanConfigValidator(TaskType type, String... paths) {
-        return (config, problems) -> {
-            for (String path : paths) {
-                Object object = config.get(path);
-
-                if (object == null) {
-                    continue;
-                }
-
-                try {
-                    Boolean b = (Boolean) object;
-                } catch (ClassCastException ex) {
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
-                            "Expected a boolean for '" + path + "', but got '" + object + "' instead", null, path));
-                }
-                break;
-            }
-        };
-    }
-
-    public enum MaterialListConfigValidatorMode {
-        ANY {
-            @Override
-            public boolean isValid(Material material) {
-                return true;
-            }
-        },
-        BLOCK {
-            @Override
-            public boolean isValid(Material material) {
-                return material.isBlock();
-            }
-        },
-        ITEM {
-            @Override
-            public boolean isValid(Material material) {
-                return material.isItem();
-            }
-        };
-
-        public abstract boolean isValid(Material material);
-    }
-
-    /**
-     * Returns a config validator which checks if at least one value in the given
-     * paths is a valid list of materials.
-     * <p>
-     * The list of materials is expected to be in the format of:
-     * <pre>key: "MATERIAL_NAME"</pre>
-     * where MATERIAL_NAME is the name of a material. Alternatively, the list
-     * of materials can be in the format of:
-     * <pre>key:
-     *   - "MATERIAL_NAME"
-     *   - "..."</pre>
-     * </p>
-     *
-     * @param paths a list of valid paths for task
-     * @return config validator
-     */
-    public static TaskType.ConfigValidator useMaterialListConfigValidator(TaskType type, MaterialListConfigValidatorMode mode, String... paths) {
-        return (config, problems) -> {
-            for (String path : paths) {
-                Object configBlock = config.get(path);
-
-                List<String> checkBlocks = new ArrayList<>();
-                if (configBlock instanceof List<?> configList) {
-                    for (Object object : configList) {
-                        checkBlocks.add(String.valueOf(object));
-                    }
-                } else {
-                    if (configBlock == null) {
-                        continue;
-                    }
-                    checkBlocks.add(String.valueOf(configBlock));
-                }
-
-                for (String materialName : checkBlocks) {
-                    String[] split = materialName.split(":");
-                    final Material material = Material.getMaterial(String.valueOf(split[0]));
-                    if (material == null || !mode.isValid(material)) {
-                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(materialName),
-                                ConfigProblemDescriptions.UNKNOWN_MATERIAL.getExtendedDescription(materialName),
-                                path));
-                    }
-                }
-                break;
-            }
-        };
-    }
-
-    /**
-     * Returns a config validator which checks if at least one value in the given
-     * paths is a valid list of dye colors.
-     * <p>
-     * The list of dye colors is expected to be in the format of:
-     * <pre>key: "DYE_COLOR_NAME"</pre>
-     * where DYE_COLOR_NAME is the name of a material. Alternatively, the list
-     * of materials can be in the format of:
-     * <pre>key:
-     *   - "DYE_COLOR_NAME"
-     *   - "..."</pre>
-     * </p>
-     *
-     * @param paths a list of valid paths for task
-     * @return config validator
-     */
-    public static TaskType.ConfigValidator useDyeColorConfigValidator(TaskType type, String... paths) {
-        return (config, problems) -> {
-            for (String path : paths) {
-                Object configColor = config.get(path);
-
-                List<String> checkColors = new ArrayList<>();
-                if (configColor instanceof List<?> configList) {
-                    for (Object object : configList) {
-                        checkColors.add(String.valueOf(object));
-                    }
-                } else {
-                    if (configColor == null) {
-                        continue;
-                    }
-                    checkColors.add(String.valueOf(configColor));
-                }
-
-                for (String colorName : checkColors) {
-                    try {
-                        DyeColor.valueOf(colorName);
-                    } catch (IllegalArgumentException ex) {
-                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                ConfigProblemDescriptions.UNKNOWN_DYE_COLOR.getDescription(colorName),
-                                ConfigProblemDescriptions.UNKNOWN_DYE_COLOR.getExtendedDescription(colorName),
-                                path));
-                    }
-                }
-                break;
-            }
-        };
-    }
-
-    /**
-     * Returns a config validator which checks if at least one value in the given
-     * paths is a valid list of entities.
-     * <p>
-     * The list of entities is expected to be in the format of:
-     * <pre>key: "ENTITY_TYPE"</pre>
-     * where ENTITY_TYPE is the name of an entity. Alternatively, the list
-     * of entities can be in the format of:
-     * <pre>key:
-     *   - "ENTITY_TYPE"
-     *   - "..."</pre>
-     * </p>
-     *
-     * @param paths a list of valid paths for task
-     * @return config validator
-     */
-    public static TaskType.ConfigValidator useEntityListConfigValidator(TaskType type, String... paths) {
-        return (config, problems) -> {
-            for (String path : paths) {
-                Object configObject = config.get(path);
-
-                List<String> checkEntities = new ArrayList<>();
-                if (configObject instanceof List<?> configList) {
-                    for (Object object : configList) {
-                        checkEntities.add(String.valueOf(object));
-                    }
-                } else {
-                    if (configObject == null) {
-                        continue;
-                    }
-                    checkEntities.add(String.valueOf(configObject));
-                }
-
-                for (String entity : checkEntities) {
-                    try {
-                        EntityType.valueOf(entity);
-                    } catch (IllegalArgumentException ex) {
-                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(entity),
-                                ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getExtendedDescription(entity),
-                                path));
-                    }
-                }
-                break;
-            }
-        };
-    }
-
-    /**
-     * Returns a config validator which checks if at least one value in the given
-     * paths is a valid list of spawn reasons.
-     * <p>
-     * The list of entities is expected to be in the format of:
-     * <pre>key: "SPAWN_REASON"</pre>
-     * where SPAWN_REASON is the name of an entity. Alternatively, the list
-     * of entities can be in the format of:
-     * <pre>key:
-     *   - "SPAWN_REASON"
-     *   - "..."</pre>
-     * </p>
-     *
-     * @param paths a list of valid paths for task
-     * @return config validator
-     */
-    public static TaskType.ConfigValidator useSpawnReasonListConfigValidator(TaskType type, String... paths) {
-        return (config, problems) -> {
-            for (String path : paths) {
-                Object configObject = config.get(path);
-
-                List<String> checkSpawnReasons = new ArrayList<>();
-                if (configObject instanceof List<?> configList) {
-                    for (Object object : configList) {
-                        checkSpawnReasons.add(String.valueOf(object));
-                    }
-                } else {
-                    if (configObject == null) {
-                        continue;
-                    }
-                    checkSpawnReasons.add(String.valueOf(configObject));
-                }
-
-                for (String spawnReason : checkSpawnReasons) {
-                    try {
-                        CreatureSpawnEvent.SpawnReason.valueOf(spawnReason);
-                    } catch (IllegalArgumentException ex) {
-                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                ConfigProblemDescriptions.UNKNOWN_SPAWN_REASON.getDescription(spawnReason),
-                                ConfigProblemDescriptions.UNKNOWN_SPAWN_REASON.getExtendedDescription(spawnReason),
-                                path));
-                    }
-                }
-                break;
-            }
-        };
-    }
-
-    /**
-     * Returns a config validator which checks if at least one value in the given
-     * paths is a valid list of enchantments.
-     * <p>
-     * The list of entities is expected to be in the format of:
-     * <pre>key: "ENCHANTMENT"</pre>
-     * where ENCHANTMENT is the name of an entity. Alternatively, the list
-     * of entities can be in the format of:
-     * <pre>key:
-     *   - "ENCHANTMENT"
-     *   - "..."</pre>
-     * </p>
-     *
-     * @param paths a list of valid paths for task
-     * @return config validator
-     */
-    public static TaskType.ConfigValidator useEnchantmentListConfigValidator(TaskType type, String... paths) {
-        return (config, problems) -> {
-            for (String path : paths) {
-                Object configObject = config.get(path);
-
-                List<String> checkEnchantments = new ArrayList<>();
-                if (configObject instanceof List<?> configList) {
-                    for (Object object : configList) {
-                        checkEnchantments.add(String.valueOf(object));
-                    }
-                } else {
-                    if (configObject == null) {
-                        continue;
-                    }
-                    checkEnchantments.add(String.valueOf(configObject));
-                }
-
-                for (String enchantment : checkEnchantments) {
-                    if (Enchantment.getByName(enchantment) == null) {
-                        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                                ConfigProblemDescriptions.UNKNOWN_ENCHANTMENT.getDescription(enchantment),
-                                ConfigProblemDescriptions.UNKNOWN_ENCHANTMENT.getExtendedDescription(enchantment),
-                                path));
-                    }
-                }
-                break;
-            }
-        };
-    }
-
-    /**
-     * Returns a config validator which checks if values in the given
-     * paths are present in the enum.
-     *
-     * Should be used for small enums only as it lists possible values in config
-     * problem extended description.
-     *
-     * @param clazz the enum class
-     * @param stringPath path to the string value
-     * @param listPath path to the list value
-     * @param required whether there must be at least 1 value set
-     * @return config validator
-     */
-    public static <T extends Enum<T>> TaskType.ConfigValidator useEnumConfigValidator(final TaskType type, final Class<T> clazz, final @Nullable String stringPath, final @Nullable String listPath, final boolean required) {
-        final Set<String> acceptedValues = new HashSet<>();
-        final T[] constants = clazz.getEnumConstants();
-
-        for (final T constant : constants) {
-            acceptedValues.add(constant.name());
-        }
-
-        return useAcceptedValuesConfigValidator(type, acceptedValues, stringPath, listPath, required);
-    }
-
-    /**
-     * Returns a config validator which checks if values in the given
-     * paths are present in the list of accepted values.
-     *
-     * @param acceptedValues a list of accepted values
-     * @param stringPath path to the string value
-     * @param listPath path to the list value
-     * @param required whether there must be at least 1 value set
-     * @return config validator
-     */
-    public static TaskType.ConfigValidator useAcceptedValuesConfigValidator(final TaskType type, final Collection<String> acceptedValues, final @Nullable String stringPath, final @Nullable String listPath, final boolean required) {
-        if (stringPath == null && listPath == null) {
-            throw new IllegalArgumentException("string path and list path cannot be both null");
-        }
-
-        return (config, problems) -> {
-            final List<Object> values = new ArrayList<>();
-
-            if (!Objects.equals(stringPath, listPath)) {
-                if (stringPath != null) {
-                    final Object stringObject = config.get(stringPath);
-
-                    if (stringObject != null) {
-                        values.add(stringObject);
-                    }
-                }
-
-                if (listPath != null) {
-                    final Object listObject = config.get(listPath);
-
-                    if (listObject != null) {
-                        final List<?> list;
-
-                        try {
-                            list = (List<?>) listObject;
-
-                            values.addAll(list);
-                        } catch (final ClassCastException e) {
-                            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING, "Expected a list for '" + listPath + "', but got '" + listObject + "' instead", null, listPath));
-                        }
-                    }
-                }
-            } else {
-                final Object object = config.get(stringPath);
-
-                if (object instanceof final List<?> list) {
-                    values.addAll(list);
-                } else if (object instanceof final String string) {
-                    values.add(string);
-                } else if (object != null) {
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING, "Expected a string or list for '" + stringPath + "', but got '" + object + "' instead", null, stringPath));
-                }
-            }
-
-            final String path = stringPath != null ? (listPath != null && !listPath.equals(stringPath) ? "'" + stringPath + "' or '" + listPath + "'" : "'" + stringPath + "'") : "'" + listPath + "'";
-            final Iterator<Object> valueIter = values.iterator();
-
-            while (valueIter.hasNext()) {
-                final Object stringObject = valueIter.next();
-                final String stringValue;
-
-                try {
-                    stringValue = (String) stringObject;
-                } catch (final ClassCastException e) {
-                    // TODO use single path for string/list options in next release
-
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING, "Expected a string for " + path + ", but got '" + stringObject + "' instead", null, stringPath));
-                    valueIter.remove();
-                    continue;
-                }
-
-                if (!acceptedValues.contains(stringValue)) {
-                    String extendedDescription = "The accepted values are:";
-
-                    for (final String acceptedValue : acceptedValues) {
-                        extendedDescription += "<br> - " + acceptedValue;
-                    }
-
-                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                            ConfigProblemDescriptions.NOT_ACCEPTED_VALUE.getDescription(stringValue, type.getType()),
-                            extendedDescription,
-                            stringPath));
-
-                    valueIter.remove();
-                }
-            }
-
-            if (required && values.isEmpty()) {
-                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR, "Expected at least one correct value for " + path, null, stringPath));
-            }
-        };
     }
 }

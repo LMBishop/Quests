@@ -1,13 +1,11 @@
 package com.leonardobishop.quests.common.config;
 
-import com.leonardobishop.quests.common.util.Modern;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
-@Modern(type = Modern.Type.FULL)
 @NullMarked
 public final class ConfigProblem {
 

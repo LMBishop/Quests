@@ -55,8 +55,8 @@ public final class BukkitTaskTypeManager extends TaskTypeManager {
      * @throws UnsupportedOperationException if the task type is not an instance of {@link BukkitTaskType}
      */
     @Override
-    public boolean registerTaskType(final @NotNull TaskType taskType) {
-        if (!(taskType instanceof final BukkitTaskType bukkitTaskType)) {
+    public boolean registerTaskType(final @NotNull TaskType<?> taskType) {
+        if (!(taskType instanceof final BukkitTaskType<?> bukkitTaskType)) {
             throw new UnsupportedOperationException("BukkitTaskTypeManager implementation can only accept instances of BukkitTaskType!");
         }
 

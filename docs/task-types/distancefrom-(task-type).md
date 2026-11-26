@@ -13,13 +13,13 @@ Travel away from a set of co-ordinates.
 
 ## Options
 
-| Key        | Description                                                     | Type    | Required | Default | Notes |
-|------------|-----------------------------------------------------------------|---------|----------|---------|-------|
-| `x`        | The x co-ordinate.                                              | Integer | Yes      | \-      | \-    |
-| `y`        | The y co-ordinate.                                              | Integer | Yes      | \-      | \-    |
-| `z`        | The z co-ordinate.                                              | Integer | Yes      | \-      | \-    |
-| `world`    | The name of the world.                                          | String  | Yes      | \-      | \-    |
-| `distance` | The distance away from the co-ordinates the player must travel. | Integer | Yes      | \-      | \-    |
+| Key        | Description                                                     | Type    | Required | Default | Notes               |
+|------------|-----------------------------------------------------------------|---------|----------|---------|---------------------|
+| `x`        | The x co-ordinate.                                              | Integer | Yes      | \-      | \-                  |
+| `y`        | The y co-ordinate.                                              | Integer | Yes      | \-      | \-                  |
+| `z`        | The z co-ordinate.                                              | Integer | Yes      | \-      | \-                  |
+| `world`    | The name of the world.                                          | String  | Yes      | \-      | \-                  |
+| `distance` | The distance away from the co-ordinates the player must travel. | Integer | Yes      | \-      | Must be at least 0. |
 
 ## Examples
 
