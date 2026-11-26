@@ -33,7 +33,7 @@ Strip 15 acacia logs:
 
 ``` yaml
 acacia_stripping:
-  type: "blockfertilizing"
+  type: "blockchanging"
   amount: 15                            # amount of blocks to be changed
   from: "ACACIA_LOG"                    # name of from block
   block: "STRIPPED_ACACIA_LOG"          # name of to block
