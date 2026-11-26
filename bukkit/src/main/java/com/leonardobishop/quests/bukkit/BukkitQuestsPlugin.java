@@ -102,10 +102,10 @@ import com.leonardobishop.quests.bukkit.tasktype.type.TamingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.TradingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.WalkingTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.ASkyBlockLevelTaskType;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058BedBreakTask;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058FinalKillTask;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058LoseTask;
-import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058WinTask;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058BedBreakTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058FinalKillTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058LoseTaskType;
+import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BedWars1058WinTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.BentoBoxLevelTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensDeliverTaskType;
 import com.leonardobishop.quests.bukkit.tasktype.type.dependent.CitizensInteractTaskType;
@@ -495,10 +495,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
             // Register task types with enabled plugin compatibility requirement
             taskTypeManager.registerTaskType(() -> new ASkyBlockLevelTaskType(this), () -> CompatUtils.isPluginEnabled("ASkyBlock"));
-            taskTypeManager.registerTaskType(() -> new BedWars1058BedBreakTask(this), () -> CompatUtils.isPluginEnabled("BedWars1058")); // not tested
-            taskTypeManager.registerTaskType(() -> new BedWars1058FinalKillTask(this), () -> CompatUtils.isPluginEnabled("BedWars1058")); // not tested
-            taskTypeManager.registerTaskType(() -> new BedWars1058LoseTask(this), () -> CompatUtils.isPluginEnabled("BedWars1058")); // not tested
-            taskTypeManager.registerTaskType(() -> new BedWars1058WinTask(this), () -> CompatUtils.isPluginEnabled("BedWars1058")); // not tested
+            taskTypeManager.registerTaskType(() -> new BedWars1058BedBreakTaskType(this), () -> CompatUtils.isPluginEnabled("BedWars1058")); // not tested
+            taskTypeManager.registerTaskType(() -> new BedWars1058FinalKillTaskType(this), () -> CompatUtils.isPluginEnabled("BedWars1058")); // not tested
+            taskTypeManager.registerTaskType(() -> new BedWars1058LoseTaskType(this), () -> CompatUtils.isPluginEnabled("BedWars1058")); // not tested
+            taskTypeManager.registerTaskType(() -> new BedWars1058WinTaskType(this), () -> CompatUtils.isPluginEnabled("BedWars1058")); // not tested
             taskTypeManager.registerTaskType(() -> new BentoBoxLevelTaskType(this), () -> CompatUtils.isPluginEnabled("BentoBox") && CompatUtils.classExists("world.bentobox.level.events.IslandLevelCalculatedEvent"));
             taskTypeManager.registerTaskType(() -> new CitizensDeliverTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));
             taskTypeManager.registerTaskType(() -> new CitizensInteractTaskType(this), () -> CompatUtils.isPluginEnabled("Citizens"));

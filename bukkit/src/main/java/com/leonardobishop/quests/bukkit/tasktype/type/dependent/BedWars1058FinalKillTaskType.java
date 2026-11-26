@@ -1,6 +1,6 @@
 package com.leonardobishop.quests.bukkit.tasktype.type.dependent;
 
-import com.andrei1058.bedwars.api.events.gameplay.GameEndEvent;
+import com.andrei1058.bedwars.api.events.player.PlayerKillEvent;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
@@ -9,20 +9,16 @@ import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
-import java.util.List;
-import java.util.UUID;
-
-public final class BedWars1058LoseTask extends BukkitTaskType {
+public final class BedWars1058FinalKillTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
-    public BedWars1058LoseTask(BukkitQuestsPlugin plugin) {
-        super("bedwars1058_lose", TaskUtils.TASK_ATTRIBUTION_STRING, "Lose a game of BedWars in BedWars1058.");
+    public BedWars1058FinalKillTaskType(BukkitQuestsPlugin plugin) {
+        super("bedwars1058_finalkill", TaskUtils.TASK_ATTRIBUTION_STRING, "Get a final kill in BedWars1058.");
         this.plugin = plugin;
 
         super.addConfigValidator(TaskUtils.useRequiredConfigValidator(this, "amount"));
@@ -30,45 +26,39 @@ public final class BedWars1058LoseTask extends BukkitTaskType {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onGameEnd(GameEndEvent event) {
-        List<UUID> loserUniqueIds = event.getLosers();
-
-        for (UUID loserUniqueId : loserUniqueIds) {
-            Player loser = Bukkit.getPlayer(loserUniqueId);
-
-            if (loser != null) {
-                this.handle(loser);
-            }
-        }
-    }
-
-    private void handle(final Player loser) {
-        if (loser.hasMetadata("NPC")) {
+    public void onPlayerKill(PlayerKillEvent event) {
+        PlayerKillEvent.PlayerKillCause cause = event.getCause();
+        if (!cause.isFinalKill()) {
             return;
         }
 
-        QPlayer qLoser = plugin.getPlayerManager().getPlayer(loser.getUniqueId());
-        if (qLoser == null) {
+        Player killer = event.getKiller();
+        if (killer == null || killer.hasMetadata("NPC")) {
             return;
         }
 
-        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(loser, qLoser, this, TaskConstraintSet.ALL)) {
+        QPlayer qKiller = plugin.getPlayerManager().getPlayer(killer.getUniqueId());
+        if (qKiller == null) {
+            return;
+        }
+
+        for (TaskUtils.PendingTask pendingTask : TaskUtils.getApplicableTasks(killer, qKiller, this, TaskConstraintSet.ALL)) {
             Quest quest = pendingTask.quest();
             Task task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            super.debug("Player lost a BedWars game", quest.getId(), task.getId(), loser.getUniqueId());
+            super.debug("Player got a final kill", quest.getId(), task.getId(), killer.getUniqueId());
 
             int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress);
-            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), loser.getUniqueId());
+            super.debug("Incrementing task progress (now " + progress + ")", quest.getId(), task.getId(), killer.getUniqueId());
 
             int amount = (int) task.getConfigValue("amount");
             if (progress >= amount) {
-                super.debug("Marking task as complete", quest.getId(), task.getId(), loser.getUniqueId());
+                super.debug("Marking task as complete", quest.getId(), task.getId(), killer.getUniqueId());
                 taskProgress.setCompleted(true);
             }
 
-            TaskUtils.sendTrackAdvancement(loser, quest, task, pendingTask, amount);
+            TaskUtils.sendTrackAdvancement(killer, quest, task, pendingTask, amount);
         }
     }
 }
