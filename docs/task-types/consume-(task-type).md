@@ -60,7 +60,6 @@ beef:
   item:                                 # USING quest-item
     quest-item: "special_beef"
   amount: 8                             # amount of item needed
-  remove-items-when-complete: false     # (OPTIONAL) take the items away from the player on completion - default: false
   worlds:                               # (OPTIONAL) restrict to certain worlds
    - "world"
 ```

@@ -58,7 +58,7 @@ beef:
      - "&7This is a special type of beef"
   amount: 8                             # amount of item needed
   remove-items-when-complete: false     # (OPTIONAL) take the items away from the player on completion - default: false
-  accept-partial-completion: false      # (OPTIONAL) allow partial deliveries - default: false
+  allow-partial-completion: false       # (OPTIONAL) allow partial deliveries - default: false
   worlds:                               # (OPTIONAL) restrict to certain worlds
    - "world"
 ```
@@ -74,7 +74,7 @@ beef:
     quest-item: "special_beef"
   amount: 8                             # amount of item needed
   remove-items-when-complete: false     # (OPTIONAL) take the items away from the player on completion - default: false
-  accept-partial-completion: false      # (OPTIONAL) allow partial deliveries - default: false
+  allow-partial-completion: false       # (OPTIONAL) allow partial deliveries - default: false
   worlds:                               # (OPTIONAL) restrict to certain worlds
    - "world"
 ```

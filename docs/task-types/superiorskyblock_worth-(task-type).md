@@ -27,5 +27,5 @@ Reach island worth 100:
 ``` yaml
 superiorskyblock:
   type: "superiorskyblock_worth"
-  level: 100                             # island worth needed
+  worth: 100                             # island worth needed
 ```
