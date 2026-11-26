@@ -36,5 +36,5 @@ acacia_stripping:
   type: "blockchanging"
   amount: 15                            # amount of blocks to be changed
   from: "ACACIA_LOG"                    # name of from block
-  block: "STRIPPED_ACACIA_LOG"          # name of to block
+  to: "STRIPPED_ACACIA_LOG"          # name of to block
 ```
