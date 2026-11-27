@@ -77,10 +77,10 @@ public final class SmithingTaskType extends BukkitTaskType<SmithingTask> {
                 }
             }
 
-            if (task.item != null) {
+            if (task.itemRequirement != null) {
                 super.debug("Player smithed " + eventAmount + " of " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
-                if (!task.item.compareItemStack(item, task.exactMatch)) {
+                if (!task.itemRequirement.matches(item)) {
                     super.debug("Item does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }

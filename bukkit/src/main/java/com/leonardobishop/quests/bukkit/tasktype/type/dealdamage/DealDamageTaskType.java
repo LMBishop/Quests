@@ -70,7 +70,7 @@ public final class DealDamageTaskType extends BukkitTaskType<DealDamageTask> {
                 continue;
             }
 
-            if (task.item != null) {
+            if (task.itemRequirement != null) {
                 if (item == null) {
                     super.debug("Specific item is required, player has no item in hand; continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
@@ -78,7 +78,7 @@ public final class DealDamageTaskType extends BukkitTaskType<DealDamageTask> {
 
                 super.debug("Specific item is required; player held item is of type '" + item.getType() + "'", quest.getId(), task.getId(), player.getUniqueId());
 
-                if (!task.item.compareItemStack(item, task.exactMatch)) {
+                if (!task.itemRequirement.matches(item)) {
                     super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 } else {
@@ -86,7 +86,7 @@ public final class DealDamageTaskType extends BukkitTaskType<DealDamageTask> {
                 }
             }
 
-            if (task.projectileItem != null) {
+            if (task.projectileItemRequirement != null) {
                 if (projectileItem == null) {
                     super.debug("Specific projectile item is required, no projectile item detected; continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
@@ -94,7 +94,7 @@ public final class DealDamageTaskType extends BukkitTaskType<DealDamageTask> {
 
                 super.debug("Specific projectile item is required; projectile item is of type '" + projectileItem.getType() + "'", quest.getId(), task.getId(), player.getUniqueId());
 
-                if (!task.projectileItem.compareItemStack(projectileItem, task.projectileItemExactMatch)) {
+                if (!task.projectileItemRequirement.matches(projectileItem)) {
                     super.debug("Projectile item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 } else {

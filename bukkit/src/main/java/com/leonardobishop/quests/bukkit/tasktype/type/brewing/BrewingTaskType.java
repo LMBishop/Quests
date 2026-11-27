@@ -81,10 +81,10 @@ public final class BrewingTaskType extends BukkitTaskType<BrewingTask> {
             BrewingTask task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            if (task.ingredient != null) {
+            if (task.ingredientRequirement != null) {
                 super.debug("Player brewed " + eventAmount + " potions" + (ingredient != null ? " using " + ingredient.getType() : ""), quest.getId(), task.getId(), player.getUniqueId());
 
-                if (!task.ingredient.compareItemStack(ingredient, task.exactMatch)) {
+                if (!task.ingredientRequirement.matches(ingredient)) {
                     super.debug("Ingredient does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }

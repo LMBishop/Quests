@@ -121,15 +121,15 @@ public final class BarteringTaskType extends BukkitTaskType<BarteringTask> {
 
             this.debug("Player completed a bartering interaction from " + inputAmount + " x " + input.getType() + " to " + outputAmount + " x " + output.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
-            if (task.input != null) {
-                if (!task.input.compareItemStack(input, task.inputExactMatch)) {
+            if (task.inputRequirement != null) {
+                if (!task.inputRequirement.matches(input)) {
                     this.debug("Input does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
             }
 
-            if (task.output != null) {
-                if (!task.output.compareItemStack(output, task.outputExactMatch)) {
+            if (task.outputRequirement != null) {
+                if (!task.outputRequirement.matches(output)) {
                     this.debug("Output does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }

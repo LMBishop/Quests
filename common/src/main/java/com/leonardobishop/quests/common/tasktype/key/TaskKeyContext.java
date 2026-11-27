@@ -46,4 +46,42 @@ public interface TaskKeyContext {
     default void warning(final String description) {
         this.report(ConfigProblem.ConfigProblemType.WARNING, description, null);
     }
+
+    /**
+     * Creates a context for a nested value, e.g. one option inside a section. Its {@link #getPath()}
+     * is {@code getPath() + "." + subPath} and every problem is reported at that location.
+     *
+     * @param subPath path of the nested value relative to {@link #getPath()}
+     * @return a child context delegating to this one
+     */
+    default TaskKeyContext child(final String subPath) {
+        final TaskKeyContext parent = this;
+
+        return new TaskKeyContext() {
+            @Override
+            public String getTaskType() {
+                return parent.getTaskType();
+            }
+
+            @Override
+            public String getPath() {
+                return parent.getPath() + "." + subPath;
+            }
+
+            @Override
+            public @Nullable Object getSibling(final String path) {
+                return parent.getSibling(path);
+            }
+
+            @Override
+            public void report(final ConfigProblem.ConfigProblemType type, final String description, final @Nullable String extendedDescription) {
+                parent.report(type, description, extendedDescription, subPath);
+            }
+
+            @Override
+            public void report(final ConfigProblem.ConfigProblemType type, final String description, final @Nullable String extendedDescription, final String nestedPath) {
+                parent.report(type, description, extendedDescription, subPath + "." + nestedPath);
+            }
+        };
+    }
 }

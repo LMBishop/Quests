@@ -40,8 +40,8 @@ public final class EnchantingTaskType extends BukkitTaskType<EnchantingTask> {
 
             super.debug("Player enchanted item", quest.getId(), task.getId(), player.getUniqueId());
 
-            if (task.item != null) {
-                if (!task.item.getItemStack().getType().equals(e.getItem().getType())) {
+            if (task.itemRequirement != null) {
+                if (!task.itemRequirement.matches(e.getItem())) {
                     super.debug("Item does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }

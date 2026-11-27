@@ -86,8 +86,8 @@ public final class SmeltingTaskType extends BukkitTaskType<SmeltingTask> {
 
             super.debug("Player smelted " + eventAmount + " of " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
-            if (task.item != null) {
-                if (!task.item.compareItemStack(item, task.exactMatch)) {
+            if (task.itemRequirement != null) {
+                if (!task.itemRequirement.matches(item)) {
                     super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }

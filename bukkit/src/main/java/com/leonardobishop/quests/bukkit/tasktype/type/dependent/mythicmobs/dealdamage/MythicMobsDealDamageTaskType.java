@@ -137,7 +137,7 @@ public final class MythicMobsDealDamageTaskType extends BukkitTaskType<MythicMob
                 continue;
             }
 
-            if (task.item != null) {
+            if (task.itemRequirement != null) {
                 if (item == null) {
                     super.debug("Specific item is required, player has no item in hand; continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
@@ -145,7 +145,7 @@ public final class MythicMobsDealDamageTaskType extends BukkitTaskType<MythicMob
 
                 super.debug("Specific item is required; player held item is of type '" + item.getType() + "'", quest.getId(), task.getId(), player.getUniqueId());
 
-                if (!task.item.compareItemStack(item, task.exactMatch)) {
+                if (!task.itemRequirement.matches(item)) {
                     super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 } else {

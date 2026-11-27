@@ -16,11 +16,11 @@ import com.leonardobishop.quests.bukkit.hook.coreprotect.AbstractCoreProtectHook
 import com.leonardobishop.quests.bukkit.hook.coreprotect.CoreProtectHook;
 import com.leonardobishop.quests.bukkit.hook.essentials.AbstractEssentialsHook;
 import com.leonardobishop.quests.bukkit.hook.essentials.EssentialsHook;
-import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter13;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter14;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter20;
 import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter8;
+import com.leonardobishop.quests.bukkit.hook.itemgetter.ItemGetter;
 import com.leonardobishop.quests.bukkit.hook.papi.AbstractPlaceholderAPIHook;
 import com.leonardobishop.quests.bukkit.hook.papi.PlaceholderAPIHook;
 import com.leonardobishop.quests.bukkit.hook.playerblocktracker.AbstractPlayerBlockTrackerHook;
@@ -42,6 +42,8 @@ import com.leonardobishop.quests.bukkit.hook.wildstacker.WildStackerHook;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItemRegistry;
+import com.leonardobishop.quests.bukkit.item.requirement.DefaultItemOptions;
+import com.leonardobishop.quests.bukkit.item.requirement.ItemOptionRegistry;
 import com.leonardobishop.quests.bukkit.listener.PlayerJoinListener;
 import com.leonardobishop.quests.bukkit.listener.PlayerLeaveListener;
 import com.leonardobishop.quests.bukkit.menu.MenuController;
@@ -217,6 +219,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
     private AbstractVaultHook vaultHook;
     private AbstractWildStackerHook wildStackerHook;
     private ItemGetter itemGetter;
+    private ItemOptionRegistry itemOptionRegistry;
     private SkullGetter skullGetter;
     private QuestsTitle titleHandle;
     private QuestsBossBar bossBarHandle;
@@ -358,6 +361,10 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
         // (itemstacks)
         this.setItemGetter();
+
+        // (item requirement options, depending on the server version)
+        this.itemOptionRegistry = new ItemOptionRegistry();
+        DefaultItemOptions.registerAll(this.itemOptionRegistry);
 
         // (skulls)
         this.setSkullGetter();
@@ -926,6 +933,14 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
 
     public ItemGetter getItemGetter() {
         return itemGetter;
+    }
+
+    /**
+     * @return the options which can be used in item requirements on this server; other plugins may
+     * register their own options before quests are loaded
+     */
+    public ItemOptionRegistry getItemOptionRegistry() {
+        return itemOptionRegistry;
     }
 
     public SkullGetter getSkullGetter() {

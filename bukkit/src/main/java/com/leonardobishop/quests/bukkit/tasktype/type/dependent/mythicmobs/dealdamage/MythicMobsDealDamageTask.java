@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.bukkit.tasktype.type.dependent.mythicmobs.dealdamage;
 
 import com.leonardobishop.quests.bukkit.item.QuestItem;
+import com.leonardobishop.quests.bukkit.item.requirement.ItemRequirement;
 import com.leonardobishop.quests.bukkit.tasktype.AmountTask;
 import com.leonardobishop.quests.bukkit.tasktype.key.BukkitTaskKeys;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
@@ -23,15 +24,22 @@ public final class MythicMobsDealDamageTask extends AmountTask {
 
     public static final TaskSchema<MythicMobsDealDamageTask> SCHEMA = AmountTask.amountSchema(MythicMobsDealDamageTask::new)
             .keys(NAMES, NAME_MATCH_MODE, MIN_LEVEL)
-            .keys(LEVEL, BukkitTaskKeys.ITEM, BukkitTaskKeys.DATA)
-            .keys(BukkitTaskKeys.EXACT_MATCH)
+            .keys(LEVEL, BukkitTaskKeys.ITEM_REQUIREMENT, BukkitTaskKeys.ITEM)
+            .keys(BukkitTaskKeys.DATA, BukkitTaskKeys.EXACT_MATCH)
+            .validator(BukkitTaskKeys.legacyItem(BukkitTaskKeys.ITEM, BukkitTaskKeys.EXACT_MATCH, BukkitTaskKeys.ITEM_REQUIREMENT))
+            .validator(BukkitTaskKeys.legacyData(BukkitTaskKeys.DATA, BukkitTaskKeys.ITEM_REQUIREMENT, false))
             .build();
 
     public final @Nullable List<String> names;
     public final TaskUtils.StringMatchMode nameMatchMode;
     public final int minLevel;
     public final int level;
+    public final @Nullable ItemRequirement itemRequirement;
+    /** @deprecated use {@link #itemRequirement}; the legacy option will be removed in a future version. */
+    @Deprecated
     public final @Nullable QuestItem item;
+    /** @deprecated use {@link #itemRequirement}; the legacy option will be removed in a future version. */
+    @Deprecated
     public final boolean exactMatch;
 
     public MythicMobsDealDamageTask(final String id, final String type, final TaskOptions options) {
@@ -43,5 +51,6 @@ public final class MythicMobsDealDamageTask extends AmountTask {
         this.level = options.get(LEVEL);
         this.item = options.getOrNull(BukkitTaskKeys.ITEM);
         this.exactMatch = options.get(BukkitTaskKeys.EXACT_MATCH);
+        this.itemRequirement = ItemRequirement.resolve(options.getOrNull(BukkitTaskKeys.ITEM_REQUIREMENT), this.item, this.exactMatch);
     }
 }

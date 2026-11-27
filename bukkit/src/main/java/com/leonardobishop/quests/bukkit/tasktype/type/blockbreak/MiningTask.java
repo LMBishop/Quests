@@ -1,6 +1,7 @@
 package com.leonardobishop.quests.bukkit.tasktype.type.blockbreak;
 
 import com.leonardobishop.quests.bukkit.item.QuestItem;
+import com.leonardobishop.quests.bukkit.item.requirement.ItemRequirement;
 import com.leonardobishop.quests.bukkit.tasktype.AmountTask;
 import com.leonardobishop.quests.bukkit.tasktype.key.BlockSpec;
 import com.leonardobishop.quests.bukkit.tasktype.key.BukkitTaskKeys;
@@ -20,14 +21,24 @@ public final class MiningTask extends AmountTask {
     public static final TaskKey<Boolean> ALLOW_SILK_TOUCH = TaskKey.of("allow-silk-touch", TaskKeyParsers.booleanValue()).withDefault(true);
 
     public static final TaskSchema<MiningTask> SCHEMA = AmountTask.amountSchema(MiningTask::new)
-            .keys(BukkitTaskKeys.BLOCKS, BukkitTaskKeys.DATA, BukkitTaskKeys.ITEM, BukkitTaskKeys.EXACT_MATCH)
-            .keys(BukkitTaskKeys.CHECK_PLAYERBLOCKTRACKER, BukkitTaskKeys.CHECK_COREPROTECT, BukkitTaskKeys.CHECK_COREPROTECT_TIME)
-            .keys(REVERSE_IF_PLACED, BukkitTaskKeys.ALLOW_NEGATIVE_PROGRESS, ALLOW_SILK_TOUCH)
+            .keys(BukkitTaskKeys.BLOCKS, BukkitTaskKeys.ITEM_REQUIREMENT, BukkitTaskKeys.ITEM)
+            .keys(BukkitTaskKeys.DATA, BukkitTaskKeys.EXACT_MATCH, BukkitTaskKeys.CHECK_PLAYERBLOCKTRACKER)
+            .keys(BukkitTaskKeys.CHECK_COREPROTECT, BukkitTaskKeys.CHECK_COREPROTECT_TIME, REVERSE_IF_PLACED)
+            .keys(BukkitTaskKeys.ALLOW_NEGATIVE_PROGRESS, ALLOW_SILK_TOUCH)
+            .validator(BukkitTaskKeys.legacyItem(BukkitTaskKeys.ITEM, BukkitTaskKeys.EXACT_MATCH, BukkitTaskKeys.ITEM_REQUIREMENT))
+            .validator(BukkitTaskKeys.legacyData(BukkitTaskKeys.DATA, BukkitTaskKeys.ITEM_REQUIREMENT, true))
             .build();
 
     public final @Nullable List<BlockSpec> blocks;
-    public final @Nullable Integer data;
+    public final @Nullable ItemRequirement itemRequirement;
+    /** @deprecated use {@link #itemRequirement}; the legacy option will be removed in a future version. */
+    @Deprecated
     public final @Nullable QuestItem item;
+    /** @deprecated use {@link #itemRequirement} (option {@code damage}), for blocks {@code MATERIAL:data} in {@link #blocks}; the legacy option will be removed in a future version. */
+    @Deprecated
+    public final @Nullable Integer data;
+    /** @deprecated use {@link #itemRequirement}; the legacy option will be removed in a future version. */
+    @Deprecated
     public final boolean exactMatch;
     public final boolean checkPlayerBlockTracker;
     public final boolean checkCoreProtect;
@@ -49,5 +60,6 @@ public final class MiningTask extends AmountTask {
         this.reverseIfPlaced = options.get(REVERSE_IF_PLACED);
         this.allowNegativeProgress = options.get(BukkitTaskKeys.ALLOW_NEGATIVE_PROGRESS);
         this.allowSilkTouch = options.get(ALLOW_SILK_TOUCH);
+        this.itemRequirement = ItemRequirement.resolve(options.getOrNull(BukkitTaskKeys.ITEM_REQUIREMENT), this.item, this.exactMatch);
     }
 }

@@ -3,6 +3,8 @@ package com.leonardobishop.quests.bukkit.tasktype.key;
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.item.ParsedQuestItem;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
+import com.leonardobishop.quests.bukkit.item.requirement.ItemRequirement;
+import com.leonardobishop.quests.bukkit.item.requirement.ItemRequirementParser;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
@@ -10,6 +12,7 @@ import com.leonardobishop.quests.common.tasktype.key.TaskKey;
 import com.leonardobishop.quests.common.tasktype.key.TaskKeyContext;
 import com.leonardobishop.quests.common.tasktype.key.TaskKeyParser;
 import com.leonardobishop.quests.common.tasktype.key.TaskKeyParsers;
+import com.leonardobishop.quests.common.tasktype.key.TaskSchema;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -18,6 +21,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Function;
@@ -38,9 +42,18 @@ public final class BukkitTaskKeys {
 
     /** Legacy data value, used by blocks and simple (material name) items. */
     public static final TaskKey<Integer> DATA = TaskKey.of("data", TaskKeyParsers.integerValue(0, Short.MAX_VALUE));
-    public static final TaskKey<Boolean> EXACT_MATCH = TaskKey.of("exact-match", TaskKeyParsers.booleanValue()).withDefault(true);
-    /** {@code item} parsed together with the legacy {@code data} value. */
+    /** {@code item-requirement}; takes precedence over {@link #ITEM}. See {@link ItemRequirementParser}. */
+    public static final TaskKey<ItemRequirement> ITEM_REQUIREMENT = itemRequirement("item-requirement");
+    /**
+     * {@code item} parsed together with the legacy {@code data} value.
+     *
+     * @deprecated use {@link #ITEM_REQUIREMENT}; this option will be removed in a future version.
+     */
+    @Deprecated
     public static final TaskKey<QuestItem> ITEM = TaskKey.of("item", questItem("data"));
+    /** @deprecated use {@link #ITEM_REQUIREMENT}; this option will be removed in a future version. */
+    @Deprecated
+    public static final TaskKey<Boolean> EXACT_MATCH = TaskKey.of("exact-match", TaskKeyParsers.booleanValue()).withDefault(true);
     public static final TaskKey<List<BlockSpec>> BLOCKS = TaskKey.of("block", blocks(MaterialMode.BLOCK)).withAliases("blocks");
     public static final TaskKey<List<EntityType>> MOBS = TaskKey.of("mob", entityTypes()).withAliases("mobs");
     public static final TaskKey<List<CreatureSpawnEvent.SpawnReason>> SPAWN_REASONS = TaskKey.of("spawn-reason", spawnReasons()).withAliases("spawn-reasons");
@@ -55,6 +68,90 @@ public final class BukkitTaskKeys {
      */
     public static TaskKey<TaskUtils.StringMatchMode> matchMode(final String path) {
         return TaskKey.of(path, TaskKeyParsers.enumValue(TaskUtils.StringMatchMode.class)).withDefault(TaskUtils.StringMatchMode.EQUALS);
+    }
+
+    /**
+     * Creates an item requirement key using the item options registered on this server.
+     */
+    public static TaskKey<ItemRequirement> itemRequirement(final String path) {
+        return TaskKey.of(path, ItemRequirementParser.parser(() -> BukkitQuestsPlugin.getPlugin(BukkitQuestsPlugin.class).getItemOptionRegistry()));
+    }
+
+    /**
+     * Warns about the deprecated legacy item options of an item requirement: they are reported as
+     * deprecated when used on their own, and as ignored when the item requirement is set as well.
+     *
+     * @param legacy      legacy item option, e.g. {@code item}
+     * @param exactMatch  its {@code exact-match} option, or null if it has none
+     * @param requirement the item requirement replacing them, e.g. {@code item-requirement}
+     */
+    public static TaskSchema.Validator legacyItem(final TaskKey<?> legacy, final @Nullable TaskKey<?> exactMatch, final TaskKey<ItemRequirement> requirement) {
+        return (options, problems) -> {
+            final boolean requirementSet = options.has(requirement);
+
+            for (final TaskKey<?> key : exactMatch != null ? List.of(legacy, exactMatch) : List.of(legacy)) {
+                if (!options.has(key)) {
+                    continue;
+                }
+
+                if (requirementSet) {
+                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                            "Option '" + key.getPath() + "' is ignored because '" + requirement.getPath() + "' is set",
+                            "'" + requirement.getPath() + "' takes precedence over the deprecated<br>" +
+                                    "'" + key.getPath() + "' option. Remove '" + key.getPath() + "'.",
+                            key.getPath()));
+                } else {
+                    problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                            "Option '" + key.getPath() + "' is deprecated and will be removed in a future version; use '" + requirement.getPath() + "' instead",
+                            "The '" + legacy.getPath() + "'" + (exactMatch != null ? " and '" + exactMatch.getPath() + "'" : "") + " options will be removed.<br>" +
+                                    "Replace them with '" + requirement.getPath() + "', see the<br>" +
+                                    "item requirements page on the wiki.",
+                            key.getPath()));
+                }
+            }
+        };
+    }
+
+    /**
+     * Warns that the legacy {@code data} option of a task with legacy item options is deprecated.
+     *
+     * @param data          the {@code data} key
+     * @param requirement   the item requirement replacing the legacy item options
+     * @param usedByBlocks  whether the task also applies {@code data} to its {@code block} option
+     */
+    public static TaskSchema.Validator legacyData(final TaskKey<?> data, final TaskKey<ItemRequirement> requirement, final boolean usedByBlocks) {
+        return (options, problems) -> {
+            if (!options.has(data)) {
+                return;
+            }
+
+            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                    "Option '" + data.getPath() + "' is deprecated and will be removed in a future version; use 'damage' in '" + requirement.getPath() + "' instead"
+                            + (usedByBlocks ? " (for blocks use 'MATERIAL:data' in 'block')" : ""),
+                    "Legacy data values are replaced by the 'damage'<br>" +
+                            "option of item requirements" + (usedByBlocks ? ", and by the<br>'MATERIAL:data' form of 'block' for blocks" : "") + ".",
+                    data.getPath()));
+        };
+    }
+
+    /**
+     * Shorthand for {@link #legacyItem(TaskKey, TaskKey, TaskKey)} without an {@code exact-match} option.
+     */
+    public static TaskSchema.Validator legacyItem(final TaskKey<?> legacy, final TaskKey<ItemRequirement> requirement) {
+        return legacyItem(legacy, null, requirement);
+    }
+
+    /**
+     * Requires either a legacy item option or its item requirement.
+     */
+    public static TaskSchema.Validator requireItem(final TaskKey<?> legacy, final TaskKey<ItemRequirement> requirement) {
+        return (options, problems) -> {
+            if (!options.has(legacy) && !options.has(requirement)) {
+                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                        "Either '" + requirement.getPath() + "' or '" + legacy.getPath() + "' must be set",
+                        null, requirement.getPath()));
+            }
+        };
     }
 
     /**

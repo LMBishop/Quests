@@ -65,7 +65,7 @@ public abstract class NpcDeliverTaskType<T> extends BukkitTaskType<NpcDeliverTas
                 }
             }
 
-            int[] amountPerSlot = TaskUtils.getAmountsPerSlot(player, task.item, task.exactMatch);
+            int[] amountPerSlot = TaskUtils.getAmountsPerSlot(player, task.itemRequirement);
             super.debug("Player has " + amountPerSlot[36] + " of the required item", quest.getId(), task.getId(), player.getUniqueId());
 
             if (task.allowPartialCompletion) {

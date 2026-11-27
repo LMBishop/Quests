@@ -53,10 +53,10 @@ public final class FishingTaskType extends BukkitTaskType<FishingTask> {
             FishingTask task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            if (task.item != null) {
+            if (task.itemRequirement != null) {
                 super.debug("Player fished item of type " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
-                if (!task.item.compareItemStack(item, task.exactMatch)) {
+                if (!task.itemRequirement.matches(item)) {
                     super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }

@@ -67,7 +67,7 @@ public final class BlockItemdroppingTaskType extends BukkitTaskType<BlockItemdro
 
                 amountToIncrease = 1;
             } else {
-                if (task.item != null) {
+                if (task.itemRequirement != null) {
                     if (item == null) {
                         super.debug("Specific item is required, dropped item is null; continuing...", quest.getId(), task.getId(), player.getUniqueId());
                         continue;
@@ -75,7 +75,7 @@ public final class BlockItemdroppingTaskType extends BukkitTaskType<BlockItemdro
 
                     super.debug("Specific item is required; dropped item is of type '" + item.getType() + "'", quest.getId(), task.getId(), player.getUniqueId());
 
-                    if (!task.item.compareItemStack(item, task.exactMatch)) {
+                    if (!task.itemRequirement.matches(item)) {
                         super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                         continue;
                     } else {

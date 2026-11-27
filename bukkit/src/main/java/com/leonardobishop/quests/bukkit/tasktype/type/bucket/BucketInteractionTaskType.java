@@ -34,10 +34,10 @@ public abstract class BucketInteractionTaskType extends BukkitTaskType<BucketInt
             BucketInteractionTask task = pendingTask.task();
             TaskProgress taskProgress = pendingTask.taskProgress();
 
-            if (task.bucket != null) {
+            if (task.bucketRequirement != null) {
                 super.debug("Player interacted with bucket of type " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
-                if (!task.bucket.compareItemStack(item, task.exactMatch)) {
+                if (!task.bucketRequirement.matches(item)) {
                     super.debug("Item does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }

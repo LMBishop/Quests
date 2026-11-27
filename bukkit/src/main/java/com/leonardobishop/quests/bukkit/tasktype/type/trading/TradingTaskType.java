@@ -81,28 +81,28 @@ public final class TradingTaskType extends BukkitTaskType<TradingTask> {
             // TODO: add villager-type and villager-profession options
             // not that simple especially after the change in 1.21
 
-            if (task.item != null) {
+            if (task.itemRequirement != null) {
                 super.debug("Player traded " + resultAmount + " items of type " + result.getType(), quest.getId(), task.getId(), player.getUniqueId());
 
-                if (!task.item.compareItemStack(result, task.exactMatch)) {
+                if (!task.itemRequirement.matches(result)) {
                     super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
             }
 
-            if (task.firstIngredient != null) {
+            if (task.firstIngredientRequirement != null) {
                 super.debug("First ingredient was " + (firstIngredient != null ? (firstIngredient.getAmount() + " of type " + firstIngredient.getType()) : null), quest.getId(), task.getId(), player.getUniqueId());
 
-                if (firstIngredient == null || !task.firstIngredient.compareItemStack(firstIngredient, task.firstIngredientExactMatch)) {
+                if (firstIngredient == null || !task.firstIngredientRequirement.matches(firstIngredient)) {
                     super.debug("First ingredient does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }
             }
 
-            if (task.secondIngredient != null) {
+            if (task.secondIngredientRequirement != null) {
                 super.debug("Second ingredient was " + (secondIngredient != null ? (secondIngredient.getAmount() + " of type " + secondIngredient.getType()) : null), quest.getId(), task.getId(), player.getUniqueId());
 
-                if (secondIngredient == null || !task.secondIngredient.compareItemStack(secondIngredient, task.secondIngredientExactMatch)) {
+                if (secondIngredient == null || !task.secondIngredientRequirement.matches(secondIngredient)) {
                     super.debug("Second ingredient does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
                     continue;
                 }

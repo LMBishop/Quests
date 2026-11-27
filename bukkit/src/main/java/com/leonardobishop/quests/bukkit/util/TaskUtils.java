@@ -2,6 +2,7 @@ package com.leonardobishop.quests.bukkit.util;
 
 import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.item.QuestItem;
+import com.leonardobishop.quests.bukkit.item.requirement.ItemRequirement;
 import com.leonardobishop.quests.bukkit.menu.itemstack.QItemStack;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTask;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
@@ -504,6 +505,18 @@ public class TaskUtils {
         }
 
         return false;
+    }
+
+    public static int[] getAmountsPerSlot(Player player, ItemRequirement requirement) {
+        int[] slotToAmount = new int[37];
+        // idx 36 = total
+        for (int i = 0; i < 36; i++) {
+            ItemStack slot = player.getInventory().getItem(i);
+            if (slot == null || !requirement.matches(slot)) continue;
+            slotToAmount[36] = slotToAmount[36] + slot.getAmount();
+            slotToAmount[i] = slot.getAmount();
+        }
+        return slotToAmount;
     }
 
     public static int[] getAmountsPerSlot(Player player, QuestItem qi, boolean exactMatch) {
