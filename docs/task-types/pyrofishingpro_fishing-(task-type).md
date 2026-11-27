@@ -18,7 +18,7 @@ Catch a set amount of a Pyro fish from the sea.
 
 | Key              | Description                                         | Type                | Required | Default | Notes                                                             |
 |------------------|-----------------------------------------------------|---------------------|----------|---------|-------------------------------------------------------------------|
-| `amount`         | The number of Pyro fish to catch.                   | Integer             | Yes      | \-      | \-                                                                |
+| `amount`         | The number of Pyro fish to catch.                   | Integer             | Yes      | \-      | Must be at least 1.                                               |
 | `fish-number`    | The specific fish number to catch.                  | Integer             | No       | \-      | If this value is not specified, then any fish will count.         |
 | `tier`           | The specific tier of fish to catch.                 | String              | No       | \-      | If this value is not specified, then any tier of fish will count. |
 | `worlds`         | Worlds which should count towards the progress.     | List of world names | No       | \-      | \-                                                                |

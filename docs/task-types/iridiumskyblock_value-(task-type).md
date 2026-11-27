@@ -16,9 +16,9 @@ Reach a certain IridiumSkyblock value.
 
 ## Options
 
-| Key     | Description         | Type    | Required | Default | Notes |
-|---------|---------------------|---------|----------|---------|-------|
-| `value` | The value to reach. | Integer | Yes      | \-      | \-    |
+| Key     | Description         | Type    | Required | Default | Notes               |
+|---------|---------------------|---------|----------|---------|---------------------|
+| `value` | The value to reach. | Integer | Yes      | \-      | Must be at least 0. |
 
 ## Examples
 

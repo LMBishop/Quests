@@ -1,6 +1,5 @@
 package com.leonardobishop.quests.common.quest;
 
-import com.leonardobishop.quests.common.util.Modern;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NullMarked;
@@ -16,7 +15,6 @@ import java.util.Objects;
  * associated quests, and it can specify whether permission is required to access it and whether
  * it should be hidden from the plugin menus.
  */
-@Modern(type = Modern.Type.FULL)
 @NullMarked
 public final class Category {
 

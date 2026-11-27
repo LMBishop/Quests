@@ -1,6 +1,5 @@
 package com.leonardobishop.quests.common.quest;
 
-import com.leonardobishop.quests.common.util.Modern;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NullMarked;
@@ -16,7 +15,6 @@ import java.util.Objects;
 /**
  * The quests manager stores all present Quests and Categories on the server and is used as a registry.
  */
-@Modern(type = Modern.Type.FULL)
 @NullMarked
 public final class QuestManager {
 

@@ -13,13 +13,13 @@ Reach a set of co-ordinates.
 
 ## Options
 
-| Key                | Description                                               | Type    | Required | Default | Notes                                                                |
-|--------------------|-----------------------------------------------------------|---------|----------|---------|----------------------------------------------------------------------|
-| `x`                | The x co-ordinate.                                        | Integer | Yes      | \-      | \-                                                                   |
-| `y`                | The y co-ordinate.                                        | Integer | Yes      | \-      | \-                                                                   |
-| `z`                | The z co-ordinate.                                        | Integer | Yes      | \-      | \-                                                                   |
-| `world`            | The name of the world.                                    | String  | Yes      | \-      | \-                                                                   |
-| `distance-padding` | The distance around the co-ordinate the player can reach. | Integer | No       | \-      | Having no padding means the player must reach the exact co-ordinate. |
+| Key                | Description                                               | Type    | Required | Default | Notes                                                                                    |
+|--------------------|-----------------------------------------------------------|---------|----------|---------|------------------------------------------------------------------------------------------|
+| `x`                | The x co-ordinate.                                        | Integer | Yes      | \-      | \-                                                                                       |
+| `y`                | The y co-ordinate.                                        | Integer | Yes      | \-      | \-                                                                                       |
+| `z`                | The z co-ordinate.                                        | Integer | Yes      | \-      | \-                                                                                       |
+| `world`            | The name of the world.                                    | String  | Yes      | \-      | \-                                                                                       |
+| `distance-padding` | The distance around the co-ordinate the player can reach. | Integer | No       | \-      | Having no padding means the player must reach the exact co-ordinate. Must be at least 0. |
 
 ## Examples
 

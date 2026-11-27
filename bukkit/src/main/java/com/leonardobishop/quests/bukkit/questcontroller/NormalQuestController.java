@@ -170,7 +170,7 @@ public class NormalQuestController implements QuestController {
 
             for (Task task : quest.getTasks()) {
                 try {
-                    plugin.getTaskTypeManager().getTaskType(task.getType()).onStart(quest, task, qPlayer.getPlayerUUID());
+                    plugin.getTaskTypeManager().getTaskType(task.getType()).start(quest, task, qPlayer.getPlayerUUID());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -16,9 +16,9 @@ Reach a certain SuperiorSkyblock level.
 
 ## Options
 
-| Key     | Description         | Type    | Required | Default | Notes |
-|---------|---------------------|---------|----------|---------|-------|
-| `level` | The level to reach. | Integer | Yes      | \-      | \-    |
+| Key     | Description         | Type    | Required | Default | Notes               |
+|---------|---------------------|---------|----------|---------|---------------------|
+| `level` | The level to reach. | Integer | Yes      | \-      | Must be at least 0. |
 
 ## Examples
 

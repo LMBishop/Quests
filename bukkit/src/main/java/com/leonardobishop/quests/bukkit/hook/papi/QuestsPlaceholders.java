@@ -243,7 +243,7 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                                             case "goal":
                                             case "g":
                                                 final Task task = quest.getTaskById(t[1]);
-                                                result = (task != null ? String.valueOf(plugin.getTaskTypeManager().getTaskType(task.getType()).getGoal(task)) : "0");
+                                                result = (task != null ? String.valueOf(task.getGoal()) : "0");
                                                 break;
                                             default:
                                                 return args[0] + "_" + args[1] + "_" + args[2] + " is not a valid placeholder";

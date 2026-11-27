@@ -10,7 +10,6 @@ import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFi
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import com.leonardobishop.quests.common.tasktype.TaskType;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -192,8 +191,7 @@ public class QItemStack {
                 case "goal" -> {
                     Quest quest = plugin.getQuestManager().getQuestById(questProgress.getQuestId());
                     Task task = quest != null ? quest.getTaskById(matchedTaskProgress.getTaskId()) : null;
-                    TaskType taskType = task != null ? plugin.getTaskTypeManager().getTaskType(task.getType()) : null;
-                    Object goal = taskType != null ? taskType.getGoal(task) : null;
+                    Object goal = task != null ? task.getGoal() : null;
                     if (goal instanceof Float || goal instanceof Double || goal instanceof BigDecimal) {
                         replacement = FormatUtils.floating((Number) goal);
                     } else if (goal instanceof Integer || goal instanceof Long || goal instanceof BigInteger) {

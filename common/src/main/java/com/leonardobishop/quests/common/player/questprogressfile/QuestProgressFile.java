@@ -5,7 +5,6 @@ import com.leonardobishop.quests.common.player.questprogressfile.filters.QuestPr
 import com.leonardobishop.quests.common.plugin.Quests;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
-import com.leonardobishop.quests.common.util.Modern;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -23,7 +22,6 @@ import java.util.function.Consumer;
 /**
  * Represents underlying quest progress for a player.
  */
-@Modern(type = Modern.Type.FULL)
 @NullMarked
 public final class QuestProgressFile {
 

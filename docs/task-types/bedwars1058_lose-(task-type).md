@@ -16,9 +16,9 @@ Lose a game of BedWars in BedWars1058.
 
 ## Options
 
-| Key      | Description                  | Type                | Required | Default | Notes |
-|----------|------------------------------|---------------------|----------|---------|-------|
-| `amount` | The amount of games to lose. | Integer             | Yes      | \-      | \-    |
+| Key      | Description                  | Type    | Required | Default | Notes               |
+|----------|------------------------------|---------|----------|---------|---------------------|
+| `amount` | The amount of games to lose. | Integer | Yes      | \-      | Must be at least 1. |
 
 ## Examples
 

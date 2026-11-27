@@ -1,6 +1,5 @@
 import xyz.wagyourtail.jvmdg.gradle.task.DowngradeJar
 import xyz.wagyourtail.jvmdg.gradle.task.ShadeJar
-import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 plugins {
     java

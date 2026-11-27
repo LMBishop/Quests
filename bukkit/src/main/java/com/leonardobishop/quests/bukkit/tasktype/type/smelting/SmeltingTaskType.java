@@ -1,0 +1,116 @@
+package com.leonardobishop.quests.bukkit.tasktype.type.smelting;
+
+import com.google.common.math.IntMath;
+import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
+import com.leonardobishop.quests.bukkit.util.TaskUtils;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
+import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
+import com.leonardobishop.quests.common.quest.Quest;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.FurnaceInventory;
+import org.bukkit.inventory.ItemStack;
+
+import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+public final class SmeltingTaskType extends BukkitTaskType<SmeltingTask> {
+
+    private final BukkitQuestsPlugin plugin;
+
+    public SmeltingTaskType(BukkitQuestsPlugin plugin) {
+        super("smelting", TaskUtils.TASK_ATTRIBUTION_STRING, "Smelt or cook a set amount of a item.", SmeltingTask.SCHEMA, "smeltingcertain");
+        this.plugin = plugin;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onInventoryClick(InventoryClickEvent event) {
+        //noinspection DuplicatedCode
+        if (!(event.getInventory() instanceof FurnaceInventory) || event.getRawSlot() != 2
+                || (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR)
+                || event.getAction() == InventoryAction.NOTHING
+                || event.getAction() == InventoryAction.COLLECT_TO_CURSOR && event.getClick() == ClickType.DOUBLE_CLICK && (event.getCursor() != null && event.getCursor().getType() != Material.AIR) && ((event.getCursor().getAmount() + event.getCurrentItem().getAmount() > event.getCursor().getMaxStackSize()) || !event.getCursor().isSimilar(event.getCurrentItem())) // https://github.com/LMBishop/Quests/issues/754 (does not apply to crafting items lol)
+                || event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD && event.getClick() == ClickType.NUMBER_KEY && !plugin.getVersionSpecificHandler().isHotbarMoveAndReaddSupported() // https://discord.com/channels/211910297810632704/510553623022010371/1011035743331819550
+                || event.getAction() == InventoryAction.DROP_ONE_SLOT && event.getClick() == ClickType.DROP && (event.getCursor() != null && event.getCursor().getType() != Material.AIR) // https://github.com/LMBishop/Quests/issues/430
+                || event.getAction() == InventoryAction.DROP_ALL_SLOT && event.getClick() == ClickType.CONTROL_DROP && (event.getCursor() != null && event.getCursor().getType() != Material.AIR) // https://github.com/LMBishop/Quests/issues/430
+                || event.getAction() == InventoryAction.UNKNOWN && event.getClick() == ClickType.UNKNOWN // for better ViaVersion support
+                || !(event.getWhoClicked() instanceof Player player)
+                || plugin.getVersionSpecificHandler().isOffHandSwap(event.getClick()) && !plugin.getVersionSpecificHandler().isOffHandEmpty(player)) {
+            return;
+        }
+
+        ItemStack item = event.getCurrentItem();
+
+        int eventAmount;
+        if (event.getAction() == InventoryAction.DROP_ONE_SLOT) {
+            eventAmount = 1;
+        } else if (event.getAction() == InventoryAction.PICKUP_HALF) {
+            eventAmount = IntMath.divide(item.getAmount(), 2, RoundingMode.CEILING);
+        } else {
+            eventAmount = item.getAmount();
+            if (event.isShiftClick() && event.getClick() != ClickType.CONTROL_DROP) { // https://github.com/LMBishop/Quests/issues/317
+                eventAmount = Math.min(eventAmount, plugin.getVersionSpecificHandler().getAvailableSpace(player, item));
+                if (eventAmount == 0) {
+                    return;
+                }
+            }
+        }
+
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+        if (qPlayer == null) {
+            return;
+        }
+
+        final InventoryType inventoryType = event.getInventory().getType();
+        final String inventoryTypeName = inventoryTypeNames.get(inventoryType);
+
+        for (TaskUtils.PendingTask<SmeltingTask> pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
+            Quest quest = pendingTask.quest();
+            SmeltingTask task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
+
+            if (task.mode != null && !inventoryTypeName.equals(task.mode)) {
+                super.debug("Specific mode is required, but the actual mode '" + inventoryType + "' does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                continue;
+            }
+
+            super.debug("Player smelted " + eventAmount + " of " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
+
+            if (task.itemRequirement != null) {
+                if (!task.itemRequirement.matches(item)) {
+                    super.debug("Item does not match required item, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+            }
+
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress, eventAmount);
+            super.debug("Updating task progress (now " + (progress + eventAmount) + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+            if ((int) taskProgress.getProgress() >= task.amount) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setProgress(task.amount);
+                taskProgress.setCompleted(true);
+            }
+
+            TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, task.amount);
+        }
+    }
+
+    private static final Map<InventoryType, String> inventoryTypeNames = new HashMap<>() {{
+        for (final InventoryType inventoryType : InventoryType.values()) {
+            final String name = inventoryType.name();
+            final String nameLowerCase = name.toLowerCase(Locale.ROOT);
+            this.put(inventoryType, nameLowerCase);
+        }
+    }};
+}

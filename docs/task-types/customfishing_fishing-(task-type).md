@@ -18,7 +18,7 @@ Catch a set amount of CustomFishing loots.
 
 | Key                | Description                                         | Type                | Required | Default | Notes                                                              |
 |--------------------|-----------------------------------------------------|---------------------|----------|---------|--------------------------------------------------------------------|
-| `amount`           | The number of loots to catch.                       | Integer             | Yes      | \-      | \-                                                                 |
+| `amount`           | The number of loots to catch.                       | Integer             | Yes      | \-      | Must be at least 1.                                                |
 | `loot` / `loots`   | The specific loot id(s) to catch.                   | String              | No       | \-      | If this value is not specified, then any loot will count.          |
 | `loot-match-mode`  | The match mode to be used to compare the strings    | String              | No       | EQUALS  | One of: `EQUALS`, `STARTS_WITH`, `ENDS_WITH`.                      |
 | `group` / `groups` | The specific group of loot to catch.                | String              | No       | \-      | If this value is not specified, then any group of loot will count. |

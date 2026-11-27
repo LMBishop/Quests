@@ -18,7 +18,7 @@ Kill a certain number of EcoBosses bosses.
 
 | Key              | Description                                         | Type                       | Required | Default | Notes                                         |
 |------------------|-----------------------------------------------------|----------------------------|----------|---------|-----------------------------------------------|
-| `amount`         | The number of bosses to kill.                       | Integer                    | Yes      | \-      | \-                                            |
+| `amount`         | The number of bosses to kill.                       | Integer                    | Yes      | \-      | Must be at least 1.                           |
 | `id` / `ids`     | The EcoBosses boss ID(s).                           | String, or list of strings | Yes      | \-      | \-                                            |
 | `id-match-mode`  | The match mode to be used to compare the strings    | String                     | No       | EQUALS  | One of: `EQUALS`, `STARTS_WITH`, `ENDS_WITH`. |
 | `worlds`         | Worlds which should count towards the progress.     | List of world names        | No       | \-      | \-                                            |

@@ -16,9 +16,9 @@ Vote a number of times using VotingPlugin.
 
 ## Options
 
-| Key      | Description          | Type    | Required | Default | Notes |
-|----------|----------------------|---------|----------|---------|-------|
-| `amount` | The number of votes. | Integer | Yes      | \-      | \-    |
+| Key      | Description          | Type    | Required | Default | Notes               |
+|----------|----------------------|---------|----------|---------|---------------------|
+| `amount` | The number of votes. | Integer | Yes      | \-      | Must be at least 1. |
 
 ## Examples
 

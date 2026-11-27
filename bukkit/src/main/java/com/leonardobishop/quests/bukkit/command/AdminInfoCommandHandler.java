@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.util.Messages;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
+import com.leonardobishop.quests.common.tasktype.key.TaskKey;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
@@ -45,8 +46,8 @@ public class AdminInfoCommandHandler implements CommandHandler {
                 sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE + "Task configurations (" + quest.getTasks().size() + ")");
                 for (Task task : quest.getTasks()) {
                     sender.sendMessage(ChatColor.RED + "Task '" + task.getId() + "':");
-                    for (Map.Entry<String, Object> config : task.getConfigValues().entrySet()) {
-                        sender.sendMessage(ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + config.getKey() + ": " + ChatColor.GRAY + ChatColor.ITALIC + config.getValue());
+                    for (Map.Entry<TaskKey<?>, Object> option : task.getOptions().asMap().entrySet()) {
+                        sender.sendMessage(ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + option.getKey().getPath() + ": " + ChatColor.GRAY + ChatColor.ITALIC + option.getValue());
                     }
                 }
                 sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE +  "Start string");

@@ -16,9 +16,9 @@ Win a game of BedWars in BedWars1058.
 
 ## Options
 
-| Key      | Description                 | Type                | Required | Default | Notes |
-|----------|-----------------------------|---------------------|----------|---------|-------|
-| `amount` | The amount of games to win. | Integer             | Yes      | \-      | \-    |
+| Key      | Description                 | Type    | Required | Default | Notes               |
+|----------|-----------------------------|---------|----------|---------|---------------------|
+| `amount` | The amount of games to win. | Integer | Yes      | \-      | Must be at least 1. |
 
 ## Examples
 

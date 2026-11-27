@@ -1,0 +1,115 @@
+package com.leonardobishop.quests.bukkit.tasktype.type.smithing;
+
+import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
+import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
+import com.leonardobishop.quests.bukkit.util.TaskUtils;
+import com.leonardobishop.quests.bukkit.util.constraint.TaskConstraintSet;
+import com.leonardobishop.quests.common.player.QPlayer;
+import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
+import com.leonardobishop.quests.common.quest.Quest;
+import com.leonardobishop.quests.common.versioning.Version;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.SmithItemEvent;
+import org.bukkit.inventory.ItemStack;
+
+public final class SmithingTaskType extends BukkitTaskType<SmithingTask> {
+
+    private final BukkitQuestsPlugin plugin;
+
+    public SmithingTaskType(BukkitQuestsPlugin plugin) {
+        super("smithing", TaskUtils.TASK_ATTRIBUTION_STRING, "Smith a specific item.", SmithingTask.SCHEMA);
+        this.plugin = plugin;
+
+        if (plugin.getServerVersion().isLowerThan(Version.V1_20)) {
+            return;
+        }
+
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSmithItem(SmithItemEvent event) {
+        //noinspection DuplicatedCode
+        if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR
+                || event.getAction() == InventoryAction.NOTHING
+                || event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD && event.getClick() == ClickType.NUMBER_KEY && !plugin.getVersionSpecificHandler().isHotbarMoveAndReaddSupported() // https://discord.com/channels/211910297810632704/510553623022010371/1011035743331819550
+                || event.getAction() == InventoryAction.DROP_ONE_SLOT && event.getClick() == ClickType.DROP && (event.getCursor() != null && event.getCursor().getType() != Material.AIR) // https://github.com/LMBishop/Quests/issues/430
+                || event.getAction() == InventoryAction.DROP_ALL_SLOT && event.getClick() == ClickType.CONTROL_DROP && (event.getCursor() != null && event.getCursor().getType() != Material.AIR) // https://github.com/LMBishop/Quests/issues/430
+                || event.getAction() == InventoryAction.UNKNOWN && event.getClick() == ClickType.UNKNOWN // for better ViaVersion support
+                || !(event.getWhoClicked() instanceof Player player)
+                || plugin.getVersionSpecificHandler().isOffHandSwap(event.getClick()) && !plugin.getVersionSpecificHandler().isOffHandEmpty(player)) {
+            return;
+        }
+
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+        if (qPlayer == null) {
+            return;
+        }
+
+        ItemStack item = event.getCurrentItem();
+
+        int eventAmount = item.getAmount();
+        if (event.isShiftClick() && event.getClick() != ClickType.CONTROL_DROP) { // https://github.com/LMBishop/Quests/issues/317
+            // https://cdn.discordapp.com/attachments/510553623022010371/1011483223446007849/unknown.png
+            eventAmount *= getSmithItemMultiplier(event);
+            eventAmount = Math.min(eventAmount, plugin.getVersionSpecificHandler().getAvailableSpace(player, item));
+            if (eventAmount == 0) {
+                return;
+            }
+        }
+
+        final String recipeType = plugin.getVersionSpecificHandler().getSmithMode(event);
+
+        for (TaskUtils.PendingTask<SmithingTask> pendingTask : TaskUtils.getApplicableTasks(player, qPlayer, this, TaskConstraintSet.ALL)) {
+            Quest quest = pendingTask.quest();
+            SmithingTask task = pendingTask.task();
+            TaskProgress taskProgress = pendingTask.taskProgress();
+
+            // null on versions lower than 1.20
+            if (recipeType != null) {
+                if (!recipeType.equals(task.mode) && !"any".equals(task.mode)) {
+                    super.debug("Specific mode is required, but the actual mode '" + recipeType + "' does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+            }
+
+            if (task.itemRequirement != null) {
+                super.debug("Player smithed " + eventAmount + " of " + item.getType(), quest.getId(), task.getId(), player.getUniqueId());
+
+                if (!task.itemRequirement.matches(item)) {
+                    super.debug("Item does not match, continuing...", quest.getId(), task.getId(), player.getUniqueId());
+                    continue;
+                }
+            }
+
+            int progress = TaskUtils.incrementIntegerTaskProgress(taskProgress, eventAmount);
+            super.debug("Updating task progress (now " + (progress + eventAmount) + ")", quest.getId(), task.getId(), player.getUniqueId());
+
+            if ((int) taskProgress.getProgress() >= task.amount) {
+                super.debug("Marking task as complete", quest.getId(), task.getId(), player.getUniqueId());
+                taskProgress.setProgress(task.amount);
+                taskProgress.setCompleted(true);
+            }
+
+            TaskUtils.sendTrackAdvancement(player, quest, task, pendingTask, task.amount);
+        }
+    }
+
+    private int getSmithItemMultiplier(SmithItemEvent event) {
+        int min = -1;
+        for (ItemStack item : this.plugin.getVersionSpecificHandler().getSmithItems(event)) {
+            if (item == null) {
+                continue;
+            }
+            int amount = item.getAmount();
+            if ((min < 0 && amount > 0) || (min > 0 && amount < min)) {
+                min = amount;
+            }
+        }
+        return Math.max(min, 1);
+    }
+}

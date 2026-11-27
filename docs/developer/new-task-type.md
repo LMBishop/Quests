@@ -45,6 +45,14 @@ public final class MiningTaskType extends BukkitTaskType {
 }
 ```
 The name of the Task Type (`blockbreak` in this case) is what server owners put into their config. 
+### Package layout
+Built-in task types live in `com.leonardobishop.quests.bukkit.tasktype.type`, one package per task type id, holding the task type, its task class and any enums it uses. Task types depending on another plugin are under `...type.dependent`, in a package named after the plugin with a sub-package for the part of the id after the underscore. For example:
+
+* `blockbreak` → `...tasktype.type.blockbreak` (`MiningTaskType`, `MiningTask`)
+* `bedwars1058_win` → `...tasktype.type.dependent.bedwars1058.win`
+
+Base classes shared by several task types are in the common parent package where there is one (`dependent.shopguiplus`, `dependent.evenmorefish`), otherwise in a package named after what they share (`bucket`, `dependent.npc`).
+
 ### Bukkit listeners
 You can use Bukkit event listeners like you normally would in your own plugin. The class is already registered as a listener by Quests.
 
@@ -80,4 +88,4 @@ The `onDisable()` method is called when the plugin is disabled, or is reloaded. 
 The `validateConfig(String, HashMap<String, Object>)` method is called when each task is loaded. It is used to detect potential configuration issues and can be used to prevent the quest from loading if, for example, a required config option is missing. The first string is the task root (e.g `tasks.mining` in the first example) and the map is the config to check. The return type is a list of `ConfigProblem`, returning a list containing at least one `ConfigProblem` with an `ERROR` type will prevent the quest from loading.
 
 ### Modifying progress
-You can modify progress by obtaining an instance of a players `QuestProgressFile`, getting the specific `QuestProgress` and then getting the specific `TaskProgress`. You can see an example of this in the [`MiningTaskType`](https://github.com/LMBishop/Quests/blob/master/bukkit/src/main/java/com/leonardobishop/quests/bukkit/tasktype/type/MiningTaskType.java) (which contains comments through the file).
+You can modify progress by obtaining an instance of a players `QuestProgressFile`, getting the specific `QuestProgress` and then getting the specific `TaskProgress`. You can see an example of this in the [`MiningTaskType`](https://github.com/LMBishop/Quests/blob/master/bukkit/src/main/java/com/leonardobishop/quests/bukkit/tasktype/type/blockbreak/MiningTaskType.java) (which contains comments through the file).
